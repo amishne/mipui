@@ -1,6 +1,7 @@
 window.onload = () => { start(); };
 
 const objects = {};
+let gesture = {};
 
 function start() {
   createGrid(document.getElementById('grid'), 30);
@@ -75,18 +76,27 @@ function createPrimaryCell(parent, row, column) {
 function createCell(parent, className, key) {
   const cell = createAndAppendDivWithClass(parent, className + ' solid');
   objects[key] = cell;
-  cell.onclick = () => { cellClicked(cell); };
+  cell.onmousedown = () => { startGesture(cell); };
+  cell.onmouseover = (e) => {
+    if (e.buttons == 1) {
+      continueGesture(cell);
+    }
+  };
+  cell.ondragenter = () => { cellClicked(cell); };
   return cell;
 }
 
-function cellClicked(cell) {
+function startGesture(cell) {
   if (cell.classList.contains('solid')) {
-    setClear(cell);
+    gesture.callback = setClear;
   } else if (cell.classList.contains('clear')) {
-    setSolid(cell);
-  } else {
-    console.log('Cell not properly initialized.');
+    gesture.callback = setSolid;
   }
+  continueGesture(cell);
+}
+
+function continueGesture(cell) {
+  gesture.callback(cell);
   if (cell.classList.contains('primary-cell')) {
     updatePrimaryCellNeighbors(cell);
   }
