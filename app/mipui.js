@@ -3,7 +3,7 @@ window.onload = () => { start(); };
 const objects = {};
 
 function start() {
-  createGrid(document.getElementById('grid'), 10);
+  createGrid(document.getElementById('grid'), 30);
 }
 
 function createGrid(parent, n) {

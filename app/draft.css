@@ -3,10 +3,12 @@
   border-left: 1px solid;
   border-top: 1px solid;
   border-color: bisque;
+  margin: 8px;
 }
 
 .row-container {
   display: block;
+  white-space: nowrap;
 }
 
 .cell {
@@ -18,23 +20,23 @@
 }
 
 .primary-cell {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .corner-cell {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 .vertical-cell {
-  width: 8px;
-  height: 24px;
+  width: 4px;
+  height: 16px;
 }
 
 .horizontal-cell {
-  width: 24px;
-  height: 8px;
+  width: 16px;
+  height: 4px;
 }
 
 .solid {
