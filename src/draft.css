@@ -1,0 +1,49 @@
+.grid {
+  display: inline-block;
+  border-left: 1px solid;
+  border-top: 1px solid;
+  border-color: bisque;
+}
+
+.row-container {
+  display: block;
+}
+
+.cell {
+  position: relative;
+  display: inline-block;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  border-color: bisque;
+}
+
+.primary-cell {
+  width: 24px;
+  height: 24px;
+}
+
+.corner-cell {
+  width: 8px;
+  height: 8px;
+}
+
+.vertical-cell {
+  width: 8px;
+  height: 24px;
+}
+
+.horizontal-cell {
+  width: 24px;
+  height: 8px;
+}
+
+.solid {
+  background-color: burlywood;
+  box-shadow: 2px 2px 6px 0px #919191;
+  z-index: 1;
+}
+
+.clear {
+  background-color: beige;
+  z-index: 0;
+}
