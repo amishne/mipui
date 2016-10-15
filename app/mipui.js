@@ -92,12 +92,17 @@ function startGesture(cell) {
   } else if (cell.classList.contains('clear')) {
     gesture.callback = setSolid;
   }
+  gesture.primaryCellsOnly = cell.classList.contains('primary-cell');
   continueGesture(cell);
 }
 
 function continueGesture(cell) {
-  gesture.callback(cell);
-  if (cell.classList.contains('primary-cell')) {
+  const primaryCell = cell.classList.contains('primary-cell');
+  if (!gesture.primaryCellsOnly || primaryCell) {
+    gesture.callback(cell);
+  }
+  if (gesture.primaryCellsOnly && primaryCell) {
+    // Primary cell gestures update neighbors.
     updatePrimaryCellNeighbors(cell);
   }
 }
