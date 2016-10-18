@@ -1,45 +1,35 @@
 function startGesture(cell) {
-  if (cell.classList.contains('solid')) {
-    gesture.callback = setClear;
-  } else if (cell.classList.contains('clear')) {
-    gesture.callback = setSolid;
-  }
-  gesture.primaryCellsOnly = cell.classList.contains('primary-cell');
+  state.getGesture().toSolid = !cell.isSolid;
+  state.getGesture().primaryCellsOnly = cell.isPrimary;
   continueGesture(cell);
 }
 
 function continueGesture(cell) {
-  const primaryCell = cell.classList.contains('primary-cell');
-  if (!gesture.primaryCellsOnly || primaryCell) {
-    gesture.callback(cell);
+  if (!state.getGesture().primaryCellsOnly || cell.isPrimary) {
+    if (state.getGesture().toSolid) {
+      cell.setSolid();
+    } else {
+      cell.setClear();
+    }
   }
-  if (gesture.primaryCellsOnly && primaryCell) {
+  if (state.getGesture().primaryCellsOnly && cell.isPrimary) {
     // Primary cell gestures update neighbors.
     updatePrimaryCellNeighbors(cell);
   }
-}
-    
-function setSolid(cell) {
-  cell.classList.remove('clear');
-  cell.classList.add('solid');
-}
-
-function setClear(cell) {
-  cell.classList.remove('solid');
-  cell.classList.add('clear');
+  recordChange();
 }
 
 function updatePrimaryCellNeighbors(cell) {
-  for (const neighbor of getNeighbors(cell)) {
-    const anyPrimaryCellIsSolid =
-        ([cell].concat(neighbor.primaryCellKeys.map(key => { return objects[key]; })))
-        .some(primaryCell => {
-          return primaryCell && primaryCell.classList.contains('solid');
-        });
-    if (anyPrimaryCellIsSolid) {
-      setSolid(objects[neighbor.dividerCellKey]);
+  for (const neighbor of cell.getNeighbors()) {
+    if (!neighbor.dividerCell) continue;
+    if (cell.isSolid || anyCellIsSolid(neighbor.primaryCells)) {
+      neighbor.dividerCell.setSolid();
     } else {
-      setClear(objects[neighbor.dividerCellKey]);
+      neighbor.dividerCell.setClear();
     }
   }
+}
+
+function anyCellIsSolid(cells) {
+  return cells.some(cell => { return cell && cell.isSolid; });
 }
