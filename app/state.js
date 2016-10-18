@@ -39,11 +39,11 @@ class State {
   }
   
   saveToString() {
-    return JSON.stringify(this.pstate);
+    return LZString.compressToEncodedURIComponent(JSON.stringify(this.pstate));
   }
   
   loadFromString(s) {
-    this.pstate = JSON.parse(s);
+    this.pstate = JSON.parse(LZString.decompressFromEncodedURIComponent(s));
     this.updateAllCells();
   }
   
@@ -62,5 +62,5 @@ class State {
 
 function recordChange() {
   window.history.replaceState(null, '',
-      'index.html?ndps=' + encodeURIComponent(state.saveToString()));
+      'index.html?ps=' + state.saveToString());
 }
