@@ -8,6 +8,15 @@ class State {
       cells: {},
       // Current mouse gesture data
       gesture: {},
+      // Undo stack
+      undoStack: {
+        // Current index in the stack, moved by undo and redo operations.
+        index: 0,
+        // The actual stack, each entry is a cellOverrides mapping.
+        cellOverrideStack: [],
+        // Cell overrides performed since the last commit to the undo stack.
+        currentCellOverrides: {},
+      }
     };
   }
   
@@ -23,15 +32,24 @@ class State {
     return !!this.pstate.cellOverrides[key];
   }
   
-  removeCellOverride(key) {
-    delete this.pstate.cellOverrides[key];
+  setCellOverride(key, cellOverride) {
+    this.addCellOverrideToCurrentOverridesInUndoStack(key, cellOverride);
+    this.setCellOverrideWithoutUpdatingUndoStack(key, cellOverride);
   }
   
-  getOrCreateCellOverride(key) {
-    if (!this.hasCellOverride(key)) {
-      this.pstate.cellOverrides[key] = {};
+  setCellOverrideWithoutUpdatingUndoStack(key, cellOverride) {
+    if (!cellOverride) {
+      delete this.pstate.cellOverrides[key];
+    } else {
+      this.pstate.cellOverrides[key] = cellOverride;
     }
-    return this.pstate.cellOverrides[key];
+  }
+  
+  addCellOverrideToCurrentOverridesInUndoStack(key, newCellOverride) {
+    this.tstate.undoStack.currentCellOverrides[key] = {
+      before: this.pstate.cellOverrides[key],
+      after: newCellOverride,
+    };
   }
   
   addCell(key, cell) {
@@ -44,23 +62,68 @@ class State {
   
   loadFromString(s) {
     this.pstate = JSON.parse(LZString.decompressFromEncodedURIComponent(s));
-    this.updateAllCells();
+    this.updateCells(Object.keys(this.tstate.cells));
   }
   
-  updateAllCells() {
-    Object.keys(this.tstate.cells).forEach(key => {
-      this.updateCell(key);
+  updateCells(cellKeys) {
+    cellKeys.forEach(cellKey => {
+      this.updateCell(this.tstate.cells[cellKey]);
     });
   }
   
-  updateCell(key) {
-    const cell = this.getCell(key);
+  updateCell(cell) {
     if (!cell) return;
     cell.updateElementToCurrentState();
   }
-}
+  
+  recordChange() {
+    this.updateUrl();
+    this.commitToUndoStack();
+  }
+  
+  commitToUndoStack() {
+    if (Object.keys(this.tstate.undoStack.currentCellOverrides).length == 0) {
+      return;
+    }
 
-function recordChange() {
-  window.history.replaceState(null, '',
-      'index.html?ps=' + state.saveToString());
+    const newChange = this.tstate.undoStack.currentCellOverrides;
+    const newStackTail = this.tstate.undoStack.cellOverrideStack.slice(
+        this.tstate.undoStack.index, this.tstate.undoStack.index + 999);
+
+    this.tstate.undoStack.currentCellOverrides = {};
+    this.tstate.undoStack.cellOverrideStack = [newChange].concat(newStackTail);
+    this.tstate.undoStack.index = 0;
+  }
+  
+  undo() {
+    this.commitToUndoStack();
+    this.changePstateToUndoState('before')
+    this.tstate.undoStack.index = Math.min(this.tstate.undoStack.index + 1,
+        this.tstate.undoStack.cellOverrideStack.length);
+  }
+  
+  redo() {
+    this.commitToUndoStack();
+    this.tstate.undoStack.index =
+        Math.max(this.tstate.undoStack.index - 1, -1);
+    this.changePstateToUndoState('after');
+    this.tstate.undoStack.index = Math.max(this.tstate.undoStack.index, 0);
+  }
+  
+  changePstateToUndoState(cellOverridePhaseToUse) {
+    const targetCellOverride =
+        this.tstate.undoStack.cellOverrideStack[this.tstate.undoStack.index];
+    if (!targetCellOverride) return;
+    const affectedCellKeys = Object.keys(targetCellOverride);
+    affectedCellKeys.forEach(key => {
+      this.setCellOverrideWithoutUpdatingUndoStack(
+          key, targetCellOverride[key][cellOverridePhaseToUse]);
+    });
+    this.updateCells(affectedCellKeys);
+  }
+  
+  updateUrl() {
+    window.history.replaceState(
+        null, '', 'index.html?ps=' + this.saveToString());
+  }
 }

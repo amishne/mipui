@@ -7,13 +7,19 @@ class Cell {
   }
   
   setSolid() {
-    state.removeCellOverride(this.key);
+    const wasClear = !this.isSolid;
+    state.setCellOverride(this.key, undefined);
     this.updateElementToCurrentState();
+    return wasClear;
   }
   
   setClear() {
-    state.getOrCreateCellOverride(this.key).solid = false;
+    const wasSolid = this.isSolid;
+    state.setCellOverride(this.key, {
+      solid: false,
+    });
     this.updateElementToCurrentState();
+    return wasSolid;
   }
   
   get isSolid() {

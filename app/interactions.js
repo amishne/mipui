@@ -1,31 +1,55 @@
 function startGesture(cell) {
-  state.getGesture().toSolid = !cell.isSolid;
-  state.getGesture().primaryCellsOnly = cell.isPrimary;
+  finishGesture();
+  const gesture = state.getGesture();
+  gesture.toSolid = !cell.isSolid;
+  gesture.primaryCellsOnly = cell.isPrimary;
   continueGesture(cell);
 }
 
 function continueGesture(cell) {
-  if (!state.getGesture().primaryCellsOnly || cell.isPrimary) {
-    if (state.getGesture().toSolid) {
-      cell.setSolid();
+  const gesture = state.getGesture();
+  if (!gesture.primaryCellsOnly || cell.isPrimary) {
+    let changed = false;
+    if (gesture.toSolid) {
+      changed = cell.setSolid();
     } else {
-      cell.setClear();
+      changed = cell.setClear();
+    }
+    if (changed) {
+      gesture.affectedCells.push(cell);
     }
   }
-  if (state.getGesture().primaryCellsOnly && cell.isPrimary) {
+  if (gesture.primaryCellsOnly && cell.isPrimary) {
     // Primary cell gestures update neighbors.
     updatePrimaryCellNeighbors(cell);
   }
-  recordChange();
+  if (gesture.timeoutId) {
+    clearTimeout(gesture.timeoutId);
+  }
+  gesture.timeoutId = setTimeout(() => {
+    finishGesture();
+  }, 1000);
+}
+
+function finishGesture() {
+  const gesture = state.getGesture();
+  delete gesture.timeoutId;
+  state.recordChange();
+  gesture.affectedCells = [];
 }
 
 function updatePrimaryCellNeighbors(cell) {
+  const gesture = state.getGesture();
   for (const neighbor of cell.getNeighbors()) {
     if (!neighbor.dividerCell) continue;
+    let changed = false;
     if (cell.isSolid || anyCellIsSolid(neighbor.primaryCells)) {
-      neighbor.dividerCell.setSolid();
+      changed = neighbor.dividerCell.setSolid();
     } else {
-      neighbor.dividerCell.setClear();
+      changed = neighbor.dividerCell.setClear();
+    }
+    if (changed) {
+      gesture.affectedCells.push(neighbor.dividerCell);
     }
   }
 }

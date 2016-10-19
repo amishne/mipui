@@ -12,9 +12,18 @@ function start() {
   const params = getUrlParams();
   if (params.ps) {
     state.loadFromString(params.ps);
-    state.updateAllCells();
+  }
+}
+
+function handleKeyDownEvent(keyDownEvent) {
+  if (keyDownEvent.ctrlKey) {
+    switch (keyDownEvent.key) {
+      case 'z': state.undo(); break;
+      case 'y': state.redo(); break;
+    }
   }
 }
 
 const state = new State();
 window.onload = () => { start(); };
+document.onkeydown = (keyDownEvent) => { handleKeyDownEvent(keyDownEvent); };
