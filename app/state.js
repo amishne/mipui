@@ -16,12 +16,23 @@ class State {
         cellOverrideStack: [],
         // Cell overrides performed since the last commit to the undo stack.
         currentCellOverrides: {},
+      },
+      navigation: {
+        scale: 1.0,
+        translate: {
+          x: 8,
+          y: 8,
+        },
       }
     };
   }
   
   getGesture() {
     return this.tstate.gesture;
+  }
+  
+  getNavigation() {
+    return this.tstate.navigation;
   }
   
   getCell(key) {
