@@ -22,6 +22,7 @@ function wireUiElements() {
   app.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
   document.getElementById('expandButton').onclick = () => { expandGrid(2); };
   document.getElementById('resetViewButton').onclick = () => { resetView(); };
+  document.getElementById('resetGridButton').onclick = () => { resetGrid(); };
 }
 
 function start() {

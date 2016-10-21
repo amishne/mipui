@@ -121,3 +121,8 @@ function resetView() {
   nav.translate.y = 8;
   updateGridTransform();
 }
+
+function resetGrid() {
+  state.initializePersistentState();
+  createGridAndUpdateElements();
+}

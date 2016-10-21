@@ -31,6 +31,12 @@ class State {
     };
   }
   
+  initializePersistentState() {
+    this.pstate.gridData.from = 0;
+    this.pstate.gridData.to = 30;
+    this.pstate.cellOverrides = {};
+  }
+  
   getGridData() {
     return this.pstate.gridData;
   }
