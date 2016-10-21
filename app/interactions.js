@@ -125,4 +125,6 @@ function resetView() {
 function resetGrid() {
   state.initializePersistentState();
   createGridAndUpdateElements();
+  resetView();
+  state.recordChange();
 }
