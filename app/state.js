@@ -1,6 +1,10 @@
 class State {
   constructor() {
     this.pstate = {
+      gridData: {
+        from: 0,
+        to: 30,
+      },
       cellOverrides: {},
     };
     this.tstate = {
@@ -25,6 +29,10 @@ class State {
         },
       }
     };
+  }
+  
+  getGridData() {
+    return this.pstate.gridData;
   }
   
   getGesture() {
@@ -73,6 +81,10 @@ class State {
   
   loadFromString(s) {
     this.pstate = JSON.parse(LZString.decompressFromEncodedURIComponent(s));
+    this.updateAllCells();
+  }
+  
+  updateAllCells() {
     this.updateCells(Object.keys(this.tstate.cells));
   }
   

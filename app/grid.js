@@ -1,27 +1,27 @@
-function createGrid(parent, n) {
-  for (let i = 0; i < n; i++) {
-    createDividerRow(parent, n, i - 1, i);
-    createCellRow(parent, n, i);
+function createGrid(parent, from, to) {
+  for (let i = from; i < to; i++) {
+    createDividerRow(parent, from, to, i - 1, i);
+    createCellRow(parent, from, to, i);
   }
-  createDividerRow(parent, n, n - 1, n);
+  createDividerRow(parent, from, to, to - 1, to);
 }
 
-function createDividerRow(parent, n, previousRow, nextRow) {
+function createDividerRow(parent, from, to, previousRow, nextRow) {
   const rowContainer = createRowContainer(parent);
-  for (let i = 0; i < n; i++) {
+  for (let i = from; i < to; i++) {
     createCornerCell(rowContainer, previousRow, nextRow, i - 1, i);
     createHorizontalCell(rowContainer, previousRow, nextRow, i);
   }
-  createCornerCell(rowContainer, previousRow, nextRow, n - 1, n);
+  createCornerCell(rowContainer, previousRow, nextRow, to - 1, to);
 }
 
-function createCellRow(parent, n, row) {
+function createCellRow(parent, from, to, row) {
   const rowContainer = createRowContainer(parent);
-  for (let i = 0; i < n; i++) {
+  for (let i = from; i < to; i++) {
     createVerticalCell(rowContainer, row, i - 1, i);
     createPrimaryCell(rowContainer, row, i);
   }
-  createVerticalCell(rowContainer, row, n - 1, n);
+  createVerticalCell(rowContainer, row, to - 1, to);
 }
 
 function createRowContainer(parent) {

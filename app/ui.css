@@ -1,0 +1,25 @@
+.app {
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  margin: 8px;
+  background-color: darkgrey;
+  overflow: hidden;
+  position: relative;
+}
+
+.toolbox {
+  position: absolute;
+  max-width: calc(100% - 8px);
+  top: 4px;
+  left: 4px;
+  max-height: calc(100% - 8px);
+  z-index: 4;
+  background-color: rgba(75, 83, 107, 0.5);
+}
+
+.toolbox button {
+  margin: 4px;
+  background-color: rgba(75, 83, 107, 0.8);
+  color: aliceblue;
+  display: block;
+}

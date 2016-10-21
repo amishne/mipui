@@ -7,46 +7,31 @@ function getUrlParams() {
   return result;
 }
 
-function start() {
+function createGridAndUpdateElements() {
+  const gridData = state.getGridData();
+  const gridElement = document.getElementById('grid');
+  gridElement.innerHTML = '';
+  createGrid(gridElement, gridData.from, gridData.to);
+  state.updateAllCells();
+}
+
+function wireUiElements() {
   const app = document.getElementById('app');
-  const grid = document.getElementById('grid');
-  createGrid(grid, 30);
   document.onkeydown = (keyDownEvent) => { handleKeyDownEvent(keyDownEvent); };
   app.onwheel = (wheelEvent) => { handleWheelEvent(wheelEvent); };
+  app.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
+  document.getElementById('expandButton').onclick = () => { expandGrid(2); };
+  document.getElementById('resetViewButton').onclick = () => { resetView(); };
+}
+
+function start() {
   const params = getUrlParams();
   if (params.ps) {
     state.loadFromString(params.ps);
   }
-}
-
-function handleKeyDownEvent(keyDownEvent) {
-  if (keyDownEvent.ctrlKey) {
-    switch (keyDownEvent.key) {
-      case 'z': state.undo(); break;
-      case 'y': state.redo(); break;
-    }
-  }
-}
-
-function handleWheelEvent(wheelEvent) {
-  const nav = state.getNavigation();
-  let scaleDiff = 1.0;
-  if (wheelEvent.deltaY > 0 && nav.scale > 0.5) {
-    scaleDiff = -0.2;
-  } else if (wheelEvent.deltaY < 0 && nav.scale < 3.9) {
-    scaleDiff = 0.2;
-  } else {
-    return;
-  }
-  const growth = scaleDiff / nav.scale;
-  nav.scale += scaleDiff;
-  nav.translate.x -= growth * (wheelEvent.x - nav.translate.x);
-  nav.translate.y -= growth * (wheelEvent.y - nav.translate.y);
-  const grid = document.getElementById('grid');
-  grid.style.transform =
-      `translate(${nav.translate.x}px, ${nav.translate.y}px) ` +
-      `scale(${nav.scale})`;
-  wheelEvent.stopPropagation();
+  createGridAndUpdateElements();
+  resetView();
+  wireUiElements();
 }
 
 const state = new State();

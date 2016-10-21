@@ -1,16 +1,8 @@
-.app {
-  width: calc(100% - 16px);
-  height: calc(100% - 16px);
-  background-color: darkgrey;
-  overflow: auto;
-}
-
 .grid {
   display: inline-block;
   border-left: 1px solid;
   border-top: 1px solid;
   border-color: bisque;
-  transform: translate(8px, 8px);
   transform-origin: top left;
 }
 

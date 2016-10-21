@@ -9,10 +9,18 @@
   <script src="state.js" type="text/javascript"></script>
   <!-- init should be last -->
   <script src="init.js" type="text/javascript"></script>
+  <!-- styles -->
+  <link href="ui.css" rel="stylesheet" type="text/css" />
   <link href="draft.css" rel="stylesheet" type="text/css" />
 </head>
 <body ondragstart="return false;" ondrop="return false;">
   <div id="app" class="app">
+    <div id="toolbox" class="toolbox">
+      <button id="resetViewButton" class="reset-view-button">
+        Reset view
+      </button>
+      <button id="expandButton" class="expand-button">Expand grid</button>
+    </div>
     <div id="grid" class="grid" />
   </div>
 </body>
