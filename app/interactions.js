@@ -107,6 +107,10 @@ function expandGrid(n) {
   gridData.from -= n;
   gridData.to += n;
   createGridAndUpdateElements();
+  const nav = state.getNavigation();
+  nav.translate.x -= 44 * nav.scale;
+  nav.translate.y -= 44 * nav.scale;
+  updateGridTransform();
   state.recordChange();
 }
 
