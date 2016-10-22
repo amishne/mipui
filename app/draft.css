@@ -40,12 +40,20 @@
 }
 
 .solid {
-  background-color: burlywood;
+  background-color: rgb(222, 184, 135);
   box-shadow: 2px 2px 6px 0px #919191;
   z-index: 1;
 }
 
 .clear {
-  background-color: beige;
+  background-color: rgb(245, 245, 220);
   z-index: 0;
+}
+
+.to-solid {
+  background-color: rgb(215, 215, 190);
+}
+
+.to-clear {
+  background-color: rgb(232, 221, 182);
 }

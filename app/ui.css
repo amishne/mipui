@@ -17,9 +17,12 @@
   background-color: rgba(75, 83, 107, 0.5);
 }
 
-.toolbox button {
+.toolbox > * {
   margin: 4px;
+  display: block;
+}
+
+.toolbox button {
   background-color: rgba(75, 83, 107, 0.8);
   color: aliceblue;
-  display: block;
 }

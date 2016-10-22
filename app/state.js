@@ -11,7 +11,7 @@ class State {
       // Cell key -> cell data
       cells: {},
       // Current mouse gesture data
-      gesture: {},
+      gesture: new WallToggleGesture(),
       // Undo stack
       undoStack: {
         // Current index in the stack, moved by undo and redo operations.

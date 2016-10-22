@@ -70,17 +70,6 @@ function createPrimaryCell(parent, row, column) {
 function createCell(parent, className, key) {
   const element = createAndAppendDivWithClass(parent, className + ' solid');
   const cell = new Cell(key, element);
-  element.onmousedown = (e) => {
-    if (e.buttons == 1) {
-      startGesture(cell);
-    }
-  };
-  element.onmouseover = (e) => {
-    if (e.buttons == 1) {
-      continueGesture(cell);
-    }
-  };
-  cell.element = element;
   state.addCell(key, cell);
   return cell;
 }

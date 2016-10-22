@@ -23,6 +23,12 @@ function wireUiElements() {
   document.getElementById('expandButton').onclick = () => { expandGrid(2); };
   document.getElementById('resetViewButton').onclick = () => { resetView(); };
   document.getElementById('resetGridButton').onclick = () => { resetGrid(); };
+  document.getElementById('increaseBrushSize').onclick = () => {
+    increaseBrushSize();
+  };
+  document.getElementById('decreaseBrushSize').onclick = () => {
+    decreaseBrushSize();
+  };
 }
 
 function start() {
