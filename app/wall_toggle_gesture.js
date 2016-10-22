@@ -17,12 +17,12 @@ class WallToggleGesture {
       for (const neighbor of cell.getNeighbors()) {
         if (!neighbor.dividerCell) continue;
         const dividerIsSolid = neighbor.dividerCell.isSolid;
-        const anyIsSolid =
-            this.toSolid || this.anyCellIsSolid(neighbor.primaryCells);
-        if (!dividerIsSolid && this.toSolid && anyIsSolid) {
+        if (!dividerIsSolid && this.toSolid) {
           result.push(neighbor.dividerCell);
-        } else if (dividerIsSolid && !this.toSolid && !anyIsSolid) {
-          result.push(neighbor.dividerCell);
+        } else if (dividerIsSolid && !this.toSolid) {
+          if (!this.toSolid && !this.anyCellIsSolid(neighbor.primaryCells)) {
+            result.push(neighbor.dividerCell);
+          }
         }
       }
     }
