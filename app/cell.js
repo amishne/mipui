@@ -3,7 +3,7 @@ class Cell {
     this.key = key;
     this.element = element;
     this.isPrimary = false;
-    this.neighborDividerKeyToPrimaryKeys = {};
+    this.neighborKeys = {};
     this.wireInteractions();
   }
   
@@ -69,19 +69,25 @@ class Cell {
     this.element.classList.add(toSolid ? 'solid' : 'clear');
   }
   
-  addNeighborKey(dividerKey, primaryKeys) {
-    this.neighborDividerKeyToPrimaryKeys[dividerKey] = primaryKeys;
+  addNeighborKey(direction, dividerKey, primaryKeys) {
+    this.neighborKeys[direction] = {
+      dividerKey: dividerKey,
+      primaryKeys : primaryKeys,
+    };
   }
   
-  getNeighbors() {
+  getNeighbors(direction) {
+    return {
+      dividerCell: state.getCell(this.neighborKeys[direction].dividerKey),
+      primaryCells: this.neighborKeys[direction].primaryKeys
+          .map(primaryCellKey => { return state.getCell(primaryCellKey); }),
+    }
+  }
+  
+  getAllNeighbors() {
     const neighbors = [];
-    for (const dividerKey
-        of Object.keys(this.neighborDividerKeyToPrimaryKeys)) {
-      neighbors.push({
-        dividerCell: state.getCell(dividerKey),
-        primaryCells: this.neighborDividerKeyToPrimaryKeys[dividerKey]
-            .map(primaryCellKey => { return state.getCell(primaryCellKey); }),
-      });
+    for (const direction of Object.keys(this.neighborKeys)) {
+      neighbors.push(this.getNeighbors(direction));
     }
     return neighbors;
   }

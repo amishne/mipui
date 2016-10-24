@@ -78,7 +78,23 @@ function disableOverlay(cell) {
 }
 
 function increaseBrushSize() {
+  const tool = state.getTool();
+  if (tool.brushSize >= 5) {
+    return;
+  }
+  tool.brushSize++;
+  updateBrushSizeText();
 }
 
 function decreaseBrushSize() {
+  const tool = state.getTool();
+  if (tool.brushSize <= 1) {
+    return;
+  }
+  tool.brushSize--;
+  updateBrushSizeText();
+}
+
+function updateBrushSizeText() {
+  document.getElementById('brushSize').innerHTML = state.getTool().brushSize;
 }

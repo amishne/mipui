@@ -75,42 +75,38 @@ function createCell(parent, className, key) {
 }
 
 function setPrimaryCellNeighborKeys(cell, row, column) {
-  // Top
-  cell.addNeighborKey(dividerCellKey(row - 1, column, row, column), [
+  cell.addNeighborKey('top', dividerCellKey(row - 1, column, row, column), [
     primaryCellKey(row - 1, column),
   ]);
-  // Right
-  cell.addNeighborKey(dividerCellKey(row, column, row, column + 1), [
+  cell.addNeighborKey('right', dividerCellKey(row, column, row, column + 1), [
     primaryCellKey(row, column + 1),
   ]);
-  // Bottom
-  cell.addNeighborKey(dividerCellKey(row, column, row + 1, column), [
+  cell.addNeighborKey('bottom', dividerCellKey(row, column, row + 1, column), [
     primaryCellKey(row + 1, column),
   ]);
-  // Left
-  cell.addNeighborKey(dividerCellKey(row, column - 1, row, column), [
+  cell.addNeighborKey('left', dividerCellKey(row, column - 1, row, column), [
     primaryCellKey(row, column - 1)
   ]);
-  // Top-right
-  cell.addNeighborKey(dividerCellKey(row - 1, column, row, column + 1), [
+  cell.addNeighborKey('top-right',
+      dividerCellKey(row - 1, column, row, column + 1), [
     primaryCellKey(row - 1, column),
     primaryCellKey(row, column + 1),
     primaryCellKey(row - 1, column + 1),
   ]);
-  // Bottom-right
-  cell.addNeighborKey(dividerCellKey(row, column, row + 1, column + 1), [
+  cell.addNeighborKey('bottom-right',
+      dividerCellKey(row, column, row + 1, column + 1), [
     primaryCellKey(row + 1, column),
     primaryCellKey(row, column + 1),
     primaryCellKey(row + 1, column + 1),
   ]);
-  // Bottom-left
-  cell.addNeighborKey(dividerCellKey(row, column - 1, row + 1, column), [
+  cell.addNeighborKey('bottom-left',
+      dividerCellKey(row, column - 1, row + 1, column), [
     primaryCellKey(row + 1, column),
     primaryCellKey(row, column - 1),
     primaryCellKey(row + 1, column - 1),
   ]);
-  // Top-left
-  cell.addNeighborKey(dividerCellKey(row - 1, column - 1, row, column), [
+  cell.addNeighborKey('top-left',
+      dividerCellKey(row - 1, column - 1, row, column), [
     primaryCellKey(row - 1, column),
     primaryCellKey(row, column - 1),
     primaryCellKey(row - 1, column - 1),

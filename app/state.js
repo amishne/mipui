@@ -27,7 +27,10 @@ class State {
           x: 8,
           y: 8,
         },
-      }
+      },
+      tool: {
+        brushSize: 1,
+      },
     };
   }
   
@@ -47,6 +50,10 @@ class State {
   
   getNavigation() {
     return this.tstate.navigation;
+  }
+  
+  getTool() {
+    return this.tstate.tool;
   }
   
   getCell(key) {
