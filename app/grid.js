@@ -98,24 +98,32 @@ function setPrimaryCellNeighborKeys(cell, row, column) {
     primaryCellKey(row - 1, column),
     primaryCellKey(row, column + 1),
     primaryCellKey(row - 1, column + 1),
+    dividerCellKey(row - 1, column, row - 1, column + 1),
+    dividerCellKey(row - 1, column + 1, row, column + 1),
   ]);
   cell.addNeighborKey('bottom-right',
       dividerCellKey(row, column, row + 1, column + 1), [
     primaryCellKey(row + 1, column),
     primaryCellKey(row, column + 1),
     primaryCellKey(row + 1, column + 1),
+    dividerCellKey(row, column + 1, row + 1, column + 1),
+    dividerCellKey(row + 1, column, row + 1, column + 1),
   ]);
   cell.addNeighborKey('bottom-left',
       dividerCellKey(row, column - 1, row + 1, column), [
     primaryCellKey(row + 1, column),
     primaryCellKey(row, column - 1),
     primaryCellKey(row + 1, column - 1),
+    dividerCellKey(row, column - 1, row + 1, column - 1),
+    dividerCellKey(row + 1, column - 1, row + 1, column),
   ]);
   cell.addNeighborKey('top-left',
       dividerCellKey(row - 1, column - 1, row, column), [
     primaryCellKey(row - 1, column),
     primaryCellKey(row, column - 1),
     primaryCellKey(row - 1, column - 1),
+    dividerCellKey(row - 1, column - 1, row - 1, column),
+    dividerCellKey(row - 1, column - 1, row, column - 1),
   ]);
   cell.addNeighborKey('all-similar', null, [
     primaryCellKey(row - 1, column - 1),

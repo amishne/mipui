@@ -97,7 +97,7 @@ class WallToggleGesture {
   anyCellIsSolid(cells) {
     return cells.some(cell => {
       return cell &&
-          (this.rootCells.has(cell) ? this.toSolid : cell.isSolid);
+          (this.rootCells.has(cell) || this.cellsToSet.has(cell) ? this.toSolid : cell.isSolid);
     });
   }
   
