@@ -43,28 +43,34 @@ function primaryCellKey(row, column) {
   return `cell ${row},${column}`;
 }
 
-function createCornerCell(parent, previousRow, nextRow, previousColumn, nextColumn) {
-  createCell(parent, 'cell corner-cell',
+function createCornerCell(
+    parent, previousRow, nextRow, previousColumn, nextColumn) {
+  const cell = createCell(parent, 'cell corner-cell',
       dividerCellKey(previousRow, previousColumn, nextRow, nextColumn));
+  setCornerCellNeighborKeys(
+      cell, previousRow, nextRow, previousColumn, nextColumn);
+  cell.role = 'corner divider';
 }
 
 function createHorizontalCell(parent, previousRow, nextRow, column) {
-  createCell(parent, 'cell horizontal-cell',
+  const cell = createCell(parent, 'cell horizontal-cell',
       dividerCellKey(previousRow, column, nextRow, column));
+  setHorizontalCellNeighborKeys(cell, previousRow, nextRow, column);
+  cell.role = 'horizontal divider';
 }
 
 function createVerticalCell(parent, row, previousColumn, nextColumn) {
-  createCell(parent, 'cell vertical-cell',
+  const cell = createCell(parent, 'cell vertical-cell',
       dividerCellKey(row, previousColumn, row, nextColumn));
+  setVerticalCellNeighborKeys(cell, row, previousColumn, nextColumn);
+  cell.role = 'vertical divider';
 }
 
 function createPrimaryCell(parent, row, column) {
   const key = primaryCellKey(row, column);
   const cell = createCell(parent, 'cell primary-cell', key);
   setPrimaryCellNeighborKeys(cell, row, column);
-  cell.row = row;
-  cell.column = column;
-  cell.isPrimary = true;
+  cell.role = 'primary';
 }
 
 function createCell(parent, className, key) {
@@ -110,5 +116,73 @@ function setPrimaryCellNeighborKeys(cell, row, column) {
     primaryCellKey(row - 1, column),
     primaryCellKey(row, column - 1),
     primaryCellKey(row - 1, column - 1),
+  ]);
+  cell.addNeighborKey('all-similar', null, [
+    primaryCellKey(row - 1, column - 1),
+    primaryCellKey(row - 1, column),
+    primaryCellKey(row - 1, column + 1),
+    primaryCellKey(row, column - 1),
+    primaryCellKey(row, column + 1),
+    primaryCellKey(row + 1, column - 1),
+    primaryCellKey(row + 1, column),
+    primaryCellKey(row + 1, column + 1),
+  ]);
+}
+
+function setCornerCellNeighborKeys(
+    cell, fromRow, fromColumn, toRow, toColumn) {
+  cell.addNeighborKey('top',
+      dividerCellKey(fromRow, fromColumn, toRow - 1, toColumn), [
+    dividerCellKey(fromRow - 1, fromColumn, toRow - 1, toColumn),
+  ]);
+  cell.addNeighborKey('right',
+      dividerCellKey(fromRow, fromColumn, toRow, toColumn + 1), [
+    dividerCellKey(fromRow, fromColumn + 1, toRow, toColumn + 1),
+  ]);
+  cell.addNeighborKey('bottom',
+      dividerCellKey(fromRow + 1, fromColumn, toRow, toColumn), [
+    dividerCellKey(fromRow + 1, fromColumn, toRow + 1, toColumn),
+  ]);
+  cell.addNeighborKey('left',
+      dividerCellKey(fromRow, fromColumn, toRow, toColumn - 1), [
+    dividerCellKey(fromRow, fromColumn - 1, toRow, toColumn - 1),
+  ]);
+}
+
+function setHorizontalCellNeighborKeys(cell, fromRow, toRow, column) {
+  cell.addNeighborKey('right',
+      dividerCellKey(fromRow, column, toRow, column + 1), [
+    dividerCellKey(fromRow, column, toRow - 1, column + 1),
+    dividerCellKey(fromRow, column + 1, toRow, column + 1),
+    dividerCellKey(fromRow + 1, column, toRow, column + 1),
+  ]);
+  cell.addNeighborKey('left',
+      dividerCellKey(fromRow, column - 1, toRow, column), [
+    dividerCellKey(fromRow, column - 1, toRow - 1, column),
+    dividerCellKey(fromRow, column - 1, toRow, column - 1),
+    dividerCellKey(fromRow + 1, column - 1, toRow, column),
+  ]);
+  cell.addNeighborKey('all-similar', null, [
+    dividerCellKey(fromRow, column + 1, toRow, column + 1),
+    dividerCellKey(fromRow, column - 1, toRow, column - 1),
+  ]);
+}
+
+function setVerticalCellNeighborKeys(cell, row, fromColumn, toColumn) {
+  cell.addNeighborKey('top',
+      dividerCellKey(row - 1, fromColumn, row, toColumn), [
+    dividerCellKey(row - 1, fromColumn, row, toColumn - 1),
+    dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
+    dividerCellKey(row - 1, fromColumn + 1, row, toColumn),
+  ]);
+  cell.addNeighborKey('bottom',
+      dividerCellKey(row, fromColumn, row + 1, toColumn), [
+    dividerCellKey(row, fromColumn, row + 1, toColumn - 1),
+    dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
+    dividerCellKey(row, fromColumn + 1, row + 1, toColumn),
+  ]);
+  cell.addNeighborKey('all-similar', null, [
+    dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
+    dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
   ]);
 }

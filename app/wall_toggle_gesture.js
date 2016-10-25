@@ -1,10 +1,27 @@
 class WallToggleGesture {
   constructor() {
+    // Cell to target. Determines by hovered cell and by the brush size. This
+    // includes cells that will not be changed since they're already with the
+    // desired content.
+    this.rootCells = null;
+
+    // Cells to change once the gesture is applies. In manual mode, it's just
+    // the root cells; in smart mode, it also includes some of the surrounding
+    // dividers. It doesn't include cells that don't need to be set since they
+    // are already with the desired content.
+    this.cellsToSet = null;
+
+    // One of 'manual', 'primary only' and 'divider only'.
+    this.mode = null;
+
+    // Gesture toggle direction, either true or false.
+    this.toSolid = null;
   }
   
   prepare(targetedCell) {
     this.toSolid = !targetedCell.isSolid;
-    this.primaryCellsOnly = targetedCell.isPrimary;
+    this.mode = !state.getTool().smartMode ? 'manual' :
+        (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
     this.calculateRootCellsAndCellsToSet(targetedCell);
     this.cellsToSet.forEach(cell => {
       cell.showHighlight(this.toSolid);
@@ -15,9 +32,7 @@ class WallToggleGesture {
     this.rootCells = this.calcRootCells(targetedCell);
     this.cellsToSet = new Set();
     this.rootCells.forEach(rootCell => {
-      this.calcCellsToSet(rootCell).forEach(cellToSet => {
-        this.cellsToSet.add(cellToSet);
-      });
+      if (rootCell) this.addCellsToSet(rootCell);
     });
   }
   
@@ -28,57 +43,61 @@ class WallToggleGesture {
   }
       
   calcRootCells(targetedCell) {
-    let roots = [targetedCell];
-    if (!this.primaryCellsOnly || state.getTool().brushSize == 1) {
-      return roots;
+    if (this.mode == 'manual') {
+      // Don't respect brush size in manual mode, for now.
+      return new Set([targetedCell]);
     }
-    let front = targetedCell;
-    let fronts = [targetedCell];
-    for (let i = 0; i < state.getTool().brushSize - 1; i++) {
-      const primaryCellToTheRight =
-          front.getNeighbors('right').primaryCells[0];
-      if (!primaryCellToTheRight) break;
-      roots.push(primaryCellToTheRight);
-      front = primaryCellToTheRight;
-      fronts.push(primaryCellToTheRight);
+    if (this.mode == 'primary only' && targetedCell.role == 'primary') {
+      return this.calcSmartRootCells(targetedCell);
     }
-    for (let i = 1; i < state.getTool().brushSize; i++) {
-      const newFronts = [];
-      fronts.forEach(front => {
-        newFronts.push(front.getNeighbors('bottom').primaryCells[0]);
+    if (this.mode == 'divider only' &&
+        (targetedCell.role == 'horizontal divider' ||
+         targetedCell.role == 'vertical divider')) {
+      return this.calcSmartRootCells(targetedCell);
+    }
+    return new Set();
+  }
+  
+  calcSmartRootCells(targetedCell) {
+    let roots = new Set([targetedCell]);
+    let front = new Set([targetedCell]);
+    for (let i = 1; i < state.getTool().brushSize; i += 2) {
+      const newFront = new Set();
+      front.forEach(cell => {
+        cell.getNeighbors('all-similar').cells.forEach(neighborCell => {
+          if (neighborCell && !roots.has(neighborCell)) {
+            roots.add(neighborCell);
+            newFront.add(neighborCell);
+          }
+        });
       });
-      if (!newFronts[0]) break;
-      roots = roots.concat(newFronts);
-      fronts = newFronts;
+      front = newFront;
     }
     return roots;
   }
   
-  calcCellsToSet(cell) {
-    let result = [];
-    if (cell.isSolid != this.toSolid) {
-      result.push(cell);
-    }
-    if (this.primaryCellsOnly && cell.isPrimary) {
-      for (const neighbor of cell.getAllNeighbors()) {
-        if (!neighbor.dividerCell) continue;
-        const dividerIsSolid = neighbor.dividerCell.isSolid;
-        if (!dividerIsSolid && this.toSolid) {
-          result.push(neighbor.dividerCell);
-        } else if (dividerIsSolid && !this.toSolid) {
-          if (!this.toSolid && !this.anyCellIsSolid(neighbor.primaryCells)) {
-            result.push(neighbor.dividerCell);
-          }
-        }
+  addCellsToSet(cell) {
+    this.addCellIfEligible(cell);
+    if (this.mode == 'manual') return;
+    for (const neighbor of cell.getAllNeighbors()) {
+      if (neighbor.direction == 'all-similar') continue;
+      if (!neighbor.dividerCell) continue;
+      if (this.toSolid || !this.anyCellIsSolid(neighbor.cells)) {
+        this.addCellIfEligible(neighbor.dividerCell);
       }
     }
-    return result;
+  }
+
+  addCellIfEligible(cell) {
+    if (cell && cell.isSolid != this.toSolid) {
+      this.cellsToSet.add(cell);
+    }
   }
   
   anyCellIsSolid(cells) {
     return cells.some(cell => {
       return cell &&
-          (this.rootCells.indexOf(cell) >= 0 ? this.toSolid : cell.isSolid);
+          (this.rootCells.has(cell) ? this.toSolid : cell.isSolid);
     });
   }
   

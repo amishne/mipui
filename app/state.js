@@ -30,6 +30,7 @@ class State {
       },
       tool: {
         brushSize: 1,
+        smartMode: true,
       },
     };
   }
@@ -54,6 +55,14 @@ class State {
   
   getTool() {
     return this.tstate.tool;
+  }
+  
+  getSmartMode() {
+    return this.tstate.tool.smartMode;
+  }
+  
+  setSmartMode(smartMode) {
+    this.tstate.tool.smartMode = smartMode;
   }
   
   getCell(key) {

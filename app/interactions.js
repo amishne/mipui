@@ -79,10 +79,10 @@ function disableOverlay(cell) {
 
 function increaseBrushSize() {
   const tool = state.getTool();
-  if (tool.brushSize >= 5) {
+  if (tool.brushSize >= 9) {
     return;
   }
-  tool.brushSize++;
+  tool.brushSize += 2;
   updateBrushSizeText();
 }
 
@@ -91,10 +91,16 @@ function decreaseBrushSize() {
   if (tool.brushSize <= 1) {
     return;
   }
-  tool.brushSize--;
+  tool.brushSize -= 2;
   updateBrushSizeText();
 }
 
 function updateBrushSizeText() {
-  document.getElementById('brushSize').innerHTML = state.getTool().brushSize;
+  const brushSize = state.getTool().brushSize;
+  document.getElementById('brushSize').innerHTML =
+      `${brushSize} x ${brushSize}`;
+}
+
+function handleSmartModeChange(isSmartMode) {
+  state.setSmartMode(isSmartMode);
 }

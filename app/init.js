@@ -29,6 +29,9 @@ function wireUiElements() {
   document.getElementById('decreaseBrushSize').onclick = () => {
     decreaseBrushSize();
   };
+  document.getElementById('smartModeCheckbox').onchange = (e) => {
+    handleSmartModeChange(e.target.checked);
+  }
 }
 
 function start() {
