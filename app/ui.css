@@ -26,3 +26,7 @@
   background-color: rgba(75, 83, 107, 0.8);
   color: aliceblue;
 }
+
+.cell {
+  cursor: crosshair;
+}
