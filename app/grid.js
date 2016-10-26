@@ -47,8 +47,6 @@ function createCornerCell(
     parent, previousRow, nextRow, previousColumn, nextColumn) {
   const cell = createCell(parent, 'cell corner-cell',
       dividerCellKey(previousRow, previousColumn, nextRow, nextColumn));
-  setCornerCellNeighborKeys(
-      cell, previousRow, nextRow, previousColumn, nextColumn);
   cell.role = 'corner divider';
 }
 
@@ -137,26 +135,6 @@ function setPrimaryCellNeighborKeys(cell, row, column) {
   ]);
 }
 
-function setCornerCellNeighborKeys(
-    cell, fromRow, fromColumn, toRow, toColumn) {
-  cell.addNeighborKey('top',
-      dividerCellKey(fromRow, fromColumn, toRow - 1, toColumn), [
-    dividerCellKey(fromRow - 1, fromColumn, toRow - 1, toColumn),
-  ]);
-  cell.addNeighborKey('right',
-      dividerCellKey(fromRow, fromColumn, toRow, toColumn + 1), [
-    dividerCellKey(fromRow, fromColumn + 1, toRow, toColumn + 1),
-  ]);
-  cell.addNeighborKey('bottom',
-      dividerCellKey(fromRow + 1, fromColumn, toRow, toColumn), [
-    dividerCellKey(fromRow + 1, fromColumn, toRow + 1, toColumn),
-  ]);
-  cell.addNeighborKey('left',
-      dividerCellKey(fromRow, fromColumn, toRow, toColumn - 1), [
-    dividerCellKey(fromRow, fromColumn - 1, toRow, toColumn - 1),
-  ]);
-}
-
 function setHorizontalCellNeighborKeys(cell, fromRow, toRow, column) {
   cell.addNeighborKey('right',
       dividerCellKey(fromRow, column, toRow, column + 1), [
@@ -173,6 +151,8 @@ function setHorizontalCellNeighborKeys(cell, fromRow, toRow, column) {
   cell.addNeighborKey('all-similar', null, [
     dividerCellKey(fromRow, column + 1, toRow, column + 1),
     dividerCellKey(fromRow, column - 1, toRow, column - 1),
+    dividerCellKey(fromRow, column, toRow, column + 1),
+    dividerCellKey(fromRow, column - 1, toRow, column),
   ]);
 }
 
@@ -192,5 +172,7 @@ function setVerticalCellNeighborKeys(cell, row, fromColumn, toColumn) {
   cell.addNeighborKey('all-similar', null, [
     dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
     dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
+    dividerCellKey(row - 1, fromColumn, row, toColumn),
+    dividerCellKey(row, fromColumn, row + 1, toColumn),
   ]);
 }
