@@ -77,6 +77,9 @@ class Cell {
   }
   
   getNeighbors(direction) {
+    if (!this.neighborKeys[direction]) {
+      return null;
+    }
     return {
       dividerCell: state.getCell(this.neighborKeys[direction].dividerKey),
       cells: this.neighborKeys[direction].cellKeys

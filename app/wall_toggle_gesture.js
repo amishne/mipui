@@ -64,7 +64,9 @@ class WallToggleGesture {
     for (let i = 1; i < state.getTool().brushSize; i += 2) {
       const newFront = new Set();
       front.forEach(cell => {
-        cell.getNeighbors('all-similar').cells.forEach(neighborCell => {
+        const neighbors = cell.getNeighbors('all-similar');
+        if (!neighbors) return;
+        neighbors.cells.forEach(neighborCell => {
           if (neighborCell && !roots.has(neighborCell)) {
             roots.add(neighborCell);
             newFront.add(neighborCell);
