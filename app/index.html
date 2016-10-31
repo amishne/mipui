@@ -4,9 +4,12 @@
   <script src="lib/lz-string.min.js" type="text/javascript"></script>
   <!-- src -->
   <script src="cell.js" type="text/javascript"></script>
-  <script src="grid.js" type="text/javascript"></script>
+  <script src="gesture.js" type="text/javascript"></script>
   <script src="interactions.js" type="text/javascript"></script>
+  <script src="operation.js" type="text/javascript"></script>
   <script src="state.js" type="text/javascript"></script>
+  <script src="the_map.js" type="text/javascript"></script>
+  <script src="utils.js" type="text/javascript"></script>
   <script src="wall_toggle_gesture.js" type="text/javascript"></script>
   <!-- init should be last -->
   <script src="init.js" type="text/javascript"></script>
@@ -16,7 +19,7 @@
 </head>
 <body ondragstart="return false;" ondrop="return false;">
   <div id="app" class="app">
-    <div id="toolbox" class="toolbox">
+    <div class="toolbox">
       <button id="resetViewButton" class="reset-view-button">
         Reset view
       </button>
@@ -35,12 +38,20 @@
       </div>
       <div class="smartMode">
         <label>
-          <input id="smartModeCheckbox" type="checkbox" checked="checked"/>
+          <input id="smartModeCheckbox" type="checkbox" checked="checked">
           Smart Mode
         </label>
       </div>
+      <label>
+        <input id="terrainTool" type="radio" name="tool" checked=true>
+        Terrain
+      </label>
     </div>
-    <div id="grid" class="grid" />
+    <div id="theMap" class="the-map">
+      <div id="terrainLayer" class="layer"></div>
+      <div id="objectsLayer" class="layer"></div>
+      <div id="gridLayer" class="layer"></div>
+    </div>
   </div>
 </body>
 </html>

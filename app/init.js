@@ -7,12 +7,10 @@ function getUrlParams() {
   return result;
 }
 
-function createGridAndUpdateElements() {
-  const gridData = state.getGridData();
-  const gridElement = document.getElementById('grid');
-  gridElement.innerHTML = '';
-  createGrid(gridElement, gridData.from, gridData.to);
-  state.updateAllCells();
+function createTheMapAndUpdateElements() {
+  const gridData = state.pstate.gridData;
+  state.theMap.create(gridData.from, gridData.from, gridData.to, gridData.to);
+  state.theMap.updateAllCells();
 }
 
 function wireUiElements() {
@@ -32,6 +30,9 @@ function wireUiElements() {
   document.getElementById('smartModeCheckbox').onchange = (e) => {
     handleSmartModeChange(e.target.checked);
   }
+  document.getElementsByName('tool').forEach(elem => {
+    elem.onchange = (e) => { handleSelectedToolChange(elem.id); }
+  });
 }
 
 function start() {
@@ -39,7 +40,7 @@ function start() {
   if (params.ps) {
     state.loadFromString(params.ps);
   }
-  createGridAndUpdateElements();
+  createTheMapAndUpdateElements();
   resetView();
   wireUiElements();
 }

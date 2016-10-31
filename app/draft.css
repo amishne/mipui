@@ -1,9 +1,5 @@
-.grid {
-  display: inline-block;
-  border-left: 1px solid;
-  border-top: 1px solid;
+#terrainLayer {
   border-color: bisque;
-  transform-origin: top left;
 }
 
 .row-container {
@@ -11,11 +7,7 @@
   white-space: nowrap;
 }
 
-.cell {
-  position: relative;
-  display: inline-block;
-  border-right: 1px solid;
-  border-bottom: 1px solid;
+.terrain-cell {
   border-color: bisque;
 }
 
@@ -39,13 +31,13 @@
   height: 4px;
 }
 
-.solid {
+.terrain-solid {
   background-color: rgb(222, 184, 135);
   box-shadow: 2px 2px 6px 0px #919191;
   z-index: 1;
 }
 
-.clear {
+.terrain-clear {
   background-color: rgb(245, 245, 220);
   z-index: 0;
 }

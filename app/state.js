@@ -7,94 +7,33 @@ class State {
       },
       cellOverrides: {},
     };
-    this.tstate = {
-      // Cell key -> cell data
-      cells: {},
-      // Current mouse gesture data
-      gesture: new WallToggleGesture(),
-      // Undo stack
-      undoStack: {
-        // Current index in the stack, moved by undo and redo operations.
-        index: 0,
-        // The actual stack, each entry is a cellOverrides mapping.
-        cellOverrideStack: [],
-        // Cell overrides performed since the last commit to the undo stack.
-        currentCellOverrides: {},
-      },
-      navigation: {
-        scale: 1.0,
-        translate: {
-          x: 8,
-          y: 8,
-        },
-      },
-      tool: {
-        brushSize: 1,
-        smartMode: true,
+
+    this.theMap = new TheMap();
+
+    this.gesture = new WallToggleGesture();
+
+    this.undoStack = {
+      // Current index in the stack, moved by undo and redo operations.
+      index: 0,
+      // The actual stack, each entry is an operation.
+      operationStack: [],
+      // An operation containing changes since the last commit to the undo
+      // stack.
+      currentOperation: new Operation(),
+    };
+
+    this.navigation = {
+      scale: 1.0,
+      translate: {
+        x: 8,
+        y: 8,
       },
     };
-  }
-  
-  initializePersistentState() {
-    this.pstate.gridData.from = 0;
-    this.pstate.gridData.to = 30;
-    this.pstate.cellOverrides = {};
-  }
-  
-  getGridData() {
-    return this.pstate.gridData;
-  }
-  
-  getGesture() {
-    return this.tstate.gesture;
-  }
-  
-  getNavigation() {
-    return this.tstate.navigation;
-  }
-  
-  getTool() {
-    return this.tstate.tool;
-  }
-  
-  getSmartMode() {
-    return this.tstate.tool.smartMode;
-  }
-  
-  setSmartMode(smartMode) {
-    this.tstate.tool.smartMode = smartMode;
-  }
-  
-  getCell(key) {
-    return this.tstate.cells[key];
-  }
-  
-  hasCellOverride(key) {
-    return !!this.pstate.cellOverrides[key];
-  }
-  
-  setCellOverride(key, cellOverride) {
-    this.addCellOverrideToCurrentOverridesInUndoStack(key, cellOverride);
-    this.setCellOverrideWithoutUpdatingUndoStack(key, cellOverride);
-  }
-  
-  setCellOverrideWithoutUpdatingUndoStack(key, cellOverride) {
-    if (!cellOverride) {
-      delete this.pstate.cellOverrides[key];
-    } else {
-      this.pstate.cellOverrides[key] = cellOverride;
-    }
-  }
-  
-  addCellOverrideToCurrentOverridesInUndoStack(key, newCellOverride) {
-    this.tstate.undoStack.currentCellOverrides[key] = {
-      before: this.pstate.cellOverrides[key],
-      after: newCellOverride,
+    
+    this.tool = {
+      brushSize: 1,
+      smartMode: true,
     };
-  }
-  
-  addCell(key, cell) {
-    this.tstate.cells[key] = cell;
   }
   
   saveToString() {
@@ -103,71 +42,59 @@ class State {
   
   loadFromString(s) {
     this.pstate = JSON.parse(LZString.decompressFromEncodedURIComponent(s));
-    this.updateAllCells();
+    this.theMap.updateAllCells();
   }
   
-  updateAllCells() {
-    this.updateCells(Object.keys(this.tstate.cells));
+  recordCellChange(key, layer, oldValue, newValue) {
+    this.undoStack.currentOperation
+        .addCellChange(key, layer, oldValue, newValue);
   }
   
-  updateCells(cellKeys) {
-    cellKeys.forEach(cellKey => {
-      this.updateCell(this.tstate.cells[cellKey]);
-    });
+  recordGridDataChange(property, oldValue, newValue) {
+    this.undoStack.currentOperation
+        .addGridDataChange(property, oldValue, newValue);
   }
   
-  updateCell(cell) {
-    if (!cell) return;
-    cell.updateElementToCurrentState();
+  recordOperationComplete() {
+    this.updateUrl_();
+    this.commitToUndoStack_();
   }
   
-  recordChange() {
-    this.updateUrl();
-    this.commitToUndoStack();
-  }
-  
-  commitToUndoStack() {
-    if (Object.keys(this.tstate.undoStack.currentCellOverrides).length == 0) {
+  commitToUndoStack_() {
+    const currentOperation = this.undoStack.currentOperation;
+    if (currentOperation.length == 0) {
       return;
     }
 
-    const newChange = this.tstate.undoStack.currentCellOverrides;
-    const newStackTail = this.tstate.undoStack.cellOverrideStack.slice(
-        this.tstate.undoStack.index, this.tstate.undoStack.index + 999);
+    const newStackTail = this.undoStack.operationStack.slice(
+        this.undoStack.index, this.undoStack.index + 999);
 
-    this.tstate.undoStack.currentCellOverrides = {};
-    this.tstate.undoStack.cellOverrideStack = [newChange].concat(newStackTail);
-    this.tstate.undoStack.index = 0;
+    this.undoStack.operationStack = [currentOperation]
+        .concat(newStackTail);
+    this.undoStack.currentOperation = new Operation();
+    this.undoStack.index = 0;
   }
   
   undo() {
-    this.commitToUndoStack();
-    this.changePstateToUndoState('before')
-    this.tstate.undoStack.index = Math.min(this.tstate.undoStack.index + 1,
-        this.tstate.undoStack.cellOverrideStack.length);
+    this.commitToUndoStack_();
+    const currentIndex = this.undoStack.index;
+    const operation = this.undoStack.operationStack[currentIndex];
+    if (!operation) return;
+    operation.undo();
+    this.undoStack.index = Math.min(currentIndex + 1,
+        this.undoStack.operationStack.length);
   }
   
   redo() {
-    this.commitToUndoStack();
-    this.tstate.undoStack.index =
-        Math.max(this.tstate.undoStack.index - 1, -1);
-    this.changePstateToUndoState('after');
-    this.tstate.undoStack.index = Math.max(this.tstate.undoStack.index, 0);
+    this.commitToUndoStack_();
+    const currentIndex = this.undoStack.index;
+    const operation = this.undoStack.operationStack[currentIndex - 1];
+    this.undoStack.index = Math.max(currentIndex - 1, 0);
+    if (!operation) return;
+    operation.redo();
   }
   
-  changePstateToUndoState(cellOverridePhaseToUse) {
-    const targetCellOverride =
-        this.tstate.undoStack.cellOverrideStack[this.tstate.undoStack.index];
-    if (!targetCellOverride) return;
-    const affectedCellKeys = Object.keys(targetCellOverride);
-    affectedCellKeys.forEach(key => {
-      this.setCellOverrideWithoutUpdatingUndoStack(
-          key, targetCellOverride[key][cellOverridePhaseToUse]);
-    });
-    this.updateCells(affectedCellKeys);
-  }
-  
-  updateUrl() {
+  updateUrl_() {
     window.history.replaceState(
         null, '', 'index.html?ps=' + this.saveToString());
   }
