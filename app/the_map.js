@@ -101,6 +101,8 @@ class TheMap {
     const key = TheMap.dividerCellKey(
         previousRow, previousColumn, nextRow, nextColumn);
     const cell = this.createCell_(parent, 'corner', key);
+    this.setCornerCellNeighborKeys_(
+        cell, previousRow, previousColumn, nextRow, nextColumn);
     if (!this.dividerHeight) {
       this.dividerHeight = cell.gridElement.offsetHeight;
     }
@@ -254,5 +256,20 @@ class TheMap {
       TheMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
     ]);
   }
-
+  
+  setCornerCellNeighborKeys_
+      (cell, previousRow, previousColumn, nextRow, nextColumn) {
+    cell.addNeighborKey('top',
+        TheMap.dividerCellKey(
+            previousRow, previousColumn, previousRow, nextColumn), []);
+    cell.addNeighborKey('right',
+        TheMap.dividerCellKey(
+            previousRow, nextColumn, nextRow, nextColumn), []);
+    cell.addNeighborKey('bottom',
+        TheMap.dividerCellKey(
+            nextRow, previousColumn, nextRow, nextColumn), []);
+    cell.addNeighborKey('left',
+        TheMap.dividerCellKey(
+            previousRow, previousColumn, nextRow, previousColumn), []);
+  }
 }

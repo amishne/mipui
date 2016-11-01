@@ -17,6 +17,8 @@ class WallToggleGesture extends Gesture {
 
     // Gesture toggle direction, either true or false.
     this.toSolid = null;
+    
+    this.brushSize_;
   }
   
   isSolid_(cell) {
@@ -27,20 +29,15 @@ class WallToggleGesture extends Gesture {
     this.toSolid = !this.isSolid_(targetedCell);
     this.mode = state.tool.manualMode ? 'manual' :
         (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
+    this.brushSize_ = state.tool.brushSize;
+    this.startHoverAfterInitialFieldsAreSet(targetedCell);
+  }
+  
+  startHoverAfterInitialFieldsAreSet(targetedCell) {
     this.calculateRootCellsAndCellsToSet_(targetedCell);
     this.cellsToSet.forEach(cell => {
-      this.showHighlight_(cell);
+      cell.showHighlight('terrain', this.toSolid ? 'to-solid' : 'to-clear');
     });
-  }
-  
-  showHighlight_(cell) {
-    cell.getOrCreateLayerElement('terrain').classList.add(
-      this.toSolid ? 'to-solid' : 'to-clear');
-  }
-  
-  hideHighlight_(cell) {
-    cell.getOrCreateLayerElement('terrain').classList.remove(
-      this.toSolid ? 'to-solid' : 'to-clear');
   }
   
   calculateRootCellsAndCellsToSet_(targetedCell) {
@@ -70,7 +67,7 @@ class WallToggleGesture extends Gesture {
   calcNonManualRootCells_(targetedCell) {
     let roots = new Set([targetedCell]);
     let front = new Set([targetedCell]);
-    for (let i = 1; i < state.tool.brushSize; i += 2) {
+    for (let i = 1; i < this.brushSize_; i += 2) {
       const newFront = new Set();
       front.forEach(cell => {
         const neighbors = cell.getNeighbors('all-similar');
@@ -99,15 +96,28 @@ class WallToggleGesture extends Gesture {
   }
 
   addCellIfEligible_(cell) {
+    // Don't toggle cells that don't need toggling.
     if (this.isSolid_(cell) == this.toSolid) return;
 
-    if (!this.toSolid_ && this.mode == 'divider only' &&
+    // Don't clear horizontal/vertical walls that have at least one clear
+    // neighbor.
+    if (!this.toSolid && this.mode == 'divider only' &&
         (cell.role == 'horizontal' || cell.role == 'vertical')) {
       const neighbor1 = cell.getNeighbors(
           cell.role == 'horizontal' ? 'top' : 'right').cells[0];
       const neighbor2 = cell.getNeighbors(
           cell.role == 'horizontal' ? 'bottom' : 'left').cells[0];
       if (this.isSolid_(neighbor1) || this.isSolid_(neighbor2)) return;
+    }
+    
+    // Don't clear cells that contain doors.
+    if (!this.toSolid && cell.getLayerValue('door')) return;
+    // Don't clear corner cells that are adjacent to cells with doors.
+    if (!this.toSolid && cell.role == 'corner') {
+      const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => {
+        return !!neighbor.dividerCell.getLayerValue('door');
+      });
+      if (aNeighborHasADoor) return;
     }
 
     this.cellsToSet.add(cell);
@@ -123,7 +133,7 @@ class WallToggleGesture extends Gesture {
   
   stopHover() {
     this.cellsToSet.forEach(cell => {
-      this.hideHighlight_(cell);
+      cell.hideHighlight('terrain', this.toSolid ? 'to-solid' : 'to-clear');
     });
   }
   

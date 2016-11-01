@@ -4,12 +4,14 @@
   <script src="lib/lz-string.min.js" type="text/javascript"></script>
   <!-- src -->
   <script src="cell.js" type="text/javascript"></script>
-  <script src="gesture.js" type="text/javascript"></script>
   <script src="interactions.js" type="text/javascript"></script>
   <script src="operation.js" type="text/javascript"></script>
   <script src="state.js" type="text/javascript"></script>
   <script src="the_map.js" type="text/javascript"></script>
   <script src="utils.js" type="text/javascript"></script>
+  <!-- gestures -->
+  <script src="gesture.js" type="text/javascript"></script>
+  <script src="door_toggle_gesture.js" type="text/javascript"></script>
   <script src="wall_toggle_gesture.js" type="text/javascript"></script>
   <!-- init should be last -->
   <script src="init.js" type="text/javascript"></script>
@@ -46,10 +48,14 @@
         <input id="terrainTool" type="radio" name="tool" checked>
         Terrain
       </label>
+      <label>
+        <input id="doorTool" type="radio" name="tool">
+        Door
+      </label>
     </div>
     <div id="theMap" class="the-map">
       <div id="terrainLayer" class="layer"></div>
-      <div id="objectsLayer" class="layer"></div>
+      <div id="doorLayer" class="layer"></div>
       <div id="gridLayer" class="layer"></div>
     </div>
   </div>

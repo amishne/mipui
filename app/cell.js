@@ -45,6 +45,18 @@ class Cell {
     return element;
   }
   
+  showHighlight(layer, className) {
+    const element = this.getOrCreateLayerElement(layer);
+    element.classList.add(className);
+  }
+  
+  hideHighlight(layer, className) {
+    const element = this.elements_.get(layer);
+    if (!element) return;
+    element.classList.remove(className);
+    this.updateElement_(layer, null, this.getLayerValue(layer));
+  }
+  
   removeElement_(layer) {
     let element = this.elements_.get(layer);
     if (!element) return;
@@ -72,6 +84,7 @@ class Cell {
   updateElement_(layer, oldValue, newValue) {
     if (!newValue) {
       this.removeElement_(layer);
+      this.elements_.delete(layer);
       return;
     }
     const element = this.getOrCreateLayerElement(layer);
@@ -127,7 +140,6 @@ class Cell {
   setElementGeometryToGridElementGeometry_(element) {
     element.style.left = this.offsetLeft;
     element.style.top = this.offsetTop;
-    // element.style.zIndex = this.zIndex;
     const classesToCopy = [
       'primary-cell',
       'corner-cell',
