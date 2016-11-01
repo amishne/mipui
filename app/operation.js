@@ -43,6 +43,6 @@ class Operation {
   }
   
   get length() {
-    return this.cellChanges_.size;
+    return this.cellChanges_.size + this.gridDataChanges_.size;
   }
 }

@@ -83,6 +83,7 @@ class State {
     operation.undo();
     this.undoStack.index = Math.min(currentIndex + 1,
         this.undoStack.operationStack.length);
+    this.updateUrl_();
   }
   
   redo() {
@@ -92,6 +93,7 @@ class State {
     this.undoStack.index = Math.max(currentIndex - 1, 0);
     if (!operation) return;
     operation.redo();
+    this.updateUrl_();
   }
   
   updateUrl_() {
