@@ -24,12 +24,13 @@ class Cell {
   
   setLayerValue(layer, value, recordChange) {
     const oldValue = this.getLayerValue(layer);
-    const changed = this.setValue_(layer, value);
-    if (changed) {
+    this.setValue_(layer, value);
+    const newValue = this.getLayerValue(layer);
+    if (oldValue != newValue) {
       if (recordChange) {
-        state.recordCellChange(this.key, layer, oldValue, value);
+        state.recordCellChange(this.key, layer, oldValue, newValue);
       }
-      this.updateElement_(layer, oldValue, value);
+      this.updateElement_(layer, oldValue, newValue);
     }
   }
   
@@ -51,11 +52,10 @@ class Cell {
   }
   
   setValue_(layer, value) {
-    const isToDefault = value == this.defaultContent_.get(layer);
+    const isToDefault =
+        value == null || value == this.defaultContent_.get(layer);
     let override = state.pstate.cellOverrides[this.key];
-    let changed = false;
     if (isToDefault && override) {
-      changed = !!override[layer];
       delete override[layer];
       if (Object.keys(override).length == 0) {
         delete state.pstate.cellOverrides[this.key];
@@ -64,12 +64,9 @@ class Cell {
       if (!override) {
         override = {};
         state.pstate.cellOverrides[this.key] = override;
-        changed = true;
       }
-      changed |= override[layer] == value;
       override[layer] = value;
     }
-    return changed;
   }
   
   updateElement_(layer, oldValue, newValue) {

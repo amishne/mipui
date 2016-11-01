@@ -32,7 +32,7 @@ class State {
     
     this.tool = {
       brushSize: 1,
-      smartMode: true,
+      manualMode: false,
     };
   }
   

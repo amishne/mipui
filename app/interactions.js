@@ -106,8 +106,8 @@ function updateBrushSizeText() {
       `${brushSize} x ${brushSize}`;
 }
 
-function handleSmartModeChange(isSmartMode) {
-  state.tool.smartMode = isSmartMode;
+function handleManualModeChange(isManualMode) {
+  state.tool.manualMode = isManualMode;
 }
 
 function handleSelectedToolChange(toolElementName) {

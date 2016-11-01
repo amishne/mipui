@@ -7,7 +7,7 @@ class WallToggleGesture extends Gesture {
     this.rootCells = null;
 
     // Cells to change once the gesture is applies. In manual mode, it's just
-    // the root cells; in smart mode, it also includes some of the surrounding
+    // the root cells; otherwise, it also includes some of the surrounding
     // dividers. It doesn't include cells that don't need to be set since they
     // are already with the desired content.
     this.cellsToSet = null;
@@ -25,7 +25,7 @@ class WallToggleGesture extends Gesture {
   
   startHover(targetedCell) {
     this.toSolid = !this.isSolid_(targetedCell);
-    this.mode = !state.tool.smartMode ? 'manual' :
+    this.mode = state.tool.manualMode ? 'manual' :
         (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
     this.calculateRootCellsAndCellsToSet_(targetedCell);
     this.cellsToSet.forEach(cell => {
@@ -57,17 +57,17 @@ class WallToggleGesture extends Gesture {
       return new Set([targetedCell]);
     }
     if (this.mode == 'primary only' && targetedCell.role == 'primary') {
-      return this.calcSmartRootCells_(targetedCell);
+      return this.calcNonManualRootCells_(targetedCell);
     }
     if (this.mode == 'divider only' &&
         (targetedCell.role == 'horizontal' ||
          targetedCell.role == 'vertical')) {
-      return this.calcSmartRootCells_(targetedCell);
+      return this.calcNonManualRootCells_(targetedCell);
     }
     return new Set();
   }
   
-  calcSmartRootCells_(targetedCell) {
+  calcNonManualRootCells_(targetedCell) {
     let roots = new Set([targetedCell]);
     let front = new Set([targetedCell]);
     for (let i = 1; i < state.tool.brushSize; i += 2) {
@@ -91,7 +91,6 @@ class WallToggleGesture extends Gesture {
     this.addCellIfEligible_(cell);
     if (this.mode == 'manual') return;
     for (const neighbor of cell.getAllNeighbors()) {
-      if (neighbor.direction == 'all-similar') continue;
       if (!neighbor.dividerCell) continue;
       if (this.toSolid || !this.anyCellIsSolid_(neighbor.cells)) {
         this.addCellIfEligible_(neighbor.dividerCell);
@@ -100,9 +99,18 @@ class WallToggleGesture extends Gesture {
   }
 
   addCellIfEligible_(cell) {
-    if (this.isSolid_(cell) != this.toSolid) {
-      this.cellsToSet.add(cell);
+    if (this.isSolid_(cell) == this.toSolid) return;
+
+    if (!this.toSolid_ && this.mode == 'divider only' &&
+        (cell.role == 'horizontal' || cell.role == 'vertical')) {
+      const neighbor1 = cell.getNeighbors(
+          cell.role == 'horizontal' ? 'top' : 'right').cells[0];
+      const neighbor2 = cell.getNeighbors(
+          cell.role == 'horizontal' ? 'bottom' : 'left').cells[0];
+      if (this.isSolid_(neighbor1) || this.isSolid_(neighbor2)) return;
     }
+
+    this.cellsToSet.add(cell);
   }
   
   anyCellIsSolid_(cells) {
