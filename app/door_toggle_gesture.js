@@ -3,6 +3,7 @@ class DoorToggleGesture extends Gesture {
     super();
     this.cell_ = null;
     this.toDoor_ = null;
+    this.timeoutId = null;
     this.wallToggleGesture_ = new WallToggleGesture();
     this.wallToggleGesture_.mode = 'divider only';
     this.wallToggleGesture_.toSolid = true;
@@ -10,8 +11,8 @@ class DoorToggleGesture extends Gesture {
   }
 
   startHover(cell) {
-    if (!this.isCellEligible_(cell)) return;
     this.cell_ = cell;
+    if (!this.isCellEligible_(cell)) return;
     this.toDoor_ = !cell.getLayerValue('door');
     cell.showHighlight(
         'door', `${cell.role}-door-${this.toDoor_ ? 'add' : 'remove'}`);
@@ -30,12 +31,19 @@ class DoorToggleGesture extends Gesture {
   }
   
   startGesture() {
+    if (!this.isCellEligible_(this.cell_)) return;
     this.stopHover();
     this.cell_.setLayerValue(
         'door', this.toDoor_ ? this.cell_.role : null , true);
     if (this.shouldPaintWall_()) {
       this.wallToggleGesture_.startGesture();
     }
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+    this.timeoutId = setTimeout(() => {
+      this.stopGesture();
+    }, 1000);
   }
 
   continueGesture(cell) {
@@ -48,6 +56,7 @@ class DoorToggleGesture extends Gesture {
   }
 
   stopGesture() {
+    delete this.timeoutId;
     if (this.shouldPaintWall_()) {
       this.wallToggleGesture_.stopGesture();
     } else {
@@ -56,7 +65,7 @@ class DoorToggleGesture extends Gesture {
   }
   
   isCellEligible_(cell) {
-    return cell.role == 'horizontal' || cell.role == 'vertical';
+    return cell && (cell.role == 'horizontal' || cell.role == 'vertical');
   }
   
   shouldPaintWall_() {
