@@ -1,4 +1,4 @@
-class WallToggleGesture extends Gesture {
+class WallGesture extends Gesture {
   constructor() {
     super();
     // Cell to target. Determines by hovered cell and by the brush size. This
@@ -19,6 +19,8 @@ class WallToggleGesture extends Gesture {
     this.toSolid = null;
     
     this.brushSize_;
+    
+    this.removeDoorGestures = null;
   }
   
   isSolid_(cell) {
@@ -35,8 +37,15 @@ class WallToggleGesture extends Gesture {
   
   startHoverAfterInitialFieldsAreSet(targetedCell) {
     this.calculateRootCellsAndCellsToSet_(targetedCell);
+    this.removeDoorGestures = new Map();
     this.cellsToSet.forEach(cell => {
       cell.showHighlight('terrain', this.toSolid ? 'to-solid' : 'to-clear');
+      if (this.shouldRemoveDoors_(cell)) {
+        const removeDoorGesture = new DoorGesture();
+        removeDoorGesture.toDoor = false;
+        removeDoorGesture.startHover(cell);
+        this.removeDoorGestures.set(cell, removeDoorGesture);
+      }
     });
   }
   
@@ -98,6 +107,11 @@ class WallToggleGesture extends Gesture {
   addCellIfEligible_(cell) {
     // Don't toggle cells that don't need toggling.
     if (this.isSolid_(cell) == this.toSolid) return;
+    // If it's manual mode, just set the cell and be done with it.
+    if (this.mode == 'manual') {
+      this.cellsToSet.add(cell);
+      return;
+    }
 
     // Don't clear horizontal/vertical walls that have at least one clear
     // neighbor.
@@ -110,12 +124,17 @@ class WallToggleGesture extends Gesture {
       if (this.isSolid_(neighbor1) || this.isSolid_(neighbor2)) return;
     }
     
-    // Don't clear cells that contain doors.
-    if (!this.toSolid && cell.getLayerValue('door')) return;
-    // Don't clear corner cells that are adjacent to cells with doors.
+    // Don't clear cells that contain doors, unless those are in the roots.
+    if (!this.toSolid && cell.getLayerValue('door') &&
+        !this.shouldRemoveDoors_(cell)) {
+      return;
+    }
+    // Don't clear corner cells that are adjacent to cells with doors that are
+    // not removed.
     if (!this.toSolid && cell.role == 'corner') {
       const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => {
-        return !!neighbor.dividerCell.getLayerValue('door');
+        return !!neighbor.dividerCell.getLayerValue('door') &&
+            !this.shouldRemoveDoors_(neighbor.dividerCell);
       });
       if (aNeighborHasADoor) return;
     }
@@ -135,6 +154,7 @@ class WallToggleGesture extends Gesture {
     this.cellsToSet.forEach(cell => {
       cell.hideHighlight('terrain', this.toSolid ? 'to-solid' : 'to-clear');
     });
+    this.removeDoorGestures.forEach(gesture => gesture.stopHover());
   }
   
   startGesture() {
@@ -157,6 +177,8 @@ class WallToggleGesture extends Gesture {
   apply_() {
     this.cellsToSet.forEach(cell => {
       cell.setLayerValue('terrain', this.toSolid ? 'solid' : 'clear', true);
+      const removeDoorGesture = this.removeDoorGestures.get(cell);
+      if (removeDoorGesture) removeDoorGesture.continueGesture(cell);
     });
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
@@ -164,5 +186,10 @@ class WallToggleGesture extends Gesture {
     this.timeoutId = setTimeout(() => {
       this.stopGesture();
     }, 1000);
+  }
+  
+  shouldRemoveDoors_(cell) {
+    return !this.toSolid && this.mode == 'divider only' &&
+        cell.getLayerValue('door') && this.rootCells.has(cell);
   }
 }

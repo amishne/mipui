@@ -10,7 +10,7 @@ class State {
 
     this.theMap = new TheMap();
 
-    this.gesture = new WallToggleGesture();
+    this.gesture = new WallGesture();
 
     this.undoStack = {
       // Current index in the stack, moved by undo and redo operations.
