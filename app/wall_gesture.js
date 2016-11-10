@@ -16,30 +16,34 @@ class WallGesture extends Gesture {
     this.mode = null;
 
     // Gesture toggle direction, either true or false.
-    this.toSolid = null;
+    this.toWall = null;
     
     this.brushSize_;
     
     this.removeDoorGestures = null;
   }
-  
-  isSolid_(cell) {
-    return cell && cell.getLayerValue('terrain').startsWith('solid');
+
+  isWall_(cell) {
+    return cell && cell.isKind(ct.terrain, ct.terrain.wall);
   }
-  
+
+  hasDoor_(cell) {
+    return cell && cell.isKind(ct.doors, ct.doors.door);
+  }
+
   startHover(targetedCell) {
-    this.toSolid = !this.isSolid_(targetedCell);
+    this.toWall = !this.isWall_(targetedCell);
     this.mode = state.tool.manualMode ? 'manual' :
         (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
     this.brushSize_ = state.tool.brushSize;
     this.startHoverAfterInitialFieldsAreSet(targetedCell);
   }
-  
+
   startHoverAfterInitialFieldsAreSet(targetedCell) {
     this.calculateRootCellsAndCellsToSet_(targetedCell);
     this.removeDoorGestures = new Map();
     this.cellsToSet.forEach(cell => {
-      cell.showHighlight('terrain', this.toSolid ? 'to-solid' : 'to-clear');
+      this.showHighlight_(cell);
       if (this.shouldRemoveDoors_(cell)) {
         const removeDoorGesture = new DoorGesture();
         removeDoorGesture.toDoor = false;
@@ -48,7 +52,7 @@ class WallGesture extends Gesture {
       }
     });
   }
-  
+
   calculateRootCellsAndCellsToSet_(targetedCell) {
     this.rootCells = this.calcRootCells_(targetedCell);
     this.cellsToSet = new Set();
@@ -56,7 +60,7 @@ class WallGesture extends Gesture {
       if (rootCell) this.addCellsToSet_(rootCell);
     });
   }
-      
+
   calcRootCells_(targetedCell) {
     if (this.mode == 'manual') {
       // Don't respect brush size in manual mode, for now.
@@ -72,7 +76,7 @@ class WallGesture extends Gesture {
     }
     return new Set();
   }
-  
+
   calcNonManualRootCells_(targetedCell) {
     let roots = new Set([targetedCell]);
     let front = new Set([targetedCell]);
@@ -92,13 +96,13 @@ class WallGesture extends Gesture {
     }
     return roots;
   }
-  
+
   addCellsToSet_(cell) {
     this.addCellIfEligible_(cell);
     if (this.mode == 'manual') return;
     for (const neighbor of cell.getAllNeighbors()) {
       if (!neighbor.dividerCell) continue;
-      if (this.toSolid || !this.anyCellIsSolid_(neighbor.cells)) {
+      if (this.toWall || !this.anyCellIsWall_(neighbor.cells)) {
         this.addCellIfEligible_(neighbor.dividerCell);
       }
     }
@@ -106,7 +110,7 @@ class WallGesture extends Gesture {
 
   addCellIfEligible_(cell) {
     // Don't toggle cells that don't need toggling.
-    if (this.isSolid_(cell) == this.toSolid) return;
+    if (this.isWall_(cell) == this.toWall) return;
     // If it's manual mode, just set the cell and be done with it.
     if (this.mode == 'manual') {
       this.cellsToSet.add(cell);
@@ -115,25 +119,26 @@ class WallGesture extends Gesture {
 
     // Don't clear horizontal/vertical walls that have at least one clear
     // neighbor.
-    if (!this.toSolid && this.mode == 'divider only' &&
+    if (!this.toWall && this.mode == 'divider only' &&
         (cell.role == 'horizontal' || cell.role == 'vertical')) {
       const neighbor1 = cell.getNeighbors(
           cell.role == 'horizontal' ? 'top' : 'right').cells[0];
       const neighbor2 = cell.getNeighbors(
           cell.role == 'horizontal' ? 'bottom' : 'left').cells[0];
-      if (this.isSolid_(neighbor1) || this.isSolid_(neighbor2)) return;
+      if (this.isWall_(neighbor1) || this.isWall_(neighbor2)) return;
     }
-    
+
     // Don't clear cells that contain doors, unless those are in the roots.
-    if (!this.toSolid && cell.getLayerValue('door') &&
+    if (!this.toWall && this.hasDoor_(cell) &&
         !this.shouldRemoveDoors_(cell)) {
       return;
     }
     // Don't clear corner cells that are adjacent to cells with doors that are
     // not removed.
-    if (!this.toSolid && cell.role == 'corner') {
+    if (!this.toWall && cell.role == 'corner') {
       const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => {
-        return !!neighbor.dividerCell.getLayerValue('door') &&
+        return neighbor.dividerCell &&
+            neighbor.dividerCell.isKind(ct.doors, ct.doors.door) &&
             !this.shouldRemoveDoors_(neighbor.dividerCell);
       });
       if (aNeighborHasADoor) return;
@@ -141,42 +146,42 @@ class WallGesture extends Gesture {
 
     this.cellsToSet.add(cell);
   }
-  
-  anyCellIsSolid_(cells) {
+
+  anyCellIsWall_(cells) {
     return cells.some(cell => {
       return cell &&
           (this.rootCells.has(cell) ||
-           this.cellsToSet.has(cell) ? this.toSolid : this.isSolid_(cell));
+           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell));
     });
   }
-  
+
   stopHover() {
     this.cellsToSet.forEach(cell => {
-      cell.hideHighlight('terrain', this.toSolid ? 'to-solid' : 'to-clear');
+      this.hideHighlight_(cell);
     });
     this.removeDoorGestures.forEach(gesture => gesture.stopHover());
   }
-  
+
   startGesture() {
     this.stopHover();
     this.apply_();
   }
-  
+
   continueGesture(cell) {
     this.stopHover();
     if (!cell.role == 'primary' && this.primaryCellsOnly) return;
     this.calculateRootCellsAndCellsToSet_(cell);
     this.apply_();
   }
-  
+
   stopGesture() {
     delete this.timeoutId;
     state.recordOperationComplete();
   }
-  
+
   apply_() {
     this.cellsToSet.forEach(cell => {
-      cell.setLayerValue('terrain', this.toSolid ? 'solid' : 'clear', true);
+      cell.setLayerContent(ct.terrain, this.createContent_(), true);
       const removeDoorGesture = this.removeDoorGestures.get(cell);
       if (removeDoorGesture) removeDoorGesture.continueGesture(cell);
     });
@@ -187,9 +192,25 @@ class WallGesture extends Gesture {
       this.stopGesture();
     }, 1000);
   }
-  
+
   shouldRemoveDoors_(cell) {
-    return !this.toSolid && this.mode == 'divider only' &&
-        cell.getLayerValue('door') && this.rootCells.has(cell);
+    return !this.toWall && this.mode == 'divider only' &&
+        this.hasDoor_(cell) && this.rootCells.has(cell);
+  }
+
+  showHighlight_(cell) {
+    cell.showHighlight(ct.terrain, this.createContent_());
+  }
+
+  hideHighlight_(cell) {
+    cell.hideHighlight(ct.terrain);
+  }
+
+  createContent_() {
+    const kind = this.toWall ? ct.terrain.wall : ct.terrain.floor;
+    return {
+      [ck.kind]: kind.id,
+      [ck.variation]: kind.generic.id,
+    }
   }
 }

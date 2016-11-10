@@ -10,7 +10,6 @@ class TheMap {
     this.dividerWidth = null;
     this.currX = null;
     this.currY = null;
-    this.currZIndex = null;
 
     // Setup default cell content.
     this.defaultCellContent_.set('terrain', 'solid');
@@ -23,24 +22,23 @@ class TheMap {
   static primaryCellKey(row, column) {
     return `c ${row},${column}`;
   }
-  
+
   resetToDefault() {
     this.cells.forEach(cell => {
       cell.resetToDefault();
     });
   }
-  
+
   updateAllCells() {
     this.cells.forEach(cell => {
-      cell.updateAllElements();
+      cell.updateAllElementsToCurrentContent();
     });
   }
-  
+
   create(minX, minY, maxX, maxY) {
     this.clearMap_();
     this.currX = 0;
     this.currY = 0;
-    this.currZIndex = 0;
     const gridLayer = document.getElementById('gridLayer');
     for (let i = minY; i < maxY; i++) {
       this.createDividerRow_(gridLayer, minX, maxX, i - 1, i);
@@ -52,15 +50,24 @@ class TheMap {
     }
     this.createDividerRow_(gridLayer, minX, maxX, maxX - 1, maxX);
     this.currY += this.dividerHeight;
+    this.setMapSize_(this.currX, this.currY);
+  }
+
+  setMapSize_(width, height) {
+    // Set layer sizes.
     const layerElements = document.getElementsByClassName('layer');
     for (let i = 0; i < layerElements.length; i++) {
       const layerElement = layerElements[i];
       if (layerElement.id == 'gridLayer') continue;
-      layerElement.style.width = this.currX;
-      layerElement.style.height = this.currY;
+      layerElement.style.width = width;
+      layerElement.style.height = height;
     }
+    this.cells.forEach(cell => {
+      cell.offsetRight = (width - 1) - (cell.offsetLeft + cell.width);
+      cell.offsetBottom = (height - 1) - (cell.offsetTop + cell.height);
+    });
   }
-  
+
   clearMap_() {
     this.cells = new Map();
     const elements = document.getElementsByClassName('layer');
@@ -80,7 +87,7 @@ class TheMap {
     this.createCornerCell_(rowContainer, previousRow, maxX - 1, nextRow, maxX);
     this.currX += this.dividerWidth;
   }
-  
+
   createRowContainer_(parent) {
     return createAndAppendDivWithClass(parent, 'row-container');
   }
@@ -96,7 +103,7 @@ class TheMap {
     this.createVerticalCell_(rowContainer, row, maxX - 1, maxX);
     this.currX += this.dividerWidth;
   }
-  
+
   createCornerCell_(parent, previousRow, previousColumn, nextRow, nextColumn) {
     const key = TheMap.dividerCellKey(
         previousRow, previousColumn, nextRow, nextColumn);
@@ -109,6 +116,8 @@ class TheMap {
     if (!this.dividerWidth) {
       this.dividerWidth = cell.gridElement.offsetWidth;
     }
+    cell.height = this.dividerHeight;
+    cell.width = this.dividerWidth;
   }
 
   createHorizontalCell_(parent, previousRow, nextRow, column) {
@@ -118,6 +127,8 @@ class TheMap {
     if (!this.cellWidth) {
       this.cellWidth = cell.gridElement.offsetWidth;
     }
+    cell.height = this.dividerHeight;
+    cell.width = this.cellWidth;
   }
 
   createVerticalCell_(parent, row, previousColumn, nextColumn) {
@@ -127,21 +138,24 @@ class TheMap {
     if (!this.cellHeight) {
       this.cellHeight = cell.gridElement.offsetHeight;
     }
+    cell.height = this.cellHeight;
+    cell.width = this.dividerWidth;
   }
 
   createPrimaryCell_(parent, row, column) {
     const key = TheMap.primaryCellKey(row, column);
     const cell = this.createCell_(parent, 'primary', key);
     this.setPrimaryCellNeighborKeys_(cell, row, column);
+    cell.height = this.cellHeight;
+    cell.width = this.cellWidth;
   }
 
   createCell_(parent, role, key) {
     const element =
         createAndAppendDivWithClass(parent, `grid-cell ${role}-cell`);
     const cell = new Cell(key, role, element, this.defaultCellContent_);
-    cell.offsetLeft = this.currX + 'px';
-    cell.offsetTop = this.currY + 'px';
-    cell.zIndex = ++this.currZIndex;
+    cell.offsetLeft = this.currX;
+    cell.offsetTop = this.currY;
     this.cells.set(key, cell);
     return cell;
   }
@@ -256,7 +270,7 @@ class TheMap {
       TheMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
     ]);
   }
-  
+
   setCornerCellNeighborKeys_
       (cell, previousRow, previousColumn, nextRow, nextColumn) {
     cell.addNeighborKey('top',

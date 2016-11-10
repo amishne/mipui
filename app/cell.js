@@ -1,12 +1,14 @@
 class Cell {
-  constructor(key, role, gridElement, defaultContent) {
+  constructor(key, role, gridElement) {
     this.key = key;
     this.role = role;
     this.gridElement = gridElement;
-    this.defaultContent_ = defaultContent;
     this.offsetLeft = null;
     this.offsetTop = null;
-    this.zIndex = null;
+    this.width = null;
+    this.height = null;
+    this.offsetRight = null;
+    this.offsetBottom = null;
 
     // Elements owned by this cell, keyed by layer.
     this.elements_ = new Map();
@@ -15,102 +17,88 @@ class Cell {
     this.neighborKeys_ = new Map();
     this.wireInteractions_();
   }
-  
-  getLayerValue(layer) {
-    const override = state.pstate.cellOverrides[this.key];
-    if (!override) return this.defaultContent_.get(layer);
-    return override[layer] || this.defaultContent_.get(layer);
+
+  getLayerContent(layer) {
+    return state.getLayerContent(this.key, layer);
   }
-  
-  setLayerValue(layer, value, recordChange) {
-    const oldValue = this.getLayerValue(layer);
-    this.setValue_(layer, value);
-    const newValue = this.getLayerValue(layer);
-    if (oldValue != newValue) {
+
+  setLayerContent(layer, content, recordChange) {
+    const oldContent = this.getLayerContent(layer);
+    state.setLayerContent(this.key, layer, content);
+    const newContent = this.getLayerContent(layer);
+    if (!sameContent(oldContent, newContent)) {
       if (recordChange) {
-        state.recordCellChange(this.key, layer, oldValue, newValue);
+        state.recordCellChange(this.key, layer, oldContent, newContent);
       }
-      this.updateElement_(layer, oldValue, newValue);
+      this.updateElement_(layer, oldContent, newContent);
     }
   }
-  
-  getOrCreateLayerElement(layer) {
+
+  isKind(layer, kind) {
+    const content = this.getLayerContent(layer);
+    return content && content[ck.kind] === kind.id;
+  }
+
+  createElementFromContent(layer, content) {
+    if (!content) return null;
+    const element = createAndAppendDivWithClass(
+        document.getElementById(layer.name + 'Layer'));
+    this.modifyElementClasses_(layer, content, element, 'add');
+    this.setElementGeometryToGridElementGeometry_(element, content);
+    element.innerHTML = content[ck.inner] || '';
+    this.elements_.set(layer, element);
+    return element;
+  }
+
+  getOrCreateLayerElement_(layer, initialContent) {
     let element = this.elements_.get(layer);
     if (!element) {
-      element = createAndAppendDivWithClass(
-          document.getElementById(layer + 'Layer'), layer + '-cell');
-      this.setElementGeometryToGridElementGeometry_(element);
-      this.elements_.set(layer, element);
+      element = this.createElementFromContent(layer, initialContent);
     }
     return element;
   }
-  
-  showHighlight(layer, className) {
-    const element = this.getOrCreateLayerElement(layer);
-    element.classList.add(className);
-  }
-  
-  hideHighlight(layer, className) {
-    const element = this.elements_.get(layer);
-    if (!element) return;
-    element.classList.remove(className);
-    this.updateElement_(layer, null, this.getLayerValue(layer));
-  }
-  
-  removeElement_(layer) {
+
+  removeElement(layer) {
     let element = this.elements_.get(layer);
     if (!element) return;
     element.parentElement.removeChild(element);
+    this.elements_.delete(layer);
   }
-  
-  setValue_(layer, value) {
-    const isToDefault =
-        value == null || value == this.defaultContent_.get(layer);
-    let override = state.pstate.cellOverrides[this.key];
-    if (isToDefault && override) {
-      delete override[layer];
-      if (Object.keys(override).length == 0) {
-        delete state.pstate.cellOverrides[this.key];
-      }
-    } else if (!isToDefault) {
-      if (!override) {
-        override = {};
-        state.pstate.cellOverrides[this.key] = override;
-      }
-      override[layer] = value;
-    }
-  }
-  
-  updateElement_(layer, oldValue, newValue) {
-    if (!newValue) {
-      this.removeElement_(layer);
-      this.elements_.delete(layer);
+
+  updateElement_(layer, oldContent, newContent) {
+    if (!newContent || newContent[ck.startCell]) {
+      // Either there's no content, or the content has a start cell, signalling
+      // it should be rendered in another cell.
+      this.removeElement(layer);
       return;
     }
-    const element = this.getOrCreateLayerElement(layer);
-    element.classList.remove(`${layer}-${oldValue}`);
-    element.classList.add(`${layer}-${newValue}`);
+    const element = this.getOrCreateLayerElement_(layer, newContent);
+    this.modifyElementClasses_(layer, oldContent, element, 'remove');
+    this.modifyElementClasses_(layer, newContent, element, 'add');
+    return element;
   }
-  
-  updateAllElements() {
-    this.defaultContent_.forEach((value, layer) => {
-      this.updateElement_(layer, null, value);
+
+  updateLayerElementToCurrentContent_(layer) {
+    const element = this.elements_.get(layer);
+    const content = this.getLayerContent(layer);
+    if (!element) {
+      this.createElementFromContent(layer, content);
+    } else {
+      element.className = '';
+      this.modifyElementClasses_(layer, content, element, 'add');
+    }
+  }
+
+  updateAllElementsToCurrentContent() {
+    ct.children.forEach(layer => {
+      this.updateLayerElementToCurrentContent_(layer);
     });
-    const override = state.pstate.cellOverrides[this.key];
-    if (override) {
-      Object.keys(override).forEach(layer => {
-        this.updateElement_(layer, this.getLayerValue(layer), override[layer]);
-      });
-    }
   }
-  
+
   resetToDefault() {
-    const override = state.pstate.cellOverrides[this.key];
-    if (override) {
-      Object.keys(override).forEach(layer => {
-        this.setLayerValue(layer, null, true);
-      });
-    }
+    ct.children.forEach(layer => {
+      this.setLayerContent(layer, null, true);
+    });
   }
 
   wireInteractions_() {
@@ -136,30 +124,23 @@ class Cell {
       state.gesture.startHover(this);
     };
   }
-  
-  setElementGeometryToGridElementGeometry_(element) {
-    element.style.left = this.offsetLeft;
+
+  setElementGeometryToGridElementGeometry_(element, content) {
+    const endCellKey = content[ck.endCell];
+    const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
     element.style.top = this.offsetTop;
-    const classesToCopy = [
-      'primary-cell',
-      'corner-cell',
-      'vertical-cell',
-      'horizontal-cell',
-    ];
-    classesToCopy.forEach(className => {
-      if (this.gridElement.classList.contains(className)) {
-        element.classList.add(className);
-      }
-    });
+    element.style.right = endCell.offsetRight;
+    element.style.bottom = endCell.offsetBottom;
+    element.style.left = this.offsetLeft;
   }
-  
+
   addNeighborKey(direction, dividerKey, cellKeys) {
     this.neighborKeys_.set(direction, {
       dividerKey: dividerKey,
       cellKeys : cellKeys,
     });
   }
-  
+
   getNeighbors(direction) {
     const neighborKeysInDirection = this.neighborKeys_.get(direction);
     if (!neighborKeysInDirection) return null;
@@ -170,7 +151,7 @@ class Cell {
           .map(cellKey => { return state.theMap.cells.get(cellKey); }),
     }
   }
-  
+
   getAllNeighbors() {
     const neighbors = [];
     for (let direction of this.neighborKeys_.keys()) {
@@ -182,5 +163,33 @@ class Cell {
       });
     };
     return neighbors;
+  }
+
+  modifyElementClasses_(layer, content, element, addOrRemove) {
+    if (!content) return;
+    const kind = ct.children[layer.id].children[content[ck.kind]];
+    const variation = kind.children[content[ck.variation]];
+    const classNames = [].concat(
+        layer.classNames || [],
+        kind.classNames || [],
+        variation.classNames || []);
+    classNames.forEach(className => {
+      element.classList[addOrRemove](className.replace(/_ROLE_/g, this.role));
+    });
+  }
+
+  showHighlight(layer, content) {
+    const element = content ?
+        this.updateElement_(layer, this.getLayerContent(layer), content) :
+        this.elements_.get(layer);
+    if (!element) return;
+    element.className = element.className
+        .replace(/_ADDING-REMOVING_/g, content ? 'adding' : 'removing')
+        .replace(/_ADDING_/g, content ? 'adding' : '_ADDING_')
+        .replace(/_REMOVING_/g, content ? '_REMOVING_' : 'removing');
+  }
+
+  hideHighlight(layer) {
+    this.updateLayerElementToCurrentContent_(layer);
   }
 }

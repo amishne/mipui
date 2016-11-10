@@ -1,53 +1,51 @@
-#terrainLayer {
-  border-color: bisque;
+.primary-cell {
+  width: 17px;
+  height: 17px;
 }
 
-.row-container {
-  display: block;
-  white-space: nowrap;
+.corner-cell {
+  width: 5px;
+  height: 5px;
+}
+
+.vertical-cell {
+  width: 5px;
+  height: 17px;
+}
+
+.horizontal-cell {
+  width: 17px;
+  height: 5px;
+}
+
+#terrainLayer {
+  border-color: bisque;
 }
 
 .terrain-cell {
   border-color: bisque;
 }
 
-.primary-cell {
-  width: 16px;
-  height: 16px;
-}
-
-.corner-cell {
-  width: 4px;
-  height: 4px;
-}
-
-.vertical-cell {
-  width: 4px;
-  height: 16px;
-}
-
-.horizontal-cell {
-  width: 16px;
-  height: 4px;
-}
-
-.terrain-solid {
+.wall-cell {
   background-color: rgb(222, 184, 135);
   box-shadow: 2px 2px 6px 0px #919191;
   z-index: 1;
 }
 
-.terrain-clear {
+.floor-cell {
   background-color: rgb(245, 245, 220);
   z-index: 0;
 }
 
-.to-solid {
+.wall-cell-adding {
   background-color: rgb(215, 215, 190);
+  box-shadow: initial;
 }
 
-.to-clear {
+.floor-cell-adding {
   background-color: rgb(232, 221, 182);
+  box-shadow: 2px 2px 6px 0px #919191;
+  z-index: 1;
 }
 
 .door-cell {
@@ -57,26 +55,20 @@
   border-radius: 2px;
 }
 
-.door-horizontal, .horizontal-door-add, .horizontal-door-remove {
-  margin-top: -2px;
-  height: 6px;
-  margin-left: 3px;
-  width: 8px
+.door-cell-horizontal {
+  margin: -2px 4px -1px 3px;
 }
 
-.door-vertical, .vertical-door-add, .vertical-door-remove {
-  margin-top: 3px;
-  height: 8px;
-  margin-left: -2px;
-  width: 6px
+.door-cell-vertical {
+  margin: 3px -1px 4px -2px;
 }
 
-.horizontal-door-add, .vertical-door-add {
+.door-cell-adding {
   background-color: rgba(255, 250, 240, 0.2);
   border: 1px solid rgba(100, 100, 100, 0.8);
 }
 
-.horizontal-door-remove, .vertical-door-remove {
+.door-cell-removing {
   background-color: rgba(255, 250, 240, 0.5);
   border: 1px solid rgba(100, 100, 100, 0.8);
 }

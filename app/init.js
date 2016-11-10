@@ -35,7 +35,7 @@ function wireUiElements() {
   });
 }
 
-function start() {
+function start() {  
   const params = getUrlParams();
   if (params.ps) {
     state.loadFromString(params.ps);
@@ -45,5 +45,6 @@ function start() {
   wireUiElements();
 }
 
+initializeContentTypes(ct, null);
 const state = new State();
 window.onload = () => { start(); };

@@ -33,6 +33,10 @@
   cursor: crosshair;
 }
 
+.the-map * {
+  box-sizing: border-box;
+}
+
 .layer {
   position: absolute;
   width: 100%;
@@ -48,19 +52,24 @@
   z-index: 3;
 }
 
-.grid-cell {
-  position: relative;
-  display: inline-block;
-  border-right: 1px solid rgba(0, 0, 0, 0);
-  border-bottom: 1px solid rgba(0, 0, 0, 0);
-}
-
-#doorLayer {
+#doorsLayer {
   z-index: 2;
 }
 
 #terrainLayer {
   z-index: 1;
+}
+
+.row-container {
+  display: block;
+  white-space: nowrap;
+}
+
+.grid-cell {
+  position: relative;
+  display: inline-block;
+  border-right: 1px solid rgba(0, 0, 0, 0);
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
 }
 
 .terrain-cell {
