@@ -47,9 +47,11 @@ function expandGrid(n) {
   const gridData = state.pstate.gridData;
   changeGridDimensions(gridData.from - n, gridData.to + n);
   createTheMapAndUpdateElements();
+  const offsetX = n * (state.theMap.cellWidth + state.theMap.dividerWidth);
+  const offsetY = n * (state.theMap.cellHeight + state.theMap.dividerHeight);
   const nav = state.navigation;
-  nav.translate.x -= 44 * nav.scale;
-  nav.translate.y -= 44 * nav.scale;
+  nav.translate.x -= offsetX * nav.scale;
+  nav.translate.y -= offsetY * nav.scale;
   updateMapTransform();
   state.recordOperationComplete();
 }
