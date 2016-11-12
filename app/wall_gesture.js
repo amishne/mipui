@@ -122,9 +122,9 @@ class WallGesture extends Gesture {
     if (!this.toWall && this.mode == 'divider only' &&
         (cell.role == 'horizontal' || cell.role == 'vertical')) {
       const neighbor1 = cell.getNeighbors(
-          cell.role == 'horizontal' ? 'top' : 'right').cells[0];
+          cell.role == 'horizontal' ? 'top' : 'right').cells[0] || null;
       const neighbor2 = cell.getNeighbors(
-          cell.role == 'horizontal' ? 'bottom' : 'left').cells[0];
+          cell.role == 'horizontal' ? 'bottom' : 'left').cells[0] || null;
       if (this.isWall_(neighbor1) || this.isWall_(neighbor2)) return;
     }
 

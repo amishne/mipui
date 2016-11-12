@@ -40,7 +40,7 @@ class Cell {
   }
 
   createElementFromContent(layer, content) {
-    if (!content) return null;
+    if (!this.contentShouldHaveElement_(content)) return null;
     const element = createAndAppendDivWithClass(
         document.getElementById(layer.name + 'Layer'));
     this.modifyElementClasses_(layer, content, element, 'add');
@@ -65,16 +65,21 @@ class Cell {
     this.elements_.delete(layer);
   }
 
+  contentShouldHaveElement_(content) {
+    // Either there's no content, or the content has a start cell, signalling
+    // it should be rendered in another cell.
+    return content && !content[ck.startCell];
+  }
+
   updateElement_(layer, oldContent, newContent) {
-    if (!newContent || newContent[ck.startCell]) {
-      // Either there's no content, or the content has a start cell, signalling
-      // it should be rendered in another cell.
+    if (!this.contentShouldHaveElement_(newContent)) {
       this.removeElement(layer);
       return;
     }
     const element = this.getOrCreateLayerElement_(layer, newContent);
     this.modifyElementClasses_(layer, oldContent, element, 'remove');
     this.modifyElementClasses_(layer, newContent, element, 'add');
+    this.setElementGeometryToGridElementGeometry_(element, newContent);
     return element;
   }
 
@@ -84,8 +89,12 @@ class Cell {
     if (!element) {
       this.createElementFromContent(layer, content);
     } else {
-      element.className = '';
-      this.modifyElementClasses_(layer, content, element, 'add');
+      if (this.contentShouldHaveElement_(content)) {
+        element.className = '';
+        this.modifyElementClasses_(layer, content, element, 'add');
+      } else {
+        this.removeElement(layer);
+      }
     }
   }
 
@@ -148,7 +157,8 @@ class Cell {
       dividerCell:
           state.theMap.cells.get(neighborKeysInDirection.dividerKey),
       cells: neighborKeysInDirection.cellKeys
-          .map(cellKey => { return state.theMap.cells.get(cellKey); }),
+          .map(cellKey => { return state.theMap.cells.get(cellKey); })
+          .filter(cell => !!cell),
     }
   }
 

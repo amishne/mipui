@@ -34,6 +34,7 @@ const ck = {
 };
 
 function sameContent(c1, c2) {
+  if (!c1 && !c2) return true;
   if (!!c1 != !!c2) return false;
   Object.keys(ck).every(k => {
     const key = ck[k];

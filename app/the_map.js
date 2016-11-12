@@ -240,6 +240,12 @@ class TheMap {
     cell.addNeighborKey('bottom', null, [
       TheMap.primaryCellKey(toRow, column),
     ]);
+    cell.addNeighborKey('right-same', null, [
+      TheMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
+    ]);
+    cell.addNeighborKey('left-same', null, [
+      TheMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
+    ]);
     cell.addNeighborKey('all-similar', null, [
       TheMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
       TheMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
@@ -264,6 +270,12 @@ class TheMap {
     ]);
     cell.addNeighborKey('left', null, [
       TheMap.primaryCellKey(row, fromColumn),
+    ]);
+    cell.addNeighborKey('top-same', null, [
+      TheMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
+    ]);
+    cell.addNeighborKey('bottom-same', null, [
+      TheMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
     ]);
     cell.addNeighborKey('all-similar', null, [
       TheMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
