@@ -1,21 +1,21 @@
 .primary-cell {
-  width: 17px;
-  height: 17px;
+  width: 25px;
+  height: 25px;
 }
 
 .corner-cell {
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
 }
 
 .vertical-cell {
-  width: 5px;
-  height: 17px;
+  width: 7px;
+  height: 25px;
 }
 
 .horizontal-cell {
-  width: 17px;
-  height: 5px;
+  width: 25px;
+  height: 7px;
 }
 
 #terrainLayer {
@@ -73,7 +73,7 @@
 
 .secret-door-cell {
   border: 1px dotted rgb(100, 100, 100);
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='8'>S</text></svg>") rgb(255, 250, 240) no-repeat;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='10'>S</text></svg>") rgb(255, 250, 240) no-repeat;
 }
 
 .door-cell-adding {

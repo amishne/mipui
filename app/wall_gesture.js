@@ -45,7 +45,7 @@ class WallGesture extends Gesture {
     this.cellsToSet.forEach(cell => {
       this.showHighlight_(cell);
       if (this.shouldRemoveDoors_(cell)) {
-        const removeDoorGesture = new DoorGesture();
+        const removeDoorGesture = new DoorGesture(null);
         removeDoorGesture.toDoor = false;
         removeDoorGesture.startHover(cell);
         this.removeDoorGestures.set(cell, removeDoorGesture);
@@ -183,7 +183,7 @@ class WallGesture extends Gesture {
     this.cellsToSet.forEach(cell => {
       cell.setLayerContent(ct.terrain, this.createContent_(), true);
       const removeDoorGesture = this.removeDoorGestures.get(cell);
-      if (removeDoorGesture) removeDoorGesture.continueGesture(cell);
+      if (removeDoorGesture) removeDoorGesture.startGesture();
     });
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);

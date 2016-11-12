@@ -3,7 +3,7 @@ class State {
     this.pstate = {
       gridData: {
         from: 0,
-        to: 30,
+        to: 25,
       },
       // Map cell key to a map which maps layer IDs to the content of that
       // layer.

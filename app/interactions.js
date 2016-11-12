@@ -78,7 +78,7 @@ function resetView() {
 function resetGrid() {
   state.recordOperationComplete();
   state.theMap.resetToDefault();
-  changeGridDimensions(0, 30);
+  changeGridDimensions(0, 25);
   createTheMapAndUpdateElements();
   resetView();
   state.recordOperationComplete();
