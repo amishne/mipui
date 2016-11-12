@@ -63,6 +63,19 @@
   margin: 3px -1px 4px -2px;
 }
 
+.double-door-cell-horizontal {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='50%' y1='0' x2='50%' y2='100%' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") rgb(255, 250, 240);
+}
+
+.double-door-cell-vertical {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='0' y1='50%' x2='100%' y2='50%' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") rgb(255, 250, 240);
+}
+
+.secret-door-cell {
+  border: 1px dotted rgb(100, 100, 100);
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='7'>S</text></svg>") rgb(255, 250, 240);
+}
+
 .door-cell-adding {
   background-color: rgba(255, 250, 240, 0.2);
   border: 1px solid rgba(100, 100, 100, 0.8);

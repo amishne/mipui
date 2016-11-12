@@ -16,10 +16,18 @@ const ct = {
   },
   doors: {
     door: {
-      classNames: ['door-cell', 'door-cell-_ROLE_', 'door-cell-_ADDING-REMOVING_'],
+      classNames: [
+        'door-cell',
+        'door-cell-_ROLE_',
+        'door-cell-_ADDING-REMOVING_'
+      ],
       single: {},
-      double: {},
-      secret: {},
+      double: {
+        classNames: ['double-door-cell-_ROLE_'],
+      },
+      secret: {
+        classNames: ['secret-door-cell'],
+      },
     },
   },
 };

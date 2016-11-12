@@ -1,6 +1,7 @@
 class DoorGesture extends Gesture {
-  constructor() {
+  constructor(variation) {
     super();
+    this.variation_ = variation;
     this.startCell_ = null;
     this.nonStartCells_ = [];
     this.toDoor = null;
@@ -162,10 +163,9 @@ class DoorGesture extends Gesture {
 
   createStartCellContent_() {
     if (!this.toDoor) return null;
-    const kind = ct.doors.door;
     const content = {
-      [ck.kind]: kind.id,
-      [ck.variation]: kind.single.id,
+      [ck.kind]: ct.doors.door.id,
+      [ck.variation]: this.variation_.id,
     };
     if (this.nonStartCells_.length > 0) {
       content[ck.endCell] =
@@ -176,10 +176,9 @@ class DoorGesture extends Gesture {
 
   createNonStartCellContent_() {
     if (!this.toDoor) return null;
-    const kind = ct.doors.door;
     return {
-      [ck.kind]: kind.id,
-      [ck.variation]: kind.single.id,
+      [ck.kind]: ct.doors.door.id,
+      [ck.variation]: this.variation_.id,
       [ck.startCell]: this.startCell_.key,
     }
   }

@@ -114,6 +114,14 @@ function handleSelectedToolChange(toolElementName) {
   state.gesture.stopGesture();
   switch (toolElementName) {
     case 'terrainTool': state.gesture = new WallGesture(); break;
-    case 'doorTool': state.gesture = new DoorGesture(); break;
+    case 'singleDoorTool':
+      state.gesture = new DoorGesture(ct.doors.door.single);
+      break;
+    case 'doubleDoorTool':
+      state.gesture = new DoorGesture(ct.doors.door.double);
+      break;
+    case 'secretDoorTool':
+      state.gesture = new DoorGesture(ct.doors.door.secret);
+      break;
   }
 }
