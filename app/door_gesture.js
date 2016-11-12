@@ -11,6 +11,21 @@ class DoorGesture extends Gesture {
   }
 
   startHover(cell) {
+    // Corner case: hovering over a corner cell in the middle of a door behaves
+    // as if hovering over the next cell.
+    if (cell.role == 'corner') {
+      const rightCell = cell.getNeighbors('right').dividerCell;
+      if (rightCell && rightCell.isKind(ct.doors, ct.doors.door) &&
+          rightCell.getLayerContent(ct.doors)[ck.startCell]) {
+        cell = rightCell;
+      } else {
+        const bottomCell = cell.getNeighbors('bottom').dividerCell;
+        if (bottomCell && bottomCell.isKind(ct.doors, ct.doors.door) &&
+            bottomCell.getLayerContent(ct.doors)[ck.startCell]) {
+          cell = bottomCell;
+        }
+      }
+    }
     this.hoveredCell_ = cell;
     if (!this.isCellEligible_(cell)) return;
     this.toDoor = !cell.isKind(ct.doors, ct.doors.door);
@@ -39,6 +54,18 @@ class DoorGesture extends Gesture {
       nonStartCell.hideHighlight(ct.doors);
     });
   }
+  
+  getNextCell_(cell) {
+    if (!cell) return null;
+    return cell.getNeighbors(
+        cell.role == 'horizontal' ? 'right-same' : 'bottom-same').cells[0];
+  }
+  
+  getPrevCell_(cell) {
+    if (!cell) return null;
+    return cell.getNeighbors(
+        cell.role == 'horizontal' ? 'left-same' : 'top-same').cells[0];
+  }
 
   setCells_(cell) {
     this.startCell_ = null;
@@ -51,8 +78,7 @@ class DoorGesture extends Gesture {
           cell.getLayerContent(ct.doors)[ck.startCell]) || cell;
       let currCell = this.startCell_;
       while (true) {
-        currCell = currCell.getNeighbors(
-            cell.role == 'horizontal' ? 'right-same' : 'bottom-same').cells[0];
+        currCell = this.getNextCell_(currCell);
         if (!currCell || !currCell.isKind(ct.doors, ct.doors.door) ||
             currCell.getLayerContent(ct.doors)[ck.startCell] !=
             this.startCell_.key) {
@@ -102,12 +128,8 @@ class DoorGesture extends Gesture {
     // Only enable for eligible cells.
     if (!this.isCellEligible_(cell)) return;
     
-    const prevCell = cell.role == 'horizontal' ?
-        cell.getNeighbors('left-same').cells[0] :
-        cell.getNeighbors('top-same').cells[0];
-    const nextCell = cell.role == 'horizontal' ?
-        cell.getNeighbors('right-same').cells[0] :
-        cell.getNeighbors('bottom-same').cells[0];
+    const prevCell = this.getPrevCell_(cell)
+    const nextCell = this.getNextCell_(cell);
 
     if (prevCell == this.startCell_ ||
         this.nonStartCells_.includes(prevCell)) {
@@ -118,9 +140,7 @@ class DoorGesture extends Gesture {
           (currCell.getLayerContent(ct.doors)[ck.startCell] ||
            currCell.getLayerContent(ct.doors)[ck.endCell])) {
         this.nonStartCells_.push(currCell);
-        currCell = cell.role == 'horizontal' ?
-            currCell.getNeighbors('right-same').cells[0] :
-            currCell.getNeighbors('bottom-same').cells[0];
+        currCell = this.getNextCell_(currCell);
       }
     } else if (nextCell == this.startCell_) {
       // Connecting backward, to a cell after this one.
@@ -129,9 +149,7 @@ class DoorGesture extends Gesture {
       while (currCell && currCell.isKind(ct.doors, ct.doors.door) &&
           currCell.getLayerContent(ct.doors)[ck.startCell]) {
         this.nonStartCells_.unshift(currCell);
-        currCell = cell.role == 'horizontal' ?
-              currCell.getNeighbors('left-same').cells[0] :
-              currCell.getNeighbors('top-same').cells[0];
+        currCell = this.getPrevCell_(currCell);
       }
       this.startCell_ = currCell;
     } else {
