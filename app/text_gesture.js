@@ -95,11 +95,12 @@ class TextGesture extends Gesture {
     document.getElementById('textLayer').appendChild(textArea);
     textArea.focus();
     textArea.onblur = () => {
+      const text = textArea.value;
+      document.getElementById('textLayer').removeChild(textArea);
       const content = startCell.getLayerContent(ct.text);
       if (!content) return;
-      content[ck.text] = textArea.value;
-      document.getElementById('textLayer').removeChild(textArea);
-      startCell.setLayerContent(ct.text, content, true);
+      content[ck.text] = text;
+      startCell.setLayerContent(ct.text, text ? content : null, true);
       state.recordOperationComplete();
     };
   }
