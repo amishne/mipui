@@ -4,7 +4,6 @@ class TextGesture extends Gesture {
     this.removeText_ = null;
     this.startCell_ = null;
     this.nonStartCells_ = [];
-    this.timeoutId = null;
   }
 
   startHover(cell) {
@@ -66,8 +65,6 @@ class TextGesture extends Gesture {
   }
 
   stopGesture() {
-    delete this.timeoutId;
-    state.recordOperationComplete();
     if (!this.removeText_ && this.startCell_.hasLayerContent(ct.text)) {
       this.startEditing_();
     }
@@ -159,13 +156,6 @@ class TextGesture extends Gesture {
       nonStartCell.setLayerContent(
           ct.text, this.createNonStartCellContent_(), true);
     });
-
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-    this.timeoutId = setTimeout(() => {
-      this.stopGesture();
-    }, 1000);
   }
 
   createStartCellContent_() {
