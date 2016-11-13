@@ -13,6 +13,7 @@
   <!-- gestures -->
   <script src="gesture.js" type="text/javascript"></script>
   <script src="door_gesture.js" type="text/javascript"></script>
+  <script src="text_gesture.js" type="text/javascript"></script>
   <script src="wall_gesture.js" type="text/javascript"></script>
   <!-- init should be last -->
   <script src="init.js" type="text/javascript"></script>
@@ -61,10 +62,15 @@
         <input id="secretDoorTool" type="radio" name="tool">
         Secret Door
       </label>
+      <label>
+        <input id="textTool" type="radio" name="tool">
+        Text
+      </label>
     </div>
     <div id="theMap" class="the-map">
       <div id="terrainLayer" class="layer"></div>
       <div id="doorsLayer" class="layer"></div>
+      <div id="textLayer" class="layer"></div>
       <div id="gridLayer" class="layer"></div>
     </div>
   </div>

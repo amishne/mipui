@@ -47,7 +47,7 @@ class DoorGesture extends Gesture {
       nonStartCell.showHighlight(ct.doors, this.createNonStartCellContent_());
     });
   }
-  
+
   hideDoorHighlight_() {
     this.startCell_.hideHighlight(ct.doors);
     this.nonStartCells_.forEach(nonStartCell => {
@@ -60,7 +60,7 @@ class DoorGesture extends Gesture {
     return cell.getNeighbors(
         cell.role == 'horizontal' ? 'right-same' : 'bottom-same').cells[0];
   }
-  
+
   getPrevCell_(cell) {
     if (!cell) return null;
     return cell.getNeighbors(

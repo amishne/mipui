@@ -30,6 +30,12 @@ const ct = {
       },
     },
   },
+  text: {
+    text: {
+      classNames: ['text-cell', 'text-cell-_ADDING-REMOVING_'],
+      standard: {},
+    },
+  },
 };
 
 // Content keys.
@@ -38,7 +44,7 @@ const ck = {
   variation: 'v',
   startCell: 's',
   endCell: 'e',
-  inner: 'i',
+  text: 't',
 };
 
 function sameContent(c1, c2) {

@@ -85,3 +85,34 @@
   background-color: rgba(255, 250, 240, 0.5);
   border-color: rgba(100, 100, 100, 0.8);
 }
+
+.text-cell {
+  position: absolute;
+  color: rgb(50, 50, 50);
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin: 2px 3px 3px 2px;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.text-cell-adding {
+  color: rgba(50, 50, 50, 0.6);
+  border: 1px dashed rgb(50, 50, 50);
+  margin: 1px 2px 2px 1px;
+}
+
+.text-cell-removing {
+  color: rgba(50, 50, 50, 0.3);
+  border: 1px dashed rgb(50, 50, 50);
+  margin: 1px 2px 2px 1px;
+}
+
+.text-cell-textarea {
+  position: absolute;
+  z-index: 5;
+  resize: none;
+}

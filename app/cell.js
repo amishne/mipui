@@ -10,6 +10,10 @@ class Cell {
     this.offsetRight = null;
     this.offsetBottom = null;
 
+    // Primary cells only.
+    this.row = null;
+    this.column = null;
+
     // Elements owned by this cell, keyed by layer.
     this.elements_ = new Map();
 
@@ -34,6 +38,10 @@ class Cell {
     }
   }
 
+  hasLayerContent(layer) {
+    return !!this.getLayerContent(layer);
+  }
+
   isKind(layer, kind) {
     const content = this.getLayerContent(layer);
     return content && content[ck.kind] === kind.id;
@@ -45,12 +53,39 @@ class Cell {
         document.getElementById(layer.name + 'Layer'));
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, content);
-    element.innerHTML = content[ck.inner] || '';
+    this.setText_(element, content[ck.text]);
     this.elements_.set(layer, element);
     return element;
   }
+  
+  setText_(element, text) {
+    if (!element || !text) return;
+    const offsetWidth = element.offsetWidth;
+    const offsetHeight = element.offsetHeight;
+    const theMapElement = document.getElementById('theMap');
+    const sizingElement = createAndAppendDivWithClass(
+        theMapElement, element.className);
+    sizingElement.style.visibility = 'hidden';
+    sizingElement.style.display = 'inline-block';
+    sizingElement.innerHTML = text;
+    let fontSize = 14;
+    sizingElement.style.fontSize = fontSize + 'pt';
+    while (sizingElement.offsetWidth < offsetWidth &&
+          sizingElement.offsetHeight < offsetHeight) {
+      fontSize++;
+      sizingElement.style.fontSize = fontSize + 'pt';
+    }
+    while (sizingElement.offsetWidth > offsetWidth ||
+          sizingElement.offsetHeight > offsetHeight) {
+      fontSize--;
+      sizingElement.style.fontSize = fontSize + 'pt';
+    }
+    theMapElement.removeChild(sizingElement);
+    element.style.fontSize = fontSize + 'pt';
+    element.innerHTML = text;
+  }
 
-  getOrCreateLayerElement_(layer, initialContent) {
+  getOrCreateLayerElement(layer, initialContent) {
     let element = this.elements_.get(layer);
     if (!element) {
       element = this.createElementFromContent(layer, initialContent);
@@ -76,10 +111,11 @@ class Cell {
       this.removeElement(layer);
       return;
     }
-    const element = this.getOrCreateLayerElement_(layer, newContent);
+    const element = this.getOrCreateLayerElement(layer, newContent);
     this.modifyElementClasses_(layer, oldContent, element, 'remove');
     this.modifyElementClasses_(layer, newContent, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, newContent);
+    this.setText_(element, newContent[ck.text]);
     return element;
   }
 

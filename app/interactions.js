@@ -115,7 +115,9 @@ function handleManualModeChange(isManualMode) {
 function handleSelectedToolChange(toolElementName) {
   state.gesture.stopGesture();
   switch (toolElementName) {
-    case 'terrainTool': state.gesture = new WallGesture(); break;
+    case 'terrainTool':
+      state.gesture = new WallGesture();
+      break;
     case 'singleDoorTool':
       state.gesture = new DoorGesture(ct.doors.door.single);
       break;
@@ -124,6 +126,9 @@ function handleSelectedToolChange(toolElementName) {
       break;
     case 'secretDoorTool':
       state.gesture = new DoorGesture(ct.doors.door.secret);
+      break;
+    case 'textTool':
+      state.gesture = new TextGesture();
       break;
   }
 }

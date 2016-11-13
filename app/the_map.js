@@ -148,6 +148,8 @@ class TheMap {
     this.setPrimaryCellNeighborKeys_(cell, row, column);
     cell.height = this.cellHeight;
     cell.width = this.cellWidth;
+    cell.row = row;
+    cell.column = column;
   }
 
   createCell_(parent, role, key) {
@@ -297,5 +299,11 @@ class TheMap {
     cell.addNeighborKey('left',
         TheMap.dividerCellKey(
             previousRow, previousColumn, nextRow, previousColumn), []);
+    cell.addNeighborKey('bottom-right', null, [
+      TheMap.primaryCellKey(nextRow, nextColumn),
+    ]);
+    cell.addNeighborKey('top-left', null, [
+      TheMap.primaryCellKey(previousRow, previousColumn),
+    ]);
   }
 }
