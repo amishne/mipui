@@ -1,7 +1,20 @@
+// Text gesture behavior:
+// * Hover over empty cell: show text highlight for that cell.
+// * Hover over cell with text:
+//   * Change cursor to text cursor.
+//   * Show "delete" and "resize" buttons.
+// * Start clicking empty cell: show hover
+// * Start clicking empty cell: change cursor to move cursor after short delay.
+// * Drag empty cell: show text highlight for all cells between the first cell
+//   and that cell, unless it's illegal (there's already a text cell
+//   in-between) and then either show the hover for the first cell only, or for
+//   some subset of the square.
+// * Drag text cell: move the entire text around.
 class TextGesture extends Gesture {
   constructor() {
     super();
     this.removeText_ = null;
+    this.hoveredCell_ = null;
     this.startCell_ = null;
     this.nonStartCells_ = [];
   }

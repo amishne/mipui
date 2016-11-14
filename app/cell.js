@@ -67,16 +67,19 @@ class Cell {
         theMapElement, element.className);
     sizingElement.style.visibility = 'hidden';
     sizingElement.style.display = 'inline-block';
+    sizingElement.style.width = offsetWidth;
+    sizingElement.style.height = offsetHeight;
     sizingElement.innerHTML = text;
     let fontSize = 14;
     sizingElement.style.fontSize = fontSize + 'pt';
-    while (sizingElement.offsetWidth < offsetWidth &&
-          sizingElement.offsetHeight < offsetHeight) {
+    while (sizingElement.scrollWidth <= offsetWidth &&
+        sizingElement.scrollHeight <= offsetHeight) {
       fontSize++;
       sizingElement.style.fontSize = fontSize + 'pt';
     }
-    while (sizingElement.offsetWidth > offsetWidth ||
-          sizingElement.offsetHeight > offsetHeight) {
+    while (fontSize > 1 &&
+        (sizingElement.scrollWidth > offsetWidth ||
+         sizingElement.scrollHeight > offsetHeight)) {
       fontSize--;
       sizingElement.style.fontSize = fontSize + 'pt';
     }
@@ -128,6 +131,8 @@ class Cell {
       if (this.contentShouldHaveElement_(content)) {
         element.className = '';
         this.modifyElementClasses_(layer, content, element, 'add');
+        this.setElementGeometryToGridElementGeometry_(element, content);
+        this.setText_(element, content[ck.text]);
       } else {
         this.removeElement(layer);
       }
