@@ -5,7 +5,6 @@ class DoorGesture extends Gesture {
     this.startCell_ = null;
     this.nonStartCells_ = [];
     this.toDoor = null;
-    this.timeoutId = null;
     this.makeWallGesture = null;
     this.hoveredCell_ = null;
   }
@@ -114,12 +113,6 @@ class DoorGesture extends Gesture {
     if (this.shouldPaintWall_()) {
       this.makeWallGesture.startGesture();
     }
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-    this.timeoutId = setTimeout(() => {
-      this.stopGesture();
-    }, 1000);
   }
 
   continueGesture(cell) {
@@ -163,12 +156,10 @@ class DoorGesture extends Gesture {
   }
 
   stopGesture() {
-    delete this.timeoutId;
     if (this.shouldPaintWall_()) {
       this.makeWallGesture.stopGesture();
-    } else {
-      state.recordOperationComplete();
     }
+    state.recordOperationComplete();
   }
 
   isCellEligible_(cell) {

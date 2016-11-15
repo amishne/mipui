@@ -175,7 +175,6 @@ class WallGesture extends Gesture {
   }
 
   stopGesture() {
-    delete this.timeoutId;
     state.recordOperationComplete();
   }
 
@@ -185,12 +184,6 @@ class WallGesture extends Gesture {
       const removeDoorGesture = this.removeDoorGestures.get(cell);
       if (removeDoorGesture) removeDoorGesture.startGesture();
     });
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-    this.timeoutId = setTimeout(() => {
-      this.stopGesture();
-    }, 1000);
   }
 
   shouldRemoveDoors_(cell) {

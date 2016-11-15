@@ -42,6 +42,8 @@ class State {
       [ck.kind]: ct.terrain.wall.id,
       [ck.variation]: ct.terrain.wall.generic.id,
     };
+    
+    this.autoSaveTimerId_ = null;
   }
 
   getLayerContent(cellKey, layer) {
@@ -79,16 +81,32 @@ class State {
   recordCellChange(key, layer, oldContent, newContent) {
     this.undoStack.currentOperation
         .addCellChange(key, layer, oldContent, newContent);
+    this.recordChange_();
   }
 
   recordGridDataChange(property, oldContent, newContent) {
     this.undoStack.currentOperation
         .addGridDataChange(property, oldContent, newContent);
+    this.recordChange_();
+  }
+    
+  recordChange_() {
+    if (this.autoSaveTimerId_) {
+      clearTimeout(this.autoSaveTimerId_);
+    }
+    this.autoSaveTimerId_ = setTimeout(() => {
+      this.autoSaveTimerId_ = null;
+      this.recordOperationComplete();
+    }, 5000);
   }
 
   recordOperationComplete() {
     this.updateUrl_();
     this.commitToUndoStack_();
+    if (this.autoSaveTimerId_) {
+      clearTimeout(this.autoSaveTimerId_);
+      this.autoSaveTimerId_ = null;
+    }
   }
 
   commitToUndoStack_() {
