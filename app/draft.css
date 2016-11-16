@@ -122,5 +122,6 @@
   text-align: center;
   border: 0;
   outline: 0;
-  background-color: transparent;
+  padding-left: 0;
+  padding-right: 0;
 }

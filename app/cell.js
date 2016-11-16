@@ -16,6 +16,9 @@ class Cell {
 
     // Elements owned by this cell, keyed by layer.
     this.elements_ = new Map();
+    
+    // Exposed to be used by text gestures.
+    this.textHeight = null;
 
     // Initialization.
     this.neighborKeys_ = new Map();
@@ -68,7 +71,7 @@ class Cell {
     sizingElement.style.visibility = 'hidden';
     sizingElement.style.display = 'inline-block';
     sizingElement.style.width = offsetWidth;
-    sizingElement.style.height = offsetHeight;
+    // sizingElement.style.height = offsetHeight;
     sizingElement.innerHTML = text;
     let fontSize = 14;
     sizingElement.style.fontSize = fontSize + 'pt';
@@ -83,6 +86,7 @@ class Cell {
       fontSize--;
       sizingElement.style.fontSize = fontSize + 'pt';
     }
+    this.textHeight = sizingElement.scrollHeight;
     theMapElement.removeChild(sizingElement);
     element.style.fontSize = fontSize + 'pt';
     element.innerHTML = text;

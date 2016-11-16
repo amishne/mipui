@@ -114,8 +114,14 @@ class TextGesture extends Gesture {
       if (!content) return;
       content[ck.text] = text;
       startCell.setLayerContent(ct.text, text ? content : null, true);
-      this.textArea_.style.fontSize =
-          startCell.getOrCreateLayerElement(ct.text, content).style.fontSize;
+      const startCellElement =
+          startCell.getOrCreateLayerElement(ct.text, content);
+      this.textArea_.style.fontSize = startCellElement.style.fontSize;
+      if (startCell.textHeight) {
+        const whitespace =
+            startCellElement.scrollHeight - startCell.textHeight;
+        this.textArea_.style.paddingTop = (whitespace / 2 + 1) + 'px';
+      }
     }
     this.textArea_.onblur = () => {
       this.finishEditing_();
