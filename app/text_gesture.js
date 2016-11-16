@@ -96,23 +96,38 @@ class TextGesture extends Gesture {
   startEditing_() {
     const startCell = this.startCell_;
     const textElement = startCell.getOrCreateLayerElement(ct.text, null);
-    const textArea = document.createElement('textarea');
-    textArea.className = 'text-cell-textarea';
-    textArea.style.left = startCell.offsetLeft;
-    textArea.style.right = startCell.offsetRight;
-    textArea.style.top = startCell.offsetTop;
-    textArea.style.bottom = startCell.offsetBottom;
-    document.getElementById('textLayer').appendChild(textArea);
-    textArea.focus();
-    textArea.onblur = () => {
-      const text = textArea.value;
-      document.getElementById('textLayer').removeChild(textArea);
+    this.textArea_ = document.createElement('textarea');
+    this.textArea_.className = 'text-cell-textarea';
+    this.textArea_.style.left = startCell.offsetLeft;
+    this.textArea_.style.top = startCell.offsetTop;
+    this.textArea_.style.width = textElement.offsetWidth;
+    this.textArea_.style.height = textElement.offsetHeight;
+    document.getElementById('textLayer').appendChild(this.textArea_);
+    this.textArea_.focus();
+    this.textArea_.onkeyup = (e) => {
+      if (e.key == 'Escape') {
+        this.finishEditing_();
+        return;
+      }
+      const text = this.textArea_.value;
       const content = startCell.getLayerContent(ct.text);
       if (!content) return;
       content[ck.text] = text;
       startCell.setLayerContent(ct.text, text ? content : null, true);
-      state.recordOperationComplete();
+      this.textArea_.style.fontSize =
+          startCell.getOrCreateLayerElement(ct.text, content).style.fontSize;
+    }
+    this.textArea_.onblur = () => {
+      this.finishEditing_();
     };
+  }
+  
+  finishEditing_() {
+    if (this.textArea_) {
+      document.getElementById('textLayer').removeChild(this.textArea_);
+    }
+    this.textArea_ = null;
+    state.recordOperationComplete();
   }
 
   isCellEligible_(cell) {
