@@ -197,7 +197,7 @@ class TextGesture extends Gesture {
     const content = {
       [ck.kind]: ct.text.text.id,
       [ck.variation]: ct.text.text.standard.id,
-      [ck.text]: 'Text',
+      [ck.text]: '',
     };
     if (this.nonStartCells_.length > 0) {
       content[ck.endCell] =
