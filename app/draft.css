@@ -99,21 +99,22 @@
   font-weight: bold;
 }
 
-.text-cell-adding {
-  color: rgba(50, 50, 50, 0.6);
+.text-cell-adding, .text-cell-removing, .text-cell-editing {
   border: 1px dashed rgb(50, 50, 50);
   margin: 1px 2px 2px 1px;
+}
+
+.text-cell-adding {
+  color: rgba(50, 50, 50, 0.6);
 }
 
 .text-cell-removing {
   color: rgba(50, 50, 50, 0.3);
-  border: 1px dashed rgb(50, 50, 50);
-  margin: 1px 2px 2px 1px;
 }
 
 .text-cell-textarea {
   position: absolute;
-  z-index: 5;
+  z-index: 11;
   resize: none;
   font-family: sans-serif;
   margin: 1px 2px 2px 1px;
@@ -124,4 +125,32 @@
   outline: 0;
   padding-left: 0;
   padding-right: 0;
+}
+
+.text-hover-widget {
+  position: absolute;
+  cursor: text;
+  z-index: 10;
+  margin: 2px 3px 3px 2px;
+}
+
+.text-delete-widget {
+  position: absolute;
+  background-color: red;
+  width: 6px;
+  height: 6px;
+  cursor: pointer;
+  margin-left: -2px;
+  z-index: 12;
+}
+
+.text-resize-widget {
+  position: absolute;
+  background-color: blue;
+  width: 6px;
+  height: 6px;
+  cursor: se-resize;
+  margin-left: -2px;
+  margin-top: -2px;
+  z-index: 12;
 }

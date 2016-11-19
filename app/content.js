@@ -32,7 +32,11 @@ const ct = {
   },
   text: {
     text: {
-      classNames: ['text-cell', 'text-cell-_ADDING-REMOVING_'],
+      classNames: [
+        'text-cell',
+        'text-cell-_ADDING-REMOVING_',
+        'text-cell-_EDITING_',
+      ],
       standard: {},
     },
   },

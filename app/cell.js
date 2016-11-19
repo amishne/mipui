@@ -234,14 +234,24 @@ class Cell {
   }
 
   showHighlight(layer, content) {
+    const existingContent = this.getLayerContent(layer);
+    const action = existingContent && content ? 'editing' :
+        (content ? 'removing' : 'adding');
     const element = content ?
         this.updateElement_(layer, this.getLayerContent(layer), content) :
         this.elements_.get(layer);
     if (!element) return;
-    element.className = element.className
-        .replace(/_ADDING-REMOVING_/g, content ? 'adding' : 'removing')
-        .replace(/_ADDING_/g, content ? 'adding' : '_ADDING_')
-        .replace(/_REMOVING_/g, content ? '_REMOVING_' : 'removing');
+    if (action == 'adding' || (content && layer == ct.terrain)) {
+      element.className = element.className
+          .replace(/_ADDING-REMOVING_/g, 'adding')
+          .replace(/_ADDING_/g, 'adding');
+    } else if (action == 'removing') {
+      element.className = element.className
+          .replace(/_ADDING-REMOVING_/g, 'removing')
+          .replace(/_REMOVING_/g, 'removing');
+    } else if (action == 'editing') {
+      element.className = element.className.replace(/_EDITING_/g, 'editing');
+    }
   }
 
   hideHighlight(layer) {
