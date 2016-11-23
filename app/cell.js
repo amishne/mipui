@@ -16,7 +16,7 @@ class Cell {
 
     // Elements owned by this cell, keyed by layer.
     this.elements_ = new Map();
-    
+
     // Exposed to be used by text gestures.
     this.textHeight = null;
 
@@ -47,7 +47,12 @@ class Cell {
 
   isKind(layer, kind) {
     const content = this.getLayerContent(layer);
-    return content && content[ck.kind] === kind.id;
+    return content ? content[ck.kind] === kind.id : false;
+  }
+
+  getVal(layer, contentKey) {
+    const content = this.getLayerContent(layer);
+    return content ? content[contentKey] : null;
   }
 
   createElementFromContent(layer, content) {
@@ -60,7 +65,7 @@ class Cell {
     this.elements_.set(layer, element);
     return element;
   }
-  
+
   setText_(element, text) {
     if (!element || !text) return;
     const offsetWidth = element.offsetWidth;
@@ -174,7 +179,9 @@ class Cell {
       }
     };
     this.gridElement.onmouseup = (e) => {
-      state.gesture.stopGesture();
+      if (e.button == 0) {
+        state.gesture.stopGesture();
+      }
       state.gesture.startHover(this);
     };
   }

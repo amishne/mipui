@@ -120,7 +120,7 @@ class DoorGesture extends Gesture {
     if (!this.toDoor) return;
     // Only enable for eligible cells.
     if (!this.isCellEligible_(cell)) return;
-    
+
     const prevCell = this.getPrevCell_(cell)
     const nextCell = this.getNextCell_(cell);
 
