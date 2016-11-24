@@ -49,6 +49,7 @@ class TextGesture extends Gesture {
 
     if (this.mode_ != 'removing') {
       if (this.hoveredCell_ == cell) return;
+      this.stopHover();
       this.hoveredCell_ = cell;
       this.calculateTargetCell_();
       if (!this.targetCell_) return;
