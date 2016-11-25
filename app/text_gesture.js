@@ -147,7 +147,8 @@ class TextGesture extends Gesture {
         state.recordOperationComplete();
       }
     }
-    this.mode_ = null;
+    // Return to some safe default.
+    this.mode_ = 'adding';
   }
 
   // Assumes
@@ -398,7 +399,6 @@ class TextGesture extends Gesture {
 
   startEditing_() {
     this.finishEditing_();
-    const startCell = this.startCell_;
     this.createDeleteWidget_();
     this.createResizeWidget_();
     const textElement =
@@ -408,70 +408,37 @@ class TextGesture extends Gesture {
     this.textarea_.className = 'text-cell-textarea';
     this.textarea_.style.width = textElement.offsetWidth + 2;
     this.textarea_.style.height = textElement.offsetHeight + 2;
-    if (startCell.hasLayerContent(ct.text)) {
-      this.textarea_.value = startCell.getVal(ct.text, ck.text);
+    if (this.startCell_.hasLayerContent(ct.text)) {
+      this.textarea_.value = this.startCell_.getVal(ct.text, ck.text);
     }
-    startCell.gridElement.appendChild(this.textarea_);
+    this.startCell_.gridElement.appendChild(this.textarea_);
     this.textarea_.onkeyup = (e) => {
       if (e.key == 'Escape') {
         this.finishEditing_();
         return;
       }
-      const text = this.textarea_.value;
-      const content = startCell.getLayerContent(ct.text);
-      if (text && content) {
-        // Changing existing text - just update the start cell content.
-        content[ck.text] = text;
-        startCell.setLayerContent(ct.text, content, true);
-      } else if (!text && !content) {
-        // Removing all text when there's already none.
-        return;
-      } else {
-        // We get here if !!text != !!content. In that case we update all
-        // affected cells.
-        const startCellContent = text ? {
-          [ck.kind]: ct.text.text.id,
-          [ck.variation]: ct.text.text.standard.id,
-          [ck.text]: text,
-        } : null;
-        if (startCellContent && this.nonStartCells_.length > 0) {
-          startCellContent[ck.endCell] =
-              this.nonStartCells_[this.nonStartCells_.length - 1].key;
-        }
-        this.startCell_.setLayerContent(
-            ct.text, text ? startCellContent : null, true);
-        this.nonStartCells_.forEach(nonStartCell => {
-          nonStartCell.setLayerContent(ct.text, text ? {
-            [ck.kind]: ct.text.text.id,
-            [ck.variation]: ct.text.text.standard.id,
-            [ck.startCell]: this.startCell_.key,
-          } : null, true);
-        });
-      }
-      const startCellElement =
-          startCell.getOrCreateLayerElement(ct.text, content);
-      this.textarea_.style.fontSize = startCellElement.style.fontSize;
-      if (startCell.textHeight) {
-        const whitespace =
-            startCellElement.scrollHeight - startCell.textHeight;
-        this.textarea_.style.paddingTop = (whitespace / 2 + 1) + 'px';
-      }
+      this.apply_();
+      this.setTextareaGeometry_(this.startCell_, null);
     }
     this.textarea_.onmousedown = (e) => e.stopPropagation();
     this.textarea_.onmouseup = (e) => e.stopPropagation();
-    const content = startCell.getLayerContent(ct.text);
+    const content = this.startCell_.getLayerContent(ct.text);
     if (content) {
-      const startCellElement =
-          startCell.getOrCreateLayerElement(ct.text, content);
-      this.textarea_.style.fontSize = startCellElement.style.fontSize;
-      if (startCell.textHeight) {
-        const whitespace =
-            startCellElement.scrollHeight - startCell.textHeight;
-        this.textarea_.style.paddingTop = (whitespace / 2 + 1) + 'px';
-      }
+      this.setTextareaGeometry_(this.startCell_, content);
     }
     this.textarea_.focus();
     this.textarea_.select();
+  }
+
+  setTextareaGeometry_(startCell, initialContent) {
+    const startCellElement =
+        startCell.getOrCreateLayerElement(ct.text, initialContent);
+    this.textarea_.style.fontSize = startCellElement.style.fontSize;
+    if (startCell.textHeight) {
+      const whitespace =
+          startCellElement.scrollHeight - startCell.textHeight;
+      this.textarea_.style.paddingTop = (whitespace / 2 + 1) + 'px';
+    }
   }
 
   finishEditing_() {
@@ -526,37 +493,50 @@ class TextGesture extends Gesture {
     let text = 'Text';
     switch (this.mode_) {
       case 'removing':
-        return null;
-      case 'editing':
-        return this.startCell_.getLayerContent(ct.text);
+        text = null;
+        break;
       case 'resizing':
         text = this.anchorCell_.getVal(ct.text, ck.text);
+        break;
+      case 'editing':
+        text = this.startCell_.getVal(ct.text, ck.text);
         // Intentional fallthrough.
       case 'adding':
-        const content = {
-          [ck.kind]: ct.text.text.id,
-          [ck.variation]: ct.text.text.standard.id,
-          [ck.text]: text,
-        };
-        if (this.endCell_) {
-          content[ck.endCell] = this.endCell_.key;
+        if (this.textarea_) {
+          text = this.textarea_.value;
         }
-        return content;
+        break;
     }
+    if (!text) return null;
+    const content = {
+      [ck.kind]: ct.text.text.id,
+      [ck.variation]: ct.text.text.standard.id,
+      [ck.text]: text,
+    };
+    if (this.endCell_) {
+      content[ck.endCell] = this.endCell_.key;
+    }
+    return content;
   }
 
   createNonStartCellContent_() {
+    let isDelete = false;
     switch (this.mode_) {
       case 'removing':
-        return null;
+        isDelete = true;
+        break;
       case 'resizing':
+        isDelete = false;
+        break;
       case 'editing':
       case 'adding':
-        return {
-          [ck.kind]: ct.text.text.id,
-          [ck.variation]: ct.text.text.standard.id,
-          [ck.startCell]: this.startCell_.key,
-        };
+        isDelete = this.textarea_ && !this.textarea_.value;
+        break;
     }
+    return isDelete ? null : {
+      [ck.kind]: ct.text.text.id,
+      [ck.variation]: ct.text.text.standard.id,
+      [ck.startCell]: this.startCell_.key,
+    };
   }
 }
