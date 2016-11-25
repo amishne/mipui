@@ -28,6 +28,8 @@ class TextGesture extends Gesture {
     this.endCell_ = null;
     // All cells belonging to the text, except the top-left one.
     this.nonStartCells_ = [];
+    // The end cell when the gesture started, if any.
+    this.originalEndCell_ = null;
 
     // Owned elements.
 
@@ -47,7 +49,7 @@ class TextGesture extends Gesture {
       return;
     }
 
-    if (this.mode_ != 'removing') {
+    if (this.mode_ != 'removing' && this.mode_ != 'resizing') {
       if (this.hoveredCell_ == cell) return;
       this.stopHover();
       this.hoveredCell_ = cell;
@@ -79,11 +81,9 @@ class TextGesture extends Gesture {
       this.hideHighlight_();
     }
 
-    ['hoverWidget_', 'deleteWidget_', 'resizeWidget_'].forEach(fieldName => {
-      const element = this[fieldName];
-      if (element) element.parentElement.removeChild(element);
-      this[fieldName] = null;
-    });
+    this.removeHoverWidget_();
+    this.removeDeleteWidget_();
+    this.removeResizeWidget_();
   }
 
   startGesture() {
@@ -104,6 +104,9 @@ class TextGesture extends Gesture {
       case 'editing':
         // Do nothing; this is handled by the hover widget.
         break;
+      case 'resizing':
+        // Do nothing; everything should already be pre-set.
+        break;
     }
   }
 
@@ -113,23 +116,38 @@ class TextGesture extends Gesture {
       return;
     }
 
-    if (this.mode_ == 'adding') {
+    if (this.mode_ == 'adding' || this.mode_ == 'resizing') {
       this.hideHighlight_();
       this.hoveredCell_ = cell;
-      if (this.hoveredCell_.role != 'primary') return;
+      if (this.hoveredCell_.role != 'primary') {
+        if (this.mode_ == 'resizing');
+        this.showHighlight_();
+        return;
+      }
       this.targetCell_ = this.hoveredCell_;
       this.calculateTextExtent_();
       this.showHighlight_();
+      if (this.mode_ == 'resizing') {
+        // Redraw the resize widget so it would appear on the new corner.
+        this.removeResizeWidget_();
+        this.createResizeWidget_();
+      }
     }
   }
 
   stopGesture() {
-    if (this.mode_ == 'adding' && this.startCell_) {
+    if ((this.mode_ == 'adding' || this.mode_ == 'resizing')
+        && this.startCell_) {
       this.stopHover();
       this.apply_();
       this.anchorCell_ = null;
-      this.startEditing_();
+      if (this.mode_ == 'adding') {
+        this.startEditing_();
+      } else {
+        state.recordOperationComplete();
+      }
     }
+    this.mode_ = null;
   }
 
   // Assumes
@@ -177,22 +195,21 @@ class TextGesture extends Gesture {
     switch (this.mode_) {
       case 'removing':
         // Removing assumes the cells are already set by the parent gesture.
-        return;
+        break;
+      case 'resizing':
       case 'adding':
         if (!this.anchorCell_) {
           this.startCell_ = this.targetCell_;
+          this.nonStartCells_ = [];
           this.endCell_ = null;
         } else {
-          const startCellKey =
-              TheMap.primaryCellKey(
-                  Math.min(this.anchorCell_.row, this.targetCell_.row),
-                  Math.min(this.anchorCell_.column, this.targetCell_.column));
-          const endCellKey =
-              TheMap.primaryCellKey(
-                  Math.max(this.anchorCell_.row, this.targetCell_.row),
-                  Math.max(this.anchorCell_.column, this.targetCell_.column));
-          this.startCell_ = state.theMap.cells.get(startCellKey);
-          this.endCell_ = state.theMap.cells.get(endCellKey);
+          const predicate = (cell) => {
+            return !cell.hasLayerContent(ct.text) ||
+                cell == this.anchorCell_ ||
+                cell.getVal(ct.text, ck.startCell) == this.anchorCell_.key;
+          };
+          this.calculateTextExtentBetween_(
+              this.anchorCell_, this.targetCell_, predicate);
         }
         break;
       case 'editing':
@@ -203,9 +220,28 @@ class TextGesture extends Gesture {
         this.endCell_ =
             state.theMap.cells
                 .get(this.startCell_.getVal(ct.text, ck.endCell));
+        this.calculateTextExtentBetween_(this.startCell_, this.endCell_);
         break;
     }
-    this.calculateNonStartCells_();
+  }
+
+  // Sets this.startCell_, this.endCell_ and this.nonStartCells_, using the
+  // cells between cell1 and cell2.
+  // If any of the cells fails the predicate, just sets this.startCell_ to
+  // cell1.
+  calculateTextExtentBetween_(cell1, cell2, predicate) {
+    // First, calculate the square between the anchor and the target:
+    let cells = cell1.getPrimaryCellsInSquareTo(cell2);
+    if (predicate) {
+      if (!cells.every(predicate)) {
+        cells = [cell1];
+      }
+    }
+    if (cells.length > 0) {
+      this.startCell_ = cells[0];
+      this.nonStartCells_ = cells.slice(1);
+    }
+    this.endCell_ = cells.length > 1 ? cells[cells.length - 1] : null;
   }
 
   // Assumes
@@ -226,17 +262,20 @@ class TextGesture extends Gesture {
     for (let i = 0; i <= height; i++) {
       let currCell = rowStart;
       for (let j = 0; j <= width; j++) {
-        if (this.mode_ == 'adding' && currCell.hasLayerContent(ct.text)) {
-          // In case we encounter a textual cell in range during adding, we
-          // discard all non-start cells and reset the start cell to the
-          // anchor.
-          this.startCell_ = this.anchorCell_;
-          this.endCell_ = null;
-          this.nonStartCells_ = [];
-          return;
-        }
         if (i != 0 || j != 0) {
           // This isn't the start cell.
+          if (currCell.hasLayerContent(ct.text) &&
+              this.anchorCell_ &&
+              currCell != this.anchorCell_ &&
+              currCell.getVal(ct.text, ck.startCell) != this.anchorCell_.key) {
+            // In case we encounter a textual cell in range during adding, or
+            // encounter a non-owned cell during resizing, we discard all
+            // non-start cells and reset the start cell to the anchor.
+            this.startCell_ = this.anchorCell_;
+            this.endCell_ = null;
+            this.nonStartCells_ = [];
+            return;
+          }
           this.nonStartCells_.push(currCell);
         }
         currCell = currCell.getNeighbors('right').cells[0];
@@ -265,6 +304,13 @@ class TextGesture extends Gesture {
     };
     this.hoverWidget_.onmousedown = (e) => e.stopPropagation();
     this.hoverWidget_.onmouseup = (e) => e.stopPropagation();
+  }
+
+  removeHoverWidget_() {
+    if (this.hoverWidget_) {
+      this.hoverWidget_.parentElement.removeChild(this.hoverWidget_);
+      this.hoverWidget_ = null;
+    }
   }
 
   createDeleteWidget_() {
@@ -303,7 +349,14 @@ class TextGesture extends Gesture {
     this.deleteWidget_.onmouseup = (e) => e.stopPropagation();
   }
 
-  createResizeWidget_(parent) {
+  removeDeleteWidget_() {
+    if (this.deleteWidget_) {
+      this.deleteWidget_.parentElement.removeChild(this.deleteWidget_);
+      this.deleteWidget_ = null;
+    }
+  }
+
+  createResizeWidget_() {
     if (this.resizeWidget_) return;
     this.resizeWidget_ = createAndAppendDivWithClass(
         this.startCell_.gridElement, 'text-resize-widget');
@@ -312,10 +365,24 @@ class TextGesture extends Gesture {
             ct.text, this.createStartCellContent_());
     this.resizeWidget_.style.left = textElement.scrollWidth;
     this.resizeWidget_.style.top = textElement.scrollHeight;
-    const resizeGesture = new TextGesture();
-    this.resizeWidget_.onmousedown = () => {
-      // XXX continue setting it to resize
-    };
+    this.resizeWidget_.onmouseenter = (e) => e.stopPropagation();
+    this.resizeWidget_.onmouseleave = (e) => e.stopPropagation();
+    this.resizeWidget_.onmouseup = (e) => e.stopPropagation();
+    this.resizeWidget_.onmousedown = (e) => {
+      this.removeHoverWidget_();
+      this.removeDeleteWidget_();
+      this.anchorCell_ = this.startCell_;
+      this.originalEndCell_ = this.endCell_;
+      this.mode_ = 'resizing';
+      e.stopPropagation();
+    }
+  }
+
+  removeResizeWidget_() {
+    if (this.resizeWidget_) {
+      this.resizeWidget_.parentElement.removeChild(this.resizeWidget_);
+      this.resizeWidget_ = null;
+    }
   }
 
   cellsBelongToSameText_(topLeftCell, bottomRightCell) {
@@ -342,7 +409,7 @@ class TextGesture extends Gesture {
     this.textarea_.style.width = textElement.offsetWidth + 2;
     this.textarea_.style.height = textElement.offsetHeight + 2;
     if (startCell.hasLayerContent(ct.text)) {
-      this.textarea_.value = startCell.getLayerContent(ct.text)[ck.text];
+      this.textarea_.value = startCell.getVal(ct.text, ck.text);
     }
     startCell.gridElement.appendChild(this.textarea_);
     this.textarea_.onkeyup = (e) => {
@@ -420,35 +487,6 @@ class TextGesture extends Gesture {
     return cell && cell.role == 'primary';
   }
 
-  setCells_(targetedCell) {
-    this.startCell_ = state.theMap.cells.get(
-        targetedCell.getLayerContent(ct.text)[ck.startCell]) || targetedCell;
-    const content = this.startCell_.getLayerContent(ct.text);
-    if (!content) return;
-    const endCellKey = this.startCell_.getLayerContent(ct.text)[ck.endCell];
-    if (!endCellKey) return;
-    const endCell = state.theMap.cells.get(endCellKey);
-    if (!endCell) return;
-    this.setNonStartCells_(endCell);
-  }
-
-  setNonStartCells_(endCell) {
-    const width = endCell.column - this.startCell_.column;
-    const height = endCell.row - this.startCell_.row;
-
-    let rowStart = this.startCell_;
-    for (let i = 0; i < height + 1; i++) {
-      let currCell = rowStart;
-      for (let j = 0; j < width + 1; j++) {
-        if (currCell != this.startCell_) this.nonStartCells_.push(currCell);
-        currCell = currCell.getNeighbors('right').cells[0];
-        if (!currCell) break;
-      }
-      rowStart = rowStart.getNeighbors('bottom').cells[0];
-      if (!rowStart) break;
-    }
-  }
-
   showHighlight_() {
     this.startCell_.showHighlight(ct.text, this.createStartCellContent_());
     this.nonStartCells_.forEach(nonStartCell => {
@@ -470,19 +508,35 @@ class TextGesture extends Gesture {
       nonStartCell.setLayerContent(
           ct.text, this.createNonStartCellContent_(), true);
     });
+    // Finally, for resize gestures, remove text from cells that were removed
+    // by this gesture. The original startcell is the anchor (because it's a
+    // resize), and the original endcell is stored in originalEndCell_.
+    if (this.originalEndCell_) {
+      this.anchorCell_.getPrimaryCellsInSquareTo(this.originalEndCell_)
+          .forEach(cell => {
+            if (cell != this.startCell_ &&
+                !this.nonStartCells_.includes(cell)) {
+              cell.setLayerContent(ct.text, null);
+            }
+          });
+    }
   }
 
   createStartCellContent_() {
+    let text = 'Text';
     switch (this.mode_) {
       case 'removing':
         return null;
       case 'editing':
         return this.startCell_.getLayerContent(ct.text);
+      case 'resizing':
+        text = this.anchorCell_.getVal(ct.text, ck.text);
+        // Intentional fallthrough.
       case 'adding':
         const content = {
           [ck.kind]: ct.text.text.id,
           [ck.variation]: ct.text.text.standard.id,
-          [ck.text]: 'Text',
+          [ck.text]: text,
         };
         if (this.endCell_) {
           content[ck.endCell] = this.endCell_.key;
@@ -495,6 +549,7 @@ class TextGesture extends Gesture {
     switch (this.mode_) {
       case 'removing':
         return null;
+      case 'resizing':
       case 'editing':
       case 'adding':
         return {

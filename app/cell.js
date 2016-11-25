@@ -66,6 +66,39 @@ class Cell {
     return element;
   }
 
+  // Returns all the cells in a square between this cell and 'cell', in row
+  // and then col order.
+  getPrimaryCellsInSquareTo(cell) {
+    if (!cell || !this.role == 'primary' || !cell.role == 'primary') return [];
+
+    const startCellKey =
+        TheMap.primaryCellKey(
+            Math.min(this.row, cell.row), Math.min(this.column, cell.column));
+    const endCellKey =
+        TheMap.primaryCellKey(
+            Math.max(this.row, cell.row), Math.max(this.column, cell.column));
+    const startCell = state.theMap.cells.get(startCellKey);
+    if (!startCell) return [];
+    const endCell = state.theMap.cells.get(endCellKey);
+    if (!endCell) return [];
+    const width = 1 + endCell.column - startCell.column;
+    const height = 1 + endCell.row - startCell.row;
+
+    const result = [];
+    let rowStart = startCell;
+    for (let i = 0; i < height; i++) {
+      let currCell = rowStart;
+      for (let j = 0; j < width; j++) {
+        result.push(currCell);
+        currCell = currCell.getNeighbors('right').cells[0];
+        if (!currCell) break;
+      }
+      rowStart = rowStart.getNeighbors('bottom').cells[0];
+      if (!rowStart) break;
+    }
+    return result;
+  }
+
   setText_(element, text) {
     if (!element || !text) return;
     const offsetWidth = element.offsetWidth;
