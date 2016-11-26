@@ -97,6 +97,7 @@
   margin: 2px 3px 3px 2px;
   font-family: sans-serif;
   font-weight: bold;
+  white-space: pre-wrap;
 }
 
 .text-cell-adding, .text-cell-removing, .text-cell-editing {

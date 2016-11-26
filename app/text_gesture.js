@@ -28,8 +28,11 @@ class TextGesture extends Gesture {
     this.endCell_ = null;
     // All cells belonging to the text, except the top-left one.
     this.nonStartCells_ = [];
-    // The end cell when the gesture started, if any.
+    // The end cell when the gesture started, if any - used for resizing.
     this.originalEndCell_ = null;
+    // The text as it was when editing started - used for reverting to it after
+    // canceling the edit.
+    this.originalText_ = null;
 
     // Owned elements.
 
@@ -139,7 +142,6 @@ class TextGesture extends Gesture {
     if ((this.mode_ == 'adding' || this.mode_ == 'resizing')
         && this.startCell_) {
       this.stopHover();
-      this.apply_();
       this.anchorCell_ = null;
       if (this.mode_ == 'adding') {
         this.startEditing_();
@@ -400,7 +402,7 @@ class TextGesture extends Gesture {
   startEditing_() {
     this.finishEditing_();
     this.createDeleteWidget_();
-    this.createResizeWidget_();
+    this.originalText_ = this.startCell_.getVal(ct.text, ck.text);
     const textElement =
         this.startCell_.getOrCreateLayerElement(
             ct.text, this.createStartCellContent_());
@@ -412,9 +414,13 @@ class TextGesture extends Gesture {
       this.textarea_.value = this.startCell_.getVal(ct.text, ck.text);
     }
     this.startCell_.gridElement.appendChild(this.textarea_);
+    this.textarea_.onkeydown = (e) => {
+      if (this.isTextFinishingEvent_(e)) {
+        this.finishEditing_(e);
+      }
+    }
     this.textarea_.onkeyup = (e) => {
-      if (e.key == 'Escape') {
-        this.finishEditing_();
+      if (this.isTextFinishingEvent_(e)) {
         return;
       }
       this.apply_();
@@ -441,12 +447,22 @@ class TextGesture extends Gesture {
     }
   }
 
-  finishEditing_() {
+  isTextFinishingEvent_(keyboardEvent) {
+    return keyboardEvent.key == 'Escape' ||
+        (keyboardEvent.key == 'Enter' && !keyboardEvent.shiftKey);
+  }
+
+  finishEditing_(keyboardEvent) {
     if (this.textarea_) {
       this.textarea_.parentElement.removeChild(this.textarea_);
       this.textarea_ = null;
     }
     this.stopHover();
+    if (keyboardEvent && keyboardEvent.key == 'Escape') {
+      // Revert this whole thing!
+      this.mode_ = 'reverting';
+      this.apply_();
+    }
     state.recordOperationComplete();
   }
 
@@ -506,6 +522,9 @@ class TextGesture extends Gesture {
           text = this.textarea_.value;
         }
         break;
+      case 'reverting':
+        text = this.originalText_;
+        break;
     }
     if (!text) return null;
     const content = {
@@ -531,6 +550,9 @@ class TextGesture extends Gesture {
       case 'editing':
       case 'adding':
         isDelete = this.textarea_ && !this.textarea_.value;
+        break;
+      case 'reverting':
+        isDelete = !this.originalText_;
         break;
     }
     return isDelete ? null : {
