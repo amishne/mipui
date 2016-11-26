@@ -1,6 +1,7 @@
 class State {
   constructor() {
     this.pstate = {
+      version: '1.0',
       gridData: {
         from: 0,
         to: 25,

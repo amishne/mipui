@@ -53,7 +53,7 @@ function start() {
   if (params.mid) {
     firebase.database()
         .ref('/maps/' + decodeURIComponent(params.mid) + '/payload')
-            .once('value', payloadRef => {
+            .on('value', payloadRef => {
               state.load(params.mid, payloadRef.val());
             });
   }
