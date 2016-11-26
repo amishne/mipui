@@ -110,7 +110,7 @@ class Cell {
     sizingElement.style.display = 'inline-block';
     sizingElement.style.width = offsetWidth;
     // sizingElement.style.height = offsetHeight;
-    sizingElement.innerHTML = text;
+    sizingElement.textContent = text;
     let fontSize = 14;
     sizingElement.style.fontSize = fontSize + 'pt';
     while (sizingElement.scrollWidth <= offsetWidth &&
@@ -127,7 +127,7 @@ class Cell {
     this.textHeight = sizingElement.scrollHeight;
     theMapElement.removeChild(sizingElement);
     element.style.fontSize = fontSize + 'pt';
-    element.innerHTML = text;
+    element.textContent = text;
   }
 
   getOrCreateLayerElement(layer, initialContent) {

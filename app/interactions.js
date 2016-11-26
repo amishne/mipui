@@ -104,7 +104,7 @@ function decreaseBrushSize() {
 
 function updateBrushSizeText() {
   const brushSize = state.tool.brushSize;
-  document.getElementById('brushSize').innerHTML =
+  document.getElementById('brushSize').textContent =
       `${brushSize} x ${brushSize}`;
 }
 
