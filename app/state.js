@@ -32,17 +32,17 @@ class State {
         y: 8,
       },
     };
-    
+
     this.tool = {
       brushSize: 1,
       manualMode: false,
     };
-    
+
     this.defaultTerrainContent_ = {
       [ck.kind]: ct.terrain.wall.id,
       [ck.variation]: ct.terrain.wall.generic.id,
     };
-    
+
     this.autoSaveTimerId_ = null;
   }
 
@@ -69,12 +69,9 @@ class State {
     cellContent[layer.id] = content;
   }
 
-  saveToString() {
-    return LZString.compressToEncodedURIComponent(JSON.stringify(this.pstate));
-  }
-
-  loadFromString(s) {
-    this.pstate = JSON.parse(LZString.decompressFromEncodedURIComponent(s));
+  load(mid, pstate) {
+    this.mid_ = mid;
+    this.pstate = pstate;
     this.theMap.updateAllCells();
   }
 
@@ -89,7 +86,7 @@ class State {
         .addGridDataChange(property, oldContent, newContent);
     this.recordChange_();
   }
-    
+
   recordChange_() {
     if (this.autoSaveTimerId_) {
       clearTimeout(this.autoSaveTimerId_);
@@ -101,7 +98,7 @@ class State {
   }
 
   recordOperationComplete() {
-    this.updateUrl_();
+    this.recordState_();
     this.commitToUndoStack_();
     if (this.autoSaveTimerId_) {
       clearTimeout(this.autoSaveTimerId_);
@@ -123,7 +120,7 @@ class State {
     this.undoStack.currentOperation = new Operation();
     this.undoStack.index = 0;
   }
-  
+
   undo() {
     this.commitToUndoStack_();
     const currentIndex = this.undoStack.index;
@@ -132,7 +129,7 @@ class State {
     operation.undo();
     this.undoStack.index = Math.min(currentIndex + 1,
         this.undoStack.operationStack.length);
-    this.updateUrl_();
+    this.recordState_();
   }
 
   redo() {
@@ -142,11 +139,27 @@ class State {
     this.undoStack.index = Math.max(currentIndex - 1, 0);
     if (!operation) return;
     operation.redo();
-    this.updateUrl_();
+    this.recordState_();
   }
 
-  updateUrl_() {
-    window.history.replaceState(
-        null, '', 'index.html?ps=' + this.saveToString());
+  recordState_() {
+    if (!this.mid_) {
+      this.mid_ = this.createNewMid_();
+    }
+    firebase.database().ref(`/maps/${this.mid_}/payload`).set(this.pstate)
+        .then(() => {
+          window.history.replaceState(
+              null, '', 'index.html?mid=' + encodeURIComponent(this.mid_));
+        })
+        .catch(error => {
+          this.mid_ = null;
+          console.log('State recording failed - map not saved on server!');
+        });
+  }
+
+  // Create a random 10-character string with characters belonging to [a-z0-9].
+  createNewMid_() {
+    // From http://stackoverflow.com/a/19964557
+    return (Math.random().toString(36)+'00000000000000000').slice(2, 12);
   }
 }

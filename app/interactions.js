@@ -113,7 +113,6 @@ function handleManualModeChange(isManualMode) {
 }
 
 function handleSelectedToolChange(toolElementName) {
-  state.gesture.stopGesture();
   switch (toolElementName) {
     case 'terrainTool':
       state.gesture = new WallGesture();

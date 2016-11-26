@@ -35,16 +35,31 @@ function wireUiElements() {
   });
 }
 
-function start() {  
-  const params = getUrlParams();
-  if (params.ps) {
-    state.loadFromString(params.ps);
-  }
+function initializeFirebase() {
+  var config = {
+    apiKey: "AIzaSyBOHHWJ8cdnDljBKr0KlaZH-nsPLmATNOw",
+    authDomain: "mipui-a13b3.firebaseapp.com",
+    databaseURL: "https://mipui-a13b3.firebaseio.com",
+  };
+  firebase.initializeApp(config);
+  firebase.database.enableLogging(true);
+}
+
+function start() {
   createTheMapAndUpdateElements();
   resetView();
   wireUiElements();
+  const params = getUrlParams();
+  if (params.mid) {
+    firebase.database()
+        .ref('/maps/' + decodeURIComponent(params.mid) + '/payload')
+            .once('value', payloadRef => {
+              state.load(params.mid, payloadRef.val());
+            });
+  }
 }
 
+initializeFirebase();
 initializeContentTypes(ct, null);
 const state = new State();
 window.onload = () => { start(); };
