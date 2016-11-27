@@ -142,12 +142,16 @@ class TextGesture extends Gesture {
     if ((this.mode_ == 'adding' || this.mode_ == 'resizing')
         && this.startCell_) {
       this.stopHover();
-      this.anchorCell_ = null;
       if (this.mode_ == 'adding') {
         this.startEditing_();
       } else {
+        if (this.mode_ == 'resizing') {
+          this.apply_();
+        }
         state.recordOperationComplete();
       }
+      this.anchorCell_ = null;
+      this.originalEndCell_ = null;
     }
     // Return to some safe default.
     this.mode_ = 'adding';

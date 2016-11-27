@@ -173,16 +173,22 @@ class State {
   recordState_() {
     if (!this.mid_) {
       this.mid_ = this.createNewMid_();
+      firebase.database().ref(`/maps/${this.mid_}/payload`).set(this.pstate)
+          .then(() => {
+            window.history.replaceState(
+                null, '', 'index.html?mid=' + encodeURIComponent(this.mid_));
+            firebase.database()
+                .ref(`/maps/${this.mid_}/payload`)
+                    .on('value', payloadRef => {
+                      this.load(this.mid_, payloadRef.val());
+                    });
+          })
+          .catch(error => {
+            this.mid_ = null;
+          });
+    } else {
+      firebase.database().ref(`/maps/${this.mid_}/payload`).set(this.pstate);
     }
-    firebase.database().ref(`/maps/${this.mid_}/payload`).set(this.pstate)
-        .then(() => {
-          window.history.replaceState(
-              null, '', 'index.html?mid=' + encodeURIComponent(this.mid_));
-        })
-        .catch(error => {
-          this.mid_ = null;
-          console.log('State recording failed - map not saved on server!');
-        });
   }
 
   // Create a random 10-character string with characters belonging to [a-z0-9].
