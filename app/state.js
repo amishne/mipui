@@ -2,10 +2,7 @@ class State {
   constructor() {
     this.pstate = {
       version: '1.0',
-      gridData: {
-        from: 0,
-        to: 25,
-      },
+      gridData: null,
       // Map cell key to a map which maps layer IDs to the content of that
       // layer.
       // "Content" is a mapping of content key (ck) to content type (ct) IDs.
@@ -44,11 +41,17 @@ class State {
       [ck.variation]: ct.terrain.wall.generic.id,
     };
 
+    this.defaultGridData_ = {
+      from: 0,
+      to: 25,
+    };
+
     this.autoSaveTimerId_ = null;
   }
 
   getLayerContent(cellKey, layer) {
-    const cellContent = this.pstate.content[cellKey];
+    const content = this.pstate.content || null;
+    const cellContent = content ? content[cellKey] : null;
     const layerContent = cellContent ? cellContent[layer.id] : null;
     if (!layerContent && layer == ct.terrain) {
       // Missing terrain translates to the default terrain content.
@@ -58,6 +61,9 @@ class State {
   }
 
   setLayerContent(cellKey, layer, content) {
+    if (!this.pstate.content) {
+      this.pstate.content = {};
+    }
     let cellContent = this.pstate.content[cellKey];
     if (!cellContent) {
       if (!content) return;
@@ -67,13 +73,34 @@ class State {
       delete cellContent[layer.id];
       return;
     }
+    if (layer == ct.terrain &&
+        Object.keys(content).length == 2 &&
+        content[ck.kind] == this.defaultTerrainContent_[ck.kind] &&
+        content[ck.variation] == this.defaultTerrainContent_[ck.variation]) {
+      // If it's the terrain layer with a content equivalent to the default
+      // terrain, it can be deleted.
+      delete cellContent[layer.id];
+      return;
+    }
     cellContent[layer.id] = content;
+  }
+
+  getGridData() {
+    return this.pstate.gridData || this.defaultGridData_;
+  }
+
+  setGridData(gridData) {
+    if (gridData && gridData.from == this.defaultGridData_.from &&
+        gridData.to == this.defaultGridData_.to) {
+      gridData = null;
+    }
+    this.pstate.gridData = gridData;
   }
 
   load(mid, pstate) {
     this.mid_ = mid;
     this.pstate = pstate;
-    this.theMap.updateAllCells();
+    createTheMapAndUpdateElements();
   }
 
   recordCellChange(key, layer, oldContent, newContent) {

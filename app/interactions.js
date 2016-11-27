@@ -44,7 +44,7 @@ function handleMouseMoveEvent(mouseEvent) {
 
 function expandGrid(n) {
   state.recordOperationComplete();
-  const gridData = state.pstate.gridData;
+  const gridData = state.getGridData();
   changeGridDimensions(gridData.from - n, gridData.to + n);
   createTheMapAndUpdateElements();
   const offsetX = n * (state.theMap.cellWidth + state.theMap.dividerWidth);
@@ -57,14 +57,13 @@ function expandGrid(n) {
 }
 
 function changeGridDimensions(newFrom, newTo) {
-  const gridData = state.pstate.gridData;
+  const gridData = state.getGridData();
   const oldFrom = gridData.from;
   const oldTo = gridData.to;
   if (oldFrom == newFrom && oldTo == newTo) {
     return;
   }
-  state.pstate.gridData.from = newFrom;
-  state.pstate.gridData.to = newTo;
+  state.setGridData({ from: newFrom, to: newTo });
   state.recordGridDataChange('from', oldFrom, newFrom);
   state.recordGridDataChange('to', oldTo, newTo);
 }
@@ -80,7 +79,7 @@ function resetView() {
 function resetGrid() {
   state.recordOperationComplete();
   state.theMap.resetToDefault();
-  changeGridDimensions(0, 25);
+  state.setGridData(null);
   createTheMapAndUpdateElements();
   resetView();
   state.recordOperationComplete();

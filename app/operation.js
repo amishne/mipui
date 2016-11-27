@@ -39,7 +39,10 @@ class Operation {
     });
     let gridDataChanged = false;
     this.gridDataChanges_.forEach((contentPair, property) => {
-      state.pstate.gridData[property] = contentPair[contentToUse];
+      const updatedGridData = {};
+      Object.assign(updatedGridData, state.getGridData());
+      updatedGridData[property] = contentPair[contentToUse];
+      state.setGridData(updatedGridData);
       gridDataChanged = true;
     });
     if (gridDataChanged) {

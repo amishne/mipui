@@ -8,7 +8,7 @@ function getUrlParams() {
 }
 
 function createTheMapAndUpdateElements() {
-  const gridData = state.pstate.gridData;
+  const gridData = state.getGridData();
   state.theMap.create(gridData.from, gridData.from, gridData.to, gridData.to);
   state.theMap.updateAllCells();
 }
