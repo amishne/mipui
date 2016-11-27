@@ -50,7 +50,7 @@ class TheMap {
     }
     this.createDividerRow_(gridLayer, minX, maxX, maxX - 1, maxX);
     this.currY += this.dividerHeight;
-    this.setMapSize_(this.currX, this.currY);
+    this.setMapSize_(this.currX + 1, this.currY + 1);
   }
 
   setMapSize_(width, height) {
