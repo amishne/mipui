@@ -1,14 +1,16 @@
 class Operation {
-  constructor() {
-    this.cellChanges_ = new Map();
-    this.gridDataChanges_ = new Map();
+  constructor(changes) {
+    this.changes = changes || {
+      cellChanges: {},
+      gridDataChanges : {},
+    };
   }
 
   addCellChange(key, layer, oldValue, newValue) {
-    let singleCellChanges = this.cellChanges_.get(key);
+    let singleCellChanges = this.changes.cellChanges[key];
     if (!singleCellChanges) {
       singleCellChanges = new Map();
-      this.cellChanges_.set(key, singleCellChanges);
+      this.changes.cellChanges[key] = singleCellChanges;
     }
     if (singleCellChanges.has(layer)) {
       // This overrides content that were already recorded as changed. In that
@@ -19,7 +21,7 @@ class Operation {
   }
 
   addGridDataChange(property, oldValue, newValue) {
-    this.gridDataChanges_.set(property, {oldValue, newValue});
+    this.changes.gridDataChanges[property] = {oldValue, newValue};
   }
 
   undo() {
@@ -31,17 +33,19 @@ class Operation {
   }
 
   undoOrRedo_(contentToUse) {
-    this.cellChanges_.forEach((valueMap, key) => {
+    Object.keys(this.changes.cellChanges).forEach(key => {
       const cell = state.theMap.cells.get(key);
-      valueMap.forEach((contentPair, layer) => {
-        cell.setLayerContent(layer, contentPair[contentToUse], false);
+      const cellChange = this.changes.cellChanges[key];
+      Object.keys(cellChange).forEach(layer => {
+        cell.setLayerContent(layer, cellChange[contentToUse], false);
       });
     });
     let gridDataChanged = false;
-    this.gridDataChanges_.forEach((contentPair, property) => {
+    Object.keys(this.changes.gridDataChanges).forEach(property => {
       const updatedGridData = {};
       Object.assign(updatedGridData, state.getGridData());
-      updatedGridData[property] = contentPair[contentToUse];
+      updatedGridData[property] =
+          this.changes.gridDataChanges[property][contentToUse];
       state.setGridData(updatedGridData);
       gridDataChanged = true;
     });
@@ -51,6 +55,7 @@ class Operation {
   }
 
   get length() {
-    return this.cellChanges_.size + this.gridDataChanges_.size;
+    return Object.keys(this.changes.cellChanges).length +
+        Object.keys(this.changes.gridDataChanges).length;
   }
 }

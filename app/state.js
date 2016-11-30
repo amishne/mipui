@@ -1,3 +1,61 @@
+// Update scheme!
+// Storage:
+// $mid: {
+//   version: "1.0",
+//   payload: {
+//     fullMap: {
+//       content: {...},
+//       gridData: {...},
+//       latestOperation: 3,
+//     },
+//     latestOperation: {
+//       num: 3,
+//       changes: {...}
+//     operations: {
+//       1: {...},
+//       2: {...},
+//       3: {...},
+//     }
+//   }
+// }
+// Update algorithm:
+// update(op) {
+//   transaction($mid/payload/latestOperation, fun(data) {
+//     if (!data || data conforms with op && data.num + 1 = op.num) {
+//       return op;
+//     }
+//   }, onSuccess() {
+//     // num is available!
+//     set($mid/payload/operations/3, op);
+//   }, onFailure() {
+//     undo op, apply latestOperation and increment counter, try to redo op.
+//     offer fork on redo failure?
+//   }
+// }
+// Read algorithm:
+// listenToChanges() {
+//   ref('$mid/payload/operations/latest/num').on(value) {
+//     if (value = null) {
+//       do nothing
+//     }
+//     if the value is higher than latestOperation, then for each in-between:
+//       apply new op, add to undo list, update latestOperation
+//   }
+// }
+// Rewrite algorithm:
+// rewrite() {
+//   transaction($mid/payload, fun(data) {
+//     if (data.fullMap.latestOperation < latestOperation &&
+//         data.latestOperation.num == latestOperation) {
+//       return {
+//         fullMap: this fullmap,
+//         latestOperation: null,
+//         operations: null,
+//       };
+//     }
+//   });
+// }
+
 class State {
   constructor() {
     this.pstate = {
