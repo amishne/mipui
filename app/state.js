@@ -1,61 +1,3 @@
-// Update scheme!
-// Storage:
-// $mid: {
-//   version: "1.0",
-//   payload: {
-//     fullMap: {
-//       content: {...},
-//       gridData: {...},
-//       latestOperation: 3,
-//     },
-//     latestOperation: {
-//       num: 3,
-//       changes: {...}
-//     operations: {
-//       1: {...},
-//       2: {...},
-//       3: {...},
-//     }
-//   }
-// }
-// Update algorithm:
-// update(op) {
-//   transaction($mid/payload/latestOperation, fun(data) {
-//     if (!data || data conforms with op && data.num + 1 = op.num) {
-//       return op;
-//     }
-//   }, onSuccess() {
-//     // num is available!
-//     set($mid/payload/operations/3, op);
-//   }, onFailure() {
-//     undo op, apply latestOperation and increment counter, try to redo op.
-//     offer fork on redo failure?
-//   }
-// }
-// Read algorithm:
-// listenToChanges() {
-//   ref('$mid/payload/operations/latest/num').on(value) {
-//     if (value = null) {
-//       do nothing
-//     }
-//     if the value is higher than latestOperation, then for each in-between:
-//       apply new op, add to undo list, update latestOperation
-//   }
-// }
-// Rewrite algorithm:
-// rewrite() {
-//   transaction($mid/payload, fun(data) {
-//     if (data.fullMap.latestOperation < latestOperation &&
-//         data.latestOperation.num == latestOperation) {
-//       return {
-//         fullMap: this fullmap,
-//         latestOperation: null,
-//         operations: null,
-//       };
-//     }
-//   });
-// }
-
 class State {
   constructor() {
     this.pstate = {
@@ -65,6 +7,7 @@ class State {
       // layer.
       // "Content" is a mapping of content key (ck) to content type (ct) IDs.
       content: {},
+      latestOperationNum: 0,
     };
 
     this.theMap = new TheMap();
@@ -78,7 +21,7 @@ class State {
       operationStack: [],
       // An operation containing changes since the last commit to the undo
       // stack.
-      currentOperation: new Operation(),
+      currentOperation: new Operation(1),
     };
 
     this.navigation = {
@@ -105,6 +48,10 @@ class State {
     };
 
     this.autoSaveTimerId_ = null;
+
+    this.pendingOperations_ = [];
+
+    this.currentlyProcessingOperations_ = false;
   }
 
   getLayerContent(cellKey, layer) {
@@ -159,6 +106,7 @@ class State {
     this.mid_ = mid;
     this.pstate = pstate;
     createTheMapAndUpdateElements();
+    this.listenForChanges_();
   }
 
   recordCellChange(key, layer, oldContent, newContent) {
@@ -185,30 +133,36 @@ class State {
 
   recordOperationComplete() {
     this.recordState_();
-    this.commitToUndoStack_();
+    const committedOperation =
+        this.commitToUndoStack_(this.undoStack.currentOperation);
     if (this.autoSaveTimerId_) {
       clearTimeout(this.autoSaveTimerId_);
       this.autoSaveTimerId_ = null;
     }
+    this.updateDb_(committedOperation);
   }
 
-  commitToUndoStack_() {
-    const currentOperation = this.undoStack.currentOperation;
-    if (currentOperation.length == 0) {
-      return;
+  performNewOperation_(op) {
+    op.redo();
+    this.commitToUndoStack_(op);
+  }
+
+  commitToUndoStack_(op) {
+    if (op.length == 0) {
+      return null;
     }
 
     const newStackTail = this.undoStack.operationStack.slice(
         this.undoStack.index, this.undoStack.index + 999);
 
-    this.undoStack.operationStack = [currentOperation]
-        .concat(newStackTail);
-    this.undoStack.currentOperation = new Operation();
+    this.undoStack.operationStack = [op].concat(newStackTail);
+    this.undoStack.currentOperation = new Operation(op.data.num + 1);
     this.undoStack.index = 0;
+    return op;
   }
 
   undo() {
-    this.commitToUndoStack_();
+    this.commitToUndoStack_(this.undoStack.currentOperation);
     const currentIndex = this.undoStack.index;
     const operation = this.undoStack.operationStack[currentIndex];
     if (!operation) return;
@@ -219,7 +173,7 @@ class State {
   }
 
   redo() {
-    this.commitToUndoStack_();
+    this.commitToUndoStack_(this.undoStack.currentOperation);
     const currentIndex = this.undoStack.index;
     const operation = this.undoStack.operationStack[currentIndex - 1];
     this.undoStack.index = Math.max(currentIndex - 1, 0);
@@ -231,21 +185,17 @@ class State {
   recordState_() {
     if (!this.mid_) {
       this.mid_ = this.createNewMid_();
-      firebase.database().ref(`/maps/${this.mid_}/payload`).set(this.pstate)
-          .then(() => {
-            window.history.replaceState(
-                null, '', 'index.html?mid=' + encodeURIComponent(this.mid_));
-            firebase.database()
-                .ref(`/maps/${this.mid_}/payload`)
-                    .on('value', payloadRef => {
-                      this.load(this.mid_, payloadRef.val());
-                    });
-          })
-          .catch(error => {
-            this.mid_ = null;
-          });
-    } else {
-      firebase.database().ref(`/maps/${this.mid_}/payload`).set(this.pstate);
+      firebase.database().ref(`/maps/${this.mid_}/payload/fullMap`)
+          .set(this.pstate)
+              .then(() => {
+                window.history
+                    .replaceState(
+                        null, '',
+                        'index.html?mid=' + encodeURIComponent(this.mid_));
+              })
+              .catch(error => {
+                this.mid_ = null;
+              });
     }
   }
 
@@ -253,5 +203,89 @@ class State {
   createNewMid_() {
     // From http://stackoverflow.com/a/19964557
     return (Math.random().toString(36)+'00000000000000000').slice(2, 12);
+  }
+
+  updateDb_(op) {
+    this.pendingOperations_.push(op);
+    if (!this.currentlyProcessingOperations_) {
+      this.processOperations_();
+    }
+  }
+
+  processOperations_() {
+    const firstOp = this.pendingOperations_[0];
+    if (!firstOp) {
+      this.currentlyProcessingOperations_ = false;
+      setStatus(Status.SAVED);
+      return;
+    }
+    this.currentlyProcessingOperations_ = true;
+    setStatus(Status.SAVING);
+    this.processOperation_(firstOp, isSuccessful => {
+      if (isSuccessful) {
+        this.pstate.latestOperationNum = firstOp.data.num;
+        this.pendingOperations_.shift();
+        this.processOperations_();
+      } else {
+        this.currentlyProcessingOperations_ = false;
+        setStatus(Status.UPDATING);
+      }
+    });
+  }
+
+  processOperation_(op, callback) {
+    const payloadPath = `/maps/${this.mid_}/payload`;
+    const latestOperationPath = payloadPath + '/latestOperation';
+    firebase.database().ref(latestOperationPath).transaction(currData => {
+      if (!currData ||
+          (currData.num + 1 == op.data.num && op.canBePrecededBy(currData))) {
+        return op.data;
+      }
+    }, (error, committed, snapshot) => {
+      if (error) {
+        console.log('Transaction failed abnormally!', error);
+        callback(false);
+      } else if (!committed) {
+        // Revert the local change!
+        op.undo();
+        // Stop processing for now.
+        callback(false);
+      } else {
+        // Success!
+        firebase.database()
+            .ref(`${payloadPath}/operations/${op.data.num}`).set(op.data);
+        callback(true);
+      }
+    }, false /* suppress updates on intermediate states */);
+  }
+
+  listenForChanges_() {
+    const latestOperationNumPath =
+        `/maps/${this.mid_}/payload/latestOperation/num`;
+    firebase.database().ref(latestOperationNumPath).on('value', numRef => {
+      setStatus(Status.UPDATING);
+      if (!numRef) return;
+      const num = numRef.val();
+      const currNum = this.pstate.latestOperationNum || 0;
+      if (num > currNum) {
+        this.loadAndPerformOperations_(currNum + 1, num);
+      }
+    });
+  }
+
+  loadAndPerformOperations_(fromNum, toNum) {
+    if (fromNum > toNum) {
+      setStatus(Status.READY);
+      return;
+    }
+    const path = `/maps/${this.mid_}/payload/operations/${fromNum}`;
+    firebase.database().ref(path).once('value', opDataRef => {
+      if (!opDataRef) return;
+      const opData = opDataRef.val();
+      const op = new Operation(opData.num, opData.changes);
+      this.performNewOperation_(op);
+      this.pstate.latestOperationNum = fromNum;
+      this.loadAndPerformOperations_(fromNum + 1, toNum);
+    });
   }
 }

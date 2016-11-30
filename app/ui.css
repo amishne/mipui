@@ -85,3 +85,15 @@
   border-right: 1px solid;
   border-bottom: 1px solid;
 }
+
+.status-initializing, .status-loading, .status-loading-failed {
+  color: darkred;
+}
+
+.status-unsaved, .status-saving, .status-updating {
+  color: yellow;
+}
+
+.status-ready, .status-saved {
+  color: greenyellow;
+}

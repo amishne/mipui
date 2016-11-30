@@ -10,6 +10,7 @@
   <script src="interactions.js" type="text/javascript"></script>
   <script src="operation.js" type="text/javascript"></script>
   <script src="state.js" type="text/javascript"></script>
+  <script src="status.js" type="text/javascript"></script>
   <script src="the_map.js" type="text/javascript"></script>
   <script src="utils.js" type="text/javascript"></script>
   <!-- gestures -->
@@ -26,6 +27,9 @@
 <body ondragstart="return false;" ondrop="return false;">
   <div id="app" class="app">
     <div class="toolbox">
+      <div>
+        <span id="status"></span>
+      </div>
       <button id="resetViewButton" class="reset-view-button">
         Reset view
       </button>

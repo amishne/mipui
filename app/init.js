@@ -46,16 +46,30 @@ function initializeFirebase() {
 }
 
 function start() {
+  setStatus(Status.INITIALIZING);
   createTheMapAndUpdateElements();
   resetView();
   wireUiElements();
   const params = getUrlParams();
   if (params.mid) {
+    setStatus(Status.LOADING);
     firebase.database()
         .ref('/maps/' + decodeURIComponent(params.mid) + '/payload')
-            .on('value', payloadRef => {
-              state.load(params.mid, payloadRef.val());
+            .once('value', payloadRef => {
+              if (!payloadRef) {
+                setStatus(Status.LOADING_FAILED);
+                return;
+              }
+              const payload = payloadRef.val();
+              if (!payload) {
+                setStatus(Status.LOADING_FAILED);
+                return;
+              }
+              state.load(params.mid, payload);
+              setStatus(Status.READY);
             });
+  } else {
+    setStatus(Status.READY);
   }
 }
 
