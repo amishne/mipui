@@ -2,7 +2,7 @@ let suiteTests_ = [];
 let testFailed_ = null;
 
 function assert(condition) {
-  testFailed_ &= !!condition;
+  testFailed_ |= !condition;
 }
 
 function addTest(name, fn) {
