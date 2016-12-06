@@ -72,6 +72,7 @@ class OperationCenter {
       if (!fullMap) return;
       // Check if our map is the same (or newer!)
       if (fullMap.lastOpNum <= state.getLastOpNum()) return;
+
       setStatus(Status.UPDATING);
       state.load(fullMap);
       this.lastFullMapNum_ = fullMap.lastOpNum;
@@ -83,6 +84,7 @@ class OperationCenter {
     if (!state.getMid()) return;
     const latestOperationNumPath =
         `/maps/${state.getMid()}/payload/latestOperation/n`;
+    let firstLoad = true;
     firebase.database().ref(latestOperationNumPath).on('value', numRef => {
       if (!numRef) return;
       const num = numRef.val();
@@ -96,7 +98,8 @@ class OperationCenter {
       } else {
         const fromNum = state.getLastOpNum() + 1;
         state.setLastOpNum(num);
-        this.loadAndPerformAndAddOperations_(fromNum, num);
+        this.loadAndPerformAndAddOperations_(fromNum, num, firstLoad);
+        firstLoad = false;
       }
     });
   }
@@ -121,8 +124,11 @@ class OperationCenter {
     }, 5000);
   }
 
-  loadAndPerformAndAddOperations_(fromNum, toNum) {
+  loadAndPerformAndAddOperations_(fromNum, toNum, rewriteWhenDone) {
     if (fromNum > toNum) {
+      if (rewriteWhenDone) {
+        this.rewrite_(toNum);
+      }
       // We're done getting changes from the database; now apply pending
       // changes.
       setStatus(Status.READY);
@@ -139,7 +145,8 @@ class OperationCenter {
       // And read it.
       const op = new Operation(opData);
       this.addRemoteOperation_(op);
-      this.loadAndPerformAndAddOperations_(fromNum + 1, toNum);
+      this.loadAndPerformAndAddOperations_(
+          fromNum + 1, toNum, rewriteWhenDone);
     });
   }
 
@@ -248,7 +255,7 @@ class OperationCenter {
     firebase.database().ref(latestOperationPath).transaction(currData => {
       // This condition enforces the linear constraint on operations.
       if (!currData || currData.n + 1 == op.num) {
-        state.setLastOpNum(op.num);
+        if (currData) state.setLastOpNum(op.num);
         return op.data;
       }
     }, (error, committed, snapshot) => {
@@ -297,6 +304,10 @@ class OperationCenter {
     // there's some basic requirement on the current operation num.
     if (num % 3 != 0) return;
 
+    this.rewrite_(num);
+  }
+
+  rewrite_(num) {
     const snapshot = JSON.parse(JSON.stringify(state.pstate_));
     const payloadPath = `/maps/${state.getMid()}/payload`;
     firebase.database().ref(payloadPath).transaction(currData => {
