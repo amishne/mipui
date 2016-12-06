@@ -1,8 +1,8 @@
 function handleKeyDownEvent(keyDownEvent) {
   if (keyDownEvent.ctrlKey) {
     switch (keyDownEvent.key) {
-      case 'z': state.undo(); break;
-      case 'y': state.redo(); break;
+      case 'z': state.opCenter.undo(); break;
+      case 'y': state.opCenter.redo(); break;
     }
   }
 }
@@ -43,7 +43,7 @@ function handleMouseMoveEvent(mouseEvent) {
 }
 
 function expandGrid(n) {
-  state.recordOperationComplete();
+  state.opCenter.recordOperationComplete();
   const gridData = state.getGridData();
   changeGridDimensions(gridData.from - n, gridData.to + n);
   createTheMapAndUpdateElements();
@@ -53,7 +53,7 @@ function expandGrid(n) {
   nav.translate.x -= offsetX * nav.scale;
   nav.translate.y -= offsetY * nav.scale;
   updateMapTransform();
-  state.recordOperationComplete();
+  state.opCenter.recordOperationComplete();
 }
 
 function changeGridDimensions(newFrom, newTo) {
@@ -64,8 +64,8 @@ function changeGridDimensions(newFrom, newTo) {
     return;
   }
   state.setGridData({ from: newFrom, to: newTo });
-  state.recordGridDataChange('from', oldFrom, newFrom);
-  state.recordGridDataChange('to', oldTo, newTo);
+  state.opCenter.recordGridDataChange('from', oldFrom, newFrom);
+  state.opCenter.recordGridDataChange('to', oldTo, newTo);
 }
 
 function resetView() {
@@ -77,12 +77,12 @@ function resetView() {
 }
 
 function resetGrid() {
-  state.recordOperationComplete();
+  state.opCenter.recordOperationComplete();
   state.theMap.resetToDefault();
   state.setGridData(null);
   createTheMapAndUpdateElements();
   resetView();
-  state.recordOperationComplete();
+  state.opCenter.recordOperationComplete();
 }
 
 function increaseBrushSize() {

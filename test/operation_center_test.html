@@ -6,7 +6,7 @@
   <script src="harness.js" type="text/javascript"></script>
   <script type="text/javascript">
     beforeSuite = () => {
-      mock('state', {mid: 'mid'});
+      mock('state.getMid()', 'mid');
       mock('Status', {
         SAVING: 'saving',
         SAVED: 'saved',
@@ -20,43 +20,46 @@
 
     beforeTest = () => {
       status = null;
+      lastOpNum = 0;
+      mock('state.getLastOpNum', () => lastOpNum);
+      mock('state.setLastOpNum', num => lastOpNum = num);
       opc = new OperationCenter();
     };
 
     addTest('successful local operation -> op is saved', () => {
-      mock('firebase.database().ref().transaction', (_, callback) => {
-        callback(null, true, null);
+      mock('firebase.database().ref().transaction', (code, callback) => {
+        callback(null, !!code({n: 0}), null);
         assert(status == Status.SAVED);
-        assert(opc.lastAcceptedOperationNumber_ == 1);
+        assert(lastOpNum == 1);
         testCompleted();
       });
-      opc.addLocalOperation(new Operation());
+      opc.addLocalOperation_(new Operation());
     });
 
     addTest('unsuccessful local operation -> status is saving', () => {
-      mock('firebase.database().ref().transaction', (_, callback) => {
-        callback(null, false, null);
+      mock('firebase.database().ref().transaction', (code, callback) => {
+        callback(null, !!code({n: 1}), null);
         assert(status == Status.SAVING);
-        assert(opc.lastAcceptedOperationNumber_ == 0);
+        assert(lastOpNum == 0);
         testCompleted();
       });
-      opc.addLocalOperation(new Operation());
+      opc.addLocalOperation_(new Operation());
     });
 
     addTest('unsuccessful local op followed by remote op ->' +
         'local op is resent', () => {
       mock('firebase.database().ref().off()', {});
       // Fail first transaction.
-      mock('firebase.database().ref().transaction', (_, firstCallback) => {
+      mock('firebase.database().ref().transaction', (code1, callback1) => {
         // Pass second transaction.
-        mock('firebase.database().ref().transaction', (_, secondCallback) => {
-          secondCallback(null, true, null);
+        mock('firebase.database().ref().transaction', (code2, callback2) => {
+          callback2(null, !!code2({n: 1}), null);
           assert(status == Status.SAVED);
-          assert(opc.lastAcceptedOperationNumber_ == 2);
+          assert(lastOpNum == 2);
           testCompleted();
         });
         assert(status == Status.SAVING);
-        firstCallback(null, false, null);
+        callback1(null, !!code1({n: 1}), null);
       });
       // When listening start, report a new remote op.
       mock('firebase.database().ref().on', (_, numCallback) => {
@@ -67,9 +70,9 @@
         });
         numCallback({val: () => 1});
       });
-      opc.addLocalOperation(new Operation());
+      opc.addLocalOperation_(new Operation());
       assert(status == Status.SAVING);
-      opc.startListening();
+      opc.startListeningForOperations();
     });
 
     addTest('unsuccessful local op followed by remote op voiding it -> ' +
@@ -100,31 +103,31 @@
           assert(status == Status.UPDATING);
           opCallback({val: () => remoteOp.data});
           assert(status == Status.READY);
-          assert(opc.lastAcceptedOperationNumber_ == 1);
+          assert(lastOpNum == 1);
           testCompleted();
         });
         numCallback({val: () => 1});
       });
       localOp.redo();
-      opc.addLocalOperation(localOp);
+      opc.addLocalOperation_(localOp);
       assert(status == Status.SAVING);
-      opc.startListening();
+      opc.startListeningForOperations();
     });
 
     addTest('multiple successful local operations -> all are saved', () => {
-      mock('firebase.database().ref().transaction', (_, firstCallback) => {
-        mock('firebase.database().ref().transaction', (_, secondCallback) => {
+      mock('firebase.database().ref().transaction', (code1, callback1) => {
+        mock('firebase.database().ref().transaction', (code2, callback2) => {
           assert(status == Status.SAVING);
-          secondCallback(null, true, null);
+          callback2(null, !!code2({n: 1}), null);
           assert(status == Status.SAVED);
-          assert(opc.lastAcceptedOperationNumber_ == 2);
+          assert(lastOpNum == 2);
           testCompleted();
         });
         assert(status == Status.SAVING);
-        firstCallback(null, true, null);
+        callback1(null, !!code1({n: 0}), null);
       });
-      opc.addLocalOperation(new Operation());
-      opc.addLocalOperation(new Operation());
+      opc.addLocalOperation_(new Operation());
+      opc.addLocalOperation_(new Operation());
     });
 
     addTest('both valid and invalid location operations -> ' +
@@ -179,15 +182,17 @@
       assert(cells.b[ck.kind] == 'b loc1');
       assert(cells.c[ck.kind] == 'c loc2');
 
-      // Mock transactions that will fail the first 4 times.
+      // Mock transactions that always succeed, starting from 1.
       let transactionNumber = 0;
-      mock('firebase.database().ref().transaction', (_, firstCallback) => {
+      mock('firebase.database().ref().transaction', (code, callback) => {
         transactionNumber++;
-        firstCallback(null, transactionNumber > 4, null);
+        callback(null, !!code({n: transactionNumber}), null);
       });
 
-      // Add all local operations.
-      localOps.forEach(op => opc.addLocalOperation(op));
+      // Add all local operations, while forcefully suppressing saving.
+      opc.isCurrentlyProcessingPendingOperations_ = true;
+      localOps.forEach(op => opc.addLocalOperation_(op));
+      opc.isCurrentlyProcessingPendingOperations_ = false;
 
       // Mock the remote op in. When its data is applied, the test should be
       // done.
@@ -199,13 +204,13 @@
           assert(cells.a[ck.kind] == 'a loc3');
           assert(cells.b[ck.kind] == 'b remote');
           assert(cells.c[ck.kind] == 'c base');
-          assert(opc.lastAcceptedOperationNumber_ == 3);
+          assert(lastOpNum == 3);
           testCompleted();
         });
         numCallback({val: () => 1});
       });
 
-      opc.startListening();
+      opc.startListeningForOperations();
     });
   </script>
 </head>

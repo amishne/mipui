@@ -86,14 +86,14 @@
   border-bottom: 1px solid;
 }
 
-.status-initializing, .status-loading, .status-loading-failed {
+.status-error {
   color: darkred;
 }
 
-.status-unsaved, .status-saving, .status-updating {
+.status-unstable {
   color: yellow;
 }
 
-.status-ready, .status-saved {
+.status-good {
   color: greenyellow;
 }

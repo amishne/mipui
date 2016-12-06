@@ -148,7 +148,7 @@ class TextGesture extends Gesture {
         if (this.mode_ == 'resizing') {
           this.apply_();
         }
-        state.recordOperationComplete();
+        state.opCenter.recordOperationComplete();
       }
       this.anchorCell_ = null;
       this.originalEndCell_ = null;
@@ -347,7 +347,7 @@ class TextGesture extends Gesture {
       this.finishEditing_();
       deleteGesture.startGesture();
       deleteGesture.stopGesture();
-      state.recordOperationComplete();
+      state.opCenter.recordOperationComplete();
       e.stopPropagation();
       this.stopHover();
       this.startHover(this.startCell_);
@@ -467,7 +467,7 @@ class TextGesture extends Gesture {
       this.mode_ = 'reverting';
       this.apply_();
     }
-    state.recordOperationComplete();
+    state.opCenter.recordOperationComplete();
   }
 
   isCellEligible_(cell) {

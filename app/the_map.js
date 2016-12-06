@@ -2,7 +2,7 @@ class TheMap {
   constructor() {
     this.cells = new Map();
     this.defaultCellContent_ = new Map();
-    
+
     // Used during construction.
     this.cellHeight = null;
     this.cellWidth = null;
@@ -16,11 +16,11 @@ class TheMap {
   }
 
   static dividerCellKey(previousRow, previousColumn, nextRow, nextColumn) {
-    return `c ${previousRow},${previousColumn}:${nextRow},${nextColumn}`;
+    return `${previousRow},${previousColumn}:${nextRow},${nextColumn}`;
   }
 
   static primaryCellKey(row, column) {
-    return `c ${row},${column}`;
+    return `${row},${column}`;
   }
 
   resetToDefault() {

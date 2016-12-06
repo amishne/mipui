@@ -35,7 +35,8 @@ class Cell {
     const newContent = this.getLayerContent(layer);
     if (!sameContent(oldContent, newContent)) {
       if (recordChange) {
-        state.recordCellChange(this.key, layer, oldContent, newContent);
+        state.opCenter.
+            recordCellChange(this.key, layer, oldContent, newContent);
       }
       this.updateElement_(layer, oldContent, newContent);
     }

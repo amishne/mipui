@@ -175,7 +175,7 @@ class WallGesture extends Gesture {
   }
 
   stopGesture() {
-    state.recordOperationComplete();
+    state.opCenter.recordOperationComplete();
   }
 
   apply_() {

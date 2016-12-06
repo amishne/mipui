@@ -53,21 +53,7 @@ function start() {
   const params = getUrlParams();
   if (params.mid) {
     setStatus(Status.LOADING);
-    firebase.database()
-        .ref('/maps/' + decodeURIComponent(params.mid) + '/payload')
-            .once('value', payloadRef => {
-              if (!payloadRef) {
-                setStatus(Status.LOADING_FAILED);
-                return;
-              }
-              const payload = payloadRef.val();
-              if (!payload) {
-                setStatus(Status.LOADING_FAILED);
-                return;
-              }
-              state.load(params.mid, payload);
-              setStatus(Status.READY);
-            });
+    state.setMid(decodeURIComponent(params.mid));
   } else {
     setStatus(Status.READY);
   }

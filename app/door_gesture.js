@@ -159,7 +159,7 @@ class DoorGesture extends Gesture {
     if (this.shouldPaintWall_()) {
       this.makeWallGesture.stopGesture();
     }
-    state.recordOperationComplete();
+    state.opCenter.recordOperationComplete();
   }
 
   isCellEligible_(cell) {

@@ -84,16 +84,24 @@ class Operation {
 
   reverse() {
     const result = new Operation();
+    if (!this.data) return result;
+    result.data = {};
     if (this.data.c) {
+      result.data.c = {};
       Object.keys(this.data.c).forEach(key => {
-        const cell = state.theMap.cells.get(key);
         const cellChange = this.data.c[key];
+        result.data.c[key] = {};
         Object.keys(cellChange).forEach(layerId => {
-          result.data.c[key][layerId] = {o: cellChange.n, n: cellChange.o};
+          const cellLayerChange = cellChange[layerId];
+          result.data.c[key][layerId] = {
+            o: cellLayerChange.n,
+            n: cellLayerChange.o,
+          };
         });
       });
     }
     if (this.data.g) {
+      result.data.g = {};
       Object.keys(this.data.g).forEach(property => {
         const propertyChange = this.data.g[property];
         result.data.g[property] = {o: propertyChange.n, n: propertyChange.o};
