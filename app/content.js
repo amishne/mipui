@@ -54,7 +54,7 @@ const ck = {
 function sameContent(c1, c2) {
   if (!c1 && !c2) return true;
   if (!!c1 != !!c2) return false;
-  Object.keys(ck).every(k => {
+  return Object.keys(ck).every(k => {
     const key = ck[k];
     const has1 = c1.hasOwnProperty(key);
     const has2 = c2.hasOwnProperty(key);
@@ -82,3 +82,5 @@ function initializeContentTypes(obj) {
   });
   obj.children = children;
 }
+
+initializeContentTypes(ct);

@@ -2,39 +2,35 @@ const Status = {
   INITIALIZING: 'Initializing...',
   READY: 'Ready',
   LOADING: 'Loading...',
+  LOADING_FAILED: 'Loading failed',
   UNSAVED: 'Unsaved',
   SAVING: 'Saving...',
   SAVED: 'Saved',
+  SAVE_ERROR: 'Save error',
   UPDATING: 'Updating...',
-  LOADING_FAILED: 'Loading failed',
+  UPDATE_ERROR: 'Update error',
 };
 
 function setStatus(status) {
   const element = document.getElementById('status');
   element.textContent = status;
   switch(status) {
+    // No work can be done in these cases:
     case Status.INITIALIZING:
-      element.className = 'status-initializing';
-      break;
-    case Status.READY:
-      element.className = 'status-ready';
-      break;
     case Status.LOADING:
-      element.className = 'status-loading';
-      break;
-    case Status.UNSAVED:
-      element.className = 'status-unsaved';
-      break;
-    case Status.SAVING:
-      element.className = 'status-saving';
-      break;
-    case Status.SAVED:
-      element.className = 'status-saved';
-      break;
-    case Status.UPDATING:
-      element.className = 'status-updating';
-      break;
     case Status.LOADING_FAILED:
-      element.className = 'status-loading-failed';
+      element.className = 'status-error';
+      break;
+    // Something's still progress or not quite right, but work can be done:
+    case Status.UNSAVED:
+    case Status.SAVING:
+    case Status.UPDATING:
+      element.className = 'status-unstable';
+      break;
+    // Everything's good:
+    case Status.READY:
+    case Status.SAVED:
+      element.className = 'status-good';
+      break;
   }
 }

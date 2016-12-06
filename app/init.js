@@ -74,6 +74,5 @@ function start() {
 }
 
 initializeFirebase();
-initializeContentTypes(ct, null);
 const state = new State();
 window.onload = () => { start(); };

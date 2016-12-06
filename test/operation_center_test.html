@@ -1,0 +1,213 @@
+<html>
+<head>
+  <script src="../app/content.js" type="text/javascript"></script>
+  <script src="../app/operation.js" type="text/javascript"></script>
+  <script src="../app/operation_center.js" type="text/javascript"></script>
+  <script src="harness.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    beforeSuite = () => {
+      mock('state', {mid: 'mid'});
+      mock('Status', {
+        SAVING: 'saving',
+        SAVED: 'saved',
+        READY: 'ready',
+        UPDATING: 'updating',
+      });
+      mock('setStatus', s => status = s);
+      mock('firebase.database().ref().set()', {});
+      mock('firebase.database().ref().transaction()', {});
+    };
+
+    beforeTest = () => {
+      status = null;
+      opc = new OperationCenter();
+    };
+
+    addTest('successful local operation -> op is saved', () => {
+      mock('firebase.database().ref().transaction', (_, callback) => {
+        callback(null, true, null);
+        assert(status == Status.SAVED);
+        assert(opc.lastAcceptedOperationNumber_ == 1);
+        testCompleted();
+      });
+      opc.addLocalOperation(new Operation());
+    });
+
+    addTest('unsuccessful local operation -> status is saving', () => {
+      mock('firebase.database().ref().transaction', (_, callback) => {
+        callback(null, false, null);
+        assert(status == Status.SAVING);
+        assert(opc.lastAcceptedOperationNumber_ == 0);
+        testCompleted();
+      });
+      opc.addLocalOperation(new Operation());
+    });
+
+    addTest('unsuccessful local op followed by remote op ->' +
+        'local op is resent', () => {
+      mock('firebase.database().ref().off()', {});
+      // Fail first transaction.
+      mock('firebase.database().ref().transaction', (_, firstCallback) => {
+        // Pass second transaction.
+        mock('firebase.database().ref().transaction', (_, secondCallback) => {
+          secondCallback(null, true, null);
+          assert(status == Status.SAVED);
+          assert(opc.lastAcceptedOperationNumber_ == 2);
+          testCompleted();
+        });
+        assert(status == Status.SAVING);
+        firstCallback(null, false, null);
+      });
+      // When listening start, report a new remote op.
+      mock('firebase.database().ref().on', (_, numCallback) => {
+        // Ensure the next on() returns the new op.
+        mock('firebase.database().ref().on', (_, opCallback) => {
+          assert(status == Status.UPDATING);
+          opCallback({val: () => ({})});
+        });
+        numCallback({val: () => 1});
+      });
+      opc.addLocalOperation(new Operation());
+      assert(status == Status.SAVING);
+      opc.startListening();
+    });
+
+    addTest('unsuccessful local op followed by remote op voiding it -> ' +
+        'local op is not resent', () => {
+      const localOp = new Operation();
+      localOp
+          .addCellChange(
+              'cell_key', ct.terrain, {[ck.kind]: 1}, {[ck.kind]: 2});
+      const remoteOp = new Operation();
+      remoteOp
+          .addCellChange(
+              'cell_key', ct.terrain, {[ck.kind]: 1}, {[ck.kind]: 3});
+      remoteOp.num = 1;
+      let layerContent = {[ck.kind]: 1};
+      mock('state.theMap.cells.get().setLayerContent', (_1, content, _2) => {
+        layerContent = content;
+      });
+      mock('state.theMap.cells.get().getLayerContent', (_) => layerContent);
+      mock('firebase.database().ref().off()', {});
+      // Fail first transaction.
+      mock('firebase.database().ref().transaction', (_, callback) => {
+        callback(null, false, null);
+      });
+      // When listening start, report a new remote op.
+      mock('firebase.database().ref().on', (_, numCallback) => {
+        // Ensure the next on() returns the new op.
+        mock('firebase.database().ref().on', (_, opCallback) => {
+          assert(status == Status.UPDATING);
+          opCallback({val: () => remoteOp.data});
+          assert(status == Status.READY);
+          assert(opc.lastAcceptedOperationNumber_ == 1);
+          testCompleted();
+        });
+        numCallback({val: () => 1});
+      });
+      localOp.redo();
+      opc.addLocalOperation(localOp);
+      assert(status == Status.SAVING);
+      opc.startListening();
+    });
+
+    addTest('multiple successful local operations -> all are saved', () => {
+      mock('firebase.database().ref().transaction', (_, firstCallback) => {
+        mock('firebase.database().ref().transaction', (_, secondCallback) => {
+          assert(status == Status.SAVING);
+          secondCallback(null, true, null);
+          assert(status == Status.SAVED);
+          assert(opc.lastAcceptedOperationNumber_ == 2);
+          testCompleted();
+        });
+        assert(status == Status.SAVING);
+        firstCallback(null, true, null);
+      });
+      opc.addLocalOperation(new Operation());
+      opc.addLocalOperation(new Operation());
+    });
+
+    addTest('both valid and invalid location operations -> ' +
+        'only valid are saved', () => {
+      // Setup 3 cells.
+      const cells = {
+        a: {[ck.kind]: 'a base'},
+        b: {[ck.kind]: 'b base'},
+        c: {[ck.kind]: 'c base'},
+      };
+      mock('state.theMap.cells.get', (key) => {
+        return {
+          getLayerContent: _ => cells[key],
+          setLayerContent: (_1, content, _2) => { cells[key] = content; },
+        };
+      });
+
+      // Setup a remote op affecting cell b.
+      const remoteOp = new Operation();
+      remoteOp
+          .addCellChange(
+              'b', ct.terrain, {[ck.kind]: 'b base'}, {[ck.kind]: 'b remote'});
+
+      // Setup 4 local ops to follow the remote op.
+      // 1 and 4 are valid; 2 is directly invalid, and 3 is indirectly invalid
+      // since it depends on 2.
+      const localOps = [
+        new Operation(),
+        new Operation(),
+        new Operation(),
+        new Operation(),
+      ];
+      localOps[0]
+          .addCellChange(
+              'a', ct.terrain, {[ck.kind]: 'a base'}, {[ck.kind]: 'a loc0'});
+      localOps[1]
+          .addCellChange(
+              'b', ct.terrain, {[ck.kind]: 'b base'}, {[ck.kind]: 'b loc1'});
+      localOps[1]
+          .addCellChange(
+              'c', ct.terrain, {[ck.kind]: 'c base'}, {[ck.kind]: 'c loc1'});
+      localOps[2]
+          .addCellChange(
+              'c', ct.terrain, {[ck.kind]: 'c loc1'}, {[ck.kind]: 'c loc2'});
+      localOps[3]
+          .addCellChange(
+              'a', ct.terrain, {[ck.kind]: 'a loc0'}, {[ck.kind]: 'a loc3'});
+
+      // Apply the operations and verify they worked.
+      localOps.forEach(op => op.redo());
+      assert(cells.a[ck.kind] == 'a loc3');
+      assert(cells.b[ck.kind] == 'b loc1');
+      assert(cells.c[ck.kind] == 'c loc2');
+
+      // Mock transactions that will fail the first 4 times.
+      let transactionNumber = 0;
+      mock('firebase.database().ref().transaction', (_, firstCallback) => {
+        transactionNumber++;
+        firstCallback(null, transactionNumber > 4, null);
+      });
+
+      // Add all local operations.
+      localOps.forEach(op => opc.addLocalOperation(op));
+
+      // Mock the remote op in. When its data is applied, the test should be
+      // done.
+      mock('firebase.database().ref().on', (_, numCallback) => {
+        // Ensure the next on() returns the new op.
+        mock('firebase.database().ref().on', (_, opCallback) => {
+          opCallback({val: () => remoteOp.data});
+          // Test done!
+          assert(cells.a[ck.kind] == 'a loc3');
+          assert(cells.b[ck.kind] == 'b remote');
+          assert(cells.c[ck.kind] == 'c base');
+          assert(opc.lastAcceptedOperationNumber_ == 3);
+          testCompleted();
+        });
+        numCallback({val: () => 1});
+      });
+
+      opc.startListening();
+    });
+  </script>
+</head>
+  <body></body>
+</html>

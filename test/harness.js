@@ -1,12 +1,23 @@
 let suiteTests_ = [];
-let testFailed_ = null;
+let currentTestIndex_ = 0;
 
 function assert(condition) {
-  testFailed_ |= !condition;
+  suiteTests_[currentTestIndex_].passed &= !!condition;
+  if (!condition) {
+    console.log(`Assert failed in '${suiteTests_[currentTestIndex_].name}':`);
+    console.trace();
+  }
+}
+
+function testCompleted() {
+  const currentTest = suiteTests_[currentTestIndex_];
+  applyTestResultToElement_(currentTest.passed, currentTest.element);
+  currentTestIndex_++;
+  runNextTest_();
 }
 
 function addTest(name, fn) {
-  suiteTests_.push({name, fn});
+  suiteTests_.push({name, fn, passed: true, element: null});
 }
 
 function mock(path, obj) {
@@ -27,20 +38,24 @@ function mock(path, obj) {
 }
 
 function runTests() {
+  currentTestIndex_ = 0;
   if (typeof beforeSuite !== 'undefined') beforeSuite();
-  suiteTests_.forEach(test => {
-    if (typeof beforeTest !== 'undefined') beforeTest();
-    testFailed_ = false;
-    const element = createTestElement_(document.body, test.name);
-    test.fn();
-    applyTestResultToElement_(testFailed_, element);
-  });
+  runNextTest_();
+}
+
+function runNextTest_() {
+  const test = suiteTests_[currentTestIndex_];
+  if (!test) return;
+  if (typeof beforeTest !== 'undefined') beforeTest();
+  test.passed = true;
+  test.element = createTestElement_(document.body, test.name);
+  test.fn();
 }
 
 function createTestElement_(parentElement, name) {
   const div = document.createElement('div');
   parentElement.appendChild(div);
-  div.append(`Test '${name}' `);
+  div.append(`Test ${currentTestIndex_ + 1} '${name}' `);
   const span = document.createElement('span');
   div.appendChild(span);
   span.textContent = 'running...';
@@ -48,9 +63,9 @@ function createTestElement_(parentElement, name) {
   return span;
 }
 
-function applyTestResultToElement_(testFailed, element) {
-  element.textContent = testFailed ? 'failed' : 'passed';
-  element.style.color = testFailed ? 'crimson' : 'limegreen';
+function applyTestResultToElement_(testPassed, element) {
+  element.textContent = testPassed ? 'passed' : 'failed';
+  element.style.color = testPassed ? 'limegreen' : 'crimson';
 }
 
 function globalFromPath_(path) {

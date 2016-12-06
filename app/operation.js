@@ -1,46 +1,45 @@
+// A set of state changes that should be applied (or undoed) together.
+// * Do not merge or split operations - the results may not be valid.
 class Operation {
-  constructor(num, changes) {
-    this.data = {
-      num,
-      changes: changes || {
-        cellChanges: {},
-        gridDataChanges : {},
-      },
+  constructor(data) {
+    this.data = data || {
+      c: {},
+      g: {},
     };
   }
 
   addCellChange(key, layer, oldValue, newValue) {
-    let singleCellChanges = this.data.changes.cellChanges[key];
+    let singleCellChanges = this.data.c[key];
     if (!singleCellChanges) {
       singleCellChanges = {};
-      this.data.changes.cellChanges[key] = singleCellChanges;
+      this.data.c[key] = singleCellChanges;
     }
     if (singleCellChanges[layer.id]) {
       // This overrides content that were already recorded as changed. In that
       // case, skip the intermediate content.
       oldValue = singleCellChanges[layer.id].oldValue;
     }
-    singleCellChanges[layer.id] = {oldValue, newValue};
+    singleCellChanges[layer.id] = {o: oldValue, n: newValue};
   }
 
   addGridDataChange(property, oldValue, newValue) {
-    this.data.changes.gridDataChanges[property] = {oldValue, newValue};
+    this.data.g[property] = {o: oldValue, n: newValue};
   }
 
   undo() {
-    this.undoOrRedo_('oldValue');
+    this.undoOrRedo_('o');
   }
 
   redo() {
-    this.undoOrRedo_('newValue');
+    this.undoOrRedo_('n');
   }
 
   undoOrRedo_(contentToUse) {
-    if (!this.data || !this.data.changes) return;
-    if (this.data.changes.cellChanges) {
-      Object.keys(this.data.changes.cellChanges).forEach(key => {
+    if (!this.data) return;
+    if (this.data.c) {
+      Object.keys(this.data.c).forEach(key => {
         const cell = state.theMap.cells.get(key);
-        const cellChange = this.data.changes.cellChanges[key];
+        const cellChange = this.data.c[key];
         Object.keys(cellChange).forEach(layerId => {
           const cellLayerChange = cellChange[layerId];
           const layer = ct.children[layerId];
@@ -48,13 +47,12 @@ class Operation {
         });
       });
     }
-    if (this.data.changes.gridDataChanges) {
+    if (this.data.g) {
       let gridDataChanged = false;
-      Object.keys(this.data.changes.gridDataChanges).forEach(property => {
+      Object.keys(this.data.g).forEach(property => {
         const updatedGridData = {};
         Object.assign(updatedGridData, state.getGridData());
-        updatedGridData[property] =
-            this.data.changes.gridDataChanges[property][contentToUse];
+        updatedGridData[property] = this.data.g[property][contentToUse];
         state.setGridData(updatedGridData);
         gridDataChanged = true;
       });
@@ -65,44 +63,66 @@ class Operation {
   }
 
   get length() {
-    if (!this.data || !this.data.changes) return 0;
-    return Object.keys(this.data.changes.cellChanges || {}).length +
-        Object.keys(this.data.changes.gridDataChanges || {}).length;
+    if (!this.data || !this.data.c) return 0;
+    return Object.keys(this.data.c || {}).length +
+        Object.keys(this.data.g || {}).length;
   }
 
-  canBePrecededBy(op) {
-    if (!op.data || !op.data.changes) return true;
-    return this.cellChangesCanBePrecededBy_(op) &&
-        this.gridChangesCanBePrecededBy_(op);
+  get num() {
+    return this.data.n;
   }
 
-  cellChangesCanBePrecededBy_(op) {
-    if (!op.data.changes.cellChanges) return true;
-    return Object.keys(this.data.changes.cellChanges).every(key => {
-      const opCellChange = op.data.changes.cellChanges[key]
-      if (!opCellChange) return true;
-      const thisCellChange = this.data.changes.cellChanges[key];
-      return Object.keys(thisCellChange).every(layer => {
-        const opLayerContentPair = opCellChange[layer];
-        if (!opLayerContentPair) return true;
-        const thisLayerContentPair = thisCellChange[layer];
-        // If we got here, both this and op modify the same layer of the same
-        // cell. Ensure the changes are compataible.
-        return
-            sameContent(
-                thisLayerContentPair.oldValue,
-                opLayerContentPair.newValue);
+  set num(num) {
+    this.data.n = num;
+  }
+
+  isLegalToRedo() {
+    if (!this.data) return true;
+    return this.cellChangesAreLegalToRedo_() &&
+        this.gridChangesAreLegalToRedo_();
+  }
+
+  reverse() {
+    const result = new Operation();
+    if (this.data.c) {
+      Object.keys(this.data.c).forEach(key => {
+        const cell = state.theMap.cells.get(key);
+        const cellChange = this.data.c[key];
+        Object.keys(cellChange).forEach(layerId => {
+          result.data.c[key][layerId] = {o: cellChange.n, n: cellChange.o};
+        });
+      });
+    }
+    if (this.data.g) {
+      Object.keys(this.data.g).forEach(property => {
+        const propertyChange = this.data.g[property];
+        result.data.g[property] = {o: propertyChange.n, n: propertyChange.o};
+      });
+    }
+    return result;
+  }
+
+  cellChangesAreLegalToRedo_() {
+    if (!this.data.c) return true;
+    return Object.keys(this.data.c).every(key => {
+      const cell = state.theMap.cells.get(key);
+      if (!cell) return false;
+      const cellChange = this.data.c[key];
+      return Object.keys(cellChange).every(layerId => {
+        const cellLayerChange = cellChange[layerId];
+        const layer = ct.children[layerId];
+        return sameContent(cellLayerChange.o, cell.getLayerContent(layer));
       });
     });
   }
 
-  gridChangesCanBePrecededBy_(op) {
-    if (!op.data.changes.gridChanges) return true;
-    return Object.keys(this.data.changes.gridChanges).every(property => {
-      const opChange = op.data.changes.gridChanges[property];
+  gridChangesAreLegalToRedo_() {
+    if (!this.data.g) return true;
+    return Object.keys(this.data.g).every(property => {
+      const opChange = this.data.g[property];
       if (!opChange) return true;
-      const thisChange = this.data.changes.gridData[property];
-      return thisChange.oldValue == opChange.newValue;
+      const thisChange = this.data.g[property];
+      return thisChange.o == state.getGridData()[property];
     });
   }
 }
