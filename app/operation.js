@@ -3,7 +3,11 @@
 class Operation {
   constructor(data) {
     this.data = data || {
+      // Operation identifiers.
+      i: {},
+      // Cell changes.
       c: {},
+      // Grid changes.
       g: {},
     };
   }
@@ -69,11 +73,33 @@ class Operation {
   }
 
   get num() {
-    return this.data.n;
+    if (!this.data || !this.data.i) return null;
+    return this.data.i.n;
   }
 
   set num(num) {
-    this.data.n = num;
+    if (!this.data) {
+      this.data = {};
+    }
+    if (!this.data.i) {
+      this.data.i = {};
+    }
+    this.data.i.n = num;
+  }
+
+  get fingerprint() {
+    if (!this.data || !this.data.i) return null;
+    return this.data.i.f;
+  }
+
+  set fingerprint(fingerprint) {
+    if (!this.data) {
+      this.data = {};
+    }
+    if (!this.data.i) {
+      this.data.i = {};
+    }
+    this.data.i.f = fingerprint;
   }
 
   isLegalToRedo() {

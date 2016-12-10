@@ -1,5 +1,8 @@
 let suiteTests_ = [];
 let currentTestIndex_ = 0;
+const PATH_FUNCTION_REGEX = /\([^)]*\)$/;
+const PATH_FUNCTION_MATCH_REGEX = /\(([^)]*)\)$/;
+let allowMatchers = true;
 
 function assert(condition) {
   suiteTests_[currentTestIndex_].passed &= !!condition;
@@ -27,12 +30,13 @@ function mock(path, obj) {
     prefix = prefix.concat([name]);
     return result;
   });
-  const functionObjects = {};
   let child = obj;
   for (let i = parts.length - 1; i >= 0; i--) {
     const part = parts[i];
+    allowMatchers = false;
     const parent =
         part.prefix.length == 0 ? window : globalFromPath_(part.prefix);
+    allowMatchers = true;
     child = mockPart_(parent, part.name, child);
   }
 }
@@ -71,22 +75,63 @@ function applyTestResultToElement_(testPassed, element) {
 function globalFromPath_(path) {
   let global = window;
   for (let i = 0; i < path.length; i++) {
-    global = global[path[i].replace('()', '')];
+    const part = path[i];
+    global = global[part.replace(PATH_FUNCTION_REGEX, '')];
     if (!global) return null;
-    if (path[i].endsWith('()')) global = global();
+    const args = getArgs_(part);
+    if (args != null) {
+      global = global.apply(this, args);
+    }
   }
   return global;
 }
 
-function mockPart_(parent, name, child) {
-  const field = {
-    [name.replace('()', '')]: name.endsWith('()') ? () => child : child
-  };
+function getArgs_(part) {
+  const argStringMatch = part.match(PATH_FUNCTION_MATCH_REGEX);
+  return argStringMatch != null ? eval('[' + argStringMatch[1] + ']') : null;
+}
+
+function mockPart_(parent, part, child) {
+  const args = getArgs_(part);
+  if (args != null) {
+    return mockFunc_(
+        parent, part.replace(PATH_FUNCTION_REGEX, ''), child, args);
+  } else {
+    return mockField_(parent, part, child);
+  }
+}
+
+function mockField_(parent, name, child) {
+  const field = {[name]: child};
   if (parent) {
     Object.assign(parent, field);
     return parent;
   } else {
     return field;
+  }
+}
+
+function mockFunc_(parent, name, child, args) {
+  let existingFunc = () => null;
+  if (parent && parent[name] && typeof parent[name] === 'function') {
+    existingFunc = parent[name];
+  }
+  const func = function() {
+    for (let i = 0; i < Math.max(args.length, arguments.length); i++) {
+      if (i >= args.length) return existingFunc.apply(this, arguments);
+      if (allowMatchers && args[i] == '$all') break;
+      if (allowMatchers && args[i] == '$any') continue;
+      if (i >= arguments.length || arguments[i] != args[i]) {
+        return existingFunc.apply(this, arguments);
+      }
+    }
+    return child;
+  };
+  if (parent) {
+    parent[name] = func;
+    return parent;
+  } else {
+    return {[name]: func};
   }
 }
 

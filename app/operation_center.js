@@ -13,11 +13,21 @@ class OperationCenter {
     // All operations performed locally that have not yet been sent to and
     // accepted by the database.
     this.pendingLocalOperations_ = [];
+    // All operations performed remotely that have been accepted by the
+    // database but not yet applied locally.
+    this.incomingRemoteOperations_ = [];
     // True if local pending operations are currently being sent to the
     // database, or re-applied for incoming operations.
     this.isCurrentlyProcessingPendingOperations_ = false;
     // The last-operation num for the fullMap stored in the database.
     this.lastFullMapNum_ = 0;
+    // The operation we are currently sending, to avoid re-applying it when
+    // read.
+    this.opBeingSent_ = null;
+    // Whether opBeingSent_ has been accepted.
+    this.opBeingSentWasAccepted_ = false;
+    // Whether our current operation read if the first time we're doing so.
+    this.firstLoad_ = true;
 
     // Undo-related fields.
 
@@ -74,6 +84,7 @@ class OperationCenter {
       if (fullMap.lastOpNum <= state.getLastOpNum()) return;
 
       setStatus(Status.UPDATING);
+      this.recordOperationComplete();
       state.load(fullMap);
       this.lastFullMapNum_ = fullMap.lastOpNum;
       setStatus(Status.READY);
@@ -82,24 +93,36 @@ class OperationCenter {
 
   startListeningForOperations() {
     if (!state.getMid()) return;
-    const latestOperationNumPath =
-        `/maps/${state.getMid()}/payload/latestOperation/n`;
-    let firstLoad = true;
-    firebase.database().ref(latestOperationNumPath).on('value', numRef => {
-      if (!numRef) return;
-      const num = numRef.val();
-      if (num === null) return;
+    const latestOpIdentityPath =
+        `/maps/${state.getMid()}/payload/latestOperation/i`;
+    this.firstLoad_ = true;
+    firebase.database().ref(latestOpIdentityPath).on('value', identityRef => {
+      if (!identityRef) return;
+      const identity = identityRef.val();
+      if (!identity) return;
+
       setStatus(Status.UPDATING);
+      const num = typeof identity.n !== 'undefined' ? identity.n : -1;
+      const fingerprint = typeof identity.f !== 'undefined' ? identity.f : -1;
       if (num < state.getLastOpNum()) {
         // This should never happen. Just skip this update.
         setStatus(Status.UPDATE_ERROR);
+      } else if (
+            this.opBeingSent_ &&
+            this.opBeingSent_.num == num &&
+            this.opBeingSent_.fingerprint == fingerprint) {
+        // This is caused by our own incomplete sendOp_().
+        this.opBeingSentWasAccepted_ = true;
       } else if (num == state.getLastOpNum()) {
-        // This is caused by our own sendOp_(), so do nothing.
+        // This is caused by our last completed sendOp_(), so do nothing.
       } else {
-        const fromNum = state.getLastOpNum() + 1;
+        let fromNum = state.getLastOpNum() + 1;
+        if (this.opBeingSentWasAccepted_) {
+          fromNum = this.opBeingSent_.num + 1;
+        }
         state.setLastOpNum(num);
-        this.loadAndPerformAndAddOperations_(fromNum, num, firstLoad);
-        firstLoad = false;
+        this.loadAndPerformAndAddOperations_(fromNum, num, this.firstLoad_);
+        this.firstLoad_ = false;
       }
     });
   }
@@ -170,11 +193,15 @@ class OperationCenter {
     this.undoPendingOperations_();
     this.addOperation_(op);
     op.redo();
+    console.log(`Remote operation applied`);
+    console.log(op);
     this.redoPendingOperations_();
   }
 
   undoPendingOperations_() {
-    for (let i = this.pendingLocalOperations_.length - 1; i >= 0; i--) {
+    const lastOpToRedo = this.pendingLocalOperations_.length - 1;
+    const firstOpToRedo = this.opBeingSentWasAccepted_ ? 1 : 0;
+    for (let i = lastOpToRedo; i >= firstOpToRedo; i--) {
       this.pendingLocalOperations_[i].undo();
     }
   }
@@ -183,11 +210,17 @@ class OperationCenter {
     const newPendingLocalOperations = [];
     for (let i = 0; i < this.pendingLocalOperations_.length; i++) {
       const op = this.pendingLocalOperations_[i];
+      if (i == 0 && this.opBeingSentWasAccepted_) {
+        newPendingLocalOperations.push(op);
+        continue;
+      }
       if (op.isLegalToRedo()) {
         op.redo();
         newPendingLocalOperations.push(op);
       } else {
         // Don't add conflicting operations back to newPendingLocalOperations.
+        console.log(`Pending op #${i} in conflict`);
+        console.log(op);
       }
     }
     this.pendingLocalOperations_ = newPendingLocalOperations;
@@ -250,15 +283,19 @@ class OperationCenter {
       this.startListeningForOperations();
     }
     op.num = state.getLastOpNum() + 1;
+    op.fingerprint = Math.floor(Math.random() * 1000);
+    this.opBeingSent_ = op;
+    this.opBeingSentWasAccepted_ = false;
     const latestOperationPath =
         `/maps/${state.getMid()}/payload/latestOperation`;
     firebase.database().ref(latestOperationPath).transaction(currData => {
       // This condition enforces the linear constraint on operations.
-      if (!currData || currData.n + 1 == op.num) {
-        if (currData) state.setLastOpNum(op.num);
+      if (!currData || !currData.i || currData.i.n + 1 == op.num) {
         return op.data;
       }
     }, (error, committed, snapshot) => {
+      this.opBeingSent_ = null;
+      this.opBeingSentWasAccepted_ = false;
       if (error) {
         this.handleOperationSendError_(op, error);
       } else if (!committed) {
@@ -270,8 +307,12 @@ class OperationCenter {
   }
 
   handleOperationSendSuccess_(op) {
+    console.log(`Local operation accepted`);
+    console.log(op);
     this.pendingLocalOperations_.shift();
-    // state.setLastOpNum(op.num);
+    if (state.getLastOpNum() < op.num) {
+      state.setLastOpNum(op.num);
+    }
     // Immediately try updating with the next pending operation (if any).
     this.continueSendingPendingLocalOperations_();
     // And concurrently, actually write the operation in its place.
@@ -315,7 +356,7 @@ class OperationCenter {
         // Verify the current fullMap isn't the same or newer.
         if (currData.fullMap && currData.fullMap.lastOpNum >= num) return;
         // Verify the latest operation is the current one.
-        if (currData.latestOperation && currData.latestOperation.n != num) {
+        if (currData.latestOperation && currData.latestOperation.i.n != num) {
           return;
         }
       }

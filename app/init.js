@@ -42,7 +42,7 @@ function initializeFirebase() {
     databaseURL: "https://mipui-a13b3.firebaseio.com",
   };
   firebase.initializeApp(config);
-  firebase.database.enableLogging(true);
+  firebase.database.enableLogging(false);
 }
 
 function start() {

@@ -14,8 +14,11 @@
         UPDATING: 'updating',
       });
       mock('setStatus', s => status = s);
-      mock('firebase.database().ref().set()', {});
-      mock('firebase.database().ref().transaction()', {});
+      mock(getOpMockPath(1) + '.set("$all")', {});
+      mock(getOpMockPath(2) + '.set("$all")', {});
+      mock(getOpMockPath(3) + '.set("$all")', {});
+      mock(getOpMockPath(1) + '.off("$all")', {});
+      mock(getOpMockPath(2) + '.off("$all")', {});
     };
 
     beforeTest = () => {
@@ -26,9 +29,32 @@
       opc = new OperationCenter();
     };
 
+    function createIdentity(n, f) {
+      const identity = {};
+      if (typeof n !== 'undefined') identity['n'] = n;
+      if (typeof f !== 'undefined') identity['f'] = f;
+      return {i: identity};
+    }
+
+    function getLatestIdentityOnMockPath() {
+      return 'firebase.database().ref("/maps/mid/payload/latestOperation/i")' +
+          '.on';
+    }
+
+    function getLatestOpTransactionMockPath() {
+      return 'firebase.database().ref("/maps/mid/payload/latestOperation")' +
+          '.transaction';
+    }
+
+    function getOpMockPath(num) {
+      return 'firebase.database().ref("/maps/mid/payload/operations/' +
+          num + '")';
+    }
+
     addTest('successful local operation -> op is saved', () => {
-      mock('firebase.database().ref().transaction', (code, callback) => {
-        callback(null, !!code({n: 0}), null);
+      mock(getOpMockPath(1) + '.set("$all")', {});
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        callback(null, !!code(createIdentity(0)), null);
         assert(status == Status.SAVED);
         assert(lastOpNum == 1);
         testCompleted();
@@ -37,8 +63,8 @@
     });
 
     addTest('unsuccessful local operation -> status is saving', () => {
-      mock('firebase.database().ref().transaction', (code, callback) => {
-        callback(null, !!code({n: 1}), null);
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        callback(null, !!code(createIdentity(1)), null);
         assert(status == Status.SAVING);
         assert(lastOpNum == 0);
         testCompleted();
@@ -48,28 +74,32 @@
 
     addTest('unsuccessful local op followed by remote op ->' +
         'local op is resent', () => {
-      mock('firebase.database().ref().off()', {});
-      // Fail first transaction.
-      mock('firebase.database().ref().transaction', (code1, callback1) => {
-        // Pass second transaction.
-        mock('firebase.database().ref().transaction', (code2, callback2) => {
-          callback2(null, !!code2({n: 1}), null);
+      let transactionCount = 0;
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        transactionCount++;
+        if (transactionCount == 1) {
+          assert(status == Status.SAVING);
+          callback(null, !!code(createIdentity(1)), null);
+        } else if (transactionCount == 2) {
+          callback(null, !!code(createIdentity(1)), null);
           assert(status == Status.SAVED);
           assert(lastOpNum == 2);
           testCompleted();
-        });
-        assert(status == Status.SAVING);
-        callback1(null, !!code1({n: 1}), null);
+        } else {
+          assert(false);
+        }
       });
-      // When listening start, report a new remote op.
-      mock('firebase.database().ref().on', (_, numCallback) => {
-        // Ensure the next on() returns the new op.
-        mock('firebase.database().ref().on', (_, opCallback) => {
-          assert(status == Status.UPDATING);
-          opCallback({val: () => ({})});
-        });
-        numCallback({val: () => 1});
+
+      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+        opc.firstLoad_ = false; // Don't rewrite.
+        identityCallback({val: () => createIdentity(1).i});
       });
+
+      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+        assert(status == Status.UPDATING);
+        opCallback({val: () => ({})});
+      });
+
       opc.addLocalOperation_(new Operation());
       assert(status == Status.SAVING);
       opc.startListeningForOperations();
@@ -87,27 +117,32 @@
               'cell_key', ct.terrain, {[ck.kind]: 1}, {[ck.kind]: 3});
       remoteOp.num = 1;
       let layerContent = {[ck.kind]: 1};
-      mock('state.theMap.cells.get().setLayerContent', (_1, content, _2) => {
+      mock('state.theMap.cells.get("$any").setLayerContent',
+          (_1, content, _2) => {
         layerContent = content;
       });
-      mock('state.theMap.cells.get().getLayerContent', (_) => layerContent);
-      mock('firebase.database().ref().off()', {});
-      // Fail first transaction.
-      mock('firebase.database().ref().transaction', (_, callback) => {
+      mock('state.theMap.cells.get("$any").getLayerContent',
+          (_) => layerContent);
+      mock(getOpMockPath(1) + '.set("$all")', {});
+      mock(getOpMockPath(1) + '.off("$all")', {});
+
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
         callback(null, false, null);
       });
-      // When listening start, report a new remote op.
-      mock('firebase.database().ref().on', (_, numCallback) => {
-        // Ensure the next on() returns the new op.
-        mock('firebase.database().ref().on', (_, opCallback) => {
-          assert(status == Status.UPDATING);
-          opCallback({val: () => remoteOp.data});
-          assert(status == Status.READY);
-          assert(lastOpNum == 1);
-          testCompleted();
-        });
-        numCallback({val: () => 1});
+
+      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+        opc.firstLoad_ = false; // Don't rewrite.
+        identityCallback({val: () => createIdentity(1).i});
       });
+
+      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+        assert(status == Status.UPDATING);
+        opCallback({val: () => remoteOp.data});
+        assert(status == Status.READY);
+        assert(lastOpNum == 1);
+        testCompleted();
+      });
+
       localOp.redo();
       opc.addLocalOperation_(localOp);
       assert(status == Status.SAVING);
@@ -115,17 +150,25 @@
     });
 
     addTest('multiple successful local operations -> all are saved', () => {
-      mock('firebase.database().ref().transaction', (code1, callback1) => {
-        mock('firebase.database().ref().transaction', (code2, callback2) => {
+      mock(getOpMockPath(1) + '.on()', {});
+      mock(getOpMockPath(2) + '.on()', {});
+      let transactionCount = 0;
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        transactionCount++;
+        if (transactionCount == 1) {
           assert(status == Status.SAVING);
-          callback2(null, !!code2({n: 1}), null);
+          callback(null, !!code(createIdentity(0)), null);
+        } else if (transactionCount == 2) {
+          assert(status == Status.SAVING);
+          callback(null, !!code(createIdentity(1)), null);
           assert(status == Status.SAVED);
           assert(lastOpNum == 2);
           testCompleted();
-        });
-        assert(status == Status.SAVING);
-        callback1(null, !!code1({n: 0}), null);
+        } else {
+          assert(false);
+        }
       });
+
       opc.addLocalOperation_(new Operation());
       opc.addLocalOperation_(new Operation());
     });
@@ -183,10 +226,10 @@
       assert(cells.c[ck.kind] == 'c loc2');
 
       // Mock transactions that always succeed, starting from 1.
-      let transactionNumber = 0;
-      mock('firebase.database().ref().transaction', (code, callback) => {
-        transactionNumber++;
-        callback(null, !!code({n: transactionNumber}), null);
+      let transactionCount = 0;
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        transactionCount++;
+        callback(null, !!code(createIdentity(transactionCount)), null);
       });
 
       // Add all local operations, while forcefully suppressing saving.
@@ -196,21 +239,119 @@
 
       // Mock the remote op in. When its data is applied, the test should be
       // done.
-      mock('firebase.database().ref().on', (_, numCallback) => {
-        // Ensure the next on() returns the new op.
-        mock('firebase.database().ref().on', (_, opCallback) => {
-          opCallback({val: () => remoteOp.data});
-          // Test done!
-          assert(cells.a[ck.kind] == 'a loc3');
-          assert(cells.b[ck.kind] == 'b remote');
-          assert(cells.c[ck.kind] == 'c base');
-          assert(lastOpNum == 3);
-          testCompleted();
-        });
-        numCallback({val: () => 1});
+      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+        opc.firstLoad_ = false; // Don't rewrite.
+        identityCallback({val: () => createIdentity(1).i});
+      });
+
+      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+        opCallback({val: () => remoteOp.data});
+        // Test done!
+        assert(cells.a[ck.kind] == 'a loc3');
+        assert(cells.b[ck.kind] == 'b remote');
+        assert(cells.c[ck.kind] == 'c base');
+        assert(lastOpNum == 3);
+        testCompleted();
       });
 
       opc.startListeningForOperations();
+    });
+
+    addTest('incoming op in the gap between transaction and its callback ->' +
+        'op in the transaction is not undoed', () => {
+      // Setup 2 cells.
+      const cells = {
+        a: {[ck.kind]: 'a base'},
+        b: {[ck.kind]: 'b base'},
+      };
+      mock('state.theMap.cells.get', (key) => {
+        return {
+          getLayerContent: _ => cells[key],
+          setLayerContent: (_1, content, _2) => { cells[key] = content; },
+        };
+      });
+
+      // Setup operations.
+      const localOp = new Operation();
+      localOp
+          .addCellChange(
+              'a', ct.terrain, {[ck.kind]: 'a base'}, {[ck.kind]: 'a local'});
+      localOp
+          .addCellChange(
+              'b', ct.terrain, {[ck.kind]: 'b base'}, {[ck.kind]: 'b local'});
+      const remoteOp = new Operation();
+      remoteOp
+          .addCellChange(
+              'b', ct.terrain, {[ck.kind]: 'b local'},
+              {[ck.kind]: 'b remote'});
+      remoteOp.data.i = {n: 2, f: 'remote'};
+
+      let listenToLatestOpIdentityCallback = null;
+      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+        listenToLatestOpIdentityCallback = identityCallback;
+      });
+
+      let remoteOpCallback = null;
+      mock(getOpMockPath(2) + '.on', (_, opCallback) => {
+        remoteOpCallback = opCallback;
+      });
+
+      let firstTransaction = true;
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        if (!firstTransaction) return;
+        firstTransaction = false;
+        const success = !!code(createIdentity(0));
+        assert(success);
+        // lastOpNum should not be updated at this point.
+        assert(lastOpNum == 0);
+        // Before calling the transaction callback, add two incoming ops:
+        // the first is localOp itself (should be ignored), the second is
+        // remoteOp.
+        opc.firstLoad_ = false; // Don't rewrite.
+        listenToLatestOpIdentityCallback({val: () => localOp.data.i});
+        listenToLatestOpIdentityCallback({val: () => remoteOp.data.i});
+        // That second callback should expect remoteOpCallback to be called,
+        // then read and apply the remote op. localOp should not be undoed when
+        // the remote is applied.
+        assert(cells.a[ck.kind] == 'a local');
+        assert(cells.b[ck.kind] == 'b local');
+        remoteOpCallback({val: () => remoteOp.data});
+        assert(cells.a[ck.kind] == 'a local');
+        assert(cells.b[ck.kind] == 'b remote');
+        // Because of the incoming ops, lastOpNum should be updated even
+        // before the transaction callback.
+        assert(lastOpNum == 2);
+        callback(null, success, null);
+        // lastOpNum and the cells should not be modified by the callback.
+        assert(lastOpNum == 2);
+        assert(cells.a[ck.kind] == 'a local');
+        assert(cells.b[ck.kind] == 'b remote');
+        testCompleted();
+      });
+      localOp.redo();
+      assert(cells.a[ck.kind] == 'a local');
+      assert(cells.b[ck.kind] == 'b local');
+      opc.startListeningForOperations();
+      opc.addLocalOperation_(localOp);
+    });
+
+    addTest('Local op invalidated during sending -> local op dropped', () => {
+      let listenToLatestOpIdentityCallback = null;
+      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+        listenToLatestOpIdentityCallback = identityCallback;
+      });
+
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        // At this point, the localOp is ready to be sent.
+        // Successfully run code.
+        const success = !!code(createIdentity(0));
+        assert(success);
+        // But before the transaction callback, add a remote action
+      });
+
+      localOp.redo();
+      opc.startListeningForOperations();
+      opc.addLocalOperation_(localOp);
     });
   </script>
 </head>
