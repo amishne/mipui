@@ -5,20 +5,20 @@ const MAX_STORED_OPERATIONS = 100;
 class OperationCenter {
   constructor() {
     // Current-operation-related fields.
+
     this.currentOperation_ = new Operation();
     this.autoSaveTimerId_ = null;
 
     // Synchronization-related fields.
 
+    // Current synchronization mode.
+    this.status_ = Status.READY;
     // All operations performed locally that have not yet been sent to and
     // accepted by the database.
     this.pendingLocalOperations_ = [];
     // All operations performed remotely that have been accepted by the
-    // database but not yet applied locally.
-    this.incomingRemoteOperations_ = [];
-    // True if local pending operations are currently being sent to the
-    // database, or re-applied for incoming operations.
-    this.isCurrentlyProcessingPendingOperations_ = false;
+    // database but not yet applied locally, keyed by number.
+    this.incomingRemoteOperations_ = {};
     // The last-operation num for the fullMap stored in the database.
     this.lastFullMapNum_ = 0;
     // The operation we are currently sending, to avoid re-applying it when
@@ -26,7 +26,7 @@ class OperationCenter {
     this.opBeingSent_ = null;
     // Whether opBeingSent_ has been accepted.
     this.opBeingSentWasAccepted_ = false;
-    // Whether our current operation read if the first time we're doing so.
+    // Whether our current operation read is the first time we're doing so.
     this.firstLoad_ = true;
 
     // Undo-related fields.
@@ -83,11 +83,11 @@ class OperationCenter {
       // Check if our map is the same (or newer!)
       if (fullMap.lastOpNum <= state.getLastOpNum()) return;
 
-      setStatus(Status.UPDATING);
+      this.setStatus_(Status.UPDATING);
       this.recordOperationComplete();
       state.load(fullMap);
       this.lastFullMapNum_ = fullMap.lastOpNum;
-      setStatus(Status.READY);
+      this.setStatus_(Status.READY);
     });
   }
 
@@ -101,12 +101,12 @@ class OperationCenter {
       const identity = identityRef.val();
       if (!identity) return;
 
-      setStatus(Status.UPDATING);
+      this.setStatus_(Status.UPDATING);
       const num = typeof identity.n !== 'undefined' ? identity.n : -1;
       const fingerprint = typeof identity.f !== 'undefined' ? identity.f : -1;
       if (num < state.getLastOpNum()) {
         // This should never happen. Just skip this update.
-        setStatus(Status.UPDATE_ERROR);
+        this.setStatus_(Status.UPDATE_ERROR);
       } else if (
             this.opBeingSent_ &&
             this.opBeingSent_.num == num &&
@@ -137,6 +137,11 @@ class OperationCenter {
     }
   }
 
+  setStatus_(status) {
+    this.status_ = status;
+    this.setStatus_(status);
+  }
+
   recordChange_() {
     if (this.autoSaveTimerId_) {
       clearTimeout(this.autoSaveTimerId_);
@@ -148,13 +153,35 @@ class OperationCenter {
   }
 
   loadAndPerformAndAddOperations_(fromNum, toNum, rewriteWhenDone) {
+    for (let i = fromNum; i < toNum; i++) {
+      this.listenForOperation_(i, false, false);
+    }
+    this.listenForOperation_(i, true, rewriteWhenDone);
+  }
+
+  listenForOperation_(num, isLast, rewriteWhenDone) {
+    const path = `/maps/${state.getMid()}/payload/operations/${fromNum}`;
+    firebase.database().ref(path).on('value', opDataRef => {
+      if (!opDataRef) return;
+      const opData = opDataRef.val();
+      if (!opData) return;
+      // The data is ready! Stop listening.
+      firebase.database().ref(path).off('value');
+      // And read it.
+      const op = new Operation(opData);
+      this.addRemoteOperation_(num, op);
+      if (rewriteWhenDone) {
+        this.rewrite_(num);
+      }
+    });
+  }
     if (fromNum > toNum) {
       if (rewriteWhenDone) {
         this.rewrite_(toNum);
       }
       // We're done getting changes from the database; now apply pending
       // changes.
-      setStatus(Status.READY);
+      this.setStatus_(Status.READY);
       this.startSendingPendingLocalOperations_();
       return;
     }
@@ -257,7 +284,7 @@ class OperationCenter {
   continueSendingPendingLocalOperations_() {
     if (this.pendingLocalOperations_.length == 0) {
       this.stopSendingPendingLocalOperations_();
-      setStatus(Status.SAVED);
+      this.setStatus_(Status.SAVED);
       return;
     }
     if (!this.isCurrentlyProcessingPendingOperations_) {
@@ -268,7 +295,7 @@ class OperationCenter {
 
   sendPendingLocalOperations_() {
     this.isCurrentlyProcessingPendingOperations_ = true;
-    setStatus(Status.SAVING);
+    this.setStatus_(Status.SAVING);
     this.sendOp_(this.pendingLocalOperations_[0]);
   }
 
@@ -332,7 +359,7 @@ class OperationCenter {
   handleOperationSendError_(op, err) {
     // Not much to do here. Just hope that by the next time we send an
     // operation, the problem will be resolved.
-    setStatus(Status.SAVE_ERROR);
+    this.setStatus_(Status.SAVE_ERROR);
     this.stopSendingPendingLocalOperations_();
   }
 
