@@ -15,12 +15,13 @@ function assert(condition) {
 function testCompleted() {
   const currentTest = suiteTests_[currentTestIndex_];
   applyTestResultToElement_(currentTest.passed, currentTest.element);
+  revertMocks_(currentTest);
   currentTestIndex_++;
   runNextTest_();
 }
 
 function addTest(name, fn) {
-  suiteTests_.push({name, fn, passed: true, element: null});
+  suiteTests_.push({name, fn, passed: true, element: null, mocked: []});
 }
 
 function mock(path, obj) {
@@ -37,7 +38,7 @@ function mock(path, obj) {
     const parent =
         part.prefix.length == 0 ? window : globalFromPath_(part.prefix);
     allowMatchers = true;
-    child = mockPart_(parent, part.name, child);
+    child = mockPart_(parent, part, child);
   }
 }
 
@@ -92,26 +93,37 @@ function getArgs_(part) {
 }
 
 function mockPart_(parent, part, child) {
-  const args = getArgs_(part);
+  const args = getArgs_(part.name);
   if (args != null) {
     return mockFunc_(
-        parent, part.replace(PATH_FUNCTION_REGEX, ''), child, args);
+        parent, part, part.name.replace(PATH_FUNCTION_REGEX, ''), child, args);
   } else {
     return mockField_(parent, part, child);
   }
 }
 
-function mockField_(parent, name, child) {
-  const field = {[name]: child};
+function mockField_(parent, part, child) {
+  const currentTest = suiteTests_[currentTestIndex_];
+  const fullPath =
+      part.prefix.join('.') + (part.prefix.length > 0 ? '.' : '') + part.name;
+  const field = {[part.name]: child};
   if (parent) {
+    currentTest.mocked.push({
+      path: fullPath,
+      obj: parent[part.name],
+    });
     Object.assign(parent, field);
     return parent;
   } else {
+    currentTest.mocked.push({
+      path: fullPath,
+      obj: undefined,
+    });
     return field;
   }
 }
 
-function mockFunc_(parent, name, child, args) {
+function mockFunc_(parent, part, name, child, args) {
   let existingFunc = () => null;
   if (parent && parent[name] && typeof parent[name] === 'function') {
     existingFunc = parent[name];
@@ -127,12 +139,31 @@ function mockFunc_(parent, name, child, args) {
     }
     return child;
   };
+
+  const currentTest = suiteTests_[currentTestIndex_];
+  const fullPath =
+      part.prefix.join('.') + (part.prefix.length > 0 ? '.' : '') + name;
   if (parent) {
+    currentTest.mocked.push({
+      path: fullPath,
+      obj: parent[name],
+    });
     parent[name] = func;
     return parent;
   } else {
+    currentTest.mocked.push({
+      path: fullPath,
+      obj: undefined,
+    });
     return {[name]: func};
   }
+}
+
+function revertMocks_(test) {
+  test.mocked.forEach(({path, obj}) => {
+    console.log(`reverting by mock(${path}, ${obj})`);
+    mock(path, obj);
+  });
 }
 
 window.onload = () => runTests();

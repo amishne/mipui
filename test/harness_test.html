@@ -3,6 +3,7 @@
   <script src="harness.js" type="text/javascript"></script>
   <script type="text/javascript">
     var existingGlobal = {x: 1};
+    var existingFunc = (n) => n + 1;
 
     addTest('mock global', () => {
       mock('global1', 3);
@@ -70,33 +71,79 @@
     });
 
     addTest('mock function with "$any"', () => {
-      mock('global6.f(1, "$any", 3)', 1);
-      assert(global6.f(1, 2, 3) == 1);
-      assert(global6.f(1, 2, 4) == null);
-      assert(global6.f(1, 2) == null);
-      assert(global6.f(1, 2, 3, 4) == null);
+      mock('global5.f(1, "$any", 3)', 1);
+      assert(global5.f(1, 2, 3) == 1);
+      assert(global5.f(1, 2, 4) == null);
+      assert(global5.f(1, 2) == null);
+      assert(global5.f(1, 2, 3, 4) == null);
       testCompleted();
     });
 
     addTest('mock function with "$all"', () => {
-      mock('global7.f(1, "$all")', 1);
-      assert(global7.f(1) == 1);
-      assert(global7.f(1, 2) == 1);
-      assert(global7.f(1, 2, 3) == 1);
-      assert(global7.f(2) == null);
-      assert(global7.f(2, 3) == null);
+      mock('global6.f(1, "$all")', 1);
+      assert(global6.f(1) == 1);
+      assert(global6.f(1, 2) == 1);
+      assert(global6.f(1, 2, 3) == 1);
+      assert(global6.f(2) == null);
+      assert(global6.f(2, 3) == null);
       testCompleted();
     });
 
     addTest('mock $any and non-$any alternative for the same function', () => {
-      mock('global5.f("$any").x', 2);
-      mock('global5.f("one").x', 1);
-      mock('global5.g("one").x', 1);
-      mock('global5.g("$any").x', 2);
-      assert(global5.f('one').x == 1);
-      assert(global5.f('two').x == 2);
-      assert(global5.g('one').x == 2);
-      assert(global5.g('two').x == 2);
+      mock('global7.f("$any").x', 2);
+      mock('global7.f("one").x', 1);
+      mock('global7.g("one").x', 1);
+      mock('global7.g("$any").x', 2);
+      assert(global7.f('one').x == 1);
+      assert(global7.f('two').x == 2);
+      assert(global7.g('one').x == 2);
+      assert(global7.g('two').x == 2);
+      testCompleted();
+    });
+
+    addTest('on completion new globals are reverted 1/2', () => {
+      mock('global8', 6);
+      assert(global8 == 6);
+      testCompleted();
+    });
+
+    addTest('on completion new globals are reverted 2/2', () => {
+      assert(!('global8' in window) || (global8 === undefined));
+      testCompleted();
+    });
+
+    addTest('on completion new fields are reverted 1/2', () => {
+      mock('existingGlobal.toBeReverted', 3);
+      assert(existingGlobal.toBeReverted == 3);
+      testCompleted();
+    });
+
+    addTest('on completion new fields are reverted 2/2', () => {
+      assert(existingGlobal.x == 1);
+      assert(!('toBeReverted' in existingGlobal) ||
+          existingGlobal.toBeReverted === undefined);
+      testCompleted();
+    });
+
+    addTest('on completion existing fields are restored 1/2', () => {
+      mock('existingGlobal.x', {some: 'thing'});
+      assert(existingGlobal.x.some == 'thing');
+      testCompleted();
+    });
+
+    addTest('on completion existing fields are restored 2/2', () => {
+      assert(existingGlobal.x == 1);
+      testCompleted();
+    });
+
+    addTest('on completion existing functions are restored 1/2', () => {
+      mock('existingFunc("$any")', 'mocked func');
+      assert(existingFunc(4) == 'mocked func');
+      testCompleted();
+    });
+
+    addTest('on completion existing functions are restored 2/2', () => {
+      assert(existingFunc(4) == 5);
       testCompleted();
     });
   </script>
