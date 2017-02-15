@@ -45,22 +45,25 @@ function mock(path, obj) {
 function runTests() {
   currentTestIndex_ = 0;
   if (typeof beforeSuite !== 'undefined') beforeSuite();
+  currentTestIndex_ = 1;
   runNextTest_();
 }
 
 function runNextTest_() {
-  const test = suiteTests_[currentTestIndex_];
-  if (!test) return;
-  if (typeof beforeTest !== 'undefined') beforeTest();
-  test.passed = true;
-  test.element = createTestElement_(document.body, test.name);
-  test.fn();
+  setTimeout(() => {
+    const test = suiteTests_[currentTestIndex_];
+    if (!test) return;
+    if (typeof beforeTest !== 'undefined') beforeTest();
+    test.passed = true;
+    test.element = createTestElement_(document.body, test.name);
+    test.fn();
+  }, 0)
 }
 
 function createTestElement_(parentElement, name) {
   const div = document.createElement('div');
   parentElement.appendChild(div);
-  div.append(`Test ${currentTestIndex_ + 1} '${name}' `);
+  div.append(`Test ${currentTestIndex_} '${name}' `);
   const span = document.createElement('span');
   div.appendChild(span);
   span.textContent = 'running...';

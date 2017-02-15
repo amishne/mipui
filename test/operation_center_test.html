@@ -19,6 +19,7 @@
       mock(getOpMockPath(3) + '.set("$all")', {});
       mock(getOpMockPath(1) + '.off("$all")', {});
       mock(getOpMockPath(2) + '.off("$all")', {});
+      mock(getOpMockPath(3) + '.off("$all")', {});
     };
 
     beforeTest = () => {
@@ -72,7 +73,7 @@
       opc.addLocalOperation_(new Operation());
     });
 
-    addTest('unsuccessful local op followed by remote op ->' +
+    addTest('unsuccessful local op followed by remote op -> ' +
         'local op is resent', () => {
       let transactionCount = 0;
       mock(getLatestOpTransactionMockPath(), (code, callback) => {
@@ -91,7 +92,6 @@
       });
 
       mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        opc.firstLoad_ = false; // Don't rewrite.
         identityCallback({val: () => createIdentity(1).i});
       });
 
@@ -131,7 +131,6 @@
       });
 
       mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        opc.firstLoad_ = false; // Don't rewrite.
         identityCallback({val: () => createIdentity(1).i});
       });
 
@@ -173,7 +172,7 @@
       opc.addLocalOperation_(new Operation());
     });
 
-    addTest('both valid and invalid location operations -> ' +
+    addTest('both valid and invalid local operations -> ' +
         'only valid are saved', () => {
       // Setup 3 cells.
       const cells = {
@@ -240,7 +239,6 @@
       // Mock the remote op in. When its data is applied, the test should be
       // done.
       mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        opc.firstLoad_ = false; // Don't rewrite.
         identityCallback({val: () => createIdentity(1).i});
       });
 
@@ -286,6 +284,10 @@
               {[ck.kind]: 'b remote'});
       remoteOp.data.i = {n: 2, f: 'remote'};
 
+      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+        opCallback({val: () => localOp.data});
+      });
+
       let listenToLatestOpIdentityCallback = null;
       mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
         listenToLatestOpIdentityCallback = identityCallback;
@@ -305,9 +307,7 @@
         // lastOpNum should not be updated at this point.
         assert(lastOpNum == 0);
         // Before calling the transaction callback, add two incoming ops:
-        // the first is localOp itself (should be ignored), the second is
-        // remoteOp.
-        opc.firstLoad_ = false; // Don't rewrite.
+        // the first is localOp itself, the second is remoteOp.
         listenToLatestOpIdentityCallback({val: () => localOp.data.i});
         listenToLatestOpIdentityCallback({val: () => remoteOp.data.i});
         // That second callback should expect remoteOpCallback to be called,
@@ -335,23 +335,53 @@
       opc.addLocalOperation_(localOp);
     });
 
-    addTest('Local op invalidated during sending -> local op dropped', () => {
-      let listenToLatestOpIdentityCallback = null;
+    addTest('Remote ops arrive out-of-order -> remote ops are applied in order',
+        () => {
+      // Setup one cell.
+      let cell = {[ck.kind]: 'a'};
+      mock('state.theMap.cells.get', (key) => {
+        return {
+          getLayerContent: _ => cell,
+          setLayerContent: (_1, content, _2) => { cell = content; },
+        };
+      });
+
+      // Setup 3 operations.
+      const ops = [new Operation(), new Operation(), new Operation()];
+      ops[0].addCellChange('c', ct.terrain, {[ck.kind]: 'a'}, {[ck.kind]: 'b'});
+      ops[0].data.i = {n: 1, f: 'x'};
+      ops[1].addCellChange('c', ct.terrain, {[ck.kind]: 'b'}, {[ck.kind]: 'c'});
+      ops[1].data.i = {n: 2, f: 'y'};
+      ops[2].addCellChange('c', ct.terrain, {[ck.kind]: 'c'}, {[ck.kind]: 'd'});
+      ops[2].data.i = {n: 3, f: 'z'};
+
+      // Register callbacks.
+      const opCallbacks = new Array(3);
+      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+        opCallbacks[0] = opCallback;
+      });
+      mock(getOpMockPath(2) + '.on', (_, opCallback) => {
+        opCallbacks[1] = opCallback;
+      });
+      mock(getOpMockPath(3) + '.on', (_, opCallback) => {
+        opCallbacks[2] = opCallback;
+      });
+
+      // Report 3 as the latest op when the client asks for it.
       mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        listenToLatestOpIdentityCallback = identityCallback;
+        identityCallback({val: () => createIdentity(3).i});
+        // Run the ops callbacks out-of-order!
+        assert(cell[ck.kind] == 'a');
+        opCallbacks[0]({val: () => ops[0].data});
+        assert(cell[ck.kind] == 'b');
+        opCallbacks[2]({val: () => ops[2].data});
+        assert(cell[ck.kind] == 'b');
+        opCallbacks[1]({val: () => ops[1].data});
+        assert(cell[ck.kind] == 'd');
+        testCompleted();
       });
 
-      mock(getLatestOpTransactionMockPath(), (code, callback) => {
-        // At this point, the localOp is ready to be sent.
-        // Successfully run code.
-        const success = !!code(createIdentity(0));
-        assert(success);
-        // But before the transaction callback, add a remote action
-      });
-
-      localOp.redo();
       opc.startListeningForOperations();
-      opc.addLocalOperation_(localOp);
     });
   </script>
 </head>

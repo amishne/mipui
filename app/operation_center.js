@@ -38,8 +38,6 @@ class OperationCenter {
     this.opBeingSent_ = null;
     // Whether opBeingSent_ has been accepted.
     this.opBeingSentWasAccepted_ = false;
-    // Whether our current operation read is the first time we're doing so.
-    this.firstLoad_ = true;
 
     // Undo-related fields.
 
@@ -192,6 +190,7 @@ class OperationCenter {
             this.opBeingSent_.fingerprint == fingerprint) {
         // This is caused by our own incomplete sendOp_().
         this.opBeingSentWasAccepted_ = true;
+        state.setLastOpNum(num);
       } else if (num == state.getLastOpNum()) {
         // This is caused by our last completed sendOp_(), so do nothing.
       } else {
@@ -218,6 +217,11 @@ class OperationCenter {
 
   loadOperation_(num, isLast) {
     console.log(`Loading operation ${num}...`);
+    if (this.opBeingSentWasAccepted_ && num == this.opBeingSent_.num) {
+      // This is a local op.
+      console.log(`Skipping loading operation ${num} since it's local.`);
+      return;
+    }
     if (this.incomingRemoteOperations_[num]) {
       // The operation has already been loaded, do nothing.
       console.log(`Operation ${num} already loaded.`);
@@ -273,11 +277,29 @@ class OperationCenter {
     this.addOperation_(op);
     op.redo();
     state.setLastOpNum(num);
-    console.log(`Remote operation ${num} applied.`);
+    console.log(`Remote operation ${num} applied:`);
     console.log(op);
-    this.redoPendingOperations_();
-    this.setStatus_(Status.READY);
-    this.startSendingPendingLocalOperations_();
+    delete this.incomingRemoteOperations_[num];
+    // If there's another remote operation waiting, apply it; otherwise redo
+    // pending ops that were undoed.
+    const nextRemoteOperation = this.incomingRemoteOperations_[num + 1];
+    if (nextRemoteOperation) {
+      // A remote operation is next up again, and it was already loaded.
+      this.applyRemoteOperation_(num + 1, nextRemoteOperation);
+    } else {
+      this.redoPendingOperations_();
+      if (num >= this.lastFullMapNum_) {
+        // This means we applied all the remote ops that we know of. Mark the
+        // status as ready and resume sending local pending ops.
+        this.setStatus_(Status.READY);
+        // But first flush out the first pending operation, if it was accepted.
+        if (this.opBeingSentWasAccepted_ &&
+            this.pendingLocalOperations_.length > 0) {
+          this.pendingLocalOperations_.shift();
+        }
+        this.startSendingPendingLocalOperations_();
+      }
+    }
   }
 
   // Undoes all the current pending local ops.
