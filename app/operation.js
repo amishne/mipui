@@ -21,7 +21,7 @@ class Operation {
     if (singleCellChanges[layer.id]) {
       // This overrides content that were already recorded as changed. In that
       // case, skip the intermediate content.
-      oldValue = singleCellChanges[layer.id].oldValue;
+      oldValue = singleCellChanges[layer.id].oldValue || null;
     }
     singleCellChanges[layer.id] = {o: oldValue, n: newValue};
   }
