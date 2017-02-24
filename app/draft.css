@@ -156,3 +156,12 @@
   margin-top: -2px;
   z-index: 12;
 }
+
+.text-move-widget {
+  position: absolute;
+  background-color: yellow;
+  width: 6px;
+  height: 6px;
+  cursor: move;
+  z-index: 12;
+}
