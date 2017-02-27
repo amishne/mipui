@@ -128,5 +128,8 @@ function handleSelectedToolChange(toolElementName) {
     case 'textTool':
       state.gesture = new TextGesture();
       break;
+    case 'imageTool':
+      state.gesture = new ImageGesture();
+      break;
   }
 }

@@ -14,6 +14,16 @@ const ct = {
       generic: {},
     },
   },
+  images: {
+    image: {
+      classNames: [
+        'image-cell',
+        'image-cell-_ADDING-REMOVING_',
+        'image-cell-_EDITING_',
+      ],
+      background: {},
+    }
+  },
   doors: {
     door: {
       classNames: [
@@ -49,6 +59,7 @@ const ck = {
   startCell: 's',
   endCell: 'e',
   text: 't',
+  image: 'i',
 };
 
 function sameContent(c1, c2) {

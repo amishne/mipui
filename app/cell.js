@@ -63,6 +63,7 @@ class Cell {
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, content);
     this.setText_(element, content[ck.text]);
+    this.setImage_(element, content[ck.image]);
     this.elements_.set(layer, element);
     return element;
   }
@@ -131,6 +132,14 @@ class Cell {
     element.textContent = text;
   }
 
+  setImage_(element, imageUrl) {
+    if (!element || !imageUrl) return;
+    const width = element.offsetWidth;
+    const height = element.offsetHeight;
+    element.innerHTML = `<img class="image" src="${imageUrl}" ` +
+        `style="width: ${width}px; height: ${height}px; alt="">`;
+  }
+
   getOrCreateLayerElement(layer, initialContent) {
     let element = this.elements_.get(layer);
     if (!element) {
@@ -162,6 +171,7 @@ class Cell {
     this.modifyElementClasses_(layer, newContent, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, newContent);
     this.setText_(element, newContent[ck.text]);
+    this.setImage_(element, newContent[ck.image]);
     return element;
   }
 
@@ -176,6 +186,7 @@ class Cell {
         this.modifyElementClasses_(layer, content, element, 'add');
         this.setElementGeometryToGridElementGeometry_(element, content);
         this.setText_(element, content[ck.text]);
+        this.setImage_(element, content[ck.image]);
       } else {
         this.removeElement(layer);
       }
@@ -277,7 +288,7 @@ class Cell {
   showHighlight(layer, content) {
     const existingContent = this.getLayerContent(layer);
     const action = existingContent && content ? 'editing' :
-        (content ? 'removing' : 'adding');
+        (existingContent ? 'removing' : 'adding');
     const element = content ?
         this.updateElement_(layer, this.getLayerContent(layer), content) :
         this.elements_.get(layer);

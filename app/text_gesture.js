@@ -61,7 +61,7 @@ class TextGesture extends Gesture {
       this.calculateTargetCell_();
       if (!this.targetCell_) return;
       this.mode_ =
-          this.targetCell_.hasLayerContent(ct.text) ? 'editing' : 'adding';
+          this.targetCell_.hasLayerContent(this.getLayer_()) ? 'editing' : 'adding';
       this.calculateTextExtent_(true);
       if (!this.startCell_) return;
     } else {
@@ -234,9 +234,9 @@ class TextGesture extends Gesture {
           this.endCell_ = null;
         } else {
           const predicate = (cell) => {
-            return !cell.hasLayerContent(ct.text) ||
+            return !cell.hasLayerContent(this.getLayer_()) ||
                 cell == this.anchorCell_ ||
-                cell.getVal(ct.text, ck.startCell) == this.anchorCell_.key;
+                cell.getVal(this.getLayer_(), ck.startCell) == this.anchorCell_.key;
           };
           this.calculateTextExtentBetween_(
               this.anchorCell_, this.targetCell_, predicate);
@@ -245,18 +245,18 @@ class TextGesture extends Gesture {
       case 'editing':
         this.startCell_ =
             state.theMap.cells
-                .get(this.targetCell_.getVal(ct.text, ck.startCell))
+                .get(this.targetCell_.getVal(this.getLayer_(), ck.startCell))
             || this.targetCell_;
         this.endCell_ =
             state.theMap.cells
-                .get(this.startCell_.getVal(ct.text, ck.endCell));
+                .get(this.startCell_.getVal(this.getLayer_(), ck.endCell));
         this.calculateTextExtentBetween_(this.startCell_, this.endCell_);
         break;
       case 'moving':
         const predicate = (cell) => {
-          return !cell.hasLayerContent(ct.text) ||
+          return !cell.hasLayerContent(this.getLayer_()) ||
               cell == this.anchorCell_ ||
-              cell.getVal(ct.text, ck.startCell) == this.anchorCell_.key;
+              cell.getVal(this.getLayer_(), ck.startCell) == this.anchorCell_.key;
         };
         if (!predicate(this.targetCell_)) {
           // The targeted cell is invalid. Set nothing.
@@ -318,10 +318,10 @@ class TextGesture extends Gesture {
       for (let j = 0; j <= width; j++) {
         if (i != 0 || j != 0) {
           // This isn't the start cell.
-          if (currCell.hasLayerContent(ct.text) &&
+          if (currCell.hasLayerContent(this.getLayer_()) &&
               this.anchorCell_ &&
               currCell != this.anchorCell_ &&
-              currCell.getVal(ct.text, ck.startCell) != this.anchorCell_.key) {
+              currCell.getVal(this.getLayer_(), ck.startCell) != this.anchorCell_.key) {
             // In case we encounter a textual cell in range during adding, or
             // encounter a non-owned cell during resizing, we discard all
             // non-start cells and reset the start cell to the anchor.
@@ -350,7 +350,7 @@ class TextGesture extends Gesture {
         this.startCell_.offsetTop - this.startCell_.offsetTop;
     const textElement =
         this.startCell_.getOrCreateLayerElement(
-            ct.text, this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_());
     this.hoverWidget_.style.width = textElement.scrollWidth;
     this.hoverWidget_.style.height = textElement.scrollHeight;
     this.hoverWidget_.onclick = (e) => {
@@ -370,12 +370,12 @@ class TextGesture extends Gesture {
   createDeleteWidget_() {
     if (this.deleteWidget_) return;
     this.deleteWidget_ = createAndAppendDivWithClass(
-        this.startCell_.gridElement, 'text-delete-widget');
+        this.startCell_.gridElement, this.getDeleteWidgetCssClassName_());
     const textElement =
         this.startCell_.getOrCreateLayerElement(
-            ct.text, this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_());
     this.deleteWidget_.style.left = textElement.scrollWidth;
-    const deleteGesture = new TextGesture();
+    const deleteGesture = this.createNewGesture_();
     deleteGesture.mode_ = 'removing';
     deleteGesture.startCell_ = this.startCell_;
     deleteGesture.endCell_ = this.endCell_;
@@ -387,7 +387,7 @@ class TextGesture extends Gesture {
     this.deleteWidget_.onmouseleave = (e) => {
       deleteGesture.stopHover();
       this.startCell_.showHighlight(
-          ct.text, this.startCell_.getLayerContent(ct.text));
+          this.getLayer_(), this.startCell_.getLayerContent(this.getLayer_()));
       e.stopPropagation();
     }
     this.deleteWidget_.onclick = (e) => {
@@ -413,10 +413,10 @@ class TextGesture extends Gesture {
   createResizeWidget_() {
     if (this.resizeWidget_) return;
     this.resizeWidget_ = createAndAppendDivWithClass(
-        this.startCell_.gridElement, 'text-resize-widget');
+        this.startCell_.gridElement, this.getResizeWidgetCssClassName_());
     const textElement =
         this.startCell_.getOrCreateLayerElement(
-            ct.text, this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_());
     this.resizeWidget_.style.left = textElement.scrollWidth;
     this.resizeWidget_.style.top = textElement.scrollHeight;
     this.resizeWidget_.onmouseenter = (e) => e.stopPropagation();
@@ -446,7 +446,7 @@ class TextGesture extends Gesture {
         this.startCell_.gridElement, 'text-move-widget');
     const textElement =
         this.startCell_.getOrCreateLayerElement(
-            ct.text, this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_());
     this.moveWidget_.onmouseenter = (e) => e.stopPropagation();
     this.moveWidget_.onmouseleave = (e) => e.stopPropagation();
     this.moveWidget_.onmouseup = (e) => e.stopPropagation();
@@ -470,28 +470,28 @@ class TextGesture extends Gesture {
 
   cellsBelongToSameText_(topLeftCell, bottomRightCell) {
     if (!topLeftCell || !bottomRightCell) return false;
-    const content1 = topLeftCell.getLayerContent(ct.text);
-    const content2 = bottomRightCell.getLayerContent(ct.text);
+    const content1 = topLeftCell.getLayerContent(this.getLayer_());
+    const content2 = bottomRightCell.getLayerContent(this.getLayer_());
     if (!content1 || !content2) return false;
     if (!content2[ck.startCell]) return false;
 
     return content2[ck.startCell] == topLeftCell.key ||
-      content2[ck.startCell] == content1[ck.startCell];
+        content2[ck.startCell] == content1[ck.startCell];
   }
 
   startEditing_() {
     this.finishEditing_();
     this.createDeleteWidget_();
-    this.originalText_ = this.startCell_.getVal(ct.text, this.getValueKind_());
+    this.originalText_ = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     const textElement =
         this.startCell_.getOrCreateLayerElement(
-            ct.text, this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_());
     this.textarea_ = document.createElement('textarea');
-    this.textarea_.className = 'text-cell-textarea';
+    this.textarea_.className = this.getTextareaCssClassName_();
     this.textarea_.style.width = textElement.offsetWidth + 2;
     this.textarea_.style.height = textElement.offsetHeight + 2;
-    if (this.startCell_.hasLayerContent(ct.text)) {
-      this.textarea_.value = this.startCell_.getVal(ct.text, this.getValueKind_());
+    if (this.startCell_.hasLayerContent(this.getLayer_())) {
+      this.textarea_.value = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     }
     this.startCell_.gridElement.appendChild(this.textarea_);
     this.textarea_.onkeydown = (e) => {
@@ -508,7 +508,7 @@ class TextGesture extends Gesture {
     }
     this.textarea_.onmousedown = (e) => e.stopPropagation();
     this.textarea_.onmouseup = (e) => e.stopPropagation();
-    const content = this.startCell_.getLayerContent(ct.text);
+    const content = this.startCell_.getLayerContent(this.getLayer_());
     if (content) {
       this.setTextareaGeometry_(this.startCell_, content);
     }
@@ -518,7 +518,7 @@ class TextGesture extends Gesture {
 
   setTextareaGeometry_(startCell, initialContent) {
     const startCellElement =
-        startCell.getOrCreateLayerElement(ct.text, initialContent);
+        startCell.getOrCreateLayerElement(this.getLayer_(), initialContent);
     this.textarea_.style.fontSize = startCellElement.style.fontSize;
     if (startCell.textHeight) {
       const whitespace =
@@ -552,25 +552,25 @@ class TextGesture extends Gesture {
   }
 
   showHighlight_() {
-    this.startCell_.showHighlight(ct.text, this.createStartCellContent_());
+    this.startCell_.showHighlight(this.getLayer_(), this.createStartCellContent_());
     this.nonStartCells_.forEach(nonStartCell => {
-      nonStartCell.showHighlight(ct.text, this.createNonStartCellContent_());
+      nonStartCell.showHighlight(this.getLayer_(), this.createNonStartCellContent_());
     });
   }
 
   hideHighlight_() {
-    this.startCell_.hideHighlight(ct.text);
+    this.startCell_.hideHighlight(this.getLayer_());
     this.nonStartCells_.forEach(nonStartCell => {
-      nonStartCell.hideHighlight(ct.text);
+      nonStartCell.hideHighlight(this.getLayer_());
     });
   }
 
   apply_() {
     this.startCell_.setLayerContent(
-        ct.text, this.createStartCellContent_(), true);
+        this.getLayer_(), this.createStartCellContent_(), true);
     this.nonStartCells_.forEach(nonStartCell => {
       nonStartCell.setLayerContent(
-          ct.text, this.createNonStartCellContent_(), true);
+          this.getLayer_(), this.createNonStartCellContent_(), true);
     });
     // Finally, for resize / move gestures, remove text from cells that were removed
     // by this gesture.
@@ -579,24 +579,24 @@ class TextGesture extends Gesture {
           .forEach(cell => {
             if (cell != this.startCell_ &&
                 !this.nonStartCells_.includes(cell)) {
-              cell.setLayerContent(ct.text, null, true);
+              cell.setLayerContent(this.getLayer_(), null, true);
             }
           });
     }
   }
 
   createStartCellContent_() {
-    let text = 'Text';
+    let text = this.getDefaultContent_();
     switch (this.mode_) {
       case 'removing':
         text = null;
         break;
       case 'resizing':
       case 'moving':
-        text = this.anchorCell_.getVal(ct.text, this.getValueKind_());
+        text = this.anchorCell_.getVal(this.getLayer_(), this.getValueKey_());
         break;
       case 'editing':
-        text = this.startCell_.getVal(ct.text, this.getValueKind_());
+        text = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
         // Intentional fallthrough.
       case 'adding':
         if (this.textarea_) {
@@ -609,9 +609,9 @@ class TextGesture extends Gesture {
     }
     if (!text) return null;
     const content = {
-      [ck.kind]: ct.text.text.id,
-      [ck.variation]: ct.text.text.standard.id,
-      [this.getValueKind_()]: text,
+      [ck.kind]: this.getKind_().id,
+      [ck.variation]: this.getVariation_().id,
+      [this.getValueKey_()]: text,
     };
     if (this.endCell_) {
       content[ck.endCell] = this.endCell_.key;
@@ -638,13 +638,45 @@ class TextGesture extends Gesture {
         break;
     }
     return isDelete ? null : {
-      [ck.kind]: ct.text.text.id,
-      [ck.variation]: ct.text.text.standard.id,
+      [ck.kind]: this.getKind_().id,
+      [ck.variation]: this.getVariation_().id,
       [ck.startCell]: this.startCell_.key,
     };
   }
-  
-  getValueKind_() {
+
+  getDefaultContent_() {
+    return 'Text';
+  }
+
+  getValueKey_() {
     return ck.text;
+  }
+
+  getLayer_() {
+    return ct.text;
+  }
+
+  getKind_() {
+    return this.getLayer_().text;
+  }
+
+  getVariation_() {
+    return this.getKind_().standard;
+  }
+
+  getTextareaCssClassName_() {
+    return 'text-cell-textarea';
+  }
+
+  getDeleteWidgetCssClassName_() {
+    return 'text-delete-widget';
+  }
+
+  getResizeWidgetCssClassName_() {
+    return 'text-resize-widget';
+  }
+
+  createNewGesture_() {
+    return new TextGesture();
   }
 }
