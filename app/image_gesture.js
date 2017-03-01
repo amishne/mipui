@@ -1,4 +1,4 @@
-class ImageGesture extends TextGesture {
+class ImageGesture extends BoxGesture {
   constructor() {
     super();
   }
@@ -27,8 +27,10 @@ class ImageGesture extends TextGesture {
     return this.getKind_().background;
   }
 
-  getTextareaCssClassName_() {
-    return 'image-cell-textarea';
+  createInputElement_() {
+    const element = document.createElement('textarea');
+    element.className = 'image-cell-textarea';
+    return element;
   }
 
   getDeleteWidgetCssClassName_() {
@@ -37,5 +39,17 @@ class ImageGesture extends TextGesture {
 
   getResizeWidgetCssClassName_() {
     return 'image-resize-widget';
+  }
+
+  getHoverWidgetCssClassName_() {
+    return 'image-hover-widget';
+  }
+
+  getMoveWidgetCssClassName_() {
+    return 'box-move-widget';
+  }
+
+  setInputGeometry_(inputElement, startCell, initialContent) {
+    // Do nothing.
   }
 }
