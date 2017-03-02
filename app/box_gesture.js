@@ -51,7 +51,8 @@ class BoxGesture extends Gesture {
       this.calculateTargetCell_();
       if (!this.targetCell_) return;
       this.mode_ =
-          this.targetCell_.hasLayerContent(this.getLayer_()) ? 'editing' : 'adding';
+          this.targetCell_.hasLayerContent(
+              this.getLayer_()) ? 'editing' : 'adding';
       this.calculateBoxExtent_(true);
       if (!this.startCell_) return;
     } else {
@@ -123,8 +124,8 @@ class BoxGesture extends Gesture {
       if (this.hoveredCell_.role != 'primary') {
         if (this.mode_ == 'resizing' || this.mode_ == 'moving') {
           this.showHighlight_();
-          return;
         }
+        return;
       }
       if (this.mode_ == 'moving') {
         // Hide the original location.
@@ -135,15 +136,6 @@ class BoxGesture extends Gesture {
       this.targetCell_ = this.hoveredCell_;
       this.calculateBoxExtent_();
       this.showHighlight_();
-      if (this.mode_ == 'resizing') {
-        // Redraw the resize widget so it would appear on the new corner.
-        this.removeResizeWidget_();
-        this.createResizeWidget_();
-      } else if (this.mode_ == 'moving') {
-        // Redraw the move widget so it would appear on the new corner.
-        this.removeMoveWidget_();
-        this.createMoveWidget_();
-      }
     }
   }
 
@@ -226,7 +218,8 @@ class BoxGesture extends Gesture {
           const predicate = (cell) => {
             return !cell.hasLayerContent(this.getLayer_()) ||
                 cell == this.anchorCell_ ||
-                cell.getVal(this.getLayer_(), ck.startCell) == this.anchorCell_.key;
+                cell.getVal(this.getLayer_(), ck.startCell) ==
+                    this.anchorCell_.key;
           };
           this.calculateBoxExtentBetween_(
               this.anchorCell_, this.targetCell_, predicate);
@@ -246,7 +239,8 @@ class BoxGesture extends Gesture {
         const predicate = (cell) => {
           return !cell.hasLayerContent(this.getLayer_()) ||
               cell == this.anchorCell_ ||
-              cell.getVal(this.getLayer_(), ck.startCell) == this.anchorCell_.key;
+              cell.getVal(this.getLayer_(), ck.startCell) ==
+                  this.anchorCell_.key;
         };
         if (!predicate(this.targetCell_)) {
           // The targeted cell is invalid. Set nothing.
@@ -311,7 +305,8 @@ class BoxGesture extends Gesture {
           if (currCell.hasLayerContent(this.getLayer_()) &&
               this.anchorCell_ &&
               currCell != this.anchorCell_ &&
-              currCell.getVal(this.getLayer_(), ck.startCell) != this.anchorCell_.key) {
+              currCell.getVal(this.getLayer_(), ck.startCell) !=
+                  this.anchorCell_.key) {
             // In case we encounter a same-layer cell in range during adding, or
             // encounter a non-owned cell during resizing, we discard all
             // non-start cells and reset the start cell to the anchor.
@@ -346,8 +341,9 @@ class BoxGesture extends Gesture {
     this.hoverWidget_.onclick = (e) => {
       if (e.button == 0) this.startEditing_();
     };
-    this.hoverWidget_.onmousedown = (e) => e.stopPropagation();
-    this.hoverWidget_.onmouseup = (e) => e.stopPropagation();
+    this.hoverWidget_.onmouseup = (e) => {
+      this.stopGesture();
+    }
   }
 
   removeHoverWidget_() {
@@ -372,13 +368,11 @@ class BoxGesture extends Gesture {
     deleteGesture.nonStartCells_ = this.nonStartCells_;
     this.deleteWidget_.onmouseenter = (e) => {
       deleteGesture.startHover(this.startCell_);
-      e.stopPropagation();
     }
     this.deleteWidget_.onmouseleave = (e) => {
       deleteGesture.stopHover();
       this.startCell_.showHighlight(
           this.getLayer_(), this.startCell_.getLayerContent(this.getLayer_()));
-      e.stopPropagation();
     }
     this.deleteWidget_.onclick = (e) => {
       this.finishEditing_();
@@ -389,8 +383,9 @@ class BoxGesture extends Gesture {
       this.stopHover();
       this.startHover(this.startCell_);
     };
-    this.deleteWidget_.onmousedown = (e) => e.stopPropagation();
-    this.deleteWidget_.onmouseup = (e) => e.stopPropagation();
+    this.deleteWidget_.onmouseup = (e) => {
+      this.stopGesture();
+    }
   }
 
   removeDeleteWidget_() {
@@ -409,17 +404,18 @@ class BoxGesture extends Gesture {
             this.getLayer_(), this.createStartCellContent_());
     this.resizeWidget_.style.left = layerElement.scrollWidth;
     this.resizeWidget_.style.top = layerElement.scrollHeight;
-    this.resizeWidget_.onmouseenter = (e) => e.stopPropagation();
-    this.resizeWidget_.onmouseleave = (e) => e.stopPropagation();
-    this.resizeWidget_.onmouseup = (e) => e.stopPropagation();
     this.resizeWidget_.onmousedown = (e) => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();
       this.removeMoveWidget_();
+      this.removeResizeWidget_();
       this.anchorCell_ = this.startCell_;
       this.originalEndCell_ = this.endCell_;
       this.mode_ = 'resizing';
       e.stopPropagation();
+    }
+    this.resizeWidget_.onmouseup = (e) => {
+      this.stopGesture();
     }
   }
 
@@ -436,17 +432,18 @@ class BoxGesture extends Gesture {
         this.startCell_.gridElement, this.getMoveWidgetCssClassName_());
     this.startCell_.getOrCreateLayerElement(
         this.getLayer_(), this.createStartCellContent_());
-    this.moveWidget_.onmouseenter = (e) => e.stopPropagation();
-    this.moveWidget_.onmouseleave = (e) => e.stopPropagation();
-    this.moveWidget_.onmouseup = (e) => e.stopPropagation();
     this.moveWidget_.onmousedown = (e) => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();
       this.removeResizeWidget_();
+      this.removeMoveWidget_();
       this.anchorCell_ = this.startCell_;
       this.originalEndCell_ = this.endCell_ || this.startCell_;
       this.mode_ = 'moving';
       e.stopPropagation();
+    }
+    this.moveWidget_.onmouseup = (e) => {
+      this.stopGesture();
     }
   }
 
@@ -471,7 +468,8 @@ class BoxGesture extends Gesture {
   startEditing_() {
     this.finishEditing_();
     this.createDeleteWidget_();
-    this.originalValue_ = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
+    this.originalValue_ =
+        this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     const layerElement =
         this.startCell_.getOrCreateLayerElement(
             this.getLayer_(), this.createStartCellContent_());
@@ -479,7 +477,8 @@ class BoxGesture extends Gesture {
     this.inputElement_.style.width = layerElement.offsetWidth + 2;
     this.inputElement_.style.height = layerElement.offsetHeight + 2;
     if (this.startCell_.hasLayerContent(this.getLayer_())) {
-      this.inputElement_.value = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
+      this.inputElement_.value =
+          this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     }
     this.startCell_.gridElement.appendChild(this.inputElement_);
     this.inputElement_.onkeydown = (e) => {
@@ -529,9 +528,11 @@ class BoxGesture extends Gesture {
   }
 
   showHighlight_() {
-    this.startCell_.showHighlight(this.getLayer_(), this.createStartCellContent_());
+    this.startCell_.showHighlight(
+        this.getLayer_(), this.createStartCellContent_());
     this.nonStartCells_.forEach(nonStartCell => {
-      nonStartCell.showHighlight(this.getLayer_(), this.createNonStartCellContent_());
+      nonStartCell.showHighlight(
+          this.getLayer_(), this.createNonStartCellContent_());
     });
   }
 
@@ -549,8 +550,8 @@ class BoxGesture extends Gesture {
       nonStartCell.setLayerContent(
           this.getLayer_(), this.createNonStartCellContent_(), true);
     });
-    // Finally, for resize / move gestures, remove content from cells that were removed
-    // by this gesture.
+    // Finally, for resize / move gestures, remove content from cells that were
+    // removed by this gesture.
     if (this.originalEndCell_) {
       this.anchorCell_.getPrimaryCellsInSquareTo(this.originalEndCell_)
           .forEach(cell => {

@@ -206,28 +206,33 @@ class Cell {
   }
 
   wireInteractions_() {
+    // All grid element interactions stop the event from bubbling up.
     this.gridElement.onmouseenter = (e) => {
       if (e.buttons == 0) {
         state.gesture.startHover(this);
       } else if (e.buttons == 1) {
         state.gesture.continueGesture(this);
       }
+      e.stopPropagation();
     };
     this.gridElement.onmouseleave = (e) => {
       if (e.buttons == 0) {
         state.gesture.stopHover();
       }
+      e.stopPropagation();
     };
     this.gridElement.onmousedown = (e) => {
       if (e.buttons == 1) {
         state.gesture.startGesture();
       }
+      e.stopPropagation();
     };
     this.gridElement.onmouseup = (e) => {
-      if (e.button == 0) {
+      if (e.buttons == 0) {
         state.gesture.stopGesture();
       }
       state.gesture.startHover(this);
+      e.stopPropagation();
     };
   }
 
