@@ -90,8 +90,109 @@
   border-bottom: 1px solid;
 }
 
+.wall-cell {
+  z-index: 1;
+}
+
+.floor-cell {
+  z-index: 0;
+}
+
+.door-cell {
+  position: absolute;
+}
+
 .image-cell {
   position: absolute;
+}
+
+.text-cell {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin: 2px 3px 3px 2px;
+  white-space: pre-wrap;
+}
+
+.text-cell-adding, .text-cell-removing, .text-cell-editing,
+.image-cell-adding, .image-cell-removing, .image-cell-editing {
+  border: 1px dashed rgb(50, 50, 50);
+  margin: 1px 2px 2px 1px;
+}
+
+.image-cell-removing {
+  border-color: red;
+}
+
+.text-cell-textarea, .image-cell-textarea {
+  position: absolute;
+  z-index: 11;
+  resize: none;
+  margin: 1px 0px 0px 1px;
+  overflow: hidden;
+  text-align: center;
+  border: 0;
+  outline: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-shadow: 0px 0px 8px 2px rgba(50,50,50,0.5);
+}
+
+.image-cell-textarea {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.text-hover-widget, .image-hover-widget {
+  position: absolute;
+  cursor: text;
+  z-index: 10;
+  margin: 2px 3px 3px 2px;
+}
+
+.text-delete-widget, .image-delete-widget {
+  position: absolute;
+  background-color: red;
+  width: 6px;
+  height: 6px;
+  cursor: pointer;
+  margin-left: -2px;
+  z-index: 12;
+}
+
+.image-delete-widget {
+  margin-left: -5px;
+}
+
+.text-resize-widget, .image-resize-widget {
+  position: absolute;
+  background-color: blue;
+  width: 6px;
+  height: 6px;
+  cursor: se-resize;
+  margin-left: -2px;
+  margin-top: -2px;
+  z-index: 12;
+}
+
+.image-resize-widget {
+  margin-left: -5px;
+  margin-top: -5px;
+}
+
+.box-move-widget {
+  position: absolute;
+  background-color: yellow;
+  width: 6px;
+  height: 6px;
+  cursor: move;
+  z-index: 12;
+}
+
+.image-cell-editing .image, .image-cell-adding .image {
+  margin: -2px -3px -3px -2px;
 }
 
 .status-error {
@@ -104,8 +205,4 @@
 
 .status-good {
   color: greenyellow;
-}
-
-.image-cell-editing .image, .image-cell-adding .image {
-  margin: -2px -3px -3px -2px;
 }

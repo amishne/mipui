@@ -29,12 +29,10 @@
 .wall-cell {
   background-color: rgb(222, 184, 135);
   box-shadow: 2px 2px 6px 0px #919191;
-  z-index: 1;
 }
 
 .floor-cell {
   background-color: rgb(245, 245, 220);
-  z-index: 0;
 }
 
 .wall-cell-adding {
@@ -49,7 +47,6 @@
 }
 
 .door-cell {
-  position: absolute;
   background-color: rgb(255, 250, 240);
   border: 1px solid rgb(100, 100, 100);
   border-radius: 2px;
@@ -87,31 +84,11 @@
 }
 
 .text-cell {
-  position: absolute;
   color: rgb(50, 50, 50);
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-  text-align: center;
-  margin: 2px 3px 3px 2px;
-  font-family: sans-serif;
-  font-weight: bold;
-  white-space: pre-wrap;
 }
 
 .image-cell {
   color: rgb(50, 50, 50);
-}
-
-.text-cell-adding, .text-cell-removing, .text-cell-editing,
-.image-cell-adding, .image-cell-removing, .image-cell-editing {
-  border: 1px dashed rgb(50, 50, 50);
-  margin: 1px 2px 2px 1px;
-}
-
-.image-cell-removing {
-  border-color: red;
 }
 
 .text-cell-adding {
@@ -122,68 +99,7 @@
   color: rgba(50, 50, 50, 0.3);
 }
 
-.text-cell-textarea, .image-cell-textarea {
-  position: absolute;
-  z-index: 11;
-  resize: none;
+.text-cell-textarea, .image-cell-textarea, .text-cell {
   font-family: sans-serif;
-  margin: 1px 0px 0px 1px;
-  overflow: hidden;
   font-weight: bold;
-  text-align: center;
-  border: 0;
-  outline: 0;
-  padding-left: 0;
-  padding-right: 0;
-  box-shadow: 0px 0px 8px 2px rgba(50,50,50,0.5);
-}
-
-.image-cell-textarea {
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-.text-hover-widget, .image-hover-widget {
-  position: absolute;
-  cursor: text;
-  z-index: 10;
-  margin: 2px 3px 3px 2px;
-}
-
-.text-delete-widget, .image-delete-widget {
-  position: absolute;
-  background-color: red;
-  width: 6px;
-  height: 6px;
-  cursor: pointer;
-  margin-left: -2px;
-  z-index: 12;
-}
-
-.image-delete-widget {
-  margin-left: -5px;
-}
-
-.text-resize-widget, .image-resize-widget {
-  position: absolute;
-  background-color: blue;
-  width: 6px;
-  height: 6px;
-  cursor: se-resize;
-  margin-left: -2px;
-  margin-top: -2px;
-  z-index: 12;
-}
-
-.image-resize-widget {
-  margin-left: -5px;
-  margin-top: -5px;
-}
-
-.box-move-widget {
-  position: absolute;
-  background-color: yellow;
-  width: 6px;
-  height: 6px;
-  cursor: move;
-  z-index: 12;
 }
