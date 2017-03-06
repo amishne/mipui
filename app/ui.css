@@ -48,23 +48,27 @@
 }
 
 #widgetLayer {
-  z-index: 6;
+  z-index: 7;
 }
 
 #gridLayer {
   display: inline-block;
-  z-index: 5;
+  z-index: 6;
 }
 
 #textLayer {
-  z-index: 4;
+  z-index: 5;
 }
 
 #doorsLayer {
-  z-index: 3;
+  z-index: 4;
 }
 
 #imagesLayer {
+  z-index: 3;
+}
+
+#blobsLayer {
   z-index: 2;
 }
 
@@ -103,6 +107,10 @@
 }
 
 .image-cell {
+  position: absolute;
+}
+
+.blob-cell {
   position: absolute;
 }
 

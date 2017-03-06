@@ -50,6 +50,15 @@ const ct = {
       standard: {},
     },
   },
+  blobs: {
+    classNames: ['blob-cell'],
+    furniture: {
+      classNames: ['furniture-cell', 'furniture-cell-_CONNECTIONS_'],
+      green: {
+        classNames: ['green-furniture', 'green-furniture-_ADDING-REMOVING_'],
+      },
+    }
+  }
 };
 
 // Content keys.
@@ -60,6 +69,7 @@ const ck = {
   endCell: 'e',
   text: 't',
   image: 'i',
+  connections: 'c',
 };
 
 function sameContent(c1, c2) {

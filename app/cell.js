@@ -287,6 +287,10 @@ class Cell {
         variation.classNames || []);
     classNames.forEach(className => {
       element.classList[addOrRemove](className.replace(/_ROLE_/g, this.role));
+      if (content.hasOwnProperty(ck.connections)) {
+        element.classList[addOrRemove](
+            className.replace(/_CONNECTIONS_/g, content[ck.connections]));
+      }
     });
   }
 
