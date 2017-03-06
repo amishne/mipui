@@ -109,67 +109,67 @@
 }
 
 .furniture-cell-0 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 23 9, 23 23, 9 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 23 9, 23 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-1 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 23, 9 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-2 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 33 9, 33 23, 9 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 33 9, 33 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-3 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, 9 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-4 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 23 9, 23 33, 9 33' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 23 9, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-5 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-6 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-7 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-8 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 23, -2 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-9 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 23, -2 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-10 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, -2 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-11 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, -2 23, -2 9, 9 9' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, -2 23, -2 9, 9 9' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-12 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 33, 9 33, 9 23, -2 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-13 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33, 9 23, -2 23, -2 9, 9 9' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33, 9 23, -2 23, -2 9, 9 9' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-14 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .furniture-cell-15 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(200, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .green-furniture {

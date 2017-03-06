@@ -158,7 +158,7 @@ class BlobGesture extends Gesture {
       cell.setLayerContent(ct.blobs, {
         [ck.kind]: content[ck.kind],
         [ck.variation]: content[ck.variation],
-        [ck.connections]: content[ck.connections] ^ mask,
+        [ck.connections]: content[ck.connections] | mask,
       }, true);
     });
   }
