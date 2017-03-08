@@ -57,6 +57,9 @@ const ct = {
       green: {
         classNames: ['green-furniture', 'green-furniture-_ADDING-REMOVING_'],
       },
+      brown: {
+        classNames: ['brown-furniture', 'brown-furniture-_ADDING-REMOVING_'],
+      },
     }
   }
 };

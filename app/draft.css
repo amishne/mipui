@@ -173,9 +173,25 @@
 }
 
 .green-furniture {
-  filter: hue-rotate(160deg) brightness(2.5);
+  filter: hue-rotate(160deg) brightness(2.5) opacity(0.8);
 }
 
-.green-furniture-adding, .green-furniture-removing {
-  filter: hue-rotate(160deg) brightness(3.0);
+.green-furniture-adding {
+  filter: hue-rotate(160deg) brightness(3.0) opacity(0.6);
+}
+
+.green-furniture-removing {
+  filter: hue-rotate(160deg) brightness(3.0) opacity(0.4);
+}
+
+.brown-furniture {
+  filter: hue-rotate(65deg) brightness(2.5) opacity(0.8);
+}
+
+.brown-furniture-adding {
+  filter: hue-rotate(65deg) brightness(3) opacity(0.6);
+}
+
+.brown-furniture-removing {
+  filter: hue-rotate(65deg) brightness(3) opacity(0.4);
 }
