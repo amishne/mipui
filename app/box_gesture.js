@@ -338,11 +338,14 @@ class BoxGesture extends Gesture {
             this.getLayer_(), this.createStartCellContent_());
     this.hoverWidget_.style.width = layerElement.scrollWidth;
     this.hoverWidget_.style.height = layerElement.scrollHeight;
-    this.hoverWidget_.onclick = (e) => {
-      if (e.button == 0) this.startEditing_();
+    this.hoverWidget_.onmousedown = (e) => {
+      if (e.button == 0) {
+        this.startEditing_();
+        e.stopPropagation()
+      }
     };
     this.hoverWidget_.onmouseup = (e) => {
-      this.stopGesture();
+      if (this.mode_ != 'editing') this.stopGesture();
     }
   }
 
@@ -374,17 +377,19 @@ class BoxGesture extends Gesture {
       this.startCell_.showHighlight(
           this.getLayer_(), this.startCell_.getLayerContent(this.getLayer_()));
     }
-    this.deleteWidget_.onclick = (e) => {
-      this.finishEditing_();
-      deleteGesture.startGesture();
-      deleteGesture.stopGesture();
-      state.opCenter.recordOperationComplete();
+    this.deleteWidget_.onmousedown = (e) => {
+      //this.finishEditing_();
       e.stopPropagation();
-      this.stopHover();
-      this.startHover(this.startCell_);
     };
     this.deleteWidget_.onmouseup = (e) => {
-      this.stopGesture();
+      if (e.buttons == 0) {
+        deleteGesture.startGesture();
+        deleteGesture.stopGesture();
+        state.opCenter.recordOperationComplete();
+        this.stopHover();
+        this.startHover(this.startCell_);
+        e.stopPropagation();
+      }
     }
   }
 
