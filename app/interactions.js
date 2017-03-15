@@ -131,13 +131,21 @@ function handleSelectedToolChange(toolElementName) {
     case 'imageTool':
       state.gesture = new ImageGesture();
       break;
-    case 'greenFurnitureTool':
+    case 'squareGreenTool':
       state.gesture =
-          new BlobGesture(ct.blobs.furniture, ct.blobs.furniture.green);
+          new BlobGesture(ct.blobs.square, ct.blobs.square.green);
       break;
-    case 'brownFurnitureTool':
+    case 'squareBrownTool':
       state.gesture =
-          new BlobGesture(ct.blobs.furniture, ct.blobs.furniture.brown);
+          new BlobGesture(ct.blobs.square, ct.blobs.square.brown);
+      break;
+    case 'circleGreenTool':
+      state.gesture =
+          new BlobGesture(ct.blobs.circle, ct.blobs.circle.green);
+      break;
+    case 'circleBrownTool':
+      state.gesture =
+          new BlobGesture(ct.blobs.circle, ct.blobs.circle.brown);
       break;
   }
 }

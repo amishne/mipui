@@ -299,8 +299,14 @@ class TheMap {
     cell.addNeighborKey('left',
         TheMap.dividerCellKey(
             previousRow, previousColumn, nextRow, previousColumn), []);
+    cell.addNeighborKey('top-right', null, [
+      TheMap.primaryCellKey(previousRow, nextColumn),
+    ]);
     cell.addNeighborKey('bottom-right', null, [
       TheMap.primaryCellKey(nextRow, nextColumn),
+    ]);
+    cell.addNeighborKey('bottom-left', null, [
+      TheMap.primaryCellKey(nextRow, previousColumn),
     ]);
     cell.addNeighborKey('top-left', null, [
       TheMap.primaryCellKey(previousRow, previousColumn),

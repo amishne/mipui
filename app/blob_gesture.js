@@ -3,179 +3,207 @@ class BlobGesture extends Gesture {
     super();
     this.kind_ = kind;
     this.variation_ = variation;
-    this.previousCell_ = null;
     this.mode_ = null;
+    this.cellMasks_ = new Map();
   }
 
   startHover(cell) {
-    if (!this.isCellEligible_(cell)) return;
-    this.hoveredCell_ = cell;
     this.mode_ = cell.hasLayerContent(ct.blobs) ? 'removing' : 'adding';
-    this.showHighlight_()
+    this.populateCellMasks_(cell);
+    this.showHighlight_();
   }
 
   stopHover() {
-    if (!this.hoveredCell_) return;
     this.hideHighlight_();
   }
 
   startGesture() {
-    if (this.mode_ == 'adding' &&
-        !this.hoveredCell_.isKind(ct.blobs, this.kind_)) {
-      this.hoveredCell_.setLayerContent(
-          ct.blobs, this.createContent_(false, false, false, false), true);
-    } else {
-      this.hoveredCell_.setLayerContent(ct.blobs, null, true);
-      // Disconnect neighbors.
-      [
-        this.createDisconnectedContent_(this.hoveredCell_, 'top', 4),
-        this.createDisconnectedContent_(this.hoveredCell_, 'right', 8),
-        this.createDisconnectedContent_(this.hoveredCell_, 'bottom', 1),
-        this.createDisconnectedContent_(this.hoveredCell_, 'left', 2),
-      ].forEach(result => {
-        if (!result) return;
-        result.neighbor.setLayerContent(ct.blobs, result.content, true);
-      });
-    }
-    this.previousCell_ = this.hoveredCell_;
+    this.hideHighlight_();
+    this.apply_();
   }
 
   continueGesture(cell) {
-    if (!this.isCellEligible_(cell)) return;
-    this.hideHighlight_();
-    if (this.mode_ == 'adding') {
-      if (!cell.isKind(ct.blobs, this.kind_)) {
-        cell.setLayerContent(
-            ct.blobs, this.createContent_(false, false, false, false), true);
-        // Disconnect neighbors.
-        [
-          this.createDisconnectedContent_(cell, 'top', 4),
-          this.createDisconnectedContent_(cell, 'right', 8),
-          this.createDisconnectedContent_(cell, 'bottom', 1),
-          this.createDisconnectedContent_(cell, 'left', 2),
-        ].forEach(result => {
-          if (!result) return;
-          result.neighbor.setLayerContent(ct.blobs, result.content, true);
-        });
-      }
-      this.connect_(this.previousCell_, cell);
-    } else {
-      cell.setLayerContent(ct.blobs, null, true);
-      // Disconnect neighbors.
-      [
-        this.createDisconnectedContent_(cell, 'top', 4),
-        this.createDisconnectedContent_(cell, 'right', 8),
-        this.createDisconnectedContent_(cell, 'bottom', 1),
-        this.createDisconnectedContent_(cell, 'left', 2),
-      ].forEach(result => {
-        if (!result) return;
-        result.neighbor.setLayerContent(ct.blobs, result.content, true);
-      });
-    }
-    this.previousCell_ = cell;
+    this.hoveredCell_ = cell;
+    this.populateCellMasks_(this.hoveredCell_);
+    this.apply_();
   }
 
   stopGesture() {
-    this.previousCell_ = null;
     state.opCenter.recordOperationComplete();
   }
 
-  isCellEligible_(cell) {
-    return cell.role == 'primary';
+  apply_() {
+    this.calcNewContent_().forEach((newContent, cell) => {
+      cell.setLayerContent(ct.blobs, newContent, true);
+    });
   }
 
   showHighlight_() {
-    if (this.mode_ == 'adding') {
-      this.hoveredCell_.showHighlight(
-          ct.blobs, this.createContent_(false, false, false, false));
-    } else {
-      // Empty highlight for the targeted cell.
-      this.hoveredCell_.showHighlight(ct.blobs, null);
-      // Disconnect neighbors.
-      [
-        this.createDisconnectedContent_(this.hoveredCell_, 'top', 4),
-        this.createDisconnectedContent_(this.hoveredCell_, 'right', 8),
-        this.createDisconnectedContent_(this.hoveredCell_, 'bottom', 1),
-        this.createDisconnectedContent_(this.hoveredCell_, 'left', 2),
-      ].forEach(result => {
-        if (!result) return;
-        result.neighbor.showHighlight(ct.blobs, result.content);
-      });
-    }
+    this.calcNewContent_().forEach((newContent, cell) => {
+      cell.showHighlight(ct.blobs, newContent);
+    });
   }
 
   hideHighlight_() {
-    this.hoveredCell_.hideHighlight(ct.blobs);
-    if (this.mode_ == 'removing') {
-      ['top', 'right', 'bottom', 'left'].forEach(dir => {
-        const cells = this.hoveredCell_.getNeighbors(dir).cells;
-        if (cells && cells.length > 0) {
-          cells[0].hideHighlight(ct.blobs);
-        }
+    this.cellMasks_.forEach((_, cell) => {
+      cell.hideHighlight(ct.blobs);
+    });
+  }
+
+  calcNewContent_() {
+    const result = new Map();
+    this.cellMasks_.forEach((val, cell) => {
+      if (val == null) {
+        result.set(cell, null);
+        return;
+      }
+      if (!cell.hasLayerContent(ct.blobs)) {
+        if (this.mode_ == 'removing') return;
+        result.set(cell, {
+          [ck.kind]: this.kind_.id,
+          [ck.variation]: this.variation_.id,
+          [ck.connections]: val,
+        });
+        return;
+      }
+      const existingContent = cell.getLayerContent(ct.blobs);
+      const existingConnections = existingContent[ck.connections];
+      result.set(cell, {
+        [ck.kind]: existingContent[ck.kind],
+        [ck.variation]: existingContent[ck.variation],
+        [ck.connections]:
+            this.mode_ == 'adding' ?
+                existingConnections | val : existingConnections & ~val,
       });
-    }
+    });
+    return result;
   }
 
-  createContent_(top, right, bottom, left) {
-    return {
-      [ck.kind]: this.kind_.id,
-      [ck.variation]: this.variation_.id,
-      [ck.connections]: top + right * 2 + bottom * 4 + left * 8,
-    }
-  }
-
-  createDisconnectedContent_(cell, neighborDir, mask) {
-    const cells = cell.getNeighbors(neighborDir).cells;
-    if (!cells || cells.length == 0) return null;
-    const neighbor = cells[0];
-    const neighborContent = cells[0].getLayerContent(ct.blobs);
-    if (!neighborContent || !neighborContent[ck.connections] ||
-        !neighborContent[ck.connections] | mask == 0) {
-      return null;
-    }
-    return {
-      neighbor,
-      content: {
-        [ck.kind]: neighborContent[ck.kind],
-        [ck.variation]: neighborContent[ck.variation],
-        [ck.connections]: neighborContent[ck.connections] & ~mask,
+  populateCellMasks_(cell) {
+    this.cellMasks_ = new Map();
+    if (this.mode_ == 'adding') {
+      switch (cell.role) {
+        case 'primary':
+          this.populateCellMask_(cell, 0);
+          break;
+        case 'vertical':
+          this.populateCellMask_(cell, 10);
+          // Connect the left and right primaries.
+          this.populateCellMask_(cell.getNeighbor('left'), 2);
+          this.populateCellMask_(cell.getNeighbor('right'), 8);
+          break;
+        case 'horizontal':
+          this.populateCellMask_(cell, 5);
+          // Connect the top and bottom primaries.
+          this.populateCellMask_(cell.getNeighbor('top'), 4);
+          this.populateCellMask_(cell.getNeighbor('bottom'), 1);
+          break;
+        case 'corner':
+          this.populateCellMask_(cell, 15);
+          // Connect the surrounding primaries.
+          this.populateCellMask_(cell.getNeighbor('top-right'), 12);
+          this.populateCellMask_(cell.getNeighbor('bottom-right'), 9);
+          this.populateCellMask_(cell.getNeighbor('bottom-left'), 3);
+          this.populateCellMask_(cell.getNeighbor('top-left'), 6);
+          // Connect the surrounding dividers.
+          this.populateCellMask_(cell.getNeighbor('top', true), 10);
+          this.populateCellMask_(cell.getNeighbor('right', true), 5);
+          this.populateCellMask_(cell.getNeighbor('bottom', true), 10);
+          this.populateCellMask_(cell.getNeighbor('left', true), 5);
+          break;
+      }
+    } else {
+      this.populateCellMask_(cell, null);
+      switch (cell.role) {
+        case 'primary':
+          // Disconnect the surrounding primaries.
+          this.populateCellMask_(cell.getNeighbor('top'), 4);
+          this.populateCellMask_(cell.getNeighbor('right'), 8);
+          this.populateCellMask_(cell.getNeighbor('bottom'), 1);
+          this.populateCellMask_(cell.getNeighbor('left'), 2);
+          // Remove the surrounding dividers.
+          this.populateCellMask_(cell.getNeighbor('top', true), null);
+          this.populateCellMask_(cell.getNeighbor('right', true), null);
+          this.populateCellMask_(cell.getNeighbor('bottom', true), null);
+          this.populateCellMask_(cell.getNeighbor('left', true), null);
+          // Remove the surrounding corners.
+          this.populateCellMask_(cell.getNeighbor('top-right', true), null);
+          this.populateCellMask_(cell.getNeighbor('bottom-right', true), null);
+          this.populateCellMask_(cell.getNeighbor('bottom-left', true), null);
+          this.populateCellMask_(cell.getNeighbor('top-left', true), null);
+          break;
+        case 'vertical':
+          // Disconnect the left and right primaries.
+          this.populateCellMask_(cell.getNeighbor('left'), 2);
+          this.populateCellMask_(cell.getNeighbor('right'), 8);
+          // Disconnect the top and bottom dividers.
+          this.populateCellMask_(cell.getNeighbor('top-same'), 4);
+          this.populateCellMask_(cell.getNeighbor('bottom-same'), 1);
+          // Remove the top corner, and disconnect its surrounding horizontal
+          // dividers.
+          const topCorner = cell.getNeighbor('top', true);
+          if (topCorner) {
+            this.populateCellMask_(topCorner, null);
+            this.populateCellMask_(topCorner.getNeighbor('right', true), 8);
+            this.populateCellMask_(topCorner.getNeighbor('left', true), 2);
+          }
+          // Remove the bottom corner, and disconnect its surrounding horizontal
+          // dividers.
+          const bottomCorner = cell.getNeighbor('bottom', true);
+          if (bottomCorner) {
+            this.populateCellMask_(bottomCorner, null);
+            this.populateCellMask_(bottomCorner.getNeighbor('right', true), 8);
+            this.populateCellMask_(bottomCorner.getNeighbor('left', true), 2);
+          }
+          break;
+        case 'horizontal':
+          // Disconnect the top and bottom primaries.
+          this.populateCellMask_(cell.getNeighbor('top'), 4);
+          this.populateCellMask_(cell.getNeighbor('bottom'), 1);
+          // Disconnect the right and left dividers.
+          this.populateCellMask_(cell.getNeighbor('right-same'), 8);
+          this.populateCellMask_(cell.getNeighbor('left-same'), 2);
+          // Remove the right corner, and disconnect its surrounding vertical
+          // dividers.
+          const rightCorner = cell.getNeighbor('right', true);
+          if (rightCorner) {
+            this.populateCellMask_(rightCorner, null);
+            this.populateCellMask_(rightCorner.getNeighbor('top', true), 4);
+            this.populateCellMask_(rightCorner.getNeighbor('bottom', true), 1);
+          }
+          // Remove the left corner, and disconnect its surrounding vertical
+          // dividers.
+          const leftCorner = cell.getNeighbor('left', true);
+          if (leftCorner) {
+            this.populateCellMask_(leftCorner, null);
+            this.populateCellMask_(leftCorner.getNeighbor('top', true), 4);
+            this.populateCellMask_(leftCorner.getNeighbor('bottom', true), 1);
+          }
+          break;
+        case 'corner':
+          // Disconnect the surrounding dividers.
+          this.populateCellMask_(cell.getNeighbor('top', true), 4);
+          this.populateCellMask_(cell.getNeighbor('right', true), 8);
+          this.populateCellMask_(cell.getNeighbor('bottom', true), 1);
+          this.populateCellMask_(cell.getNeighbor('left', true), 2);
+          break;
       }
     }
   }
 
-  connect_(cell1, cell2) {
-    const masks = [];
-    const dir = this.findDirection_(cell1, cell2);
-    switch (dir) {
-      case 'left-to-right': masks[0] = 2; masks[1] = 8; break;
-      case 'top-to-bottom': masks[0] = 4; masks[1] = 1; break;
-      case 'right-to-left': masks[0] = 8; masks[1] = 2; break;
-      case 'bottom-to-top': masks[0] = 1; masks[1] = 4; break;
+  populateCellMask_(cell, mask) {
+    if (!cell) return;
+    if (!this.cellMasks_.has(cell)) {
+      this.cellMasks_.set(cell, mask);
+    } else {
+      const existingMask = this.cellMasks_.get(cell);
+      let newMask;
+      if (this.mode_ == 'removing' && (mask == null || existingMask == null)) {
+        newMask = null;
+      } else {
+        newMask = existingMask | mask;
+      }
+      this.cellMasks_.set(cell, newMask);
     }
-    masks.forEach((mask, index) => {
-      const cell = [cell1, cell2][index];
-      const content = cell.getLayerContent(ct.blobs);
-      cell.setLayerContent(ct.blobs, {
-        [ck.kind]: content[ck.kind],
-        [ck.variation]: content[ck.variation],
-        [ck.connections]: content[ck.connections] | mask,
-      }, true);
-    });
-  }
-
-  findDirection_(cell1, cell2) {
-    if (cell1.getNeighbors('top').cells.includes(cell2)) {
-      return 'bottom-to-top';
-    }
-    if (cell1.getNeighbors('right').cells.includes(cell2)) {
-      return 'left-to-right';
-    }
-    if (cell1.getNeighbors('bottom').cells.includes(cell2)) {
-      return 'top-to-bottom';
-    }
-    if (cell1.getNeighbors('left').cells.includes(cell2)) {
-      return 'right-to-left';
-    }
-    return null;
   }
 }

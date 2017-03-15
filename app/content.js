@@ -52,15 +52,32 @@ const ct = {
   },
   blobs: {
     classNames: ['blob-cell'],
-    furniture: {
-      classNames: ['furniture-cell', 'furniture-cell-_CONNECTIONS_'],
+    square: {
+      classNames: [
+        'square-cell-_CONNECTIONS_',
+        'square-cell-_ROLE_',
+        'square-cell-_ROLE_-_ADDING-REMOVING_',
+      ],
       green: {
-        classNames: ['green-furniture', 'green-furniture-_ADDING-REMOVING_'],
+        classNames: ['green-square', 'green-square-_ADDING-REMOVING_'],
       },
       brown: {
-        classNames: ['brown-furniture', 'brown-furniture-_ADDING-REMOVING_'],
+        classNames: ['brown-square', 'brown-square-_ADDING-REMOVING_'],
       },
-    }
+    },
+    circle: {
+      classNames: [
+        'circle-cell-_CONNECTIONS_',
+        'circle-cell-_ROLE_',
+        'circle-cell-_ROLE_-_ADDING-REMOVING_',
+      ],
+      green: {
+        classNames: ['green-circle', 'green-circle-_ADDING-REMOVING_'],
+      },
+      brown: {
+        classNames: ['brown-circle', 'brown-circle-_ADDING-REMOVING_'],
+      },
+    },
   }
 };
 

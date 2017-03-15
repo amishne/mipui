@@ -51,6 +51,14 @@ class Cell {
     return content ? content[ck.kind] === kind.id : false;
   }
 
+  isVariation(layer, kind, variation) {
+    const content = this.getLayerContent(layer);
+    if (!content) return false;
+    if (content[ck.kind] !== kind.id) return false;
+    if (content[ck.variation] !== variation.id) return false;
+    return true;
+  }
+
   getVal(layer, contentKey) {
     const content = this.getLayerContent(layer);
     return content ? content[contentKey] : null;
@@ -262,6 +270,16 @@ class Cell {
           .map(cellKey => { return state.theMap.cells.get(cellKey); })
           .filter(cell => !!cell),
     }
+  }
+  
+  getNeighbor(direction, divider) {
+    const neighbors = this.getNeighbors(direction);
+    if (!neighbors) return null;
+    if (divider) {
+      return neighbors.dividerCell;
+    }
+    if (!neighbors.cells || neighbors.cells.length == 0) return null;
+    return neighbors.cells[0];
   }
 
   getAllNeighbors() {
