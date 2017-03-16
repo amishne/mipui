@@ -106,13 +106,21 @@
 
 .square-cell-primary, .square-cell-vertical, .square-cell-horizontal,
 .circle-cell-primary, .circle-cell-vertical, .circle-cell-horizontal {
-  margin: -4px -3px -3px -4px;
+  margin: -1px -0px -0px -1px;
+}
+
+.square-cell-primary, .circle-cell-primary {
+  z-index: 1;
+}
+
+.square-cell-vertical, .square-cell-horizontal, .circle-cell-vertical,
+.circle-cell-horizontal {
   z-index: 0;
 }
 
 .square-cell-corner, .circle-cell-corner {
-  margin: -8px -7px -7px -8px;
-  z-index: 1;
+  margin: -7px -6px -6px -7px;
+  z-index: 2;
   background: rgb(255, 0, 0) !important;
 }
 
@@ -151,129 +159,121 @@
 }
 
 .square-cell-0 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 23 9, 23 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 20 6, 20 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-1 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-2 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 33 9, 33 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 27 6, 27 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-3 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, 9 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 6, 27 6, 27 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-4 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 23 9, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 20 6, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
-.square-cell-5 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+.square-cell-5, .circle-cell-5 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-6 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 27 6, 27 20, 20 20, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-7 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 6, 27 6, 27 20, 20 20, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-8 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 20 6, 20 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-9 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 6 6, 6 -2, 20 -2, 20 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
-.square-cell-10 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+.square-cell-10, .circle-cell-10 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 27 6, 27 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-11 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, -2 23, -2 9, 9 9' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 6, 27 6, 27 20, -2 20, -2 6, 6 6' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-12 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 20 6, 20 27, 6 27, 6 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-13 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33, 9 23, -2 23, -2 9, 9 9' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 27, 6 27, 6 20, -2 20, -2 6, 6 6' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-14 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 27 6, 27 20, 20 20, 20 27, 6 27, 6 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .square-cell-15 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 6 6, 6 -2, 20 -2, 20 6, 27 6, 27 20, 20 20, 20 27, 6 27, 6 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-0 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><circle cx='16' cy='16' r='8' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><circle cx='13' cy='13' r='7' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-1 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 9 -2, H 23, V 16, A 6 6 0 1 1 9 16, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 13, A 7 7 0 1 1 6 13, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-2 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 33 9, V 23, H 16, A 6 6 0 1 1 16 9, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 30 6, V 20, H 13, A 7 7 0 1 1 13 6, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-3 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 9 -2, H 23, A 18 18 0 1 1 33 9, V 33, A 24 0 1 1 9 -2' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 0, A 6 6 0 0 0 26 6, H 27, V 20, H 26, A 20 20 0 0 1 6 0, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-4 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 23 9, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-5 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 27, H 20, V 13, A 7 7 0 0 0 6 13, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-6 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 27 6, V 20, H 26, A 6 6 0 0 0 20 26, V 27, H 6, V 26, A 20 20 0 0 1 26 6, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-7 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 20 -2, V 0, A 6 6 0 0 0 26 6, H 27, V 20, H 26, A 6 6 0 0 0 20 26, V 27, H 6, V -2, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-8 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 20, V 6, H 13, A 7 7 0 1 1 13 20, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-9 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-10 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 0, A 20 20 0 0 1 0 20, H -2, V 6, H 0, A 6 6 0 0 0 6 0, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-11 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 9, 33 9, 33 23, -2 23, -2 9, 9 9' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 0, A 6 6 0 0 0 6 0, V -2, H 20, V 0, A 6 6 0 0 0 26 6, H 27, V 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-12 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 23 9, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 0, A 20 20 0 0 1 20 26, V 27, H 6, A 6 6 0 0 0 0 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-13 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='9 -2, 23 -2, 23 33, 9 33, 9 23, -2 23, -2 9, 9 9' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 27, H 6, V 26, A 6 6 0 0 0 0 20, H -2, V 6, H 0, A 6 6 0 0 0 6 0, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-14 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 27, V 20, H 26, A 6 6 0 0 0 20 26, V 27, H 6, V 26, A 6 6 0 0 0 0 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
 
 .circle-cell-15 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 9, 9 9, 9 -2, 23 -2, 23 9, 33 9, 33 23, 23 23, 23 33, 9 33, 9 23, -2 23' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 0, A 6 6 0 0 0 6 0, V -2, H 20, V 0, A 6 6 0 0 0 26 6, H 27, V 20, A 6 6 0 0 0 20 26, V 27, H 6, V 26, A 6 6 0 0 0 0 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
