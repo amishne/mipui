@@ -3,6 +3,10 @@ class TextGesture extends BoxGesture {
     super();
   }
 
+  isEditable_() {
+    return true;
+  }
+
   getDefaultContent_() {
     return 'Text';
   }

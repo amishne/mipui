@@ -144,7 +144,17 @@ class BoxGesture extends Gesture {
          this.mode_ == 'moving') && this.startCell_) {
       this.stopHover();
       if (this.mode_ == 'adding') {
-        this.startEditing_();
+        if (this.isEditable_()) {
+          this.startEditing_();
+        } else {
+          this.apply_();
+          this.anchorCell_ = null;
+          this.originalEndCell_ = null;
+          this.targetCell_ = null;
+          this.startCell_ = null;
+          this.nonStartCells_ = [];
+          this.hoveredCell_ = null;
+        }
       } else {
         if (this.mode_ == 'resizing' || this.mode_ == 'moving') {
           this.apply_();
@@ -471,6 +481,7 @@ class BoxGesture extends Gesture {
   }
 
   startEditing_() {
+    if (!this.isEditable_()) return;
     this.finishEditing_();
     this.createDeleteWidget_();
     this.originalValue_ =

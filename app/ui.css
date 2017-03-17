@@ -48,27 +48,31 @@
 }
 
 #widgetLayer {
-  z-index: 7;
+  z-index: 8;
 }
 
 #gridLayer {
   display: inline-block;
-  z-index: 6;
+  z-index: 7;
 }
 
 #textLayer {
-  z-index: 5;
+  z-index: 6;
 }
 
 #doorsLayer {
-  z-index: 4;
+  z-index: 5;
 }
 
 #imagesLayer {
+  z-index: 4;
+}
+
+#shapesLayer {
   z-index: 3;
 }
 
-#blobsLayer {
+#stairsLayer {
   z-index: 2;
 }
 
@@ -110,8 +114,13 @@
   position: absolute;
 }
 
-.blob-cell {
+.shape-cell {
   position: absolute;
+}
+
+.stairs-cell {
+  position: absolute;
+  margin: 0 1px 1px 0;
 }
 
 .text-cell {

@@ -1,14 +1,28 @@
 class ImageGesture extends BoxGesture {
-  constructor() {
+  constructor(layer, kind, variation, defaultImage, isEditable) {
     super();
+    this.layer_ = layer;
+    this.kind_ = kind;
+    this.variation_ = variation;
+    this.defaultImage_ = defaultImage;
+    this.isEditable__ = isEditable;
+  }
+
+  isEditable_() {
+    return this.isEditable__;
   }
 
   createNewGesture_() {
-    return new ImageGesture();
+    return new ImageGesture(
+        this.layer_,
+        this.kind_,
+        this.variation_,
+        this.defaultImage_,
+        this.isEditable__);
   }
 
   getDefaultContent_() {
-    return 'assets/wyvern.svg';
+    return this.defaultImage_;
   }
 
   getValueKey_() {
@@ -16,18 +30,19 @@ class ImageGesture extends BoxGesture {
   }
 
   getLayer_() {
-    return ct.images;
+    return this.layer_;
   }
 
   getKind_() {
-    return this.getLayer_().image;
+    return this.kind_;
   }
 
   getVariation_() {
-    return this.getKind_().background;
+    return this.variation_;
   }
 
   createInputElement_() {
+    if (!this.isEditable_) return null;
     const element = document.createElement('textarea');
     element.className = 'image-cell-textarea';
     return element;
