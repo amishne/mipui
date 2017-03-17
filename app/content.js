@@ -98,7 +98,11 @@ const ct = {
     },
   },
   stairs: {
-    classNames: ['stairs-cell'],
+    classNames: [
+      'stairs-cell',
+      'stairs-cell-_ADDING-REMOVING_',
+      'stairs-cell-_EDITING_',
+    ],
     horizontal: { generic: {} },
     vertical: { generic: {} },
     spiral: { generic: {} },
