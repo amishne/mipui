@@ -50,8 +50,8 @@ const ct = {
       standard: {},
     },
   },
-  blobs: {
-    classNames: ['blob-cell'],
+  shapes: {
+    classNames: ['shape-cell'],
     square: {
       classNames: [
         'square-cell-_CONNECTIONS_',
@@ -63,6 +63,15 @@ const ct = {
       },
       brown: {
         classNames: ['brown-square', 'brown-square-_ADDING-REMOVING_'],
+      },
+      blue: {
+        classNames: ['blue-square', 'blue-square-_ADDING-REMOVING_'],
+      },
+      red: {
+        classNames: ['red-square', 'red-square-_ADDING-REMOVING_'],
+      },
+      white: {
+        classNames: ['white-square', 'white-square-_ADDING-REMOVING_'],
       },
     },
     circle: {
@@ -77,7 +86,22 @@ const ct = {
       brown: {
         classNames: ['brown-circle', 'brown-circle-_ADDING-REMOVING_'],
       },
+      blue: {
+        classNames: ['blue-circle', 'blue-circle-_ADDING-REMOVING_'],
+      },
+      red: {
+        classNames: ['red-circle', 'red-circle-_ADDING-REMOVING_'],
+      },
+      white: {
+        classNames: ['white-circle', 'white-circle-_ADDING-REMOVING_'],
+      },
     },
+  },
+  stairs: {
+    classNames: ['stairs-cell'],
+    horizontal: { generic: {} },
+    vertical: { generic: {} },
+    spiral: { generic: {} },
   }
 };
 

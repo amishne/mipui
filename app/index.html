@@ -16,10 +16,10 @@
   <script src="utils.js" type="text/javascript"></script>
   <!-- gestures -->
   <script src="gesture.js" type="text/javascript"></script>
-  <script src="blob_gesture.js" type="text/javascript"></script>
   <script src="box_gesture.js" type="text/javascript"></script>
   <script src="door_gesture.js" type="text/javascript"></script>
   <script src="image_gesture.js" type="text/javascript"></script>
+  <script src="shape_gesture.js" type="text/javascript"></script>
   <script src="text_gesture.js" type="text/javascript"></script>
   <script src="wall_gesture.js" type="text/javascript"></script>
   <!-- init should be last -->
@@ -89,6 +89,18 @@
         Square (brown)
       </label>
       <label>
+        <input id="squareBlueTool" type="radio" name="tool">
+        Square (blue)
+      </label>
+      <label>
+        <input id="squareRedTool" type="radio" name="tool">
+        Square (red)
+      </label>
+      <label>
+        <input id="squareWhiteTool" type="radio" name="tool">
+        Square (white)
+      </label>
+      <label>
         <input id="circleGreenTool" type="radio" name="tool">
         Circle (green)
       </label>
@@ -96,10 +108,35 @@
         <input id="circleBrownTool" type="radio" name="tool">
         Circle (brown)
       </label>
+      <label>
+        <input id="circleBlueTool" type="radio" name="tool">
+        Circle (blue)
+      </label>
+      <label>
+        <input id="circleRedTool" type="radio" name="tool">
+        Circle (red)
+      </label>
+      <label>
+        <input id="circleWhiteTool" type="radio" name="tool">
+        Circle (white)
+      </label>
+      <label>
+        <input id="stairsHorizontalTool" type="radio" name="tool">
+        Stairs (horizontal)
+      </label>
+      <label>
+        <input id="stairsVerticalTool" type="radio" name="tool">
+        Stairs (vertical)
+      </label>
+      <label>
+        <input id="stairsSpiralTool" type="radio" name="tool">
+        Stairs (spiral)
+      </label>
     </div>
     <div id="theMap" class="the-map">
       <div id="terrainLayer" class="layer"></div>
-      <div id="blobsLayer" class="layer"></div>
+      <div id="stairsLayer" class="layer"></div>
+      <div id="shapesLayer" class="layer"></div>
       <div id="imagesLayer" class="layer"></div>
       <div id="doorsLayer" class="layer"></div>
       <div id="textLayer" class="layer"></div>

@@ -129,23 +129,76 @@ function handleSelectedToolChange(toolElementName) {
       state.gesture = new TextGesture();
       break;
     case 'imageTool':
-      state.gesture = new ImageGesture();
+      state.gesture = new ImageGesture(
+          ct.images,
+          ct.images.image,
+          ct.images.image.background,
+          'assets/wyvern.svg',
+          true);
       break;
     case 'squareGreenTool':
       state.gesture =
-          new BlobGesture(ct.blobs.square, ct.blobs.square.green);
+          new ShapeGesture(ct.shapes.square, ct.shapes.square.green);
       break;
     case 'squareBrownTool':
       state.gesture =
-          new BlobGesture(ct.blobs.square, ct.blobs.square.brown);
+          new ShapeGesture(ct.shapes.square, ct.shapes.square.brown);
+      break;
+    case 'squareBlueTool':
+      state.gesture =
+          new ShapeGesture(ct.shapes.square, ct.shapes.square.blue);
+      break;
+    case 'squareRedTool':
+      state.gesture =
+          new ShapeGesture(ct.shapes.square, ct.shapes.square.red);
+      break;
+    case 'squareWhiteTool':
+      state.gesture =
+          new ShapeGesture(ct.shapes.square, ct.shapes.square.white);
       break;
     case 'circleGreenTool':
       state.gesture =
-          new BlobGesture(ct.blobs.circle, ct.blobs.circle.green);
+          new ShapeGesture(ct.shapes.circle, ct.shapes.circle.green);
       break;
     case 'circleBrownTool':
       state.gesture =
-          new BlobGesture(ct.blobs.circle, ct.blobs.circle.brown);
+          new ShapeGesture(ct.shapes.circle, ct.shapes.circle.brown);
+      break;
+    case 'circleBlueTool':
+      state.gesture =
+          new ShapeGesture(ct.shapes.circle, ct.shapes.circle.blue);
+      break;
+    case 'circleRedTool':
+      state.gesture =
+          new ShapeGesture(ct.shapes.circle, ct.shapes.circle.red);
+      break;
+    case 'circleWhiteTool':
+      state.gesture =
+          new ShapeGesture(ct.shapes.circle, ct.shapes.circle.white);
+      break;
+    case 'stairsHorizontalTool':
+      state.gesture = new ImageGesture(
+          ct.stairs,
+          ct.stairs.horizontal,
+          ct.stairs.horizontal.generic,
+          'assets/stairs-horizontal.svg',
+          false);
+      break;
+    case 'stairsVerticalTool':
+      state.gesture = new ImageGesture(
+          ct.stairs,
+          ct.stairs.vertical,
+          ct.stairs.vertical.generic,
+          'assets/stairs-vertical.svg',
+          false);
+      break;
+    case 'stairsSpiralTool':
+      state.gesture = new ImageGesture(
+          ct.stairs,
+          ct.stairs.spiral,
+          ct.stairs.spiral.generic,
+          'assets/stairs-spiral.svg',
+          false);
       break;
   }
 }
