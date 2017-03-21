@@ -120,7 +120,7 @@ class State {
   
   setSecret(secret) {
     this.secret_ = secret;
-    firebase.database().ref(`/users/${this.auth.uid}/secrets/${this.mid_}`)
+    firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
         .set(secret, error => {
       setStatus(Status.AUTH_ERROR);
     });
