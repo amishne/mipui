@@ -36,7 +36,13 @@ function wireUiElements() {
 }
 
 function initializeFirebase() {
-  var config = {
+  const isProd =
+      window.location.href.startsWith('https://amishne.github.io/mipui/app/');
+  var config = isProd ? {
+    apiKey: "AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ",
+    authDomain: "mipui-prod.firebaseapp.com",
+    databaseURL: "https://mipui-prod.firebaseio.com",
+  } : {
     apiKey: "AIzaSyAP7CfYeh9_DWmKqTPI_-etKuhYFggaYy4",
     authDomain: "mipui-dev.firebaseapp.com",
     databaseURL: "https://mipui-dev.firebaseio.com",
