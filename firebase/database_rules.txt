@@ -2,22 +2,18 @@
   "rules": {
     "maps": {
       "$mid": {
-        // Writing here requires either no existing value, or that the secret is known.
-        // It doesn't require auth.
-        ".write": "!data.exists() || data.child('secret').val() === newData.child('secret').val()",
+        // Writing here requires an existing user, and either no existing value
+        // (in which case a secret must be provided), or that the user knows the
+        // secret.
+        ".write":
+            "auth != null && ((!data.exists() && newData.child('secret').exists()) ||
+            (data.exists() && data.child('secret').val() === root.child('users').child(auth.uid).child('secrets').child($mid).val()))",
         "payload": {
-          // Anyone with a mid can read the payload.
+          // Anyone (who knows the mid) can read the payload.
           ".read": true,
-          // Writing here can be done by writing the parent and supplying a secret, but
-          // logged-in users can write here directly, if their user knows the secret.
-          ".write":
-              "data.parent().child('secret').val() ===
-               root.child('users').child(auth.uid).child('secrets').child($mid).val()",
         },
         "secret": {
-          // Anyone can write here, as long as it doesn't already exist...
-          ".write": "!data.exists()",
-          // And it _must_ exist, so this makes it a write-once value.
+          // A secret is a string between 1 and 100 characters long.
           ".validate": "newData.isString() && newData.val().length < 100 && newData.val().length > 0",
         },
       },
@@ -27,7 +23,7 @@
       "$uid": {
         // Only the current user can access their data.
         ".read": "$uid === auth.uid",
-        ".write": "$uid === auth.uid && newData.child('isAdmin').isBoolean() && newData.child('isAdmin').val() === false"
+        ".write": "$uid === auth.uid",
       },
     },
   },

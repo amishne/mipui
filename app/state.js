@@ -14,6 +14,8 @@ class State {
 
     this.mid_ = null;
 
+    this.secret_ = null;
+
     this.gesture = new WallGesture();
 
     this.opCenter = new OperationCenter();
@@ -48,6 +50,8 @@ class State {
     this.currentlySendingOperations_ = false;
 
     this.lastAppliedOperation_ = null;
+
+    this.user = null;
   }
 
   setLastOpNum(num) {
@@ -113,6 +117,14 @@ class State {
     this.opCenter.startListeningForMap();
     this.opCenter.startListeningForOperations();
   }
+  
+  setSecret(secret) {
+    this.secret_ = secret;
+    firebase.database().ref(`/users/${this.auth.uid}/secrets/${this.mid_}`)
+        .set(secret, error => {
+      setStatus(Status.AUTH_ERROR);
+    });
+  }
 
   getMid() {
     return this.mid_;
@@ -123,9 +135,16 @@ class State {
     createTheMapAndUpdateElements();
   }
 
-  // Create a random 10-character string with characters belonging to [a-z0-9].
+  
   setupNewMid() {
     // From http://stackoverflow.com/a/19964557
-    this.setMid((Math.random().toString(36)+'00000000000000000').slice(2, 12));
+    this.setMid('m' + this.generateRandomString_());
+    this.setSecret('s' + this.generateRandomString_());
+  }
+
+  // Create a random 10-character string with characters belonging to [a-z0-9].
+  generateRandomString_() {
+    // From http://stackoverflow.com/a/19964557
+    return (Math.random().toString(36)+'00000000000000000').slice(2, 12);
   }
 }

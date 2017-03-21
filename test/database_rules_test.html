@@ -1,0 +1,197 @@
+<html>
+<head>
+  <!-- firebase -->
+  <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js"></script>
+  <!-- test framework -->
+  <script src="harness.js" type="text/javascript"></script>
+  <!-- test -->
+  <script type="text/javascript">
+    let cleanupFunctions = [];
+
+    window.authStateChanged = user => {};
+
+    beforeSuite = () => {
+      const config = {
+        apiKey: "AIzaSyBwSiZD5sXpn-jBPMuDK_7n-CmMnetD0uw",
+        authDomain: "mipui-test.firebaseapp.com",
+        databaseURL: "https://mipui-test.firebaseio.com",
+      };
+      firebase.initializeApp(config);
+      firebase.database.enableLogging(false);
+//      firebase.auth().onAuthStateChanged(user => {
+//        window.authStateChanged(user);
+//      });
+    };
+
+    afterTest = () => {
+      cleanupFunctions.forEach(f => f());
+      cleanupFunctions = [];
+    }
+
+    const signIn = (callback) => {
+      //mock('authStateChanged', (user) => callback(user));
+      firebase.auth().signInAnonymously().then(user => callback(user))
+          .catch(dontExpectThis);
+    }
+
+    const cleanup = (mid, secret, user) => {
+      const cleanupMapAndUser = (userToDelete) => {
+        const uid = userToDelete.uid;
+        if (mid) {
+          firebase.database().ref(`/users/${uid}/secrets`).set({[mid]: secret});
+          firebase.database().ref(`/maps/${mid}`).set(null);
+        }
+        firebase.database().ref(`/users/${uid}`).set(null);
+        userToDelete.delete();
+      };
+      cleanupFunctions.push(() => {
+        if (user) {
+          cleanupMapAndUser(user);
+        } else {
+          signIn(newUser => {
+            if (!newUser) {
+              assert(false);
+              testCompleted();
+            }
+            cleanupMapAndUser(newUser);
+          });
+        }
+      });
+    }
+
+    const expectThis = (_) => {
+      assert(true);
+      testCompleted();
+    }
+    
+    const dontExpectThis = (_) => {
+      assert(false);
+      testCompleted();
+    }
+
+    addTest('reading / is forbidden', () => {
+      firebase.database().ref('/').once('value')
+          .then(dontExpectThis, expectThis);
+    });
+
+    addTest('reading /maps is forbidden', () => {
+      firebase.database().ref('/maps').once('value')
+          .then(dontExpectThis, expectThis);
+    });
+
+    addTest('reading /users is forbidden', () => {
+      firebase.database().ref('/users').once('value')
+          .then(dontExpectThis, expectThis);
+    });
+
+    addTest('reading /users/uid is forbidden', () => {
+      firebase.database().ref('/users/uid').once('value')
+          .then(dontExpectThis, expectThis);
+    });
+
+    addTest('reading /users/uid even when signed in is forbidden', () => {
+      signIn(user => {
+        cleanup(null, null, user);
+        firebase.database().ref('/users/uid').once('value')
+            .then(dontExpectThis, expectThis);
+      });
+    });
+
+    addTest('reading /users/uid by that user is allowed', () => {
+      signIn(user => {
+        cleanup(null, null, user);
+        firebase.database().ref(`/users/${user.uid}`).once('value')
+            .then(expectThis, dontExpectThis);
+      });
+    });
+
+    addTest('writing /users/uid even when signed in is forbidden', () => {
+      signIn(user => {
+        cleanup(null, null, user);
+        firebase.database().ref('/users/uid').set(null)
+            .then(dontExpectThis, expectThis);
+      });
+    });
+
+    addTest('writing /users/uid by that user is allowed', () => {
+      signIn(user => {
+        cleanup(null, null, user);
+        firebase.database().ref(`/users/${user.uid}`).set(null)
+            .then(expectThis, dontExpectThis);
+      });
+    });
+
+    addTest('reading /maps/mid is forbidden', () => {
+      const path = '/maps/mid1';
+      firebase.database().ref(path).once('value')
+          .then(dontExpectThis, expectThis);
+    });
+
+    addTest('reading /maps/mid/payload is allowed', () => {
+      const path = '/maps/existing/payload';
+      firebase.database().ref(path).once('value')
+          .then(expectThis, dontExpectThis);
+    });
+
+    addTest('writing / is forbidden', () => {
+      signIn(user => {
+        cleanup(null, null, user);
+        firebase.database().ref('/').set(null)
+            .then(dontExpectThis).catch(expectThis);
+      });
+    });
+
+    addTest('writing /maps is forbidden', () => {
+      signIn(user => {
+        cleanup(null, null, user);
+        firebase.database().ref('/maps').set(null)
+            .then(dontExpectThis).catch(expectThis);
+      });
+    });
+
+    addTest('writing a new /maps/mid without a secret is forbidden', () => {
+      signIn(user => {
+        cleanup(null, null, user);
+        const path = '/maps/mid3';
+        firebase.database().ref(path).set(null)
+            .then(dontExpectThis).catch(expectThis);
+      });
+    });
+    
+    addTest('writing a new /maps/mid with just secret is forbidden', () => {
+      const mid = 'mid4';
+      const path = '/maps/' + mid;
+      firebase.database().ref(path).set({secret: 's'})
+          .then(dontExpectThis).catch(expectThis);
+    });
+
+    addTest('writing a new /maps/mid with auth and secret is allowed', () => {
+      const mid = 'mid5';
+      const path = '/maps/' + mid;
+      signIn(user => {
+        cleanup(mid, 's', user);
+        firebase.database().ref(path).set({secret: 's'})
+          .then(expectThis).catch(dontExpectThis);
+      });
+    });
+
+    addTest('overriding /maps/mid with auth with secret is allowed', () => {
+      const mid = 'mid6';
+      const path = '/maps/' + mid;
+      signIn(user => {
+        cleanup(mid, 's', user);
+        firebase.database().ref(path).set({secret: 's'}).then(_ => {
+          firebase.database().ref(`/users/${user.uid}/secrets`)
+              .set({[mid]: 's'}).then(_ => {
+            firebase.database().ref(path).set(null)
+                .then(expectThis).catch(dontExpectThis);
+          }).catch(dontExpectThis);
+        }).catch(dontExpectThis);
+      });
+    });
+  </script>
+</head>
+  <body></body>
+</html>

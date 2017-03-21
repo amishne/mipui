@@ -1,4 +1,4 @@
-let suiteTests_ = [];
+let suiteTests_ = [{}];
 let currentTestIndex_ = 0;
 const PATH_FUNCTION_REGEX = /\([^)]*\)$/;
 const PATH_FUNCTION_MATCH_REGEX = /\(([^)]*)\)$/;
@@ -13,6 +13,7 @@ function assert(condition) {
 }
 
 function testCompleted() {
+  if (typeof afterTest !== 'undefined') afterTest();
   const currentTest = suiteTests_[currentTestIndex_];
   applyTestResultToElement_(currentTest.passed, currentTest.element);
   revertMocks_(currentTest);

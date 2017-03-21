@@ -37,12 +37,20 @@ function wireUiElements() {
 
 function initializeFirebase() {
   var config = {
-    apiKey: "AIzaSyBOHHWJ8cdnDljBKr0KlaZH-nsPLmATNOw",
-    authDomain: "mipui-a13b3.firebaseapp.com",
-    databaseURL: "https://mipui-a13b3.firebaseio.com",
+    apiKey: "AIzaSyAP7CfYeh9_DWmKqTPI_-etKuhYFggaYy4",
+    authDomain: "mipui-dev.firebaseapp.com",
+    databaseURL: "https://mipui-dev.firebaseio.com",
   };
   firebase.initializeApp(config);
   firebase.database.enableLogging(false);
+  firebase.auth().signInAnonymously().catch(function(error) {
+    setStatus(Status.AUTH_ERROR);
+  });
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      state.user = user;
+    }
+  });
 }
 
 function start() {

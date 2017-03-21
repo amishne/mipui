@@ -9,6 +9,7 @@ const Status = {
   SAVE_ERROR: 'Save error',
   UPDATING: 'Updating...',
   UPDATE_ERROR: 'Update error',
+  AUTH_ERROR: 'Authentication error',
 };
 
 function setStatus(status) {
@@ -25,6 +26,8 @@ function setStatus(status) {
     case Status.UNSAVED:
     case Status.SAVING:
     case Status.UPDATING:
+    case Status.UPDATE_ERROR:
+    case Status.AUTH_ERROR:
       element.className = 'status-unstable';
       break;
     // Everything's good:
