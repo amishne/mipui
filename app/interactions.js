@@ -111,6 +111,14 @@ function handleManualModeChange(isManualMode) {
   state.tool.manualMode = isManualMode;
 }
 
+function handleSelectedMenuGroupChange(menuGroupName) {
+  [].forEach.call(document.getElementsByClassName('menu-group-bottom'), elem => {
+    elem.style.display = 'none';
+  });
+  const group = document.getElementById(menuGroupName + 'Bottom');
+  group.style.display = 'initial';
+}
+
 function handleSelectedToolChange(toolElementName) {
   switch (toolElementName) {
     case 'terrainTool':

@@ -135,9 +135,7 @@ class State {
     createTheMapAndUpdateElements();
   }
 
-  
   setupNewMid() {
-    // From http://stackoverflow.com/a/19964557
     this.setMid('m' + this.generateRandomString_());
     this.setSecret('s' + this.generateRandomString_());
   }

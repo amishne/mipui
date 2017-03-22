@@ -30,6 +30,9 @@ function wireUiElements() {
   document.getElementById('manualModeCheckbox').onchange = (e) => {
     handleManualModeChange(e.target.checked);
   }
+  document.getElementsByName('menuGroup').forEach(elem => {
+    elem.onchange = (e) => { handleSelectedMenuGroupChange(elem.id); }
+  });
   document.getElementsByName('tool').forEach(elem => {
     elem.onchange = (e) => { handleSelectedToolChange(elem.id); }
   });

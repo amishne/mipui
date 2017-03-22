@@ -30,108 +30,178 @@
 </head>
 <body ondragstart="return false;" ondrop="return false;">
   <div id="app" class="app">
-    <div class="toolbox">
-      <div>
-        <span id="status"></span>
-      </div>
-      <button id="resetViewButton" class="reset-view-button">
-        Reset view
-      </button>
-      <button id="resetGridButton" class="reset-grid-button">
-        Reset grid
-      </button>
-      <button id="expandButton" class="expand-button">Expand grid</button>
-      <div class="brushSizeSelector">
-        <button id="decreaseBrushSize" class="decrease-brush-size-button">
-          -
-        </button>
-        <span id="brushSize" class="brush-size">1 x 1</span>
-        <button id="increaseBrushSize" class="increase-brush-size-button">
-          +
-        </button>
-      </div>
-      <div class="manualMode">
-        <label>
-          <input id="manualModeCheckbox" type="checkbox">
-          Manual Mode
+    <div id="menu">
+      <div id="menu-top">
+        <div id="status"></div>
+        <label id="menu-group-view" class="menu-group" title="View">
+          <input id="viewMenuGroup" type="radio" name="menuGroup" checked>
+          <div>View</div>
+        </label>
+        <label id="menu-group-grid" class="menu-group" title="Grid">
+          <input id="gridMenuGroup" type="radio" name="menuGroup">
+          <div>Grid</div>
+        </label>
+        <label id="menu-group-terrain" class="menu-group" title="Terrain">
+          <input id="terrainMenuGroup" type="radio" name="menuGroup">
+          <div>
+            <div class="primary-cell grid-cell wall-cell terrain-cell" style="position: relative; width: 13px"></div>
+            <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; margin-left: -4px; width: 13px"></div>
+          </div>
+        </label>
+        <label id="menu-group-doors" class="menu-group" title="Doors">
+          <input id="doorsMenuGroup" type="radio" name="menuGroup">
+          <div>
+            <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px"></div>
+            <div class="vertical-cell grid-cell wall-cell terrain-cell" style="position: relative; margin-left: -4px"></div>
+            <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px; margin-left: -4px"></div>
+            <div class="door-cell door-cell-vertical"></div>
+          </div>
+        </label>
+        <label id="menu-group-text" class="menu-group" title="Text">
+          <input id="textMenuGroup" type="radio" name="menuGroup">
+          <div>
+            <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
+            <div class="primary-cell text-cell">A</div>
+          </div>
+        </label>
+        <label id="menu-group-images" class="menu-group" title="Images">
+          <input id="imagesMenuGroup" type="radio" name="menuGroup">
+          <div>
+            <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
+            <div class="primary-cell image-cell"></div>
+          </div>
+        </label>
+        <label id="menu-group-shapes" class="menu-group" title="Shapes">
+          <input id="shapesMenuGroup" type="radio" name="menuGroup">
+          <div>
+            <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
+            <div class="primary-cell shape-cell circle-cell-0 circle-cell-primary green-circle"></div>
+          </div>
+        </label>
+        <label id="menu-group-stairs" class="menu-group" title="Stairs">
+          <input id="stairsMenuGroup" type="radio" name="menuGroup">
+          <div>
+            <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
+            <div class="primary-cell stairs-cell"></div>
+          </div>
         </label>
       </div>
-      <label>
-        <input id="terrainTool" type="radio" name="tool" checked>
-        Terrain
-      </label>
-      <label>
-        <input id="singleDoorTool" type="radio" name="tool">
-        Single Door
-      </label>
-      <label>
-        <input id="doubleDoorTool" type="radio" name="tool">
-        Double Door
-      </label>
-      <label>
-        <input id="secretDoorTool" type="radio" name="tool">
-        Secret Door
-      </label>
-      <label>
-        <input id="textTool" type="radio" name="tool">
-        Text
-      </label>
-      <label>
-        <input id="imageTool" type="radio" name="tool">
-        Image
-      </label>
-      <label>
-        <input id="squareGreenTool" type="radio" name="tool">
-        Square (green)
-      </label>
-      <label>
-        <input id="squareBrownTool" type="radio" name="tool">
-        Square (brown)
-      </label>
-      <label>
-        <input id="squareBlueTool" type="radio" name="tool">
-        Square (blue)
-      </label>
-      <label>
-        <input id="squareRedTool" type="radio" name="tool">
-        Square (red)
-      </label>
-      <label>
-        <input id="squareWhiteTool" type="radio" name="tool">
-        Square (white)
-      </label>
-      <label>
-        <input id="circleGreenTool" type="radio" name="tool">
-        Circle (green)
-      </label>
-      <label>
-        <input id="circleBrownTool" type="radio" name="tool">
-        Circle (brown)
-      </label>
-      <label>
-        <input id="circleBlueTool" type="radio" name="tool">
-        Circle (blue)
-      </label>
-      <label>
-        <input id="circleRedTool" type="radio" name="tool">
-        Circle (red)
-      </label>
-      <label>
-        <input id="circleWhiteTool" type="radio" name="tool">
-        Circle (white)
-      </label>
-      <label>
-        <input id="stairsHorizontalTool" type="radio" name="tool">
-        Stairs (horizontal)
-      </label>
-      <label>
-        <input id="stairsVerticalTool" type="radio" name="tool">
-        Stairs (vertical)
-      </label>
-      <label>
-        <input id="stairsSpiralTool" type="radio" name="tool">
-        Stairs (spiral)
-      </label>
+      <div id="menu-bottom">
+        <div id="viewMenuGroupBottom" class="menu-group-bottom">
+          <button id="resetViewButton" class="reset-view-button">
+            Reset view
+          </button>
+        </div>
+        <div id="gridMenuGroupBottom" class="menu-group-bottom">
+          <button id="resetGridButton" class="reset-grid-button">
+            Reset grid
+          </button>
+          <button id="expandButton" class="expand-button">Expand grid</button>
+          <div class="brushSizeSelector">
+            <button id="decreaseBrushSize" class="decrease-brush-size-button">
+              -
+            </button>
+            <span id="brushSize" class="brush-size">1 x 1</span>
+            <button id="increaseBrushSize" class="increase-brush-size-button">
+              +
+            </button>
+          </div>
+        </div>
+        <div id="terrainMenuGroupBottom" class="menu-group-bottom">
+          <div class="manualMode">
+            <label>
+              <input id="manualModeCheckbox" type="checkbox">
+              Manual Mode
+            </label>
+          </div>
+          <label>
+            <input id="terrainTool" type="radio" name="tool" checked>
+            Terrain
+          </label>
+        </div>
+        <div id="doorsMenuGroupBottom" class="menu-group-bottom">
+          <label>
+            <input id="singleDoorTool" type="radio" name="tool">
+            Single Door
+          </label>
+          <label>
+            <input id="doubleDoorTool" type="radio" name="tool">
+            Double Door
+          </label>
+          <label>
+            <input id="secretDoorTool" type="radio" name="tool">
+            Secret Door
+          </label>
+        </div>
+        <div id="textMenuGroupBottom" class="menu-group-bottom">
+          <label>
+            <input id="textTool" type="radio" name="tool">
+            Text
+          </label>
+        </div>
+        <div id="imagesMenuGroupBottom" class="menu-group-bottom">
+          <label>
+            <input id="imageTool" type="radio" name="tool">
+            Image
+          </label>
+        </div>
+        <div id="shapesMenuGroupBottom" class="menu-group-bottom">
+          <label>
+            <input id="squareGreenTool" type="radio" name="tool">
+            Square (green)
+          </label>
+          <label>
+            <input id="squareBrownTool" type="radio" name="tool">
+            Square (brown)
+          </label>
+          <label>
+            <input id="squareBlueTool" type="radio" name="tool">
+            Square (blue)
+          </label>
+          <label>
+            <input id="squareRedTool" type="radio" name="tool">
+            Square (red)
+          </label>
+          <label>
+            <input id="squareWhiteTool" type="radio" name="tool">
+            Square (white)
+          </label>
+          <label>
+            <input id="circleGreenTool" type="radio" name="tool">
+            Circle (green)
+          </label>
+          <label>
+            <input id="circleBrownTool" type="radio" name="tool">
+            Circle (brown)
+          </label>
+          <label>
+            <input id="circleBlueTool" type="radio" name="tool">
+            Circle (blue)
+          </label>
+          <label>
+            <input id="circleRedTool" type="radio" name="tool">
+            Circle (red)
+          </label>
+          <label>
+            <input id="circleWhiteTool" type="radio" name="tool">
+            Circle (white)
+          </label>
+        </div>
+        <div id="stairsMenuGroupBottom" class="menu-group-bottom">
+          <label>
+            <input id="stairsHorizontalTool" type="radio" name="tool">
+            Stairs (horizontal)
+          </label>
+          <label>
+            <input id="stairsVerticalTool" type="radio" name="tool">
+            Stairs (vertical)
+          </label>
+          <label>
+            <input id="stairsSpiralTool" type="radio" name="tool">
+            Stairs (spiral)
+          </label>
+        </div>
+      </div>
     </div>
     <div id="theMap" class="the-map">
       <div id="terrainLayer" class="layer"></div>
