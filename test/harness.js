@@ -1,4 +1,4 @@
-let suiteTests_ = [{}];
+let suiteTests_ = [{mocked: []}];
 let currentTestIndex_ = 0;
 const PATH_FUNCTION_REGEX = /\([^)]*\)$/;
 const PATH_FUNCTION_MATCH_REGEX = /\(([^)]*)\)$/;
