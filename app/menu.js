@@ -70,9 +70,12 @@ class Menu {
         // textContent is dynamically set.
         break;
       case 'selected child':
-        cells = item.submenu.items.find(item => item.isSelected).cells;
+        const selectedChild = item.submenu.items.find(item => item.isSelected);
+        cells = selectedChild.cells;
+        item.element.classList.add(...selectedChild.classNames);
         // Intentional fallthrough.
       case 'cells':
+        item.element.innerHTML = '';
         this.createCellsForItem_(item.element, cells || item.cells);
         break;
     }
@@ -80,7 +83,9 @@ class Menu {
 
   createCellsForItem_(parent, cells) {
     cells.forEach(cell => {
-      createAndAppendDivWithClass(parent, cell.classNames.join(' '));
+      const element =
+          createAndAppendDivWithClass(parent, cell.classNames.join(' '));
+      element.innerHTML = cell.innerHTML || '';
     });
   }
 
@@ -149,8 +154,19 @@ class Menu {
   }
 
   createDoorTool_(name, variation, isSelected) {
+    let doorClassName = '';
+    switch (variation.id) {
+      case ct.doors.door.double.id:
+        doorClassName = 'double-door-cell-vertical';
+        break;
+      case ct.doors.door.secret.id:
+        doorClassName = 'secret-door-cell';
+        break;
+    }
     return {
       name,
+      type: 'tool',
+      presentation: 'cells',
       classNames: ['menu-doors'],
       isSelected,
       callback: () => {
@@ -178,7 +194,7 @@ class Menu {
             'vertical-cell',
             'door-cell',
             'door-cell-vertical',
-          ].concat(variation.classNames),
+          ].concat([doorClassName]),
         },
         {
           classNames: [
@@ -186,6 +202,37 @@ class Menu {
             'primary-cell',
             'terrain-cell',
             'floor-cell',
+          ],
+        },
+      ],
+    };
+  }
+
+  createTextTool_() {
+    return {
+      name: 'Text',
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-text'],
+      isSelected: true,
+      callback: () => {
+        state.gesture = new TextGesture();
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'terrain-cell',
+            'floor-cell',
+          ],
+        },
+        {
+          innerHTML: 'Text',
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'text-cell',
           ],
         },
       ],
@@ -215,13 +262,10 @@ class Menu {
     //           [classNames: ['classname1', 'classname2'],]
     //           [callback: () => {...},],
     //           [cells: [
-    //             role: 'primary',
-    //             content: {
-    //               0: {
-    //                 kind: 0,
-    //                 variation: 0,
-    //               },
-    //             }
+    //             {
+    //               classNames: ['classname1', 'classname2'],
+    //               innerHTML: '...',
+    //             },
     //           ]]
     //         }
     //       ]
@@ -306,11 +350,22 @@ class Menu {
         name: 'Doors',
         presentation: 'selected child',
         tip: 'Drag when placing to create a multi-cell door.',
+        classNames: ['menu-doors'],
         submenu: {
           items: [
             this.createDoorTool_('Single door', ct.doors.door.single, true),
             this.createDoorTool_('Double door', ct.doors.door.double, false),
             this.createDoorTool_('Secret door', ct.doors.door.secret, false),
+          ],
+        },
+      },
+      {
+        name: 'Text',
+        presentation: 'selected child',
+        tip: 'Drag when placing to stretch across multiple cells.',
+        submenu: {
+          items: [
+            this.createTextTool_(),
           ],
         },
       },

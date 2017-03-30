@@ -31,14 +31,16 @@
   height: 30px;
   min-width: 30px;
   margin: 4px;
-  padding: 2px;
+  border: 1px solid rgba(105, 105, 105, 0.6);
+  padding: 1px;
   min-width: 30px;
-  background-color: rgba(75, 83, 107, 0.8);
+  background-color: rgba(105, 105, 105, 0.6);
   text-align: center;
   vertical-align: middle;
   line-height: 30px;
   cursor: pointer;
   display: inline-block;
+  position: relative;
 }
 
 .menu-icon {
@@ -65,7 +67,7 @@
 }
 
 .status-error {
-  color: red;
+  color: #ff671a;
 }
 
 .status-unstable {
@@ -95,6 +97,41 @@
   display: flex;
   align-items: center;
   min-height: 50px;
+}
+
+.menu-terrain .terrain-cell {
+  width: 14px;
+  position: relative;
+  top: 2px;
+}
+
+.menu-doors .terrain-cell {
+  position: relative;
+  top: 2px;
+}
+
+.menu-doors .floor-cell {
+  width: 10px;
+}
+
+.menu-doors .door-cell {
+  position: absolute;
+  width: 8px;
+  height: 16px;
+  z-index: 1;
+  left: 13px;
+  top: 4px;
+}
+
+.menu-text .terrain-cell {
+  position: relative;
+  top: 2px;
+}
+
+.menu-text .text-cell {
+  position: absolute;
+  font-size: 8pt;
+  top: 1px;
 }
 
 /*
