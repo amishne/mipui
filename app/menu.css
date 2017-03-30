@@ -134,6 +134,17 @@
   top: 1px;
 }
 
+.menu-images .terrain-cell {
+  position: relative;
+  top: 2px;
+}
+
+.menu-images .image-cell {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+}
+
 /*
 
 #menu {

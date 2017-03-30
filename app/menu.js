@@ -239,6 +239,42 @@ class Menu {
     };
   }
 
+  createImageTool_() {
+    return {
+      name: 'Images',
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-images'],
+      isSelected: true,
+      callback: () => {
+        state.gesture = new ImageGesture(
+            ct.images,
+            ct.images.image,
+            ct.images.image.background,
+            'assets/wyvern.svg',
+            true);
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'terrain-cell',
+            'floor-cell',
+          ],
+        },
+        {
+          innerHTML: '<img src="assets/wyvern.svg">',
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'image-cell',
+          ],
+        },
+      ],
+    };
+  }
+
   setupMenuItems_() {
     // Format is:
     // [
@@ -366,6 +402,16 @@ class Menu {
         submenu: {
           items: [
             this.createTextTool_(),
+          ],
+        },
+      },
+      {
+        name: 'Images',
+        presentation: 'selected child',
+        tip: 'Drag when placing to stretch across multiple cells.',
+        submenu: {
+          items: [
+            this.createImageTool_(),
           ],
         },
       },
