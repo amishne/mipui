@@ -1,5 +1,7 @@
 <html>
 <head>
+  <!-- Material web-font -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!-- firebase -->
   <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase-auth.js"></script>
@@ -8,6 +10,7 @@
   <script src="cell.js" type="text/javascript"></script>
   <script src="content.js" type="text/javascript"></script>
   <script src="interactions.js" type="text/javascript"></script>
+  <script src="menu.js" type="text/javascript"></script>
   <script src="operation.js" type="text/javascript"></script>
   <script src="operation_center.js" type="text/javascript"></script>
   <script src="state.js" type="text/javascript"></script>
@@ -27,76 +30,82 @@
   <!-- styles -->
   <link href="ui.css" rel="stylesheet" type="text/css" />
   <link href="draft.css" rel="stylesheet" type="text/css" />
+  <link href="menu.css" rel="stylesheet" type="text/css" />
 </head>
 <body ondragstart="return false;" ondrop="return false;">
   <div id="app" class="app">
+<!--
     <div id="menu">
       <div id="menu-top">
         <div id="status"></div>
-        <label id="menu-group-view" class="menu-group" title="View">
-          <input id="viewMenuGroup" type="radio" name="menuGroup" checked>
-          <div>View</div>
+        <label id="menUgroupView" class="menu-group" title="View">
+          <input id="viewMenuGroup" type="radio" name="menuGroup">
+          <div class="radio-div material-icons">search</div>
         </label>
-        <label id="menu-group-grid" class="menu-group" title="Grid">
+        <label id="menuGroupGrid" class="menu-group" title="Grid">
           <input id="gridMenuGroup" type="radio" name="menuGroup">
-          <div>Grid</div>
+          <div class="radio-div material-icons">grid_on</div>
         </label>
-        <label id="menu-group-terrain" class="menu-group" title="Terrain">
-          <input id="terrainMenuGroup" type="radio" name="menuGroup">
-          <div>
+        <label id="menuGroupTerrain" class="menu-group" title="Terrain">
+          <input id="terrainMenuGroup" type="radio" name="menuGroup" checked>
+          <div class="radio-div">
             <div class="primary-cell grid-cell wall-cell terrain-cell" style="position: relative; width: 13px"></div>
             <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; margin-left: -4px; width: 13px"></div>
           </div>
         </label>
-        <label id="menu-group-doors" class="menu-group" title="Doors">
+        <label id="menuGroupDoors" class="menu-group" title="Doors">
           <input id="doorsMenuGroup" type="radio" name="menuGroup">
-          <div>
+          <div class="radio-div">
             <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px"></div>
             <div class="vertical-cell grid-cell wall-cell terrain-cell" style="position: relative; margin-left: -4px"></div>
             <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px; margin-left: -4px"></div>
             <div class="door-cell door-cell-vertical"></div>
           </div>
         </label>
-        <label id="menu-group-text" class="menu-group" title="Text">
+        <label id="menuGroupText" class="menu-group" title="Text">
           <input id="textMenuGroup" type="radio" name="menuGroup">
-          <div>
+          <div class="radio-div">
             <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
             <div class="primary-cell text-cell">A</div>
           </div>
         </label>
-        <label id="menu-group-images" class="menu-group" title="Images">
+        <label id="menuGroupImages" class="menu-group" title="Images">
           <input id="imagesMenuGroup" type="radio" name="menuGroup">
-          <div>
+          <div class="radio-div">
             <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
             <div class="primary-cell image-cell"></div>
           </div>
         </label>
-        <label id="menu-group-shapes" class="menu-group" title="Shapes">
+        <label id="menuGroupShapes" class="menu-group" title="Shapes">
           <input id="shapesMenuGroup" type="radio" name="menuGroup">
-          <div>
+          <div class="radio-div">
             <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
             <div class="primary-cell shape-cell circle-cell-0 circle-cell-primary green-circle"></div>
           </div>
         </label>
-        <label id="menu-group-stairs" class="menu-group" title="Stairs">
+        <label id="menuGroupStairs" class="menu-group" title="Stairs">
           <input id="stairsMenuGroup" type="radio" name="menuGroup">
-          <div>
+          <div class="radio-div">
             <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative"></div>
             <div class="primary-cell stairs-cell"></div>
           </div>
         </label>
       </div>
-      <div id="menu-bottom">
+      <div id="menuBottom">
         <div id="viewMenuGroupBottom" class="menu-group-bottom">
-          <button id="resetViewButton" class="reset-view-button">
-            Reset view
+          <button id="resetViewButton" class="reset-view-button material-icons">
+            zoom_out_map
           </button>
         </div>
         <div id="gridMenuGroupBottom" class="menu-group-bottom">
           <button id="resetGridButton" class="reset-grid-button">
-            Reset grid
+            <i class="material-icons">delete</i>
           </button>
-          <button id="expandButton" class="expand-button">Expand grid</button>
+          <button id="expandButton" class="expand-button">
+            <i class="material-icons">settings_overscan</i>
+          </button>
+        </div>
+        <div id="terrainMenuGroupBottom" class="menu-group-bottom">
           <div class="brushSizeSelector">
             <button id="decreaseBrushSize" class="decrease-brush-size-button">
               -
@@ -106,8 +115,6 @@
               +
             </button>
           </div>
-        </div>
-        <div id="terrainMenuGroupBottom" class="menu-group-bottom">
           <div class="manualMode">
             <label>
               <input id="manualModeCheckbox" type="checkbox">
@@ -115,22 +122,40 @@
             </label>
           </div>
           <label>
-            <input id="terrainTool" type="radio" name="tool" checked>
-            Terrain
+            <input id="terrainTool" type="radio" name="terrainToolGroup" class="tool" checked>
+            <div class="radio-div">
+              <div class="primary-cell grid-cell wall-cell terrain-cell" style="position: relative; width: 13px"></div>
+              <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; margin-left: -4px; width: 13px"></div>
+            </div>
           </label>
         </div>
         <div id="doorsMenuGroupBottom" class="menu-group-bottom">
           <label>
-            <input id="singleDoorTool" type="radio" name="tool">
-            Single Door
+            <input id="singleDoorTool" type="radio" name="doorToolGroup" class="tool" checked>
+            <div class="radio-div">
+              <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px"></div>
+              <div class="vertical-cell grid-cell wall-cell terrain-cell" style="position: relative; margin-left: -4px"></div>
+              <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px; margin-left: -4px"></div>
+              <div class="door-cell door-cell-vertical"></div>
+            </div>
           </label>
           <label>
-            <input id="doubleDoorTool" type="radio" name="tool">
-            Double Door
+            <input id="doubleDoorTool" type="radio" name="doorToolGroup" class="tool">
+            <div class="radio-div">
+              <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px"></div>
+              <div class="vertical-cell grid-cell wall-cell terrain-cell" style="position: relative; margin-left: -4px"></div>
+              <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px; margin-left: -4px"></div>
+              <div class="door-cell door-cell-vertical double-door-cell-vertical"></div>
+            </div>
           </label>
           <label>
-            <input id="secretDoorTool" type="radio" name="tool">
-            Secret Door
+            <input id="singleDoorTool" type="radio" name="doorToolGroup" class="tool">
+            <div class="radio-div">
+              <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px"></div>
+              <div class="vertical-cell grid-cell wall-cell terrain-cell" style="position: relative; margin-left: -4px"></div>
+              <div class="primary-cell grid-cell floor-cell terrain-cell" style="position: relative; width: 9px; margin-left: -4px"></div>
+              <div class="door-cell door-cell-vertical secret-door-cell"></div>
+            </div>
           </label>
         </div>
         <div id="textMenuGroupBottom" class="menu-group-bottom">
@@ -203,6 +228,7 @@
         </div>
       </div>
     </div>
+-->
     <div id="theMap" class="the-map">
       <div id="terrainLayer" class="layer"></div>
       <div id="stairsLayer" class="layer"></div>

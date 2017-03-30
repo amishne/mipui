@@ -116,7 +116,11 @@ function handleSelectedMenuGroupChange(menuGroupName) {
     elem.style.display = 'none';
   });
   const group = document.getElementById(menuGroupName + 'Bottom');
-  group.style.display = 'initial';
+  group.style.display = 'flex';
+  const inputs = group.getElementsByTagName('input');
+  Array.of(inputs).forEach(input => {
+    if (input.checked) handleSelectedToolChange(input.id);
+  });
 }
 
 function handleSelectedToolChange(toolElementName) {

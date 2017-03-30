@@ -124,6 +124,9 @@ class State {
         .set(secret, error => {
       setStatus(Status.AUTH_ERROR);
     });
+    const newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
+        `&secret=${encodeURIComponent(secret)}`;
+    window.history.replaceState(null, '', newUrl);
   }
 
   getMid() {

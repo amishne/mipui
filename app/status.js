@@ -13,14 +13,22 @@ const Status = {
 };
 
 function setStatus(status) {
-  const element = document.getElementById('status');
-  element.textContent = status;
+  const statusIcon = document.getElementById('status-icon');
+  const statusText = document.getElementById('status-text');
+  const setClass = (className) => {
+    [statusIcon, statusText].forEach(element => {
+      element.classList
+          .remove('status-error', 'status-unstable', 'status-good');
+      element.classList.add(className);
+    });
+  };
+  statusText.textContent = status;
   switch(status) {
     // No work can be done in these cases:
     case Status.INITIALIZING:
     case Status.LOADING:
     case Status.LOADING_FAILED:
-      element.className = 'status-error';
+      setClass('status-error');
       break;
     // Something's still progress or not quite right, but work can be done:
     case Status.UNSAVED:
@@ -28,12 +36,12 @@ function setStatus(status) {
     case Status.UPDATING:
     case Status.UPDATE_ERROR:
     case Status.AUTH_ERROR:
-      element.className = 'status-unstable';
+      setClass('status-unstable');
       break;
     // Everything's good:
     case Status.READY:
     case Status.SAVED:
-      element.className = 'status-good';
+      setClass('status-good');
       break;
   }
 }

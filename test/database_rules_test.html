@@ -180,16 +180,18 @@
     addTest('overriding /maps/mid with auth with secret is allowed', () => {
       const mid = 'mid6';
       const path = '/maps/' + mid;
-      signIn(user => {
-        cleanup(mid, 's', user);
-        firebase.database().ref(path).set({secret: 's'}).then(_ => {
-          firebase.database().ref(`/users/${user.uid}/secrets`)
-              .set({[mid]: 's'}).then(_ => {
-            firebase.database().ref(path).set(null)
-                .then(expectThis).catch(dontExpectThis);
+      setTimeout(() => {
+        signIn(user => {
+          cleanup(mid, 's', user);
+          firebase.database().ref(path).set({secret: 's'}).then(_ => {
+            firebase.database().ref(`/users/${user.uid}/secrets`)
+                .set({[mid]: 's'}).then(_ => {
+              firebase.database().ref(path).set(null)
+                  .then(expectThis).catch(dontExpectThis);
+            }).catch(dontExpectThis);
           }).catch(dontExpectThis);
-        }).catch(dontExpectThis);
-      });
+        });
+      }, 1000);
     });
   </script>
 </head>
