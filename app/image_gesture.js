@@ -48,6 +48,10 @@ class ImageGesture extends BoxGesture {
     return element;
   }
 
+  getDefaultInputElementValue_() {
+    return '<url>';
+  }
+
   getDeleteWidgetCssClassName_() {
     return 'image-delete-widget';
   }

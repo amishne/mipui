@@ -33,6 +33,10 @@ class TextGesture extends BoxGesture {
     return element;
   }
 
+  getDefaultInputElementValue_() {
+    return 'Text';
+  }
+
   getDeleteWidgetCssClassName_() {
     return 'text-delete-widget';
   }

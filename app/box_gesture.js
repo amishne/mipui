@@ -492,10 +492,11 @@ class BoxGesture extends Gesture {
     this.inputElement_ = this.createInputElement_();
     this.inputElement_.style.width = layerElement.offsetWidth + 2;
     this.inputElement_.style.height = layerElement.offsetHeight + 2;
-    if (this.startCell_.hasLayerContent(this.getLayer_())) {
-      this.inputElement_.value =
-          this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
-    }
+    this.inputElement_.value =
+        this.startCell_.hasLayerContent(this.getLayer_()) ?
+        this.startCell_.getVal(this.getLayer_(), this.getValueKey_()) :
+        this.getDefaultInputElementValue_();
+    this.inputElement_.select();
     this.startCell_.gridElement.appendChild(this.inputElement_);
     this.inputElement_.onkeydown = (e) => {
       if (this.isInputFinishingEvent_(e)) {
