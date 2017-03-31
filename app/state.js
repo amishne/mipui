@@ -16,7 +16,7 @@ class State {
 
     this.secret_ = null;
 
-    this.gesture = new WallGesture();
+    this.gesture = null;//new WallGesture(1, false);
 
     this.opCenter = new OperationCenter();
 
@@ -26,11 +26,6 @@ class State {
         x: 8,
         y: 8,
       },
-    };
-
-    this.tool = {
-      brushSize: 1,
-      manualMode: false,
     };
 
     this.defaultTerrainContent_ = {

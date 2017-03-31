@@ -32,10 +32,9 @@ class DoorGesture extends Gesture {
     this.showDoorHighlight_();
 
     if (this.shouldPaintWall_()) {
-      this.makeWallGesture = new WallGesture();
+      this.makeWallGesture = new WallGesture(1, false);
       this.makeWallGesture.mode = 'divider only';
       this.makeWallGesture.toWall = true;
-      this.makeWallGesture.brushSize = 1;
       this.makeWallGesture.startHoverAfterInitialFieldsAreSet(cell);
     }
   }

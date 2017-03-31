@@ -122,15 +122,26 @@ class Menu {
     submenuItem.callback();
   }
 
-  createTerrainTool_() {
+  createTerrainTool_(size, isManual, isSelected) {
+    const descriptionCells = [];
+    if (size > 1 || isManual) {
+      descriptionCells.push({
+        innerHTML: size > 1 ? `${size}x${size}` : 'Man-<br/>ual',
+        classNames: [
+          'grid-cell',
+          'primary-cell',
+          'text-cell',
+        ],
+      });
+    }
     return {
-      name: 'Wall/floor',
+      name: `Wall/floor, ${size}x${size}`,
       type: 'tool',
       presentation: 'cells',
       classNames: ['menu-terrain'],
-      isSelected: true,
+      isSelected,
       callback: () => {
-        state.gesture = new WallGesture();
+        state.gesture = new WallGesture(size, isManual);
       },
       cells: [
         {
@@ -149,7 +160,7 @@ class Menu {
             'floor-cell',
           ],
         },
-      ],
+      ].concat(descriptionCells),
     };
   }
 
@@ -464,7 +475,12 @@ class Menu {
         isSelected: true,
         submenu: {
           items: [
-            this.createTerrainTool_(),
+            this.createTerrainTool_(1, false, true),
+            this.createTerrainTool_(3, false, false),
+            this.createTerrainTool_(5, false, false),
+            this.createTerrainTool_(7, false, false),
+            this.createTerrainTool_(9, false, false),
+            this.createTerrainTool_(1, true, false),
           ],
         },
       },

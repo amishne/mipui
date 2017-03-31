@@ -18,26 +18,6 @@ function wireUiElements() {
   document.onkeydown = (keyDownEvent) => { handleKeyDownEvent(keyDownEvent); };
   app.onwheel = (wheelEvent) => { handleWheelEvent(wheelEvent); };
   app.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
-//  document.getElementById('expandButton').onclick = () => { expandGrid(2); };
-//  document.getElementById('resetViewButton').onclick = () => { resetView(); };
-//  document.getElementById('resetGridButton').onclick = () => { resetGrid(); };
-//  document.getElementById('increaseBrushSize').onclick = () => {
-//    increaseBrushSize();
-//  };
-//  document.getElementById('decreaseBrushSize').onclick = () => {
-//    decreaseBrushSize();
-//  };
-//  document.getElementById('manualModeCheckbox').onchange = (e) => {
-//    handleManualModeChange(e.target.checked);
-//  }
-//  document.getElementsByName('menuGroup').forEach(elem => {
-//    elem.onchange = (e) => { handleSelectedMenuGroupChange(elem.id); }
-//  });
-//  document.getElementsByName('tool').forEach(elem => {
-//    elem.onchange = (e) => { handleSelectedToolChange(elem.id); }
-//  });
-//  handleSelectedMenuGroupChange('terrainMenuGroup');
-//  handleSelectedToolChange('terrainTool');
 }
 
 function initializeFirebase() {

@@ -1,5 +1,5 @@
 class WallGesture extends Gesture {
-  constructor() {
+  constructor(brushSize, isManual) {
     super();
     // Cell to target. Determines by hovered cell and by the brush size. This
     // includes cells that will not be changed since they're already with the
@@ -18,7 +18,9 @@ class WallGesture extends Gesture {
     // Gesture toggle direction, either true or false.
     this.toWall = null;
     
-    this.brushSize_;
+    this.brushSize_ = brushSize;
+    
+    this.isManual_ = isManual;
     
     this.removeDoorGestures = null;
   }
@@ -33,9 +35,8 @@ class WallGesture extends Gesture {
 
   startHover(targetedCell) {
     this.toWall = !this.isWall_(targetedCell);
-    this.mode = state.tool.manualMode ? 'manual' :
+    this.mode = this.isManual_ ? 'manual' :
         (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
-    this.brushSize_ = state.tool.brushSize;
     this.startHoverAfterInitialFieldsAreSet(targetedCell);
   }
 

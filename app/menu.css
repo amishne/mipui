@@ -105,6 +105,14 @@
   top: 2px;
 }
 
+.menu-terrain .text-cell {
+  position: absolute;
+  font-size: 8pt;
+  line-height: 8pt;
+  top: 4px;
+  z-index: 2;
+}
+
 .menu-doors .terrain-cell {
   position: relative;
   top: 2px;
