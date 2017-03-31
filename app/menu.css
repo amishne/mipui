@@ -145,6 +145,31 @@
   top: 4px;
 }
 
+.menu-shapes .terrain-cell {
+  position: relative;
+  top: 2px;
+}
+
+.menu-shapes .shape-cell {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+}
+
+.menu-stairs .terrain-cell {
+  position: relative;
+  top: 2px;
+}
+
+.menu-stairs .stairs-cell {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  overflow: hidden;
+  left: 2px;
+  top: 2px;
+}
+
 /*
 
 #menu {

@@ -275,6 +275,92 @@ class Menu {
     };
   }
 
+  createShapeTool_(name, kind, variation, isSelected) {
+    const kindClassNames = kind.id == ct.shapes.square.id ? [
+      'square-cell-0',
+      'square-cell-primary',
+    ] : [
+      'circle-cell-0',
+      'circle-cell-primary',
+    ];
+    return {
+      name,
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-shapes'],
+      isSelected,
+      callback: () => {
+        state.gesture =
+          new ShapeGesture(kind, variation);
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'terrain-cell',
+            'floor-cell',
+          ],
+        },
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'shape-cell',
+          ].concat(kindClassNames).concat(variation.classNames),
+        },
+      ],
+    };
+  }
+
+  createStairsTool_(name, kind, isSelected) {
+    let image = '';
+    switch (kind.id) {
+      case ct.stairs.horizontal.id:
+        image = 'assets/stairs-horizontal.svg';
+        break;
+      case ct.stairs.vertical.id:
+        image = 'assets/stairs-vertical.svg';
+        break;
+      case ct.stairs.spiral.id:
+        image = 'assets/stairs-spiral.svg';
+        break;
+    }
+    return {
+      name,
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-stairs'],
+      isSelected,
+      callback: () => {
+        state.gesture = new ImageGesture(
+            ct.stairs,
+            kind,
+            kind.generic,
+            image,
+            false);
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'terrain-cell',
+            'floor-cell',
+          ],
+        },
+        {
+          innerHTML: `<img src=${image} >`,
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'stairs-cell',
+          ],
+        },
+      ],
+    };
+  }
+
   setupMenuItems_() {
     // Format is:
     // [
@@ -412,6 +498,37 @@ class Menu {
         submenu: {
           items: [
             this.createImageTool_(),
+          ],
+        },
+      },
+      {
+        name: 'Shapes',
+        presentation: 'selected child',
+        submenu: {
+          items: [
+            this.createShapeTool_('Green square', ct.shapes.square, ct.shapes.square.green, true),
+            this.createShapeTool_('Green circle', ct.shapes.circle, ct.shapes.square.green, false),
+            this.createShapeTool_('Brown square', ct.shapes.square, ct.shapes.square.brown, false),
+            this.createShapeTool_('Brown circle', ct.shapes.circle, ct.shapes.square.brown, false),
+            this.createShapeTool_('Blue square', ct.shapes.square, ct.shapes.square.blue, false),
+            this.createShapeTool_('blue circle', ct.shapes.circle, ct.shapes.square.blue, false),
+            this.createShapeTool_('Red square', ct.shapes.square, ct.shapes.square.red, false),
+            this.createShapeTool_('Red circle', ct.shapes.circle, ct.shapes.square.red, false),
+            this.createShapeTool_('White square', ct.shapes.square, ct.shapes.square.white, false),
+            this.createShapeTool_('White circle', ct.shapes.circle, ct.shapes.square.white, false),
+          ],
+        },
+      },
+      {
+        name: 'Stairs',
+        presentation: 'selected child',
+        tip: 'Drag when placing to stretch across multiple cells.',
+        classNames: ['menu-stairs'],
+        submenu: {
+          items: [
+            this.createStairsTool_('Horizontal stairs', ct.stairs.horizontal, true),
+            this.createStairsTool_('Vertical stairs', ct.stairs.vertical, false),
+            this.createStairsTool_('Spiral stairs', ct.stairs.spiral, false),
           ],
         },
       },
