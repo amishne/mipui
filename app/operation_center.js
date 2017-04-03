@@ -415,6 +415,10 @@ class OperationCenter {
       });
       return;
     }
+    Array.from(document.getElementsByClassName('disabled-in-read-only-mode'))
+        .forEach(element => {
+      element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
+    });
     this.startListeningForMap();
     this.startListeningForOperations();
     callback();
@@ -431,6 +435,12 @@ class OperationCenter {
       }).then(() => {
         this.connectToExistingMap(state.getMid(), state.getSecret(), callback);
       });
+    });
+  }
+
+  fork() {
+    this.createAndConnectToNewMapOnServer(() => {
+      this.rewrite_(state.getLastOpNum());
     });
   }
 

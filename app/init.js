@@ -55,15 +55,16 @@ function start() {
     const secret = params.secret ? decodeURIComponent(params.secret) : null;
     if (mid) {
       state.opCenter.connectToExistingMap(mid, secret, () => {
+        if (secret) menu.setToInitialSelection();
         setStatus(Status.READY);
       });
     } else {
+      menu.setToInitialSelection();
       setStatus(Status.READY);
     }
   });
   resetView();
   wireUiElements();
-  menu.setToInitialSelection();
 }
 
 const state = new State();

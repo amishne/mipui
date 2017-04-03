@@ -32,16 +32,20 @@
   height: 30px;
   min-width: 30px;
   margin: 4px;
-  border: 1px solid rgba(105, 105, 105, 0.6);
+  border: 1px solid rgba(31, 31, 31, 0.6);
   padding: 1px;
   min-width: 30px;
-  background-color: rgba(105, 105, 105, 0.6);
+  background-color: rgba(31, 31, 31, 0.6);
   text-align: center;
   vertical-align: middle;
   line-height: 30px;
   cursor: pointer;
   display: inline-block;
   position: relative;
+}
+
+.disabled-menu-item {
+  background-color: rgba(100, 100, 100, 0.6);
 }
 
 .menu-icon {

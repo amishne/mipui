@@ -58,6 +58,9 @@ class Menu {
   }
 
   updateItem_(item) {
+    if (!item.enabledInReadonlyMode) {
+      item.element.classList.add('disabled-in-read-only-mode');
+    }
     let cells = null;
     switch (item.presentation) {
       case 'icon':
@@ -90,6 +93,10 @@ class Menu {
   }
 
   selectMenuItem_(menuItem) {
+    if (menuItem.element.classList.contains('disabled-menu-item')) {
+      alert('This is a read-only view of this map; fork to edit.');
+      return;
+    }
     this.menuItems_.forEach(otherMenuItem => {
       const isThisItem = menuItem == otherMenuItem;
       otherMenuItem.isSelected = isThisItem;
@@ -106,6 +113,10 @@ class Menu {
   }
 
   selectSubmenuItem_(submenuItem) {
+    if (submenuItem.element.classList.contains('disabled-menu-item')) {
+      alert('This is a read-only view of this map; fork to edit.');
+      return;
+    }
     if (!submenuItem.callback) {
       // This isn't an interactive item.
       return;
@@ -402,6 +413,7 @@ class Menu {
     //     [tip: 'Long text displayed in submenu',]
     //     [isSelected: true,]
     //     [classNames: ['classname1', 'classname2'],]
+    //     [enabledInReadonlyMode: true,]
     //     submenu: {
     //       items: [
     //         {
@@ -412,6 +424,7 @@ class Menu {
     //           [materialIcon: 'icon_name',]
     //           [isSelected: true,]
     //           [classNames: ['classname1', 'classname2'],]
+    //           [enabledInReadonlyMode: true,]
     //           [callback: () => {...},],
     //           [cells: [
     //             {
@@ -430,6 +443,7 @@ class Menu {
         presentation: 'icon',
         id: 'status-icon',
         materialIcon: 'swap_vertical_circle',
+        enabledInReadonlyMode: true,
         submenu: {
           items: [
             {
@@ -437,6 +451,7 @@ class Menu {
               type: 'label',
               presentation: 'text',
               id: 'status-text',
+              enabledInReadonlyMode: true,
             },
           ],
         },
@@ -445,6 +460,7 @@ class Menu {
         name: 'Share',
         presentation: 'icon',
         materialIcon: 'share',
+        enabledInReadonlyMode: true,
         submenu: {
           items: [
             {
@@ -452,6 +468,7 @@ class Menu {
               type: 'button',
               presentation: 'icon',
               materialIcon: 'lock',
+              enabledInReadonlyMode: true,
               callback: () => {
                 this.showShareDialog_(state.getMid(), null);
               },
@@ -470,6 +487,16 @@ class Menu {
                 this.showShareDialog_(state.getMid(), state.getSecret());
               },
             },
+            {
+              name: 'Fork',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'call_split',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                state.opCenter.fork();
+              },
+            },
           ],
         },
       },
@@ -477,6 +504,7 @@ class Menu {
         name: 'View',
         presentation: 'icon',
         materialIcon: 'search',
+        enabledInReadonlyMode: true,
         submenu: {
           items: [
             {
@@ -484,6 +512,7 @@ class Menu {
               type: 'button',
               presentation: 'icon',
               materialIcon: 'zoom_out_map',
+              enabledInReadonlyMode: true,
               callback: () => {
                 resetView();
               },
