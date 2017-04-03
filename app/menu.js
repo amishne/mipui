@@ -110,11 +110,13 @@ class Menu {
       // This isn't an interactive item.
       return;
     }
+    state.gesture = null;
     submenuItem.parent.submenu.items.forEach(otherSubmenuItem => {
       const isThisItem = submenuItem == otherSubmenuItem;
       otherSubmenuItem.isSelected = isThisItem;
       otherSubmenuItem.element
-          .classList[isThisItem ? 'add' : 'remove']('selected-submenu-item');
+          .classList[isThisItem && otherSubmenuItem.type == 'tool' ?
+              'add' : 'remove']('selected-submenu-item');
     });
     if (submenuItem.parent.presentation == 'selected child') {
       this.updateItem_(submenuItem.parent);
@@ -372,6 +374,23 @@ class Menu {
     };
   }
 
+  showShareDialog_(mid, secret) {
+    if (!mid) {
+      alert('Cannot share empty map.');
+      return;
+    }
+    const loc = window.location;
+    const pageUrl =
+        `${loc.protocol}//${loc.hostname}:${loc.port}${loc.pathname}`;
+    let url = `${pageUrl}?mid=${encodeURIComponent(mid)}`;
+    let message = 'URL to a read-only view of this map.';
+    if (secret) {
+      url = `${url}&secret=${encodeURIComponent(secret)}`;
+      message = 'URL to a writable version of this map.';
+    }
+    window.prompt(message, url);
+  }
+
   setupMenuItems_() {
     // Format is:
     // [
@@ -410,7 +429,7 @@ class Menu {
         name: 'Status',
         presentation: 'icon',
         id: 'status-icon',
-        materialIcon: 'error_outline',
+        materialIcon: 'swap_vertical_circle',
         submenu: {
           items: [
             {
@@ -418,6 +437,38 @@ class Menu {
               type: 'label',
               presentation: 'text',
               id: 'status-text',
+            },
+          ],
+        },
+      },
+      {
+        name: 'Share',
+        presentation: 'icon',
+        materialIcon: 'share',
+        submenu: {
+          items: [
+            {
+              name: 'Read-only URL',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'lock',
+              callback: () => {
+                this.showShareDialog_(state.getMid(), null);
+              },
+            },
+            {
+              name: 'Read-write URL',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'lock_open',
+              callback: () => {
+                const secret = state.getSecret();
+                if (!secret) {
+                  alert('Cannot share a writable version of a read-only map.');
+                  return;
+                }
+                this.showShareDialog_(state.getMid(), state.getSecret());
+              },
             },
           ],
         },

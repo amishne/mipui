@@ -406,13 +406,42 @@ class OperationCenter {
     this.isCurrentlyProcessingPendingOperations_ = false;
   }
 
+  connectToExistingMap(mid, secret, callback) {
+    if (!mid) return;
+    if (state.getMid() != mid) state.setMid(mid);
+    if (secret && state.getSecret() != secret) {
+      state.setSecret(secret, () => {
+        this.connectToExistingMap(mid, secret, callback);
+      });
+      return;
+    }
+    this.startListeningForMap();
+    this.startListeningForOperations();
+    callback();
+  }
+
+  createAndConnectToNewMapOnServer(callback) {
+    state.setupNewMid(() => {
+      const data = {
+        payload: {},
+        secret: state.getSecret(),
+      };
+      firebase.database().ref(`/maps/${state.getMid()}`).set(data, error => {
+        setStatus(Status.AUTH_ERROR);
+      }).then(() => {
+        this.connectToExistingMap(state.getMid(), state.getSecret(), callback);
+      });
+    });
+  }
+
   // Sends an operation to the server.
   sendOp_(op) {
     if (!state.getMid()) {
-      // First-ever operation! Setup a new mid and listen to changes on it.
-      state.setupNewMid();
-      this.startListeningForMap();
-      this.startListeningForOperations();
+      // First-ever operation!
+      this.createAndConnectToNewMapOnServer(() => {
+        this.sendOp_(op);
+      });
+      return;
     }
     // Assign the next available number to the operation. If the operation could
     // not be accepted with this number, it will need to be re-sent.

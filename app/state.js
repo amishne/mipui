@@ -109,16 +109,14 @@ class State {
     this.mid_ = mid;
     const newUrl = 'index.html?mid=' + encodeURIComponent(this.mid_);
     window.history.replaceState(null, '', newUrl);
-    this.opCenter.startListeningForMap();
-    this.opCenter.startListeningForOperations();
   }
   
-  setSecret(secret) {
+  setSecret(secret, callback) {
     this.secret_ = secret;
     firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
         .set(secret, error => {
       setStatus(Status.AUTH_ERROR);
-    });
+    }).then(() => callback());
     const newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
         `&secret=${encodeURIComponent(secret)}`;
     window.history.replaceState(null, '', newUrl);
@@ -128,14 +126,18 @@ class State {
     return this.mid_;
   }
 
+  getSecret() {
+    return this.secret_;
+  }
+
   load(pstate) {
     this.pstate_ = pstate;
     createTheMapAndUpdateElements();
   }
 
-  setupNewMid() {
+  setupNewMid(callback) {
     this.setMid('m' + this.generateRandomString_());
-    this.setSecret('s' + this.generateRandomString_());
+    this.setSecret('s' + this.generateRandomString_(), callback);
   }
 
   // Create a random 10-character string with characters belonging to [a-z0-9].

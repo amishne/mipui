@@ -20,7 +20,7 @@ function wireUiElements() {
   app.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
 }
 
-function initializeFirebase() {
+function initializeFirebase(callback) {
   const isProd =
       window.location.href.startsWith('https://amishne.github.io/mipui/app/');
   var config = isProd ? {
@@ -33,10 +33,10 @@ function initializeFirebase() {
     databaseURL: "https://mipui-dev.firebaseio.com",
   };
   firebase.initializeApp(config);
-  firebase.database.enableLogging(false);
-  firebase.auth().signInAnonymously().catch(function(error) {
-    setStatus(Status.AUTH_ERROR);
-  });
+  firebase.database.enableLogging(true);
+  firebase.auth().signInAnonymously()
+      .then(user => {state.user = user; callback();})
+      .catch(error => setStatus(Status.AUTH_ERROR));
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       state.user = user;
@@ -45,23 +45,24 @@ function initializeFirebase() {
 }
 
 function start() {
+  const params = getUrlParams();
   const menu = new Menu();
   menu.createMenu();
   setStatus(Status.INITIALIZING);
   createTheMapAndUpdateElements();
-  initializeFirebase();
+  initializeFirebase(() => {
+    const mid = params.mid ? decodeURIComponent(params.mid) : null;
+    const secret = params.secret ? decodeURIComponent(params.secret) : null;
+    if (mid) {
+      state.opCenter.connectToExistingMap(mid, secret, () => {
+        setStatus(Status.READY);
+      });
+    } else {
+      setStatus(Status.READY);
+    }
+  });
   resetView();
   wireUiElements();
-  const params = getUrlParams();
-  if (params.mid) {
-    setStatus(Status.LOADING);
-    state.setMid(decodeURIComponent(params.mid));
-    if (params.secret) {
-      state.setSecret(decodeURIComponent(params.secret));
-    }
-  } else {
-    setStatus(Status.READY);
-  }
   menu.setToInitialSelection();
 }
 

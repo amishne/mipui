@@ -216,6 +216,7 @@ class Cell {
   wireInteractions_() {
     // All grid element interactions stop the event from bubbling up.
     this.gridElement.onmouseenter = (e) => {
+      if (!state.gesture) return;
       if (e.buttons == 0) {
         state.gesture.startHover(this);
       } else if (e.buttons == 1) {
@@ -224,18 +225,21 @@ class Cell {
       e.stopPropagation();
     };
     this.gridElement.onmouseleave = (e) => {
+      if (!state.gesture) return;
       if (e.buttons == 0) {
         state.gesture.stopHover();
       }
       e.stopPropagation();
     };
     this.gridElement.onmousedown = (e) => {
+      if (!state.gesture) return;
       if (e.buttons == 1) {
         state.gesture.startGesture();
       }
       e.stopPropagation();
     };
     this.gridElement.onmouseup = (e) => {
+      if (!state.gesture) return;
       if (e.buttons == 0) {
         state.gesture.stopGesture();
       }
