@@ -16,7 +16,7 @@ class State {
 
     this.secret_ = null;
 
-    this.gesture = null;//new WallGesture(1, false);
+    this.gesture = null;
 
     this.opCenter = new OperationCenter();
 

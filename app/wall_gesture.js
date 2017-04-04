@@ -17,11 +17,11 @@ class WallGesture extends Gesture {
 
     // Gesture toggle direction, either true or false.
     this.toWall = null;
-    
+
     this.brushSize_ = brushSize;
-    
+
     this.isManual_ = isManual;
-    
+
     this.removeDoorGestures = null;
   }
 
@@ -157,10 +157,14 @@ class WallGesture extends Gesture {
   }
 
   stopHover() {
-    this.cellsToSet.forEach(cell => {
-      this.hideHighlight_(cell);
-    });
-    this.removeDoorGestures.forEach(gesture => gesture.stopHover());
+    if (this.cellsToSet) {
+      this.cellsToSet.forEach(cell => {
+        this.hideHighlight_(cell);
+      });
+    }
+    if (this.removeDoorGestures) {
+      this.removeDoorGestures.forEach(gesture => gesture.stopHover());
+    }
   }
 
   startGesture() {
