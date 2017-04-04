@@ -20,6 +20,10 @@ No registration necessary.
 
 It's also possible to share a read-only view of the map, so that maps you create can easily be shared with any number of total strangers - aka the Internet.
 
+### Friendly
+
+*Mipui* contains a lot of small features beyondf just tools that help with worry-free editing, including undo/redo support, the ability to resize the grid without deleting existing content, and zoom and pan tools.
+
 ### Cloud storage
 
 Every *Mipui* map is automatically saved to the cloud every few seconds, and will remain there forever.
@@ -48,3 +52,8 @@ In fact, *Mipui* started from me using his app and thinking "oh this is cool, bu
 
 Feedback is welcome at [contact@mipui.net](mailto:contact@mipui.net).
 Suggestions, feature requests and bug reports are welcome at [contact@mipui.net](mailto:contact@mipui.net) or as [issues on the Github project](https://github.com/amishne/mipui/issues).
+
+## Other resources
+
+[Privacy policy](docs/privacy_policy)  
+[Advertisements policy](docs/ad_policy)
