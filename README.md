@@ -6,6 +6,9 @@
 
 No registration is neccessary, and there's nothing to download or install.
 
+> Temporary warning: this app is in testing mode.
+Maps might be deleted at any point, and the connection might even fail during an edit.
+
 ## Features
 
 ### Simple
@@ -27,6 +30,9 @@ It's also possible to share a read-only view of the map, so that maps you create
 ### Cloud storage
 
 Every *Mipui* map is automatically saved to the cloud every few seconds, and will remain there forever.
+
+> Temporary warning: this app is in testing mode.
+Maps might be deleted at any point, and the connection might even fail during an edit.
 
 ### Developer information
 
