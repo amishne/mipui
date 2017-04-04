@@ -70,7 +70,9 @@ class Menu {
         break;
       case 'label':
         item.element.classList.add('menu-label');
-        // textContent is dynamically set.
+        if (item.text) {
+          item.element.textContent = item.text;
+        }
         break;
       case 'selected child':
         const selectedChild = item.submenu.items.find(item => item.isSelected);
@@ -419,7 +421,7 @@ class Menu {
     //         {
     //           name: 'Submenu item name',
     //           type: 'label' | 'button' | 'tool'
-    //           presentation: 'icon' | 'cells',
+    //           presentation: 'icon' | 'cells' | 'label',
     //           [id: 'element-id',]
     //           [materialIcon: 'icon_name',]
     //           [isSelected: true,]
@@ -495,6 +497,49 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 state.opCenter.fork();
+              },
+            },
+            {
+              name: 'Download PNG',
+              type: 'button',
+              presentation: 'label',
+              text: 'PNG',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const overlay =
+                    createAndAppendDivWithClass(document.body, 'modal-overlay');
+                overlay.textContent = 'Constructing PNG...';
+                setTimeout(() => {
+                  domtoimage.toBlob(document.getElementById('theMap'))
+                      .then(blob => {
+                    saveAs(blob, 'mipui.png');
+                    overlay.parentElement.removeChild(overlay);
+                  }).catch(() => {
+                    overlay.parentElement.removeChild(overlay);
+                  });
+                }, 10);
+              },
+            },
+            {
+              name: 'Download SVG',
+              type: 'button',
+              presentation: 'label',
+              text: 'SVG',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const overlay =
+                    createAndAppendDivWithClass(document.body, 'modal-overlay');
+                overlay.textContent = 'Constructing SVG...';
+                setTimeout(() => {
+                  domtoimage.toSvg(document.getElementById('theMap'))
+                      .then(dataUrl => {
+                    const blob = new Blob([dataUrl.substr(33)], {type: "image/svg+xml"});
+                    saveAs(blob, 'mipui.svg');
+                    overlay.parentElement.removeChild(overlay);
+                  }).catch(() => {
+                    overlay.parentElement.removeChild(overlay);
+                  });
+                }, 10);
               },
             },
           ],
