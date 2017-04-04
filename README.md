@@ -39,10 +39,10 @@ Contact me at [contact@mipui.net](mailto:contact@mipui.net).
 
 *Mipui*'s implementation uses the following resources:
 
-* [Firebase by Google](firebase.google.com)
+* [Firebase by Google](http://firebase.google.com)
 * [DOM to Image by Anatolii Saienko](https://github.com/tsayen/dom-to-image)
 * [FireSaver.js by Eli Grey](https://github.com/eligrey/FileSaver.js)
-* [Game icons by Lorc, available on game-icons.net](game-icons.net)
+* [Game icons by Lorc, available on game-icons.net](http://game-icons.net)
 * [Material icons by Google](https://material.io/icons/)
 
 *Mipui* was inspired by many things, but first and foremost is [ANAmap by Sébastien Bénard](http://deepnight.net/tools/tabletop-rpg-map-editor/).
