@@ -166,7 +166,7 @@ class DoorGesture extends Gesture {
   }
 
   shouldPaintWall_() {
-    return this.toDoor && !state.tool.manualMode;
+    return this.toDoor;
   }
 
   createStartCellContent_() {
