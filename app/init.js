@@ -22,7 +22,7 @@ function wireUiElements() {
 
 function initializeFirebase(callback) {
   const isProd =
-      window.location.href.startsWith('https://amishne.github.io/mipui/app/');
+      window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/);
   var config = isProd ? {
     apiKey: "AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ",
     authDomain: "mipui-prod.firebaseapp.com",
