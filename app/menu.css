@@ -6,6 +6,7 @@
   max-height: calc(100% - 8px);
   z-index: 20;
   background-color: rgba(75, 83, 107, 0.5);
+  overflow-x: auto;
 }
 
 .menu-top {
