@@ -6,11 +6,23 @@
         // (in which case a secret must be provided), or that the user knows the
         // secret.
         ".write":
-            "auth != null && ((!data.exists() && newData.child('secret').exists()) ||
+            "auth != null && ((!data.exists() && newData.child('secret').exists() && newData.child('metadata').exists()) ||
             (data.exists() && data.child('secret').val() === root.child('users').child(auth.uid).child('secrets').child($mid).val()))",
         "payload": {
           // Anyone (who knows the mid) can read the payload.
           ".read": true,
+        },
+        "metadata": {
+          // Metadata is used to store write-only information on map creation.
+          ".write": "!data.exists()",
+          // But anyone (who knows the mid) can read it.
+          ".read": true,
+          // Make sure that there's a "created" timestamp, and that its value is
+          // sane.
+          ".validate":
+              "newData.child('created').exists() &&
+              newData.child('created').val() <= now &&
+              newData.child('created').val() >= now - 30000",
         },
         "secret": {
           // A secret is a string between 1 and 100 characters long.

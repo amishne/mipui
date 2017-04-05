@@ -167,23 +167,46 @@
           .then(dontExpectThis).catch(expectThis);
     });
 
-    addTest('writing a new /maps/mid with auth and secret is allowed', () => {
+    addTest('writing a new /maps/mid with auth and secret is forbidden', () => {
       const mid = 'mid5';
       const path = '/maps/' + mid;
       signIn(user => {
         cleanup(mid, 's', user);
         firebase.database().ref(path).set({secret: 's'})
-          .then(expectThis).catch(dontExpectThis);
+            .then(dontExpectThis).catch(expectThis);
+      });
+    });
+
+    addTest('writing a new /maps/mid with auth, secret & metadata is allowed',
+        () => {
+      const mid = 'mid6';
+      const path = '/maps/' + mid;
+      const data = {
+        secret: 's',
+        metadata: {
+          created: firebase.database.ServerValue.TIMESTAMP,
+        },
+      };
+      signIn(user => {
+        cleanup(mid, 's', user);
+        firebase.database().ref(path).set(data)
+            .then(expectThis).catch(dontExpectThis);
       });
     });
 
     addTest('overriding /maps/mid with auth with secret is allowed', () => {
-      const mid = 'mid6';
+      const mid = 'mid7';
       const path = '/maps/' + mid;
+      const data = {
+        secret: 's',
+        metadata: {
+          created: firebase.database.ServerValue.TIMESTAMP,
+        },
+      };
       setTimeout(() => {
         signIn(user => {
           cleanup(mid, 's', user);
-          firebase.database().ref(path).set({secret: 's'}).then(_ => {
+          firebase.database().ref(path).set(data).then(_ => {
             firebase.database().ref(`/users/${user.uid}/secrets`)
                 .set({[mid]: 's'}).then(_ => {
               firebase.database().ref(path).set(null)

@@ -428,6 +428,9 @@ class OperationCenter {
     state.setupNewMid(() => {
       const data = {
         payload: {},
+        metadata: {
+          created: firebase.database.ServerValue.TIMESTAMP,
+        },
         secret: state.getSecret(),
       };
       firebase.database().ref(`/maps/${state.getMid()}`).set(data, error => {
