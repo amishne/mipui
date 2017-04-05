@@ -85,9 +85,14 @@ class BoxGesture extends Gesture {
   }
 
   startGesture() {
-    this.finishEditing_();
+    const editWasInProgress = this.finishEditing_();
 
     if (!this.startCell_) {
+      return;
+    }
+
+    if (editWasInProgress) {
+      this.startCell_ = null;
       return;
     }
 
@@ -526,10 +531,12 @@ class BoxGesture extends Gesture {
   }
 
   finishEditing_(keyboardEvent) {
+    let editWasInProgress = false;
     if (this.inputElement_) {
       this.inputElement_.parentElement.removeChild(this.inputElement_);
       this.inputElement_ = null;
       this.anchorCell_ = null;
+      editWasInProgress = true;
     }
     this.stopHover();
     if (keyboardEvent && keyboardEvent.key == 'Escape') {
@@ -538,6 +545,7 @@ class BoxGesture extends Gesture {
       this.apply_();
     }
     state.opCenter.recordOperationComplete();
+    return editWasInProgress;
   }
 
   isCellEligible_(cell) {
