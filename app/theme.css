@@ -1,0 +1,130 @@
+#terrainLayer {
+  border-color: bisque;
+}
+
+.terrain-cell {
+  border-color: bisque;
+}
+
+.wall-cell {
+  background-color: rgb(222, 184, 135);
+  box-shadow: 2px 2px 6px 0px #919191;
+}
+
+.floor-cell {
+  background-color: rgb(245, 245, 220);
+}
+
+.wall-cell-adding {
+  background-color: rgb(215, 215, 190);
+  box-shadow: initial;
+}
+
+.floor-cell-adding {
+  background-color: rgb(232, 221, 182);
+  box-shadow: 2px 2px 6px 0px #919191;
+  z-index: 1;
+}
+
+.door-cell {
+  background-color: rgb(255, 250, 240);
+  border: 1px solid rgb(100, 100, 100);
+  border-radius: 2px;
+}
+
+.door-cell-horizontal {
+  margin: -2px 4px -1px 3px;
+}
+
+.door-cell-vertical {
+  margin: 3px -1px 4px -2px;
+}
+
+.double-door-cell-horizontal {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='50%' y1='0' x2='50%' y2='100%' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") rgb(255, 250, 240);
+}
+
+.double-door-cell-vertical {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='0' y1='50%' x2='100%' y2='50%' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") rgb(255, 250, 240);
+}
+
+.secret-door-cell {
+  border: 1px dashed rgb(100, 100, 100);
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='10'>S</text></svg>") rgb(255, 250, 240) no-repeat;
+}
+
+.door-cell-adding {
+  background-color: rgba(255, 250, 240, 0.2);
+  border-color: rgba(100, 100, 100, 0.8);
+}
+
+.door-cell-removing {
+  background-color: rgba(255, 250, 240, 0.5);
+  border-color: rgba(100, 100, 100, 0.8);
+}
+
+.text-cell {
+  color: rgb(50, 50, 50);
+}
+
+.image-cell {
+  color: rgb(50, 50, 50);
+}
+
+.text-cell-adding {
+  color: rgba(50, 50, 50, 0.6);
+}
+
+.text-cell-removing {
+  color: rgba(50, 50, 50, 0.3);
+}
+
+.text-cell-textarea, .image-cell-textarea, .text-cell {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.green-square, .green-circle {
+  filter: hue-rotate(160deg) brightness(2.5);
+}
+
+.green-square-adding, .green-circle-adding, .green-square-removing,
+.green-circle-removing {
+  filter: hue-rotate(165deg) brightness(3.0);
+}
+
+.brown-square, .brown-circle {
+  filter: hue-rotate(65deg) brightness(2.5);
+}
+
+.brown-square-adding, .brown-circle-adding, .brown-square-removing,
+.brown-circle-removing {
+  filter: hue-rotate(65deg) brightness(3.0);
+}
+
+.blue-square, .blue-circle {
+  filter: hue-rotate(215deg) brightness(2.5);
+}
+
+.blue-square-adding, .blue-circle-adding, .blue-square-removing,
+.blue-circle-removing {
+  filter: hue-rotate(215deg) brightness(3.0);
+}
+
+.red-square, .red-circle {
+  filter: hue-rotate(45deg) brightness(2.0);
+}
+
+.red-square-adding, .red-circle-adding, .red-square-removing,
+.red-circle-removing {
+  filter: hue-rotate(45deg) brightness(2.5);
+}
+
+.white-square, .white-circle {
+  filter: grayscale(100%) brightness(4) contrast(4);
+}
+
+.white-square-adding, .white-circle-adding, .white-square-removing,
+.white-circle-removing {
+  filter: grayscale(100%) brightness(4.3) contrast(4);
+}
