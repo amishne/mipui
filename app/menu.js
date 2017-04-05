@@ -123,16 +123,18 @@ class Menu {
       // This isn't an interactive item.
       return;
     }
-    state.gesture = null;
-    submenuItem.parent.submenu.items.forEach(otherSubmenuItem => {
-      const isThisItem = submenuItem == otherSubmenuItem;
-      otherSubmenuItem.isSelected = isThisItem;
-      otherSubmenuItem.element
-          .classList[isThisItem && otherSubmenuItem.type == 'tool' ?
-              'add' : 'remove']('selected-submenu-item');
-    });
-    if (submenuItem.parent.presentation == 'selected child') {
-      this.updateItem_(submenuItem.parent);
+    if (submenuItem.type == 'tool') {
+      state.gesture = null;
+      submenuItem.parent.submenu.items.forEach(otherSubmenuItem => {
+        const isThisItem = submenuItem == otherSubmenuItem;
+        otherSubmenuItem.isSelected = isThisItem;
+        otherSubmenuItem.element
+            .classList[isThisItem && otherSubmenuItem.type == 'tool' ?
+                'add' : 'remove']('selected-submenu-item');
+      });
+      if (submenuItem.parent.presentation == 'selected child') {
+        this.updateItem_(submenuItem.parent);
+      }
     }
     submenuItem.callback();
   }
