@@ -66,6 +66,9 @@ class TheMap {
       cell.offsetRight = (width - 1) - (cell.offsetLeft + cell.width);
       cell.offsetBottom = (height - 1) - (cell.offsetTop + cell.height);
     });
+    const theMapElement = document.getElementById('theMap');
+    theMapElement.style.width = width;
+    theMapElement.style.height = height;
   }
 
   clearMap_() {

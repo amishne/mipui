@@ -44,6 +44,7 @@
   transform-origin: top left;
   display: inline-block;
   cursor: crosshair;
+  overflow: hidden;
 }
 
 .the-map * {
