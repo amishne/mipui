@@ -40,6 +40,129 @@
   left: 0;
 }
 
+.the-map {
+  transform-origin: top left;
+  display: inline-block;
+  cursor: crosshair;
+  overflow: hidden;
+}
+
+.the-map * {
+  box-sizing: border-box;
+}
+
+.layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-left: 1px solid;
+  border-top: 1px solid;
+  border-color: rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+}
+
+#widgetLayer {
+  z-index: 8;
+}
+
+#gridLayer {
+  display: inline-block;
+  z-index: 7;
+}
+
+#textLayer {
+  z-index: 6;
+}
+
+#doorsLayer {
+  z-index: 5;
+}
+
+#imagesLayer {
+  z-index: 4;
+}
+
+#shapesLayer {
+  z-index: 3;
+}
+
+#stairsLayer {
+  z-index: 2;
+}
+
+#terrainLayer {
+  z-index: 1;
+}
+
+.row-container {
+  display: block;
+  white-space: nowrap;
+}
+
+.grid-cell {
+  position: relative;
+  display: inline-block;
+  border-right: 1px solid rgba(0, 0, 0, 0);
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
+}
+
+.terrain-cell {
+  position: absolute;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+.wall-cell {
+  z-index: 1;
+}
+
+.floor-cell {
+  z-index: 0;
+}
+
+.door-cell {
+  position: absolute;
+}
+
+.image-cell {
+  position: absolute;
+}
+
+.shape-cell {
+  position: absolute;
+}
+
+.stairs-cell {
+  position: absolute;
+  margin: 0 1px 1px 0;
+}
+
+.text-cell {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin: 2px 3px 3px 2px;
+  white-space: pre-wrap;
+}
+
+.text-cell-adding, .text-cell-removing, .text-cell-editing,
+.image-cell-adding, .image-cell-removing, .image-cell-editing {
+  border: 1px dashed rgb(50, 50, 50);
+  margin: 1px 2px 2px 1px;
+}
+
+.stairs-cell-adding, .stairs-cell-removing, .stairs-cell-editing {
+  border: 1px dashed rgb(50, 50, 50);
+  margin: -1px 0 0 -1px;
+}
+
+.image-cell-removing {
+  border-color: red;
+}
+
 .text-cell-textarea, .image-cell-textarea {
   position: absolute;
   z-index: 11;

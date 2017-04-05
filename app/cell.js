@@ -240,7 +240,7 @@ class Cell {
     };
     this.gridElement.onmouseup = (e) => {
       if (!state.gesture) return;
-      if (e.buttons == 0) {
+      if (e.button == 0) {
         state.gesture.stopGesture();
       }
       state.gesture.startHover(this);
