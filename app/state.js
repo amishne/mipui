@@ -10,6 +10,8 @@ class State {
       lastOpNum: 0,
     };
 
+    this.metadata = {};
+
     this.theMap = new TheMap();
 
     this.mid_ = null;

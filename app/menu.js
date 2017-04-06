@@ -422,24 +422,25 @@ class Menu {
     //       items: [
     //         {
     //           name: 'Submenu item name',
-    //           type: 'label' | 'button' | 'tool'
+    //           type: 'label' | 'button' | 'tool',
     //           presentation: 'icon' | 'cells' | 'label',
     //           [id: 'element-id',]
     //           [materialIcon: 'icon_name',]
     //           [isSelected: true,]
     //           [classNames: ['classname1', 'classname2'],]
     //           [enabledInReadonlyMode: true,]
-    //           [callback: () => {...},],
+    //           [text: 'text',]
+    //           [callback: () => {...},]
     //           [cells: [
     //             {
     //               classNames: ['classname1', 'classname2'],
     //               innerHTML: '...',
     //             },
-    //           ]]
-    //         }
-    //       ]
-    //     }
-    //   }
+    //           ],]
+    //         },
+    //       ],
+    //     },
+    //   },
     // ]
     return [
       {
@@ -453,9 +454,27 @@ class Menu {
             {
               name: 'Status',
               type: 'label',
-              presentation: 'text',
+              presentation: 'label',
               id: 'status-text',
               enabledInReadonlyMode: true,
+            },
+          ],
+        },
+      },
+      {
+        name: 'Info',
+        presentation: 'icon',
+        materialIcon: 'error_outline',
+        enabledInReadonlyMode: true,
+        submenu: {
+          items: [
+            {
+              name: 'Created on',
+              type: 'label',
+              id: 'createdOn',
+              presentation: 'label',
+              enabledInReadonlyMode: true,
+              text: 'Map not yet created',
             },
           ],
         },

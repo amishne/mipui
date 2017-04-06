@@ -421,6 +421,7 @@ class OperationCenter {
     });
     this.startListeningForMap();
     this.startListeningForOperations();
+    this.readMetadata_();
     callback();
   }
 
@@ -439,6 +440,22 @@ class OperationCenter {
         this.connectToExistingMap(state.getMid(), state.getSecret(), callback);
       });
     });
+  }
+
+  readMetadata_() {
+    const mid = state.getMid();
+    firebase.database().ref(`/maps/${mid}/metadata`).once('value')
+        .then(data => {
+      state.metadata = data.val();
+      this.updateMetadata_();
+    });
+  }
+
+  updateMetadata_() {
+    if (state.metadata.created) {
+      document.getElementById('createdOn').textContent =
+          'Created on ' + new Date(state.metadata.created).toUTCString();
+    }
   }
 
   fork() {
