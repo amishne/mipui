@@ -20,9 +20,6 @@
       };
       firebase.initializeApp(config);
       firebase.database.enableLogging(false);
-//      firebase.auth().onAuthStateChanged(user => {
-//        window.authStateChanged(user);
-//      });
     };
 
     afterTest = () => {
@@ -31,7 +28,6 @@
     }
 
     const signIn = (callback) => {
-      //mock('authStateChanged', (user) => callback(user));
       firebase.auth().signInAnonymously().then(user => callback(user))
           .catch(dontExpectThis);
     }
