@@ -196,12 +196,12 @@
 
 .text-delete-widget, .image-delete-widget {
   position: absolute;
-  background-color: red;
   width: 6px;
   height: 6px;
   cursor: pointer;
   margin-left: -2px;
   z-index: 12;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><line x1='0' y1='0' x2='6' y2='6' stroke='red' stroke-width='1' /><line x1='6' y1='0' x2='0' y2='6' stroke='red' stroke-width='1' /></svg>");
 }
 
 .image-delete-widget {
@@ -210,13 +210,13 @@
 
 .text-resize-widget, .image-resize-widget {
   position: absolute;
-  background-color: blue;
   width: 6px;
   height: 6px;
   cursor: se-resize;
   margin-left: -2px;
   margin-top: -2px;
   z-index: 12;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><polygon points='0,6 6,6 6,0'/></svg>");
 }
 
 .image-resize-widget {
@@ -231,6 +231,7 @@
   height: 6px;
   cursor: move;
   z-index: 12;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><rect x='0' y='0' width='6' height='6' stroke-width='1' fill='none' stroke='black'/></svg>");
 }
 
 .image-cell-editing .image, .image-cell-adding .image {
