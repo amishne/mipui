@@ -1,65 +1,78 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<head>
+  <title>Mipui</title>
+</head>
+<body>
+  <h1>Mipui</h1>
+  <p>
+    <em>Mipui</em> is a free and open-source collaborative web application for creating, editing and viewing grid-based maps for tabletop or role-playing games.
+  </p>
+  <a href="app/" class="start">Start creating a map now!</a>
+  <p>
+    No registration is neccessary, and there's nothing to download or install.
+  </p>
+  <div class="warning">
+    Temporary warning: this app is in testing mode.
+    Maps might be deleted at any point, and the connection might even fail during an edit.
+  </div>
+  <h2>Features</h2>
+  <h3>Simple</h3>
+  <p>
+    <em>Mipui</em> employs a limited but expressive set of tools, avoiding the bloat that exists in some other map editors while still remaining rich enough for most everyday gaming needs.
+  </p>
+  <h3>Real-time collaboration</h3>
+  <p>
+    <em>Mipui</em> has real-time collaboration between multiple authors.
+    Just share the link with someone else and watch their edits live.
+    No registration necessary.
+  </p>
+  <p>
+    It's also possible to share a read-only view of the map, so that maps you create can easily be shared with any number of total strangers - aka the Internet.
+  </p>
+  <h3>Friendly</h3>
+  <p>
+    <em>Mipui</em> contains a lot of small features beyondf just tools that help with worry-free editing, including undo/redo support, the ability to resize the grid without deleting existing content, and zoom and pan tools.
+  </p>
+  <h3>Cloud storage</h3>
+  <p>
+    Every *Mipui* map is automatically saved to the cloud every few seconds, and will remain there forever.
+  </p>
+  <div class="warning">
+    Temporary warning: this app is in testing mode.
+    Maps might be deleted at any point, and the connection might even fail during an edit.
+  </div>
+  <h2>Developer information</h2>
+  <a href="docs/developer_guide.html">Visit the developer's guide</a>.
+  <h2>Credits</h2>
+  <p>
+    <em>Mipui</em> is developed and maintained by Alon Mishne.
+    Contact me at <a href="mailto:contact@mipui.net">contact@mipui.net</a>.
+  </p>
+  <p>
+    <em>Mipui</em>'s implementation uses the following resources:
+    <ul>
+      <li><a href="http://firebase.google.com">Firebase by Google</a></li>
+      <li><a href="https://github.com/tsayen/dom-to-image">DOM to Image by Anatolii Saienko</a></li>
+      <li><a href="https://github.com/eligrey/FileSaver.js">FireSaver.js by Eli Grey</a></li>
+      <li><a href="http://game-icons.net">Game icons by Lorc, available on game-icons.net</a></li>
+      <li><a href="https://material.io/icons/">Material icons by Google</a></li>
+    </ul>
+  </p>
+  <p>
+    <em>Mipui</em> was inspired by many things, but first and foremost is <a href="http://deepnight.net/tools/tabletop-rpg-map-editor/">ANAmap by Sébastien Bénard</a>.
+    In fact, <em>Mipui</em> started from me using his app and thinking "oh this is cool, but I wish it had just a few more features... I wonder if I can do that myself."
+  </p>
+  <h2>Contact</h2>
+  <p>
+    Feedback is welcome at <a href="mailto:contact@mipui.net">contact@mipui.net</a>.
+    Suggestions, feature requests and bug reports are welcome at <a href="mailto:contact@mipui.net">contact@mipui.net</a> or as <a href="https://github.com/amishne/mipui/issues">issues on the Github project</a>.
+  </p>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/3.7.5/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/3.7.5/firebase-auth.js"></script>
-    <script defer src="/__/firebase/3.7.5/firebase-database.js"></script>
-    <script defer src="/__/firebase/3.7.5/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/3.7.5/firebase-storage.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
-    <script defer src="/__/firebase/init.js"></script>
+  <h2>Other resources</h2>
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+  <a href="docs/privacy_policy.html">Privacy policy</a><br />
+  <a href="docs/ad_policy.html">Advertisements policy</a>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('data', snapshot => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-          document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
-  </body>
+</body>
 </html>
