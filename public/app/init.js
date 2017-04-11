@@ -68,7 +68,11 @@ function start() {
 }
 
 const state = new State();
-window.onload = () => { start(); };
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-    ga('create', 'UA-96544349-1', 'auto');
-    ga('send', 'pageview');
+window.onload = () => {
+  start();
+  window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
+  ga.l=+new Date;
+  ga('create', 'UA-96544349-1', 'auto');
+  ga('send', 'pageview');
+};
+
