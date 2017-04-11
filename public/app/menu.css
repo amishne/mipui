@@ -55,6 +55,11 @@
   color: aliceblue;
 }
 
+.menu-icon img {
+  position: relative;
+  top: 3px;
+}
+
 .menu-label {
   color: aliceblue;
 }

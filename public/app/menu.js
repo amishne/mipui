@@ -64,9 +64,10 @@ class Menu {
     let cells = null;
     switch (item.presentation) {
       case 'icon':
-        item.element.classList.add('material-icons');
+        const image = document.createElement('img');
         item.element.classList.add('menu-icon');
-        item.element.textContent = item.materialIcon;
+        image.src = `assets/ic_${item.materialIcon}_white_24px.svg`;
+        item.element.appendChild(image);
         break;
       case 'label':
         item.element.classList.add('menu-label');
