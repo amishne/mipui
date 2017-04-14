@@ -175,6 +175,17 @@
   top: 2px;
 }
 
+.menu-tokens .terrain-cell {
+  position: relative;
+  top: 2px;
+}
+
+.menu-tokens .image-cell {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+}
+
 #createdOn {
   color: white;
 }

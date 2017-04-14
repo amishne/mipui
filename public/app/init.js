@@ -75,4 +75,3 @@ window.onload = () => {
   ga('create', 'UA-96544349-1', 'auto');
   ga('send', 'pageview');
 };
-

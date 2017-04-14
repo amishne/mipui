@@ -1,5 +1,6 @@
 class Menu {
   constructor() {
+    this.gameIcons_ = gameIcons;
     this.menuItems_ = this.setupMenuItems_();
   }
 
@@ -407,6 +408,57 @@ class Menu {
     window.prompt(message, url);
   }
 
+  createTokenSelector_() {
+    return {
+      name: 'Search Token',
+      type: 'label',
+      presentation: 'label',
+    };
+  }
+
+  createTokenButtons_() {
+    const tokens = [];
+    this.gameIcons_.forEach(gameIcon => {
+      const path = gameIcon.path.replace('public/app/', '');
+      tokens.push({
+        name: gameIcon.name.replace('-', ' '),
+        type: 'tool',
+        presentation: 'cells',
+        classNames: ['menu-tokens'],
+        isSelected: gameIcon.name == 'wyvern',
+        id: 'token_' + gameIcon.name,
+        callback: () => {
+          state.gesture = new ImageGesture(
+              ct.images,
+              ct.images.image,
+              ct.images.image.background,
+              path,
+              false);
+        },
+        cells: [
+          {
+            classNames: [
+              'grid-cell',
+              'primary-cell',
+              'terrain-cell',
+              'floor-cell',
+            ],
+          },
+          {
+            innerHTML: `<img src="${path}">`,
+            classNames: [
+              'grid-cell',
+              'primary-cell',
+              'image-cell',
+            ],
+          },
+        ],
+      });
+    });
+    tokens[0].isSelected = true;
+    return tokens;
+  }
+
   setupMenuItems_() {
     // Format is:
     // [
@@ -655,13 +707,12 @@ class Menu {
         },
       },
       {
-        name: 'Images',
+        name: 'Tokens',
         presentation: 'selected child',
         tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
-          items: [
-            this.createImageTool_(),
-          ],
+          items: [this.createTokenSelector_()]
+              .concat(this.createTokenButtons_()),
         },
       },
       {
