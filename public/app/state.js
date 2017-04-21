@@ -3,6 +3,7 @@ class State {
     this.pstate_ = {
       version: '1.0',
       gridData: null,
+      desc: null,
       // Map cell key to a map which maps layer IDs to the content of that
       // layer.
       // "Content" is a mapping of content key (ck) to content type (ct) IDs.
@@ -40,6 +41,8 @@ class State {
       to: 25,
     };
 
+    this.defaultDesc_ = {title: 'Unnamed', long: ''};
+
     this.autoSaveTimerId_ = null;
 
     this.pendingOperations_ = [];
@@ -49,6 +52,8 @@ class State {
     this.lastAppliedOperation_ = null;
 
     this.user = null;
+
+    this.menu = null;
   }
 
   setLastOpNum(num) {
@@ -107,12 +112,24 @@ class State {
     this.pstate_.gridData = gridData;
   }
 
+  getDesc() {
+    return this.pstate_.desc || this.defaultDesc_;
+  }
+
+  setDesc(desc) {
+    if (desc && desc.title == this.defaultDesc_.title &&
+        desc.long == this.defaultDesc_.long) {
+      desc = null;
+    }
+    this.pstate_.desc = desc;
+  }
+
   setMid(mid) {
     this.mid_ = mid;
     const newUrl = 'index.html?mid=' + encodeURIComponent(this.mid_);
     window.history.replaceState(null, '', newUrl);
   }
-  
+
   setSecret(secret, callback) {
     this.secret_ = secret;
     firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)

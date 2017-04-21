@@ -22,6 +22,12 @@ class Menu {
     }
   }
 
+  descChanged() {
+    document.querySelector('#mapTitle textarea').value = state.getDesc().title;
+    document.querySelector('#mapLongDesc textarea').value =
+        state.getDesc().long;
+  }
+
   createMenuItems_(topElement, bottomElement) {
     this.menuItems_.forEach(menuItem => {
       this.createMenuItem_(menuItem, topElement, bottomElement);
@@ -85,6 +91,28 @@ class Menu {
         item.element.innerHTML = '';
         this.createCellsForItem_(item.element, cells || item.cells);
         break;
+      case 'textarea':
+        const label =
+            createAndAppendDivWithClass(item.element, 'menu-textarea-label');
+        label.textContent = item.name;
+        const textarea = document.createElement('textarea');
+        textarea.rows = item.rows;
+        textarea.className = 'menu-textarea-input';
+        item.element.appendChild(textarea);
+        item.oldText = '';
+        if (item.onChange) {
+          textarea.onchange = () => {
+            item.onChange(item.oldText, textarea.value);
+            item.oldText = textarea.value;
+          }
+        }
+        if (item.onInput) {
+          textarea.oninput = () => {
+            item.onInput(item.oldText, textarea.value);
+            item.oldText = textarea.value;
+          }
+        }
+        break;
     }
   }
 
@@ -106,7 +134,8 @@ class Menu {
       otherMenuItem.isSelected = isThisItem;
       otherMenuItem.element
           .classList[isThisItem ? 'add' : 'remove']('selected-menu-item');
-      otherMenuItem.submenu.element.style.display = isThisItem ? 'flex' : 'none';
+      otherMenuItem.submenu.element.style.display =
+          isThisItem ? 'block' : 'none';
     });
     // Select the currently-selected tool in this submenu, if one exists.
     menuItem.submenu.items.forEach(submenuItem => {
@@ -499,7 +528,7 @@ class Menu {
       {
         name: 'Status',
         presentation: 'icon',
-        id: 'status-icon',
+        id: 'statusIcon',
         materialIcon: 'swap_vertical_circle',
         enabledInReadonlyMode: true,
         submenu: {
@@ -508,7 +537,7 @@ class Menu {
               name: 'Status',
               type: 'label',
               presentation: 'label',
-              id: 'status-text',
+              id: 'statusText',
               enabledInReadonlyMode: true,
             },
           ],
@@ -521,6 +550,32 @@ class Menu {
         enabledInReadonlyMode: true,
         submenu: {
           items: [
+            {
+              name: 'Title',
+              type: 'textarea',
+              id: 'mapTitle',
+              classNames: ['menu-textarea'],
+              presentation: 'textarea',
+              rows: 1,
+              enabledInReadonlyMode: false,
+              onChange: (oldText, newText) => {
+                state.opCenter.recordDescChange('title', oldText, newText);
+                state.opCenter.recordOperationComplete();
+              }
+            },
+            {
+              name: 'Description',
+              type: 'textarea',
+              id: 'mapLongDesc',
+              classNames: ['menu-textarea'],
+              rows: 2,
+              presentation: 'textarea',
+              enabledInReadonlyMode: false,
+              onChange: (oldText, newText) => {
+                state.opCenter.recordDescChange('long', oldText, newText);
+                state.opCenter.recordOperationComplete();
+              }
+            },
             {
               name: 'Created on',
               type: 'label',

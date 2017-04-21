@@ -9,6 +9,8 @@ class Operation {
       c: {},
       // Grid changes.
       g: {},
+      // Desc changes.
+      d: {},
     };
   }
 
@@ -28,6 +30,10 @@ class Operation {
 
   addGridDataChange(property, oldValue, newValue) {
     this.data.g[property] = {o: oldValue, n: newValue};
+  }
+
+  addDescChange(property, oldValue, newValue) {
+    this.data.d[property] = {o: oldValue, n: newValue};
   }
 
   undo() {
@@ -64,12 +70,26 @@ class Operation {
         createTheMapAndUpdateElements();
       }
     }
+    if (this.data.d) {
+      let descChanged = false;
+      Object.keys(this.data.d).forEach(property => {
+        const updatedDesc = {};
+        Object.assign(updatedDesc, state.getDesc());
+        updatedDesc[property] = this.data.d[property][contentToUse];
+        state.setDesc(updatedDesc);
+        descChanged = true;
+      });
+      if (descChanged) {
+        state.menu.descChanged();
+      }
+    }
   }
 
   get length() {
     if (!this.data || !this.data.c) return 0;
     return Object.keys(this.data.c || {}).length +
-        Object.keys(this.data.g || {}).length;
+        Object.keys(this.data.g || {}).length +
+        Object.keys(this.data.d || {}).length;
   }
 
   get num() {
@@ -105,7 +125,8 @@ class Operation {
   isLegalToRedo() {
     if (!this.data) return true;
     return this.cellChangesAreLegalToRedo_() &&
-        this.gridChangesAreLegalToRedo_();
+        this.gridChangesAreLegalToRedo_() &&
+        this.descChangesAreLegalToRedo_();
   }
 
   reverse() {
@@ -133,6 +154,13 @@ class Operation {
         result.data.g[property] = {o: propertyChange.n, n: propertyChange.o};
       });
     }
+    if (this.data.d) {
+      result.data.d = {};
+      Object.keys(this.data.d).forEach(property => {
+        const propertyChange = this.data.d[property];
+        result.data.d[property] = {o: propertyChange.n, n: propertyChange.o};
+      });
+    }
     return result;
   }
 
@@ -157,6 +185,16 @@ class Operation {
       if (!opChange) return true;
       const thisChange = this.data.g[property];
       return thisChange.o == state.getGridData()[property];
+    });
+  }
+
+  descChangesAreLegalToRedo_() {
+    if (!this.data.d) return true;
+    return Object.keys(this.data.d).every(property => {
+      const opChange = this.data.d[property];
+      if (!opChange) return true;
+      const thisChange = this.data.d[property];
+      return thisChange.o == state.getDesc()[property];
     });
   }
 }

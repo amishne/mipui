@@ -71,6 +71,11 @@ class OperationCenter {
     this.recordChange_();
   }
 
+  recordDescChange(property, oldContent, newContent) {
+    this.currentOperation_.addDescChange(property, oldContent, newContent);
+    this.recordChange_();
+  }
+
   // Records that a local change to the current operation has occured.
   // This is used for updating the current operation, and this starts an
   // operation-completed timer.
@@ -419,6 +424,10 @@ class OperationCenter {
         .forEach(element => {
       element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
     });
+    Array.from(document.querySelector('.disabled-in-read-only-mode textarea'))
+        .forEach(element => {
+      element.readonly = secret ? false : true;
+    })
     this.startListeningForMap();
     this.startListeningForOperations();
     this.readMetadata_();

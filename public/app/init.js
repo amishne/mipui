@@ -14,10 +14,10 @@ function createTheMapAndUpdateElements() {
 }
 
 function wireUiElements() {
-  const app = document.getElementById('app');
+  const theMap = document.getElementById('theMap');
   document.onkeydown = (keyDownEvent) => { handleKeyDownEvent(keyDownEvent); };
-  app.onwheel = (wheelEvent) => { handleWheelEvent(wheelEvent); };
-  app.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
+  theMap.onwheel = (wheelEvent) => { handleWheelEvent(wheelEvent); };
+  theMap.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
 }
 
 function initializeFirebase(callback) {
@@ -46,8 +46,8 @@ function initializeFirebase(callback) {
 
 function start() {
   const params = getUrlParams();
-  const menu = new Menu();
-  menu.createMenu();
+  state.menu = new Menu();
+  state.menu.createMenu();
   setStatus(Status.INITIALIZING);
   createTheMapAndUpdateElements();
   initializeFirebase(() => {
@@ -55,11 +55,11 @@ function start() {
     const secret = params.secret ? decodeURIComponent(params.secret) : null;
     if (mid) {
       state.opCenter.connectToExistingMap(mid, secret, () => {
-        if (secret) menu.setToInitialSelection();
+        if (secret) state.menu.setToInitialSelection();
         setStatus(Status.READY);
       });
     } else {
-      menu.setToInitialSelection();
+      state.menu.setToInitialSelection();
       setStatus(Status.READY);
     }
   });
@@ -68,10 +68,20 @@ function start() {
 }
 
 const state = new State();
+
 window.onload = () => {
   start();
-  window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
-  ga.l=+new Date;
-  ga('create', 'UA-96544349-1', 'auto');
-  ga('send', 'pageview');
+  setTimeout(() => {
+    script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.async = true;
+    script.onload = function(){
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
+      ga.l=+new Date;
+      ga('create', 'UA-96544349-1', 'auto');
+      ga('send', 'pageview');
+    };
+    script.src = 'https://www.google-analytics.com/analytics.js';
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }, 50)
 };

@@ -13,8 +13,8 @@ const Status = {
 };
 
 function setStatus(status) {
-  const statusIcon = document.getElementById('status-icon');
-  const statusText = document.getElementById('status-text');
+  const statusIcon = document.getElementById('statusIcon');
+  const statusText = document.getElementById('statusText');
   const setClass = (className) => {
     [statusIcon, statusText].forEach(element => {
       element.classList

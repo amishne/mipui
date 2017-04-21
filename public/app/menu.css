@@ -10,20 +10,12 @@
 }
 
 .menu-top {
-  display: flex;
   align-items: center;
   padding: 4px;
 }
 
 .menu-bottom {
   background-color: rgba(43, 43, 44, 0.28);
-}
-
-.menu-top, .submenu {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-direction: row;
 }
 
 .menu-tip {
@@ -37,7 +29,6 @@
   margin: 4px;
   border: 1px solid rgba(31, 31, 31, 0.6);
   padding: 1px;
-  min-width: 30px;
   background-color: rgba(31, 31, 31, 0.6);
   text-align: center;
   vertical-align: middle;
@@ -62,6 +53,20 @@
 
 .menu-label {
   color: aliceblue;
+}
+
+.menu-textarea {
+  white-space: nowrap;
+}
+
+.menu-textarea-label {
+  display: inline-block;
+  color: aliceblue;
+}
+
+.menu-textarea-input {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .selected-menu-item {
