@@ -396,7 +396,7 @@ class Menu {
             ct.stairs,
             kind,
             kind.generic,
-            image,
+            kind.generic.imageMnemonic,
             false);
       },
       cells: [
@@ -439,15 +439,26 @@ class Menu {
 
   createTokenSelector_() {
     return {
-      name: 'Search Token',
-      type: 'label',
-      presentation: 'label',
+      name: 'Token selector',
+      type: 'textarea',
+      id: 'tokenSelector',
+      classNames: ['menu-textarea'],
+      presentation: 'textarea',
+      rows: 1,
+      enabledInReadonlyMode: false,
+      onInput: (oldText, newText) => {
+        this.updateTokenSelectorSubmenu_(newText);
+      }
     };
+  }
+
+  updateTokenSelectorSubmenu_(text) {
+    
   }
 
   createTokenButtons_() {
     const tokens = [];
-    this.gameIcons_.forEach(gameIcon => {
+    this.gameIcons_.slice(0, 10).forEach(gameIcon => {
       const path = gameIcon.path.replace('public/app/', '');
       tokens.push({
         name: gameIcon.name.replace('-', ' '),

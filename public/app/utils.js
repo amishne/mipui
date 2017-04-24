@@ -4,3 +4,11 @@ function createAndAppendDivWithClass(parent, className) {
   parent.appendChild(result);
   return result;
 }
+
+function hashString(s) {
+  // http://stackoverflow.com/a/15710692
+  return s.split('').reduce(function(a,b) {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a&a;
+  }, 0);
+}

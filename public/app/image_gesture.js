@@ -6,6 +6,9 @@ class ImageGesture extends BoxGesture {
     this.variation_ = variation;
     this.defaultImage_ = defaultImage;
     this.isEditable__ = isEditable;
+    const imagePath = 'public/app/' + defaultImage;
+    const icon = gameIcons.find(gameIcon => gameIcon.path == imagePath);
+    this.imageHash_ = icon ? icon.hash : null;
   }
 
   isEditable_() {
@@ -22,11 +25,11 @@ class ImageGesture extends BoxGesture {
   }
 
   getDefaultContent_() {
-    return this.defaultImage_;
+    return this.imageHash_ || this.defaultImage_;
   }
 
   getValueKey_() {
-    return ck.image;
+    return this.imageHash_ ? ck.imageHash : ck.image;
   }
 
   getLayer_() {

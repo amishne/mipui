@@ -5,6 +5,14 @@ const fs = require('fs');
 const path = require('path');
 const scrapeIt = require('scrape-it');
 
+function hashString(s) {
+  // http://stackoverflow.com/a/15710692
+  return s.split('').reduce(function(a,b) {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a&a;
+  }, 0);
+}
+
 function flatten(arr) {
   return arr.reduce(
       (acc, val) => acc.concat(Array.isArray(val) ? flatten(val) : val), []);
@@ -51,6 +59,7 @@ function getIconsFromPathsStaggered(paths, icons, index, callback) {
       path,
       name: getName(path),
       tags,
+      hash: hashString(path),
     };
     icons.push(icon);
     setTimeout(

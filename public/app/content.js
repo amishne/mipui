@@ -103,9 +103,9 @@ const ct = {
       'stairs-cell-_ADDING-REMOVING_',
       'stairs-cell-_EDITING_',
     ],
-    horizontal: { generic: {} },
-    vertical: { generic: {} },
-    spiral: { generic: {} },
+    horizontal: { generic: {imagePath: 'assets/stairs-horizontal.svg'} },
+    vertical: { generic: {imagePath: 'assets/stairs-horizontal.svg'} },
+    spiral: { generic: {imagePath: 'assets/stairs-horizontal.svg'} },
   }
 };
 
@@ -117,6 +117,7 @@ const ck = {
   endCell: 'e',
   text: 't',
   image: 'i',
+  imageHash: 'h',
   connections: 'c',
 };
 
@@ -143,7 +144,7 @@ function initializeContentTypes(obj) {
   const children = [];
   Object.keys(obj).forEach(prop => {
     const field = obj[prop];
-    if (['classNames', 'name', 'id'].includes(prop)) return;
+    if (['classNames', 'name', 'id', 'imagePath'].includes(prop)) return;
     field.name = prop;
     initializeContentTypes(field);
     field.id = children.length;

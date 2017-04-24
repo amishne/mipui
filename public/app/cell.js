@@ -68,10 +68,7 @@ class Cell {
     if (!this.contentShouldHaveElement_(content)) return null;
     const element = createAndAppendDivWithClass(
         document.getElementById(layer.name + 'Layer'));
-    this.modifyElementClasses_(layer, content, element, 'add');
-    this.setElementGeometryToGridElementGeometry_(element, content);
-    this.setText_(element, content[ck.text]);
-    this.setImage_(element, content[ck.image]);
+    this.populateElementFromContent_(element, layer, content);
     this.elements_.set(layer, element);
     return element;
   }
@@ -107,6 +104,14 @@ class Cell {
       if (!rowStart) break;
     }
     return result;
+  }
+  
+  populateElementFromContent_(element, layer, content) {
+    this.modifyElementClasses_(layer, content, element, 'add');
+    this.setElementGeometryToGridElementGeometry_(element, content);
+    this.setText_(element, content[ck.text]);
+    this.setImage_(element, content[ck.image]);
+    this.setImageHash_(element, content[ck.imageHash]);
   }
 
   setText_(element, text) {
@@ -148,6 +153,13 @@ class Cell {
         `style="width: ${width}px; height: ${height}px; alt="">`;
   }
 
+  setImageHash_(element, imageHash) {
+    if (!element || !imageHash) return;
+    const imageUrl =
+        gameIcons.find(gameIcon => gameIcon.hash == imageHash).path;
+    if (imageUrl) this.setImage_(element, imageUrl.replace('public/app/', ''));
+  }
+
   getOrCreateLayerElement(layer, initialContent) {
     let element = this.elements_.get(layer);
     if (!element) {
@@ -176,10 +188,7 @@ class Cell {
     }
     const element = this.getOrCreateLayerElement(layer, newContent);
     this.modifyElementClasses_(layer, oldContent, element, 'remove');
-    this.modifyElementClasses_(layer, newContent, element, 'add');
-    this.setElementGeometryToGridElementGeometry_(element, newContent);
-    this.setText_(element, newContent[ck.text]);
-    this.setImage_(element, newContent[ck.image]);
+    this.populateElementFromContent_(element, layer, newContent);
     return element;
   }
 
@@ -191,10 +200,7 @@ class Cell {
     } else {
       if (this.contentShouldHaveElement_(content)) {
         element.className = '';
-        this.modifyElementClasses_(layer, content, element, 'add');
-        this.setElementGeometryToGridElementGeometry_(element, content);
-        this.setText_(element, content[ck.text]);
-        this.setImage_(element, content[ck.image]);
+        this.populateElementFromContent_(element, layer, content);
       } else {
         this.removeElement(layer);
       }
