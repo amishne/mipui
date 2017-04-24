@@ -2,6 +2,7 @@ class Menu {
   constructor() {
     this.gameIcons_ = gameIcons;
     this.menuItems_ = this.setupMenuItems_();
+    this.bottomElement_ = null;
   }
 
   createMenu() {
@@ -12,6 +13,7 @@ class Menu {
     const bottomElement =
         createAndAppendDivWithClass(menuElement, 'menu-bottom');
     this.createMenuItems_(topElement, bottomElement);
+    this.bottomElement_ = bottomElement;
   }
 
   setToInitialSelection() {
@@ -38,18 +40,22 @@ class Menu {
     const submenuElement =
         createAndAppendDivWithClass(bottomElement, 'submenu');
     menuItem.submenu.element = submenuElement;
-    menuItem.submenu.items.forEach(submenuItem => {
-      // Wire it to its parent.
-      submenuItem.parent = menuItem;
-      this.createItem_(submenuElement, submenuItem, () => {
-        this.selectSubmenuItem_(submenuItem);
-      });
+    this.createItem_(topElement, menuItem, () => {
+      this.selectMenuItem_(menuItem);
     });
+    this.populateMenuItem_(menuItem);
     const tipElement =
         createAndAppendDivWithClass(submenuElement, 'menu-tip');
     tipElement.textContent = menuItem.tip;
-    this.createItem_(topElement, menuItem, () => {
-      this.selectMenuItem_(menuItem);
+  }
+
+  populateMenuItem_(menuItem) {
+    menuItem.submenu.items.forEach(submenuItem => {
+      // Wire it to its parent.
+      submenuItem.parent = menuItem;
+      this.createItem_(menuItem.submenu.element, submenuItem, () => {
+        this.selectSubmenuItem_(submenuItem);
+      });
     });
   }
 
@@ -396,7 +402,6 @@ class Menu {
             ct.stairs,
             kind,
             kind.generic,
-            kind.generic.imageMnemonic,
             false);
       },
       cells: [
@@ -438,7 +443,7 @@ class Menu {
   }
 
   createTokenSelector_() {
-    return {
+    const selector = {
       name: 'Token selector',
       type: 'textarea',
       id: 'tokenSelector',
@@ -446,57 +451,87 @@ class Menu {
       presentation: 'textarea',
       rows: 1,
       enabledInReadonlyMode: false,
-      onInput: (oldText, newText) => {
-        this.updateTokenSelectorSubmenu_(newText);
-      }
+      submenu: {},
     };
-  }
-
-  updateTokenSelectorSubmenu_(text) {
-    
+    selector.onInput = (oldText, newText) => {
+      this.updateTokenSelectorSubmenu_(selector, newText);
+    };
+    return selector;
   }
 
   createTokenButtons_() {
-    const tokens = [];
-    this.gameIcons_.slice(0, 10).forEach(gameIcon => {
-      const path = gameIcon.path.replace('public/app/', '');
-      tokens.push({
-        name: gameIcon.name.replace('-', ' '),
-        type: 'tool',
-        presentation: 'cells',
-        classNames: ['menu-tokens'],
-        isSelected: gameIcon.name == 'wyvern',
-        id: 'token_' + gameIcon.name,
-        callback: () => {
-          state.gesture = new ImageGesture(
-              ct.images,
-              ct.images.image,
-              ct.images.image.background,
-              path,
-              false);
+    return [
+      this.createTokenButton_(
+          this.gameIcons_.find(icon => icon.name == 'wyvern')),
+    ];
+  }
+
+  createTokenButton_(gameIcon) {
+    const path = gameIcon.path.replace('public/app/', '');
+    return {
+      name: gameIcon.name.replace('-', ' '),
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-tokens'],
+      isSelected: gameIcon.name == 'wyvern',
+      id: 'token_' + gameIcon.name,
+      callback: () => {
+        state.gesture = new ImageGesture(
+            ct.images,
+            ct.images.image,
+            ct.images.image.background,
+            path,
+            false,
+            gameIcon.hash);
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'terrain-cell',
+            'floor-cell',
+          ],
         },
-        cells: [
-          {
-            classNames: [
-              'grid-cell',
-              'primary-cell',
-              'terrain-cell',
-              'floor-cell',
-            ],
-          },
-          {
-            innerHTML: `<img src="${path}">`,
-            classNames: [
-              'grid-cell',
-              'primary-cell',
-              'image-cell',
-            ],
-          },
-        ],
-      });
-    });
-    tokens[0].isSelected = true;
-    return tokens;
+        {
+          innerHTML: `<img src="${path}">`,
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'image-cell',
+          ],
+        },
+      ],
+    };
+  }
+
+  updateTokenSelectorSubmenu_(selector, text) {
+    if (!selector.submenu.element) {
+      selector.submenu.element =
+          createAndAppendDivWithClass(this.bottomElement_, 'selector-submenu');
+    }
+    if (text.length < 2) {
+      if (selector.submenu.element) {
+        selector.submenu.element.display = 'none';
+      }
+      return;
+    }
+
+    selector.submenu.element.innerHTML = '';
+    let matchingIcons = text.length < 2 ? [] :
+        this.gameIcons_.filter(gameIcon => this.iconNameMatch_(gameIcon, text));
+    matchingIcons = matchingIcons.slice(0, 100);
+    const buttons = matchingIcons.map(icon => this.createTokenButton_(icon));
+    selector.submenu.items = buttons;
+    this.populateMenuItem_(selector);
+    selector.submenu.items =
+        selector.submenu.items.concat(selector.parent.submenu.items.slice(0));
+    selector.submenu.element.display = 'block';
+  }
+
+  iconNameMatch_(gameIcon, text) {
+    return gameIcon.name.includes(text) ||
+        gameIcon.tags.find(tag => tag.includes(text));
   }
 
   setupMenuItems_() {

@@ -1,14 +1,19 @@
 class ImageGesture extends BoxGesture {
-  constructor(layer, kind, variation, defaultImage, isEditable) {
+  constructor(layer, kind, variation, defaultImage, isEditable, imageHash) {
     super();
     this.layer_ = layer;
     this.kind_ = kind;
     this.variation_ = variation;
     this.defaultImage_ = defaultImage;
     this.isEditable__ = isEditable;
-    const imagePath = 'public/app/' + defaultImage;
-    const icon = gameIcons.find(gameIcon => gameIcon.path == imagePath);
-    this.imageHash_ = icon ? icon.hash : null;
+    this.imageHash_ = null;
+    if (imageHash) {
+      this.imageHash_ = imageHash;
+    } else {
+      const imagePath = 'public/app/' + defaultImage;
+      const icon = gameIcons.find(gameIcon => gameIcon.path == imagePath);
+      if (icon) this.imageHash_ = icon.hash;
+    }
   }
 
   isEditable_() {
