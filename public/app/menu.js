@@ -449,7 +449,7 @@ class Menu {
 
   createTokenSelector_() {
     const selector = {
-      name: 'Token selector',
+      name: 'Find by name',
       type: 'textarea',
       id: 'tokenSelector',
       classNames: ['menu-textarea'],
@@ -541,7 +541,7 @@ class Menu {
     selector.submenu.element.innerHTML = '';
     let matchingIcons = text.length < 2 ? [] :
         this.gameIcons_.filter(gameIcon => this.iconNameMatch_(gameIcon, text));
-    matchingIcons = matchingIcons.slice(0, 100);
+    matchingIcons = matchingIcons.slice(0, 200);
     const buttons = matchingIcons.map(icon => this.createTokenButton_(icon));
     selector.submenu.items = buttons;
     this.populateMenuItem_(selector);
