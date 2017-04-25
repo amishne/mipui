@@ -2,7 +2,6 @@ class Menu {
   constructor() {
     this.gameIcons_ = gameIcons;
     this.menuItems_ = this.setupMenuItems_();
-    this.bottomElement_ = null;
   }
 
   createMenu() {
@@ -13,7 +12,6 @@ class Menu {
     const bottomElement =
         createAndAppendDivWithClass(menuElement, 'menu-bottom');
     this.createMenuItems_(topElement, bottomElement);
-    this.bottomElement_ = bottomElement;
   }
 
   setToInitialSelection() {
@@ -508,12 +506,11 @@ class Menu {
   updateTokenSelectorSubmenu_(selector, text) {
     if (!selector.submenu.element) {
       selector.submenu.element =
-          createAndAppendDivWithClass(this.bottomElement_, 'selector-submenu');
+          createAndAppendDivWithClass(selector.parent.submenu.element, 'selector-submenu');
     }
+    this.selectSubmenuItem_(selector.parent.submenu.items[1]);
     if (text.length < 2) {
-      if (selector.submenu.element) {
-        selector.submenu.element.display = 'none';
-      }
+      selector.submenu.element.style.display = 'none';
       return;
     }
 
