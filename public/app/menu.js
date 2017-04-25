@@ -87,7 +87,10 @@ class Menu {
         }
         break;
       case 'selected child':
-        const selectedChild = item.submenu.items.find(item => item.isSelected);
+        if (!item.submenu.allItems) {
+          item.submenu.allItems = item.submenu.items;
+        }
+        let selectedChild = item.submenu.allItems.find(item => item.isSelected);
         cells = selectedChild.cells;
         item.element.classList.add(...selectedChild.classNames);
         // Intentional fallthrough.
@@ -149,7 +152,10 @@ class Menu {
           isThisItem ? 'block' : 'none';
     });
     // Select the currently-selected tool in this submenu, if one exists.
-    menuItem.submenu.items.forEach(submenuItem => {
+    if (!menuItem.submenu.allItems) {
+      menuItem.submenu.allItems = menuItem.submenu.items;
+    }
+    menuItem.submenu.allItems.forEach(submenuItem => {
       if (submenuItem.isSelected) {
         this.selectSubmenuItem_(submenuItem);
       }
@@ -167,7 +173,7 @@ class Menu {
     }
     if (submenuItem.type == 'tool') {
       state.gesture = null;
-      submenuItem.parent.submenu.items.forEach(otherSubmenuItem => {
+      submenuItem.parent.submenu.allItems.forEach(otherSubmenuItem => {
         const isThisItem = submenuItem == otherSubmenuItem;
         otherSubmenuItem.isSelected = isThisItem;
         otherSubmenuItem.element
@@ -176,6 +182,10 @@ class Menu {
       });
       if (submenuItem.parent.presentation == 'selected child') {
         this.updateItem_(submenuItem.parent);
+      }
+      if (submenuItem.parent.parent &&
+          submenuItem.parent.parent.presentation == 'selected child') {
+        this.updateItem_(submenuItem.parent.parent);
       }
     }
     submenuItem.callback();
@@ -544,9 +554,10 @@ class Menu {
     matchingIcons = matchingIcons.slice(0, 200);
     const buttons = matchingIcons.map(icon => this.createTokenButton_(icon));
     selector.submenu.items = buttons;
+    selector.submenu.allItems =
+        buttons.concat(selector.parent.submenu.items.slice(1));
     this.populateMenuItem_(selector);
-    selector.submenu.items =
-        selector.submenu.items.concat(selector.parent.submenu.items.slice(0));
+    selector.parent.submenu.allItems = selector.submenu.allItems;
     selector.submenu.element.style.display = 'block';
   }
 
