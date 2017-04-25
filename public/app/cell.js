@@ -112,6 +112,7 @@ class Cell {
     this.setText_(element, content[ck.text]);
     this.setImage_(element, content[ck.image]);
     this.setImageHash_(element, content[ck.imageHash]);
+    this.setImageFromVariation_(element, layer, content);
   }
 
   setText_(element, text) {
@@ -124,7 +125,6 @@ class Cell {
     sizingElement.style.visibility = 'hidden';
     sizingElement.style.display = 'inline-block';
     sizingElement.style.width = offsetWidth;
-    // sizingElement.style.height = offsetHeight;
     sizingElement.textContent = text;
     let fontSize = 14;
     sizingElement.style.fontSize = fontSize + 'pt';
@@ -158,6 +158,14 @@ class Cell {
     const imageUrl =
         gameIcons.find(gameIcon => gameIcon.hash == imageHash).path;
     if (imageUrl) this.setImage_(element, imageUrl.replace('public/app/', ''));
+  }
+  
+  setImageFromVariation_(element, layer, content) {
+    if (!element) return;
+    const kind = ct.children[layer.id].children[content[ck.kind]];
+    const variation = kind.children[content[ck.variation]];
+    if (!variation.imagePath) return;
+    this.setImage_(element, variation.imagePath);
   }
 
   getOrCreateLayerElement(layer, initialContent) {

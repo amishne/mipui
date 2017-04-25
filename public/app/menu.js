@@ -394,18 +394,6 @@ class Menu {
   }
 
   createStairsTool_(name, kind, isSelected) {
-    let image = '';
-    switch (kind.id) {
-      case ct.stairs.horizontal.id:
-        image = 'assets/stairs-horizontal.svg';
-        break;
-      case ct.stairs.vertical.id:
-        image = 'assets/stairs-vertical.svg';
-        break;
-      case ct.stairs.spiral.id:
-        image = 'assets/stairs-spiral.svg';
-        break;
-    }
     return {
       name,
       type: 'tool',
@@ -429,7 +417,7 @@ class Menu {
           ],
         },
         {
-          innerHTML: `<img src=${image} >`,
+          innerHTML: `<img src=${kind.generic.imagePath} >`,
           classNames: [
             'grid-cell',
             'primary-cell',

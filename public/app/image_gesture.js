@@ -14,6 +14,11 @@ class ImageGesture extends BoxGesture {
       const icon = gameIcons.find(gameIcon => gameIcon.path == imagePath);
       if (icon) this.imageHash_ = icon.hash;
     }
+    
+    this.valueKey_ = variation.imagePath ? ck.useVariationImage :
+        (this.imageHash_ ? ck.imageHash : ck.image);
+    this.defaultImagePath_ =
+        variation.imagePath ? 1 : this.imageHash_ || this.defaultImage_;
   }
 
   isEditable_() {
@@ -26,15 +31,16 @@ class ImageGesture extends BoxGesture {
         this.kind_,
         this.variation_,
         this.defaultImage_,
-        this.isEditable__);
+        this.isEditable__,
+        this.imageHash_);
   }
 
   getDefaultContent_() {
-    return this.imageHash_ || this.defaultImage_;
+    return this.defaultImagePath_;
   }
 
   getValueKey_() {
-    return this.imageHash_ ? ck.imageHash : ck.image;
+    return this.valueKey_;
   }
 
   getLayer_() {

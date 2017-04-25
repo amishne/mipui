@@ -104,8 +104,8 @@ const ct = {
       'stairs-cell-_EDITING_',
     ],
     horizontal: { generic: {imagePath: 'assets/stairs-horizontal.svg'} },
-    vertical: { generic: {imagePath: 'assets/stairs-horizontal.svg'} },
-    spiral: { generic: {imagePath: 'assets/stairs-horizontal.svg'} },
+    vertical: { generic: {imagePath: 'assets/stairs-vertical.svg'} },
+    spiral: { generic: {imagePath: 'assets/stairs-spiral.svg'} },
   }
 };
 
@@ -118,6 +118,7 @@ const ck = {
   text: 't',
   image: 'i',
   imageHash: 'h',
+  useVariationImage: 'u',
   connections: 'c',
 };
 
