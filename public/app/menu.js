@@ -464,7 +464,8 @@ class Menu {
     };
     const completions = new Set();
     this.gameIcons_.forEach(icon => {
-      // completions.add(icon.name);
+      // Disabling this for now, it leads to too many items:
+      //completions.add(icon.name);
       icon.tags.forEach(tag => completions.add(tag));
     });
     const datalist = document.createElement('datalist');
