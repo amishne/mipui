@@ -95,13 +95,20 @@ class Menu {
         item.element.innerHTML = '';
         this.createCellsForItem_(item.element, cells || item.cells);
         break;
+      case 'input':
       case 'textarea':
         const label =
             createAndAppendDivWithClass(item.element, 'menu-textarea-label');
         label.textContent = item.name;
-        const textarea = document.createElement('textarea');
-        textarea.rows = item.rows;
+        const textarea = document.createElement(
+            item.presentation == 'input' ? 'input' : 'textarea');
+        if (item.presentation == 'textarea') {
+          textarea.rows = item.rows;
+        }
         textarea.className = 'menu-textarea-input';
+        if (item.datalistId) {
+          textarea.setAttribute('list', item.datalistId);
+        }
         item.element.appendChild(textarea);
         item.oldText = '';
         if (item.onChange) {
@@ -446,7 +453,8 @@ class Menu {
       type: 'textarea',
       id: 'tokenSelector',
       classNames: ['menu-textarea'],
-      presentation: 'textarea',
+      presentation: 'input',
+      datalistId: 'gameIcons',
       rows: 1,
       enabledInReadonlyMode: false,
       submenu: {},
@@ -454,6 +462,19 @@ class Menu {
     selector.onInput = (oldText, newText) => {
       this.updateTokenSelectorSubmenu_(selector, newText);
     };
+    const completions = new Set();
+    this.gameIcons_.forEach(icon => {
+      // completions.add(icon.name);
+      icon.tags.forEach(tag => completions.add(tag));
+    });
+    const datalist = document.createElement('datalist');
+    datalist.id = selector.datalistId;
+    completions.forEach(completion => {
+      const option = document.createElement('option');
+      option.value = completion;
+      datalist.appendChild(option);
+    });
+    document.getElementById('app').appendChild(datalist);
     return selector;
   }
 
@@ -523,7 +544,7 @@ class Menu {
     this.populateMenuItem_(selector);
     selector.submenu.items =
         selector.submenu.items.concat(selector.parent.submenu.items.slice(0));
-    selector.submenu.element.display = 'block';
+    selector.submenu.element.style.display = 'block';
   }
 
   iconNameMatch_(gameIcon, text) {
