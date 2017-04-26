@@ -745,6 +745,7 @@ class Menu {
         presentation: 'icon',
         materialIcon: 'search',
         enabledInReadonlyMode: true,
+        tip: 'Pan with middle mouse button or touch pan, zoom with mousewheel or pinch.',
         submenu: {
           items: [
             {
