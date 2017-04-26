@@ -92,14 +92,17 @@
 
 .status-error {
   color: #ff671a;
+  background-color: firebrick;
 }
 
 .status-unstable {
   color: yellow;
+  background-color: goldenrod;
 }
 
 .status-good {
   color: greenyellow;
+  background-color: green;
 }
 
 .toolbox > button {
