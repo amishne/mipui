@@ -227,39 +227,47 @@ class Cell {
     });
   }
 
+  onMouseEnter(e) {
+    if (!state.gesture) return;
+    if (e.buttons == 0) {
+      state.gesture.startHover(this);
+    } else if (e.buttons == 1) {
+      state.gesture.continueGesture(this);
+    }
+    e.stopPropagation();
+  }
+
+  onMouseLeave(e) {
+    if (!state.gesture) return;
+    if (e.buttons == 0) {
+      state.gesture.stopHover();
+    }
+    e.stopPropagation();
+  }
+
+  onMouseDown(e) {
+    if (!state.gesture) return;
+    if (e.buttons == 1) {
+      state.gesture.startGesture();
+    }
+    e.stopPropagation();
+  }
+
+  onMouseUp(e) {
+    if (!state.gesture) return;
+    if (e.button == 0) {
+      state.gesture.stopGesture();
+    }
+    state.gesture.startHover(this);
+    e.stopPropagation();
+  }
+
   wireInteractions_() {
     // All grid element interactions stop the event from bubbling up.
-    this.gridElement.onmouseenter = (e) => {
-      if (!state.gesture) return;
-      if (e.buttons == 0) {
-        state.gesture.startHover(this);
-      } else if (e.buttons == 1) {
-        state.gesture.continueGesture(this);
-      }
-      e.stopPropagation();
-    };
-    this.gridElement.onmouseleave = (e) => {
-      if (!state.gesture) return;
-      if (e.buttons == 0) {
-        state.gesture.stopHover();
-      }
-      e.stopPropagation();
-    };
-    this.gridElement.onmousedown = (e) => {
-      if (!state.gesture) return;
-      if (e.buttons == 1) {
-        state.gesture.startGesture();
-      }
-      e.stopPropagation();
-    };
-    this.gridElement.onmouseup = (e) => {
-      if (!state.gesture) return;
-      if (e.button == 0) {
-        state.gesture.stopGesture();
-      }
-      state.gesture.startHover(this);
-      e.stopPropagation();
-    };
+    this.gridElement.onmouseenter = e => this.onMouseEnter(e);
+    this.gridElement.onmouseleave = e => this.onMouseLeave(e);
+    this.gridElement.onmousedown = e => this.onMouseDown(e);
+    this.gridElement.onmouseup = e => this.onMouseUp(e);
   }
 
   setElementGeometryToGridElementGeometry_(element, content) {

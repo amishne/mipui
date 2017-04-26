@@ -18,6 +18,9 @@ function wireUiElements() {
   document.onkeydown = (keyDownEvent) => { handleKeyDownEvent(keyDownEvent); };
   theMap.onwheel = (wheelEvent) => { handleWheelEvent(wheelEvent); };
   theMap.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
+  theMap.ontouchstart = (touchEvent) => { handleTouchStartEvent(touchEvent); };
+  theMap.ontouchmove = (touchEvent) => { handleTouchMoveEvent(touchEvent); };
+  theMap.ontouchend = (touchEvent) => { handleTouchEndEvent(touchEvent); };
 }
 
 function initializeFirebase(callback) {
