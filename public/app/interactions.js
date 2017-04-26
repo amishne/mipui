@@ -32,6 +32,7 @@ function handleWheelEvent(wheelEvent) {
   wheelEvent.stopPropagation();
 }
 
+let prevGridCell = null;
 function handleMouseMoveEvent(mouseEvent) {
   if (mouseEvent.buttons == 4) {
     // Middle button is pan.
@@ -39,7 +40,37 @@ function handleMouseMoveEvent(mouseEvent) {
     nav.translate.x += mouseEvent.movementX;
     nav.translate.y += mouseEvent.movementY;
     updateMapTransform();
+  } else {
+    const gridCell = getCurrentGridCell(mouseEvent);
+    if (!prevGridCell || prevGridCell != gridCell) {
+      if (prevGridCell) {
+        console.log(`Leaving cell ${prevGridCell}`);
+      }
+      console.log(`Entering cell ${gridCell}`);
+      prevGridCell = gridCell;
+    }
   }
+}
+
+function getCurrentGridCell(mouseEvent) {
+  const nav = state.navigation;
+  const cellSize = 26 * nav.scale;
+  const borderSize = 8 * nav.scale;
+
+  const fromRow =
+      Math.floor((mouseEvent.y - nav.translate.y) / (cellSize + borderSize));
+  const toRow = fromRow + Math.floor(
+      ((mouseEvent.y - nav.translate.y) % (cellSize + borderSize)) / cellSize);
+
+  const fromCol =
+      Math.floor((mouseEvent.x - nav.translate.x) / (cellSize + borderSize));
+  const toCol = fromCol + Math.floor(
+      ((mouseEvent.x - nav.translate.x) % (cellSize + borderSize)) / cellSize);
+
+  const key = fromRow != toRow || fromCol != toCol ?
+      TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
+      TheMap.primaryCellKey(fromRow, fromCol);
+  return key;
 }
 
 function expandGrid(n) {
