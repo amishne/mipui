@@ -589,19 +589,25 @@ class BoxGesture extends Gesture {
   }
 
   createStartCellContent_() {
-    let value = this.getDefaultContent_();
+    let kind = this.startCell_.getVal(this.getLayer_(), ck.kind);
+    let variation = this.startCell_.getVal(this.getLayer_(), ck.variation);
+    let value = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     switch (this.mode_) {
       case 'removing':
         value = null;
         break;
       case 'resizing':
       case 'moving':
+        kind = this.anchorCell_.getVal(this.getLayer_(), ck.kind);
+        variation = this.anchorCell_.getVal(this.getLayer_(), ck.variation);
         value = this.anchorCell_.getVal(this.getLayer_(), this.getValueKey_());
         break;
-      case 'editing':
-        value = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
-        // Intentional fallthrough.
       case 'adding':
+        kind = this.getKind_().id;
+        variation = this.getVariation_().id;
+        value = this.getDefaultContent_();
+        // Intentional fallthrough.
+      case 'editing':
         if (this.inputElement_) {
           value = this.inputElement_.value;
         }
@@ -612,8 +618,8 @@ class BoxGesture extends Gesture {
     }
     if (!value) return null;
     const content = {
-      [ck.kind]: this.getKind_().id,
-      [ck.variation]: this.getVariation_().id,
+      [ck.kind]: kind,
+      [ck.variation]: variation,
       [this.getValueKey_()]: value,
     };
     if (this.endCell_) {
