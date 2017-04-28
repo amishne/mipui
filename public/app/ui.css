@@ -96,8 +96,12 @@ body {
   z-index: 2;
 }
 
-#terrainLayer {
+#wallsLayer {
   z-index: 1;
+}
+
+#floorsLayer {
+  z-index: 0;
 }
 
 .row-container {
@@ -112,18 +116,16 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0);
 }
 
-.terrain-cell {
+.wall-cell {
   position: absolute;
   border-right: 1px solid;
   border-bottom: 1px solid;
 }
 
-.wall-cell {
-  z-index: 1;
-}
-
 .floor-cell {
-  z-index: 0;
+  position: absolute;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
 }
 
 .door-cell {

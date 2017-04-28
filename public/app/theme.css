@@ -1,28 +1,29 @@
-#terrainLayer {
+#floorsLayer {
   border-color: bisque;
 }
 
-.terrain-cell {
+#wallsLayer {
   border-color: bisque;
+  box-shadow: 2px 2px 6px 0px #919191;
 }
 
 .wall-cell {
   background-color: rgb(222, 184, 135);
-  box-shadow: 2px 2px 6px 0px #919191;
+  
+  border-color: bisque;
 }
 
 .floor-cell {
   background-color: rgb(245, 245, 220);
+  border-color: bisque;
 }
 
 .wall-cell-adding {
   background-color: rgb(215, 215, 190);
-  box-shadow: initial;
 }
 
-.floor-cell-adding {
+.wall-cell-removing {
   background-color: rgb(232, 221, 182);
-  box-shadow: 2px 2px 6px 0px #919191;
   z-index: 1;
 }
 

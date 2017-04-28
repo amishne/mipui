@@ -31,9 +31,9 @@ class State {
       },
     };
 
-    this.defaultTerrainContent_ = {
-      [ck.kind]: ct.terrain.wall.id,
-      [ck.variation]: ct.terrain.wall.generic.id,
+    this.defaultFloorContent_ = {
+      [ck.kind]: ct.floors.floor.id,
+      [ck.variation]: ct.floors.floor.generic.id,
     };
 
     this.defaultGridData_ = {
@@ -68,9 +68,9 @@ class State {
     const content = this.pstate_.content || null;
     const cellContent = content ? content[cellKey] : null;
     const layerContent = cellContent ? cellContent[layer.id] : null;
-    if (!layerContent && layer == ct.terrain) {
-      // Missing terrain translates to the default terrain content.
-      return this.defaultTerrainContent_;
+    if (!layerContent && layer == ct.floors) {
+      // Missing floor translates to the default floor content.
+      return this.defaultFloorContent_;
     }
     return layerContent || null;
   }
@@ -88,12 +88,12 @@ class State {
       delete cellContent[layer.id];
       return;
     }
-    if (layer == ct.terrain &&
+    if (layer == ct.floors &&
         Object.keys(content).length == 2 &&
-        content[ck.kind] == this.defaultTerrainContent_[ck.kind] &&
-        content[ck.variation] == this.defaultTerrainContent_[ck.variation]) {
-      // If it's the terrain layer with a content equivalent to the default
-      // terrain, it can be deleted.
+        content[ck.kind] == this.defaultFloorContent_[ck.kind] &&
+        content[ck.variation] == this.defaultFloorContent_[ck.variation]) {
+      // If it's the floor layer with a content equivalent to the default
+      // floor, it can be deleted.
       delete cellContent[layer.id];
       return;
     }

@@ -1,7 +1,6 @@
 class TheMap {
   constructor() {
     this.cells = new Map();
-    this.defaultCellContent_ = new Map();
 
     // Used during construction.
     this.cellHeight = null;
@@ -10,9 +9,6 @@ class TheMap {
     this.dividerWidth = null;
     this.currX = null;
     this.currY = null;
-
-    // Setup default cell content.
-    this.defaultCellContent_.set('terrain', 'solid');
   }
 
   static dividerCellKey(previousRow, previousColumn, nextRow, nextColumn) {
@@ -158,7 +154,7 @@ class TheMap {
   createCell_(parent, role, key) {
     const element =
         createAndAppendDivWithClass(parent, `grid-cell ${role}-cell`);
-    const cell = new Cell(key, role, element, this.defaultCellContent_);
+    const cell = new Cell(key, role, element);
     cell.offsetLeft = this.currX;
     cell.offsetTop = this.currY;
     this.cells.set(key, cell);

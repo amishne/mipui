@@ -3,15 +3,16 @@
 // * Each "layer" contains "kind"s.
 // * Each "kind" contains "variation"s.
 const ct = {
-  terrain: {
-    classNames: ['terrain-cell'],
-    wall: {
-      classNames: ['wall-cell', 'wall-cell-_ADDING_'],
+  floors: {
+    classNames: ['floor-cell'],
+    floor: {
       generic: {},
     },
-    floor: {
-      classNames: ['floor-cell', 'floor-cell-_ADDING_'],
-      generic: {},
+  },
+  walls: {
+    classNames: ['wall-cell', 'wall-cell-_ADDING_', 'wall-cell-_REMOVING_'],
+    smooth: {
+      square: {}
     },
   },
   images: {

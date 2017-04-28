@@ -110,11 +110,11 @@
       const localOp = new Operation();
       localOp
           .addCellChange(
-              'cell_key', ct.terrain, {[ck.kind]: 1}, {[ck.kind]: 2});
+              'cell_key', ct.walls, {[ck.kind]: 1}, {[ck.kind]: 2});
       const remoteOp = new Operation();
       remoteOp
           .addCellChange(
-              'cell_key', ct.terrain, {[ck.kind]: 1}, {[ck.kind]: 3});
+              'cell_key', ct.walls, {[ck.kind]: 1}, {[ck.kind]: 3});
       remoteOp.num = 1;
       let layerContent = {[ck.kind]: 1};
       mock('state.theMap.cells.get("$any").setLayerContent',
@@ -191,7 +191,7 @@
       const remoteOp = new Operation();
       remoteOp
           .addCellChange(
-              'b', ct.terrain, {[ck.kind]: 'b base'}, {[ck.kind]: 'b remote'});
+              'b', ct.walls, {[ck.kind]: 'b base'}, {[ck.kind]: 'b remote'});
 
       // Setup 4 local ops to follow the remote op.
       // 1 and 4 are valid; 2 is directly invalid, and 3 is indirectly invalid
@@ -204,19 +204,19 @@
       ];
       localOps[0]
           .addCellChange(
-              'a', ct.terrain, {[ck.kind]: 'a base'}, {[ck.kind]: 'a loc0'});
+              'a', ct.walls, {[ck.kind]: 'a base'}, {[ck.kind]: 'a loc0'});
       localOps[1]
           .addCellChange(
-              'b', ct.terrain, {[ck.kind]: 'b base'}, {[ck.kind]: 'b loc1'});
+              'b', ct.walls, {[ck.kind]: 'b base'}, {[ck.kind]: 'b loc1'});
       localOps[1]
           .addCellChange(
-              'c', ct.terrain, {[ck.kind]: 'c base'}, {[ck.kind]: 'c loc1'});
+              'c', ct.walls, {[ck.kind]: 'c base'}, {[ck.kind]: 'c loc1'});
       localOps[2]
           .addCellChange(
-              'c', ct.terrain, {[ck.kind]: 'c loc1'}, {[ck.kind]: 'c loc2'});
+              'c', ct.walls, {[ck.kind]: 'c loc1'}, {[ck.kind]: 'c loc2'});
       localOps[3]
           .addCellChange(
-              'a', ct.terrain, {[ck.kind]: 'a loc0'}, {[ck.kind]: 'a loc3'});
+              'a', ct.walls, {[ck.kind]: 'a loc0'}, {[ck.kind]: 'a loc3'});
 
       // Apply the operations and verify they worked.
       localOps.forEach(op => op.redo());
@@ -273,14 +273,14 @@
       const localOp = new Operation();
       localOp
           .addCellChange(
-              'a', ct.terrain, {[ck.kind]: 'a base'}, {[ck.kind]: 'a local'});
+              'a', ct.walls, {[ck.kind]: 'a base'}, {[ck.kind]: 'a local'});
       localOp
           .addCellChange(
-              'b', ct.terrain, {[ck.kind]: 'b base'}, {[ck.kind]: 'b local'});
+              'b', ct.walls, {[ck.kind]: 'b base'}, {[ck.kind]: 'b local'});
       const remoteOp = new Operation();
       remoteOp
           .addCellChange(
-              'b', ct.terrain, {[ck.kind]: 'b local'},
+              'b', ct.walls, {[ck.kind]: 'b local'},
               {[ck.kind]: 'b remote'});
       remoteOp.data.i = {n: 2, f: 'remote'};
 
@@ -348,11 +348,11 @@
 
       // Setup 3 operations.
       const ops = [new Operation(), new Operation(), new Operation()];
-      ops[0].addCellChange('c', ct.terrain, {[ck.kind]: 'a'}, {[ck.kind]: 'b'});
+      ops[0].addCellChange('c', ct.walls, {[ck.kind]: 'a'}, {[ck.kind]: 'b'});
       ops[0].data.i = {n: 1, f: 'x'};
-      ops[1].addCellChange('c', ct.terrain, {[ck.kind]: 'b'}, {[ck.kind]: 'c'});
+      ops[1].addCellChange('c', ct.walls, {[ck.kind]: 'b'}, {[ck.kind]: 'c'});
       ops[1].data.i = {n: 2, f: 'y'};
-      ops[2].addCellChange('c', ct.terrain, {[ck.kind]: 'c'}, {[ck.kind]: 'd'});
+      ops[2].addCellChange('c', ct.walls, {[ck.kind]: 'c'}, {[ck.kind]: 'd'});
       ops[2].data.i = {n: 3, f: 'z'};
 
       // Register callbacks.

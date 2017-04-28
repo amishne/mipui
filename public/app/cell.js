@@ -346,7 +346,7 @@ class Cell {
         this.updateElement_(layer, this.getLayerContent(layer), content) :
         this.elements_.get(layer);
     if (!element) return;
-    if (action == 'adding' || (content && layer == ct.terrain)) {
+    if (action == 'adding') {
       element.className = element.className
           .replace(/_ADDING-REMOVING_/g, 'adding')
           .replace(/_ADDING_/g, 'adding');

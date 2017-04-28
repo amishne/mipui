@@ -26,7 +26,7 @@ class WallGesture extends Gesture {
   }
 
   isWall_(cell) {
-    return cell && cell.isKind(ct.terrain, ct.terrain.wall);
+    return cell && cell.isKind(ct.walls, ct.walls.smooth);
   }
 
   hasDoor_(cell) {
@@ -185,7 +185,7 @@ class WallGesture extends Gesture {
 
   apply_() {
     this.cellsToSet.forEach(cell => {
-      cell.setLayerContent(ct.terrain, this.createContent_(), true);
+      cell.setLayerContent(ct.walls, this.createContent_(), true);
       const removeDoorGesture = this.removeDoorGestures.get(cell);
       if (removeDoorGesture) removeDoorGesture.startGesture();
     });
@@ -197,18 +197,18 @@ class WallGesture extends Gesture {
   }
 
   showHighlight_(cell) {
-    cell.showHighlight(ct.terrain, this.createContent_());
+    cell.showHighlight(ct.walls, this.createContent_());
   }
 
   hideHighlight_(cell) {
-    cell.hideHighlight(ct.terrain);
+    cell.hideHighlight(ct.walls);
   }
 
   createContent_() {
-    const kind = this.toWall ? ct.terrain.wall : ct.terrain.floor;
+    if (!this.toWall) return null;
     return {
-      [ck.kind]: kind.id,
-      [ck.variation]: kind.generic.id,
+      [ck.kind]: ct.walls.smooth.id,
+      [ck.variation]: ct.walls.smooth.square.id,
     }
   }
 }

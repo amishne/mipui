@@ -2,6 +2,7 @@
   transform-origin: top left;
   display: inline-block;
   cursor: crosshair;
+  position: relative;
 }
 
 .the-map * {
@@ -47,10 +48,6 @@
   z-index: 2;
 }
 
-#terrainLayer {
-  z-index: 1;
-}
-
 .row-container {
   display: block;
   white-space: nowrap;
@@ -81,20 +78,6 @@
   display: inline-block;
   border-right: 1px solid rgba(0, 0, 0, 0);
   border-bottom: 1px solid rgba(0, 0, 0, 0);
-}
-
-.terrain-cell {
-  position: absolute;
-  border-right: 1px solid;
-  border-bottom: 1px solid;
-}
-
-.wall-cell {
-  z-index: 1;
-}
-
-.floor-cell {
-  z-index: 0;
 }
 
 .door-cell {

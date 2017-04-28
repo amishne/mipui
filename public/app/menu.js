@@ -191,7 +191,7 @@ class Menu {
     submenuItem.callback();
   }
 
-  createTerrainTool_(size, isManual, isSelected) {
+  createWallTool_(size, isManual, isSelected) {
     const descriptionCells = [];
     if (size > 1 || isManual) {
       descriptionCells.push({
@@ -207,7 +207,7 @@ class Menu {
       name: `Wall/floor, ${size}x${size}`,
       type: 'tool',
       presentation: 'cells',
-      classNames: ['menu-terrain'],
+      classNames: ['menu-walls'],
       isSelected,
       callback: () => {
         state.gesture = new WallGesture(size, isManual);
@@ -217,7 +217,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'wall-cell',
           ],
         },
@@ -225,7 +224,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -257,7 +255,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -265,7 +262,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'vertical-cell',
-            'terrain-cell',
             'wall-cell',
           ],
         },
@@ -280,7 +276,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -303,7 +298,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -339,7 +333,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -378,7 +371,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -412,7 +404,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -509,7 +500,6 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'terrain-cell',
             'floor-cell',
           ],
         },
@@ -790,18 +780,18 @@ class Menu {
         },
       },
       {
-        name: 'Terrain',
+        name: 'Walls',
         presentation: 'selected child',
         tip: 'Add a wall by clicking a divider cell between two floor cells.',
         isSelected: true,
         submenu: {
           items: [
-            this.createTerrainTool_(1, false, true),
-            this.createTerrainTool_(3, false, false),
-            this.createTerrainTool_(5, false, false),
-            this.createTerrainTool_(7, false, false),
-            this.createTerrainTool_(9, false, false),
-            this.createTerrainTool_(1, true, false),
+            this.createWallTool_(1, false, true),
+            this.createWallTool_(3, false, false),
+            this.createWallTool_(5, false, false),
+            this.createWallTool_(7, false, false),
+            this.createWallTool_(9, false, false),
+            this.createWallTool_(1, true, false),
           ],
         },
       },
