@@ -26,6 +26,9 @@ class Cell {
   }
 
   getLayerContent(layer) {
+    if (layer.getShadowingLayer) {
+      return this.getLayerContent(layer.getShadowingLayer());
+    }
     return state.getLayerContent(this.key, layer);
   }
 
@@ -39,6 +42,9 @@ class Cell {
             recordCellChange(this.key, layer, oldContent, newContent);
       }
       this.updateElement_(layer, oldContent, newContent);
+      if (layer.getShadowLayer) {
+        this.updateElement_(layer.getShadowLayer(), oldContent, newContent);
+      }
     }
   }
 
@@ -114,6 +120,30 @@ class Cell {
     this.setImageHash_(element, content[ck.imageHash]);
     this.setImageFromVariation_(element, layer, content);
   }
+
+//  setShadow_(element, layer, content) {
+//    const shadowLayer = layer.getShadowLayer();
+//    if (!shadowLayer) return;
+//    let shadowElement = this.elements_.get(shadowLayer);
+//    if (!element && !shadowElement) {
+//      return;
+//    }
+//    if (!element && shadowElement) {
+//      this.removeElement(shadowLayer);
+//      return;
+//    };
+//    if (element && !shadowElement) {
+//      this.getOrCreateLayerElement(shadowLayer, content);
+//      return;
+//    }
+//    
+//    
+//    const shadowElement = element.cloneNode(true);
+//    this.elements_[shadowLayer].set(shadowElement);
+//    document.getElementById(shadowLayer.name + 'Layer')
+//        .appendChild(shadowElement);
+//    this.elements_[shadowLayer].set(shadowElement);
+//  }
 
   setText_(element, text) {
     if (!element || !text) return;
@@ -192,11 +222,14 @@ class Cell {
   updateElement_(layer, oldContent, newContent) {
     if (!this.contentShouldHaveElement_(newContent)) {
       this.removeElement(layer);
-      return;
+      return null;
     }
     const element = this.getOrCreateLayerElement(layer, newContent);
     this.modifyElementClasses_(layer, oldContent, element, 'remove');
     this.populateElementFromContent_(element, layer, newContent);
+//    if (layer.getShadowLayer) {
+//      this.updateElement_(layer.getShadowLayer(), oldContent, newContent);
+//    }
     return element;
   }
 
@@ -223,9 +256,26 @@ class Cell {
 
   resetToDefault() {
     ct.children.forEach(layer => {
-      this.setLayerContent(layer, null, true);
+      const hasShadowingLayer = !!layer.getShadowingLayer;
+      this.setLayerContent(layer, null, !hasShadowingLayer);
     });
   }
+
+//  setShadowElement_(shadowLayer, element) {
+//    if (!element) {
+//      this.removeElement(shadowLayer);
+//      return;
+//    }
+//    let shadowElement = this.elements_.get(shadowLayer);
+//    if (!shadowElement) {
+//      shadowElement = createAndAppendDivWithClass()
+//    }
+//    if (!element && shadowElement) {
+//      this.elements_[];
+//      element.parentElement.removeChild(element);
+//      XXX
+//    }
+//  }
 
   onMouseEnter(e) {
     if (!state.gesture) return;

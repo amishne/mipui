@@ -9,8 +9,16 @@ const ct = {
       generic: {},
     },
   },
+  wallsShadow: {
+    classNames: ['wall-cell', 'wall-cell-_ADDING_', 'wall-cell-_REMOVING_'],
+    getShadowingLayer: () => ct.walls,
+    smooth: {
+      square: {}
+    },
+  },
   walls: {
     classNames: ['wall-cell', 'wall-cell-_ADDING_', 'wall-cell-_REMOVING_'],
+    getShadowLayer: () => ct.wallsShadow,
     smooth: {
       square: {}
     },
