@@ -98,6 +98,7 @@ body {
 
 #wallsLayer {
   z-index: 3;
+  filter: drop-shadow(2px 2px 3px #919191);
 }
 
 #wallsShadowLayer {
