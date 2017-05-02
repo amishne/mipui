@@ -231,6 +231,36 @@ class Menu {
     };
   }
 
+  createNoncardinalWallTool_(kind, variation) {
+    const kindClassNames = kind.id == ct.shapes.square.id ? [
+      'square-cell-0',
+      'square-cell-primary',
+    ] : [
+      'circle-cell-0',
+      'circle-cell-primary',
+    ];
+    return {
+      name,
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-walls'],
+      isSelected: false,
+      callback: () => {
+        state.gesture =
+          new ShapeGesture(ct.walls, kind, variation);
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'shape-cell',
+          ].concat(kindClassNames).concat(variation.classNames),
+        },
+      ],
+    };
+  }
+
   createDoorTool_(name, variation, isSelected) {
     let doorClassName = '';
     switch (variation.id) {
@@ -364,7 +394,7 @@ class Menu {
       isSelected,
       callback: () => {
         state.gesture =
-          new ShapeGesture(kind, variation);
+          new ShapeGesture(ct.shapes, kind, variation);
       },
       cells: [
         {
@@ -792,6 +822,7 @@ class Menu {
             this.createWallTool_(7, false, false),
             this.createWallTool_(9, false, false),
             this.createWallTool_(1, true, false),
+            this.createNoncardinalWallTool_(ct.walls.smooth, ct.walls.smooth.angled),
           ],
         },
       },

@@ -12,7 +12,8 @@ const ct = {
   walls: {
     classNames: ['wall-cell', 'wall-cell-_ADDING_', 'wall-cell-_REMOVING_'],
     smooth: {
-      square: {}
+      square: {classNames: ['square-wall-cell']},
+      angled: {classNames: ['angled-wall-cell-_CONNECTIONS_']},
     },
   },
   images: {

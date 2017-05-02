@@ -127,8 +127,6 @@ body {
 
 .wall-cell {
   position: absolute;
-  border-right: 1px solid;
-  border-bottom: 1px solid;
 }
 
 .floor-cell {

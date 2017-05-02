@@ -7,9 +7,10 @@
   box-shadow: 2px 2px 6px 0px #919191;
 }
 
-.wall-cell {
+.square-wall-cell {
   background-color: rgb(222, 184, 135);
-  
+  border-right: 1px solid;
+  border-bottom: 1px solid;
   border-color: bisque;
 }
 

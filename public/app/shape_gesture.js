@@ -1,6 +1,7 @@
 class ShapeGesture extends Gesture {
-  constructor(kind, variation) {
+  constructor(layer, kind, variation) {
     super();
+    this.layer_ = layer;
     this.kind_ = kind;
     this.variation_ = variation;
     this.mode_ = null;
@@ -8,7 +9,7 @@ class ShapeGesture extends Gesture {
   }
 
   startHover(cell) {
-    this.mode_ = cell.hasLayerContent(ct.shapes) ? 'removing' : 'adding';
+    this.mode_ = cell.hasLayerContent(this.layer_) ? 'removing' : 'adding';
     this.populateCellMasks_(cell);
     this.showHighlight_();
   }
@@ -34,19 +35,19 @@ class ShapeGesture extends Gesture {
 
   apply_() {
     this.calcNewContent_().forEach((newContent, cell) => {
-      cell.setLayerContent(ct.shapes, newContent, true);
+      cell.setLayerContent(this.layer_, newContent, true);
     });
   }
 
   showHighlight_() {
     this.calcNewContent_().forEach((newContent, cell) => {
-      cell.showHighlight(ct.shapes, newContent);
+      cell.showHighlight(this.layer_, newContent);
     });
   }
 
   hideHighlight_() {
     this.cellMasks_.forEach((_, cell) => {
-      cell.hideHighlight(ct.shapes);
+      cell.hideHighlight(this.layer_);
     });
   }
 
@@ -57,7 +58,7 @@ class ShapeGesture extends Gesture {
         result.set(cell, null);
         return;
       }
-      if (!cell.hasLayerContent(ct.shapes)) {
+      if (!cell.hasLayerContent(this.layer_)) {
         if (this.mode_ == 'removing') return;
         result.set(cell, {
           [ck.kind]: this.kind_.id,
@@ -66,7 +67,7 @@ class ShapeGesture extends Gesture {
         });
         return;
       }
-      const existingContent = cell.getLayerContent(ct.shapes);
+      const existingContent = cell.getLayerContent(this.layer_);
       const existingConnections = existingContent[ck.connections];
       result.set(cell, {
         [ck.kind]: existingContent[ck.kind],

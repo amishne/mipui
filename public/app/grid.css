@@ -243,3 +243,66 @@
 .circle-cell-15 {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 0, A 6 6 0 0 0 6 0, V -2, H 20, V 0, A 6 6 0 0 0 26 6, H 27, V 20, A 6 6 0 0 0 20 26, V 27, H 6, V 26, A 6 6 0 0 0 0 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='2' stroke='rgb(150, 0, 0)'/></svg>");
 }
+
+.angled-wall-cell-0 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='12 0, 24 12, 12 24, 0 12' fill='rgb(222, 184, 135)' /></svg>");
+}
+
+.angled-wall-cell-1 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 12 12' fill='rgb(222, 184, 135)' /></svg>");
+}
+
+.angled-wall-cell-2 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='24 0, 12 12, 24 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-3 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 24 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-4 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 24, 12 12, 24 24' fill='rgb(222, 184, 135)' /><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-5, .angled-wall-cell-10 {
+  background-color: rgb(222, 184, 135);
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  border-color: bisque;
+}
+
+.angled-wall-cell-6 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='24 0, 0 24, 24 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-7 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 24 24, 0 24, 12 12' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-8 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 12 12, 0 24' fill='rgb(222, 184, 135)' /></svg>");
+}
+
+.angled-wall-cell-9 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 0 24' fill='rgb(222, 184, 135)' /></svg>");
+}
+
+.angled-wall-cell-11 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 24 24, 12 12, 0 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-12 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 24, 0 24' fill='rgb(222, 184, 135)' /><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-13 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 12 12, 24 24, 0 24' fill='rgb(222, 184, 135)' /><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-14 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 12 12, 24 0, 24 24, 0 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
+
+.angled-wall-cell-15 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 12 0, 0 12' fill='rgb(222, 184, 135)' /><polygon points='12 0, 24 0, 24 12' fill='rgb(222, 184, 135)' /><polygon points='24 12, 24 24, 12 24' fill='rgb(222, 184, 135)' /><polygon points='0 12, 12 24, 0 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
+}
