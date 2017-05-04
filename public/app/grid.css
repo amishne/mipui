@@ -333,8 +333,8 @@
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='7' height='7'><polygon points='0 6, 3 3, 6 6' fill='rgb(222, 184, 135)' /><line x1='0' y1='7' x2='7' y2='7' stroke-width='2' stroke='bisque'/></svg>");
 }
 
-.angled-wall-cell-corner-5, .angled-wall-cell-corner-10 {
-  background-color: red;
+.angled-wall-cell-corner-5 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='7' height='7'><polygon points='0 0, 6 0, 3 3' fill='rgb(222, 184, 135)' /><polygon points='0 6, 3 3, 6 6' fill='rgb(222, 184, 135)' /><line x1='0' y1='7' x2='7' y2='7' stroke-width='2' stroke='bisque'/></svg>");
 }
 
 .angled-wall-cell-corner-6 {
@@ -351,6 +351,10 @@
 
 .angled-wall-cell-corner-9 {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='7' height='7'><polygon points='0 0, 6 0, 0 6' fill='rgb(222, 184, 135)' /></svg>");
+}
+
+.angled-wall-cell-corner-10 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='7' height='7'><polygon points='6 0, 3 3, 6 6' fill='rgb(222, 184, 135)' /><line x1='7' y1='0' x2='7' y2='7' stroke-width='2' stroke='bisque'/><polygon points='0 0, 3 3, 0 6' fill='rgb(222, 184, 135)' /></svg>");
 }
 
 .angled-wall-cell-corner-11 {

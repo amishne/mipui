@@ -4,7 +4,7 @@ class NoncardinalWallGesture extends ShapeGesture {
     this.wallRemovingGesture_ = new WallGesture(1, false);
     this.wallRemovingGesture_.toWall = false;
   }
-
+/*
   startHover(cell) {
     this.mode_ = cell.hasLayerContent(this.layer_) ? 'removing' : 'adding';
     if (this.mode_ == 'adding') {
@@ -45,7 +45,7 @@ class NoncardinalWallGesture extends ShapeGesture {
       this.wallRemovingGesture_.stopGesture();
     }
   }
-
+*/
   populateCellMasks_(cell) {
     super.populateCellMasks_(cell);
   }
@@ -137,7 +137,7 @@ class NoncardinalWallGesture extends ShapeGesture {
       case 'primary':
         return connections == 15 ? connectionlessContent : content;
       case 'corner':
-        return connections % 5 == 0 ? connectionlessContent : content;
+        return connections == 0 || connections == 15 ? connectionlessContent : content;
       case 'horizontal':
       case 'vertical':
         return connectionlessContent;
