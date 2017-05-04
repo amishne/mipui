@@ -7,6 +7,7 @@
   box-shadow: 2px 2px 6px 0px #919191;
 }
 
+/* hsl(34, 56.9, 70.0) */
 .square-wall-cell {
   background-color: rgb(222, 184, 135);
   border-right: 1px solid;
@@ -19,21 +20,23 @@
   border-color: bisque;
 }
 
+/* hsl(60, 23.8, 79.4) */
 .square-wall-cell-adding {
   background-color: rgb(215, 215, 190);
 }
 
+/* hsl(47, 52.1, 81.2) */
 .square-wall-cell-removing {
   background-color: rgb(232, 221, 182);
   z-index: 1;
 }
 
 .angled-wall-cell-adding {
-  filter: opacity(0.6);
+  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
 }
 
 .angled-wall-cell-removing {
-  filter: opacity(0.4);
+  filter: hue-rotate(13deg) saturate(0.92) brightness(1.16);
 }
 
 .door-cell {
