@@ -92,6 +92,7 @@ class Menu {
         }
         let selectedChild = item.submenu.allItems.find(item => item.isSelected);
         cells = selectedChild.cells;
+        item.element.className = 'menu-item';
         item.element.classList.add(...selectedChild.classNames);
         // Intentional fallthrough.
       case 'cells':
@@ -217,7 +218,7 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'wall-cell',
+            'square-wall-cell',
           ],
         },
         {
@@ -243,7 +244,7 @@ class Menu {
       name,
       type: 'tool',
       presentation: 'cells',
-      classNames: ['menu-walls'],
+      classNames: ['menu-walls-angled'],
       isSelected: false,
       callback: () => {
         state.gesture = new NoncardinalWallGesture(ct.walls, kind, variation);
@@ -253,8 +254,15 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'shape-cell',
-          ].concat(kindClassNames).concat(variation.classNames),
+            'floor-cell',
+          ],
+        },
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'angled-wall-cell-primary-12',
+          ],
         },
       ],
     };
