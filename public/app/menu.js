@@ -93,6 +93,7 @@ class Menu {
         let selectedChild = item.submenu.allItems.find(item => item.isSelected);
         cells = selectedChild.cells;
         item.element.className = 'menu-item';
+        if (item.isSelected) item.element.classList.add('selected-menu-item');
         item.element.classList.add(...selectedChild.classNames);
         // Intentional fallthrough.
       case 'cells':

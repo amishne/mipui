@@ -61,8 +61,8 @@ class NoncardinalWallGesture extends ShapeGesture {
         }
         super.populateCellMask_(cell, mask);
         // Set mask on neighboring corners:
-        super.populateCellMask_(cell.getNeighbor('left', true), 2);
-        super.populateCellMask_(cell.getNeighbor('right', true), 8);
+        this.populateCellMask_(cell.getNeighbor('left', true), 2);
+        this.populateCellMask_(cell.getNeighbor('right', true), 8);
         break;
       case 'vertical':
         if (this.isAnySquare_(
@@ -72,8 +72,8 @@ class NoncardinalWallGesture extends ShapeGesture {
         }
         super.populateCellMask_(cell, mask);
         // Set mask on neighboring corners:
-        super.populateCellMask_(cell.getNeighbor('top', true), 4);
-        super.populateCellMask_(cell.getNeighbor('bottom', true), 1);
+        this.populateCellMask_(cell.getNeighbor('top', true), 4);
+        this.populateCellMask_(cell.getNeighbor('bottom', true), 1);
         break;
       case 'primary':
       case 'corner':
@@ -119,8 +119,11 @@ class NoncardinalWallGesture extends ShapeGesture {
   }
   
   isAnySquare_(cells) {
-    return cells.some(cell =>
-        cell.isVariation(this.layer_, ct.walls.smooth, ct.walls.smooth.square));
+    return cells.some(cell => {
+      return cell != null &&
+          cell.isVariation(
+              this.layer_, ct.walls.smooth, ct.walls.smooth.square);
+    });
   }
 
   calcFinalContent_(cell, content) {
