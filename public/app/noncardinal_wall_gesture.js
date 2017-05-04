@@ -3,8 +3,6 @@ class NoncardinalWallGesture extends ShapeGesture {
     super(layer, kind, variation);
     this.wallRemovingGesture_ = new WallGesture(1, false);
     this.wallRemovingGesture_.toWall = false;
-//    this.wallGesture_ = null;
-//    this.squareCells_ = [];
   }
 
   startHover(cell) {
@@ -14,11 +12,6 @@ class NoncardinalWallGesture extends ShapeGesture {
     } else {
       this.wallRemovingGesture_.startHover(cell);
     }
-//    this.wallGesture_ = new WallGesture(1, true);
-//    this.wallGesture_.mode = 'manual';
-//    this.wallGesture_.toWall = this.mode_ == 'adding';
-//    this.wallGesture_.cellsToSet = this.squareCells_;
-//    this.wallGesture_.startHoverAfterInitialFieldsAreSet(null);
   }
 
   stopHover() {
@@ -27,7 +20,6 @@ class NoncardinalWallGesture extends ShapeGesture {
     } else {
       this.wallRemovingGesture_.stopHover();
     }
-//    this.wallGesture_.stopHover();
   }
 
   startGesture() {
@@ -36,7 +28,6 @@ class NoncardinalWallGesture extends ShapeGesture {
     } else {
       this.wallRemovingGesture_.startGesture();
     }
-//    this.wallGesture_.startGesture();
   }
 
   continueGesture(cell) {
@@ -45,8 +36,6 @@ class NoncardinalWallGesture extends ShapeGesture {
     } else {
       this.wallRemovingGesture_.continueGesture(cell);
     }
-//    this.wallGesture_.cellsToSet = this.squareCells_;
-//    this.wallGesture_.continueGesture(null);
   }
 
   stopGesture() {
@@ -58,7 +47,6 @@ class NoncardinalWallGesture extends ShapeGesture {
   }
 
   populateCellMasks_(cell) {
-//    this.squareCells_ = [];
     super.populateCellMasks_(cell);
   }
 
@@ -99,7 +87,7 @@ class NoncardinalWallGesture extends ShapeGesture {
           if (cell.getNeighbor('left', true).isKind(layer, kind)) mask |= 8;
         }
         super.populateCellMask_(cell, mask);
-        if (cell.role == 'primary') {
+        if (cell.role == 'primary' && mask % 5 != 0) {
           // Update corners.
           if (!(mask & 8) != !(mask & 4)) {
             const corner = cell.getNeighbor('bottom-left', true);
