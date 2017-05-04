@@ -246,8 +246,7 @@ class Menu {
       classNames: ['menu-walls'],
       isSelected: false,
       callback: () => {
-        state.gesture =
-          new ShapeGesture(ct.walls, kind, variation);
+        state.gesture = new NoncardinalWallGesture(ct.walls, kind, variation);
       },
       cells: [
         {

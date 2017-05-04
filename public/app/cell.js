@@ -380,11 +380,11 @@ class Cell {
         kind.classNames || [],
         variation.classNames || []);
     classNames.forEach(className => {
-      element.classList[addOrRemove](className.replace(/_ROLE_/g, this.role));
+      let renamed = className.replace(/_ROLE_/g, this.role);
       if (content.hasOwnProperty(ck.connections)) {
-        element.classList[addOrRemove](
-            className.replace(/_CONNECTIONS_/g, content[ck.connections]));
+        renamed = renamed.replace(/_CONNECTIONS_/g, content[ck.connections]);
       }
+      element.classList[addOrRemove](renamed);
     });
   }
 

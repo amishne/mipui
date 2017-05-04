@@ -35,14 +35,20 @@ class ShapeGesture extends Gesture {
 
   apply_() {
     this.calcNewContent_().forEach((newContent, cell) => {
-      cell.setLayerContent(this.layer_, newContent, true);
+      const finalContent = this.calcFinalContent_(cell, newContent);
+      cell.setLayerContent(this.layer_, finalContent, true);
     });
   }
 
   showHighlight_() {
     this.calcNewContent_().forEach((newContent, cell) => {
-      cell.showHighlight(this.layer_, newContent);
+      const finalContent = this.calcFinalContent_(cell, newContent);
+      cell.showHighlight(this.layer_, finalContent);
     });
+  }
+
+  calcFinalContent_(cell, content) {
+    return content;
   }
 
   hideHighlight_() {
@@ -68,14 +74,23 @@ class ShapeGesture extends Gesture {
         return;
       }
       const existingContent = cell.getLayerContent(this.layer_);
-      const existingConnections = existingContent[ck.connections];
-      result.set(cell, {
-        [ck.kind]: existingContent[ck.kind],
-        [ck.variation]: existingContent[ck.variation],
-        [ck.connections]:
-            this.mode_ == 'adding' ?
-                existingConnections | val : existingConnections & ~val,
-      });
+      if (existingContent.hasOwnProperty(ck.connections)) {
+        const existingConnections = existingContent[ck.connections];
+        result.set(cell, {
+          [ck.kind]: existingContent[ck.kind],
+          [ck.variation]: existingContent[ck.variation],
+          [ck.connections]:
+              this.mode_ == 'adding' ?
+                  existingConnections | val : existingConnections & ~val,
+        });
+      } else {
+        //// Without connections, leave it unmodified.
+        result.set(cell, {
+          [ck.kind]: this.kind_.id,
+          [ck.variation]: this.variation_.id,
+          [ck.connections]: val,
+        });
+      }
     });
     return result;
   }

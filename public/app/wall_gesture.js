@@ -55,6 +55,7 @@ class WallGesture extends Gesture {
   }
 
   calculateRootCellsAndCellsToSet_(targetedCell) {
+    if (!targetedCell) return;
     this.rootCells = this.calcRootCells_(targetedCell);
     this.cellsToSet = new Set();
     this.rootCells.forEach(rootCell => {
@@ -111,7 +112,11 @@ class WallGesture extends Gesture {
 
   addCellIfEligible_(cell) {
     // Don't toggle cells that don't need toggling.
-    if (this.isWall_(cell) == this.toWall) return;
+    if (this.isWall_(cell) == this.toWall &&
+        (!this.toWall ||
+         !cell.getLayerContent(ct.walls).hasOwnProperty(ck.connections))) {
+      return;
+    }
     // If it's manual mode, just set the cell and be done with it.
     if (this.mode == 'manual') {
       this.cellsToSet.add(cell);
@@ -174,8 +179,10 @@ class WallGesture extends Gesture {
 
   continueGesture(cell) {
     this.stopHover();
-    if (!cell.role == 'primary' && this.primaryCellsOnly) return;
-    this.calculateRootCellsAndCellsToSet_(cell);
+    if (cell) {
+      if (!cell.role == 'primary' && this.primaryCellsOnly) return;
+      this.calculateRootCellsAndCellsToSet_(cell);
+    }
     this.apply_();
   }
 

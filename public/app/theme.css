@@ -19,13 +19,21 @@
   border-color: bisque;
 }
 
-.wall-cell-adding {
+.square-wall-cell-adding {
   background-color: rgb(215, 215, 190);
 }
 
-.wall-cell-removing {
+.square-wall-cell-removing {
   background-color: rgb(232, 221, 182);
   z-index: 1;
+}
+
+.angled-wall-cell-adding {
+  filter: opacity(0.6);
+}
+
+.angled-wall-cell-removing {
+  filter: opacity(0.4);
 }
 
 .door-cell {

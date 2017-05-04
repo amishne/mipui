@@ -10,10 +10,22 @@ const ct = {
     },
   },
   walls: {
-    classNames: ['wall-cell', 'wall-cell-_ADDING_', 'wall-cell-_REMOVING_'],
+    classNames: ['wall-cell', ],
     smooth: {
-      square: {classNames: ['square-wall-cell']},
-      angled: {classNames: ['angled-wall-cell-_CONNECTIONS_']},
+      square: {
+        classNames: [
+          'square-wall-cell',
+          'square-wall-cell-_ADDING_',
+          'square-wall-cell-_REMOVING_',
+        ],
+      },
+      angled: {
+        classNames: [
+          'angled-wall-cell-_ROLE_-_CONNECTIONS_',
+          'angled-wall-cell-_ADDING_',
+          'angled-wall-cell-_REMOVING_',
+        ],
+      },
     },
   },
   images: {

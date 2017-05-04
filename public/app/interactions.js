@@ -18,7 +18,10 @@ let useWheelForZooming = true;
 function handleWheelEvent(wheelEvent) {
   wheelEvent.preventDefault();
   wheelEvent.stopImmediatePropagation();
-  if (wheelEvent.deltaX > 0) {
+  if (wheelEvent.deltaX > 0 || wheelEvent.ctrlKey) {
+    // The first time a horizontal scroll is encountered, or the first time
+    // ctrl is held during a scroll, we assume trackpad / touchpad and stop
+    // using wheel for zooming.
     useWheelForZooming = false;
   }
   if (useWheelForZooming || wheelEvent.ctrlKey) {
