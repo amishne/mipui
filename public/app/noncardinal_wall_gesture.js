@@ -87,7 +87,7 @@ class NoncardinalWallGesture extends ShapeGesture {
           if (cell.getNeighbor('left', true).isKind(layer, kind)) mask |= 8;
         }
         super.populateCellMask_(cell, mask);
-        if (cell.role == 'primary' && mask % 5 != 0) {
+        if (cell.role == 'primary') {
           // Update corners.
           if (!(mask & 8) != !(mask & 4)) {
             const corner = cell.getNeighbor('bottom-left', true);
@@ -135,14 +135,9 @@ class NoncardinalWallGesture extends ShapeGesture {
     };
     switch (cell.role) {
       case 'primary':
-        return (connections == 5 || connections == 10 || connections == 15) ?
-            connectionlessContent : content;
+        return connections == 15 ? connectionlessContent : content;
       case 'corner':
-        if (connections == 5 || connections == 10 ||
-            connections == 0 || connections == 15) {
-            return connectionlessContent;
-        }
-        return content;
+        return connections % 5 == 0 ? connectionlessContent : content;
       case 'horizontal':
       case 'vertical':
         return connectionlessContent;

@@ -264,15 +264,8 @@
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 24, 12 12, 24 24' fill='rgb(222, 184, 135)' /><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
 }
 
-.angled-wall-cell-primary-5, .angled-wall-cell-primary-10 {
-  background-color: red;
-  border-right: 1px solid;
-  border-bottom: 1px solid;
-  border-color: bisque;
-}
-
-.angled-wall-cell-horizontal-5, .angled-wall-cell-vertical-10 {
-  background-color: red;
+.angled-wall-cell-primary-5 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 12 12' fill='rgb(222, 184, 135)' /><polygon points='0 24, 12 12, 24 24' fill='rgb(222, 184, 135)' /><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
 }
 
 .angled-wall-cell-primary-6 {
@@ -289,6 +282,10 @@
 
 .angled-wall-cell-primary-9 {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 24 0, 0 24' fill='rgb(222, 184, 135)' /></svg>");
+}
+
+.angled-wall-cell-primary-10 {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='24 0, 12 12, 24 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/><polygon points='0 0, 12 12, 0 24' fill='rgb(222, 184, 135)' /></svg>");
 }
 
 .angled-wall-cell-primary-11 {
@@ -311,6 +308,11 @@
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><polygon points='0 0, 12 0, 0 12' fill='rgb(222, 184, 135)' /><polygon points='12 0, 24 0, 24 12' fill='rgb(222, 184, 135)' /><polygon points='24 12, 24 24, 12 24' fill='rgb(222, 184, 135)' /><polygon points='0 12, 12 24, 0 24' fill='rgb(222, 184, 135)' /><line x1='25' y1='0' x2='25' y2='25' stroke-width='2' stroke='bisque'/><line x1='0' y1='25' x2='25' y2='25' stroke-width='2' stroke='bisque'/></svg>");
 }
 */
+
+.angled-wall-cell-horizontal-5, .angled-wall-cell-vertical-10 {
+  background-color: red;
+}
+
 .angled-wall-cell-corner-0 {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='7' height='7'><polygon points='3 0, 6 3, 3 6, 0 3' fill='rgb(222, 184, 135)' /></svg>");
 }
