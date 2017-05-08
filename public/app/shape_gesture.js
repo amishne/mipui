@@ -208,7 +208,7 @@ class ShapeGesture extends Gesture {
   }
 
   populateCellMask_(cell, mask) {
-    if (!cell) return;
+    if (!cell) return mask;
     if (!this.cellMasks_.has(cell)) {
       this.cellMasks_.set(cell, mask);
     } else {
@@ -221,5 +221,6 @@ class ShapeGesture extends Gesture {
       }
       this.cellMasks_.set(cell, newMask);
     }
+    return mask;
   }
 }
