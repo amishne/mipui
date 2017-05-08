@@ -84,7 +84,6 @@ class ShapeGesture extends Gesture {
                   existingConnections | val : existingConnections & ~val,
         });
       } else {
-        //// Without connections, leave it unmodified.
         result.set(cell, {
           [ck.kind]: this.kind_.id,
           [ck.variation]: this.variation_.id,
