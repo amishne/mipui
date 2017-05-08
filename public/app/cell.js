@@ -181,6 +181,24 @@ class Cell {
     const height = element.offsetHeight;
     element.innerHTML = `<img class="image" src="${imageUrl}" ` +
         `style="width: ${width}px; height: ${height}px; alt="">`;
+    if (imageUrl.endsWith('.svg')) {
+      // Asynchronously replace <img> with <svg>, which then supports
+      // 1. Styling
+      // 2. Exporting to PNG / SVG
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', imageUrl, true);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState != 4) return;
+        const svgDom = xhr.responseXML.documentElement;
+        const importedSvgDom = document.importNode(svgDom, true);
+        importedSvgDom.classList.add('image');
+        importedSvgDom.style.width = width;
+        importedSvgDom.style.height = height;
+        element.innerHTML = '';
+        element.appendChild(importedSvgDom);
+      };
+      xhr.send();
+    }
   }
 
   setImageHash_(element, imageHash) {
