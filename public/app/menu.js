@@ -2,6 +2,7 @@ class Menu {
   constructor() {
     this.gameIcons_ = gameIcons;
     this.menuItems_ = this.setupMenuItems_();
+    this.currentImageVariation_ = ct.images.image.black;
   }
 
   createMenu() {
@@ -351,41 +352,6 @@ class Menu {
     };
   }
 
-  createImageTool_() {
-    return {
-      name: 'Images',
-      type: 'tool',
-      presentation: 'cells',
-      classNames: ['menu-images'],
-      isSelected: true,
-      callback: () => {
-        state.gesture = new ImageGesture(
-            ct.images,
-            ct.images.image,
-            ct.images.image.background,
-            'assets/wyvern.svg',
-            true);
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-        {
-          innerHTML: '<img src="assets/wyvern.svg">',
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'image-cell',
-          ],
-        },
-      ],
-    };
-  }
-
   createShapeTool_(name, kind, variation, isSelected) {
     const kindClassNames = kind.id == ct.shapes.square.id ? [
       'square-cell-0',
@@ -528,7 +494,7 @@ class Menu {
         state.gesture = new ImageGesture(
             ct.images,
             ct.images.image,
-            ct.images.image.background,
+            this.currentImageVariation_,
             path,
             false,
             gameIcon.hash);
@@ -543,6 +509,40 @@ class Menu {
         },
         {
           innerHTML: `<img src="${path}">`,
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'image-cell',
+          ],
+        },
+      ],
+    };
+  }
+
+  createTokenColorSelector_(variation) {
+    return {
+      name: 'wyvern',
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-tokens'],
+      callback: () => {
+        this.currentImageVariation_ = variation;
+        if (state.gesture instanceof ImageGesture) {
+          state.gesture.setVariation(variation);
+        }
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'floor-cell',
+          ],
+        },
+        {
+          innerHTML:
+              `<img src="assets/wyvern.svg" ` +
+              `class="${(variation.classList || []).join(' ')}">`,
           classNames: [
             'grid-cell',
             'primary-cell',

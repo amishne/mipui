@@ -21,6 +21,10 @@ class ImageGesture extends BoxGesture {
         variation.imagePath ? 1 : this.imageHash_ || this.defaultImage_;
   }
 
+  setVariation(variation) {
+    this.variation_ = variation;
+  }
+
   isEditable_() {
     return this.isEditable__;
   }

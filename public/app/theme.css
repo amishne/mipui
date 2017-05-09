@@ -84,6 +84,10 @@
   color: rgb(50, 50, 50);
 }
 
+.image-black {
+  fill: black;
+}
+
 .text-cell-adding {
   color: rgba(50, 50, 50, 0.6);
 }

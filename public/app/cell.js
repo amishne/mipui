@@ -116,8 +116,8 @@ class Cell {
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, content);
     this.setText_(element, content[ck.text]);
-    this.setImage_(element, content[ck.image]);
-    this.setImageHash_(element, content[ck.imageHash]);
+    this.setImage_(element, content[ck.image], content[ck.variation]);
+    this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
     this.setImageFromVariation_(element, layer, content);
   }
 
@@ -175,12 +175,13 @@ class Cell {
     element.textContent = text;
   }
 
-  setImage_(element, imageUrl) {
+  setImage_(element, imageUrl, variation) {
     if (!element || !imageUrl) return;
     const width = element.offsetWidth;
     const height = element.offsetHeight;
-    element.innerHTML = `<img class="image" src="${imageUrl}" ` +
-        `style="width: ${width}px; height: ${height}px; alt="">`;
+    const classNames = variation.classNames || [];
+    element.innerHTML = `<img class="image ${classNames.join(' ')}" src=` +
+        `"${imageUrl}" style="width: ${width}px; height: ${height}px; alt="">`;
     if (imageUrl.endsWith('.svg')) {
       // Asynchronously replace <img> with <svg>, which then supports
       // 1. Styling
@@ -189,23 +190,25 @@ class Cell {
       xhr.open('get', imageUrl, true);
       xhr.onreadystatechange = () => {
         if (xhr.readyState != 4) return;
-        const svgDom = xhr.responseXML.documentElement;
-        const importedSvgDom = document.importNode(svgDom, true);
-        importedSvgDom.classList.add('image');
-        importedSvgDom.style.width = width;
-        importedSvgDom.style.height = height;
+        const svgElement = xhr.responseXML.documentElement;
+        svgElement.classList.add('image');
+        svgElement.classList.add(...classNames);
+        svgElement.style.width = width;
+        svgElement.style.height = height;
         element.innerHTML = '';
-        element.appendChild(importedSvgDom);
+        element.appendChild(svgElement);
       };
       xhr.send();
     }
   }
 
-  setImageHash_(element, imageHash) {
+  setImageHash_(element, imageHash, variation) {
     if (!element || !imageHash) return;
     const imageUrl =
         gameIcons.find(gameIcon => gameIcon.hash == imageHash).path;
-    if (imageUrl) this.setImage_(element, imageUrl.replace('public/app/', ''));
+    if (imageUrl) {
+      this.setImage_(element, imageUrl.replace('public/app/', ''), variation);
+    }
   }
   
   setImageFromVariation_(element, layer, content) {
@@ -213,7 +216,7 @@ class Cell {
     const kind = ct.children[layer.id].children[content[ck.kind]];
     const variation = kind.children[content[ck.variation]];
     if (!variation.imagePath) return;
-    this.setImage_(element, variation.imagePath);
+    this.setImage_(element, variation.imagePath, variation);
   }
 
   getOrCreateLayerElement(layer, initialContent) {

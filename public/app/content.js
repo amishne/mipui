@@ -35,7 +35,7 @@ const ct = {
         'image-cell-_ADDING-REMOVING_',
         'image-cell-_EDITING_',
       ],
-      background: {},
+      black: {classNames: ['image-black']},
     }
   },
   doors: {
@@ -46,12 +46,8 @@ const ct = {
         'door-cell-_ADDING-REMOVING_'
       ],
       single: {},
-      double: {
-        classNames: ['double-door-cell-_ROLE_'],
-      },
-      secret: {
-        classNames: ['secret-door-cell'],
-      },
+      double: {classNames: ['double-door-cell-_ROLE_']},
+      secret: {classNames: ['secret-door-cell']},
     },
   },
   text: {
