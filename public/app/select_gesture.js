@@ -11,7 +11,7 @@ class SelectGesture extends Gesture {
   }
 
   startGesture() {
-    this.clearSelection_();
+    this.clearSelection();
     if (this.anchorCell_) {
       // Clicking anywhere when there's an active selection just cancels it.
       this.anchorCell_ = null;
@@ -20,25 +20,29 @@ class SelectGesture extends Gesture {
     }
   }
 
+  onUnselect() {
+    this.clearSelection();
+  }
+
   stopHover() {}
   stopGesture() {}
 
   copy() {}
 
   invert() {
-    const newSet = new Set();
+    const newCells = [];
     this.anchorCell_ = null;
-    state.theMap.cells.values().forEach(cell => {
+    for (let cell of state.theMap.cells.values()) {
       if (!this.selectedCells_.has(cell)) {
-        if (!this.anchorCell) this.anchorCell_ = cell;
-        newSet.add(cell);
+        if (!this.anchorCell_) this.anchorCell_ = cell;
+        newCells.push(cell);
       }
-    });
-    this.clearSelection_();
-    this.selectedCells_ = newSet;
+    }
+    this.clearSelection();
+    newCells.map(cell => this.addSelectedCell_(cell));
   }
 
-  clearSelection_() {
+  clearSelection() {
     this.selectedCells_.forEach(cell => {
       cell.gridElement.classList.remove('selected-cell');
     });

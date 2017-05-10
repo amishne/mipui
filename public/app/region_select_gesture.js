@@ -14,7 +14,7 @@ class RegionSelectGesture extends SelectGesture {
 
   continueGesture(cell) {
     if (!this.anchorCell_ || !cell || cell.role != 'primary') return;
-    this.clearSelection_();
+    this.clearSelection();
     this.addSelectedCell_(this.anchorCell_);
     const cells = this.anchorCell_.getPrimaryCellsInSquareTo(cell);
     const borderCells = [];

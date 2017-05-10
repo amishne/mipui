@@ -19,7 +19,7 @@ class State {
 
     this.secret_ = null;
 
-    this.gesture = null;
+    this.gesture_ = null;
 
     this.opCenter = new OperationCenter();
 
@@ -54,6 +54,17 @@ class State {
     this.user = null;
 
     this.menu = null;
+  }
+  
+  set gesture(newGesture) {
+    if (this.gesture_ && this.gesture_.onUnselect) {
+      this.gesture_.onUnselect();
+    }
+    this.gesture_ = newGesture;
+  }
+  
+  get gesture() {
+    return this.gesture_;
   }
 
   setLastOpNum(num) {
