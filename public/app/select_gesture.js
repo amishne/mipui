@@ -7,7 +7,6 @@ class SelectGesture extends Gesture {
   }
 
   startHover(cell) {
-    if (cell.role != 'primary') return;
     this.hoveredCell_ = cell;
   }
 

@@ -5,7 +5,10 @@ class RegionSelectGesture extends SelectGesture {
 
   startGesture() {
     super.startGesture();
-    if (!this.anchorCell_) return;
+    if (!this.anchorCell_ || this.hoveredCell_.role != 'primary') {
+      this.anchorCell_ = null;
+      return;
+    }
     this.addSelectedCell_(this.anchorCell_);
   }
 

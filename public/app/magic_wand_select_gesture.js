@@ -24,21 +24,44 @@ class MagicWandSelectGesture extends SelectGesture {
     while (front.size > 0) {
       const newFront = new Set();
       for (let cell of front.values()) {
-        cell.getAllNeighbors().forEach(neighbor => {
-          const neighborCells = neighbor.cells || [];
-          if (neighbor.dividerCell) neighborCells.push(neighbor.dividerCell);
-          neighborCells.forEach(neighborCell => {
-            if (neighborCell &&
-                this.predicate_(neighborCell) &&
-                !this.selectedCells_.has(neighborCell) &&
-                !front.has(neighborCell)) {
-              newFront.add(neighborCell);
-            }
-          });
+        this.getImmediateNeighborCells(cell).forEach(neighborCell => {
+          if (neighborCell &&
+              this.predicate_(neighborCell) &&
+              !this.selectedCells_.has(neighborCell) &&
+              !front.has(neighborCell)) {
+            newFront.add(neighborCell);
+          }
         });
       }
       newFront.forEach(cell => this.addSelectedCell_(cell));
       front = newFront;
     }
+  }
+
+  getImmediateNeighborCells(cell) {
+    const result = [];
+    if (!cell) return result;
+    switch (cell.role) {
+      case 'corner':
+      case 'primary':
+        result.push(cell.getNeighbor('top', true));
+        result.push(cell.getNeighbor('right', true));
+        result.push(cell.getNeighbor('bottom', true));
+        result.push(cell.getNeighbor('left', true));
+        break;
+      case 'horizontal':
+        result.push(cell.getNeighbor('top', false));
+        result.push(cell.getNeighbor('right', true));
+        result.push(cell.getNeighbor('bottom', false));
+        result.push(cell.getNeighbor('left', true));
+        break;
+      case 'vertical':
+        result.push(cell.getNeighbor('top', true));
+        result.push(cell.getNeighbor('right', false));
+        result.push(cell.getNeighbor('bottom', true));
+        result.push(cell.getNeighbor('left', false));
+        break;
+    }
+    return result;
   }
 }
