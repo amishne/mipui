@@ -3,6 +3,12 @@ function handleKeyDownEvent(keyDownEvent) {
     switch (keyDownEvent.key) {
       case 'z': state.opCenter.undo(); break;
       case 'y': state.opCenter.redo(); break;
+      case 'c':
+        if (state.gesture instanceof SelectGesture) {
+          state.gesture.copy();
+        }
+        break;
+      case 'v': state.gesture = new PasteGesture(); break;
     }
   }
 }
