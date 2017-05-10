@@ -9,8 +9,6 @@ class Cell {
     this.height = null;
     this.offsetRight = null;
     this.offsetBottom = null;
-
-    // Primary cells only.
     this.row = null;
     this.column = null;
 

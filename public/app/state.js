@@ -54,6 +54,8 @@ class State {
     this.user = null;
 
     this.menu = null;
+
+    this.clipboard = null;
   }
   
   set gesture(newGesture) {

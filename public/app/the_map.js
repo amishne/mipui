@@ -117,6 +117,8 @@ class TheMap {
     }
     cell.height = this.dividerHeight;
     cell.width = this.dividerWidth;
+    cell.row = previousRow + 0.5;
+    cell.column = previousColumn + 0.5;
   }
 
   createHorizontalCell_(parent, previousRow, nextRow, column) {
@@ -128,6 +130,8 @@ class TheMap {
     }
     cell.height = this.dividerHeight;
     cell.width = this.cellWidth;
+    cell.row = previousRow + 0.5;
+    cell.column = column;
   }
 
   createVerticalCell_(parent, row, previousColumn, nextColumn) {
@@ -139,6 +143,8 @@ class TheMap {
     }
     cell.height = this.cellHeight;
     cell.width = this.dividerWidth;
+    cell.row = row;
+    cell.column = previousColumn + 0.5;
   }
 
   createPrimaryCell_(parent, row, column) {

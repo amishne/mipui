@@ -27,7 +27,23 @@ class SelectGesture extends Gesture {
   stopHover() {}
   stopGesture() {}
 
-  copy() {}
+  copy() {
+    const cellMapping = new Map();
+    this.selectedCells_.forEach(cell => {
+      cellMapping.set(this.keyForCopy_(this.anchorCell_, cell), cell);
+    });
+    state.clipboard = {
+      anchor: this.anchorCell_,
+      cells: cellMapping,
+    };
+  }
+
+  keyForCopy_(anchorCell, cell) {
+    return {
+      row: cell.row - anchorCell.row,
+      column: cell.column - anchorCell.column,
+    };
+  }
 
   invert() {
     const newCells = [];

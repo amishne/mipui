@@ -743,7 +743,7 @@ class Menu {
               materialIcon: 'content_paste',
               enabledInReadonlyMode: false,
               callback: () => {
-                stage.gesture = new PasteGesture();
+                state.gesture = new PasteGesture();
               },
             },
             {
