@@ -682,6 +682,131 @@ class Menu {
         },
       },
       {
+        name: 'Select',
+        presentation: 'icon',
+        materialIcon: 'select_all',
+        enabledInReadonlyMode: true,
+        submenu: {
+          items: [
+            {
+              name: 'Select Region',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'fullscreen',
+              enabledInReadonlyMode: true,
+              isSelected: true,
+              callback: () => {
+                state.gesture = new RegionSelectGesture();
+              },
+            },
+            {
+              name: 'Magic Wand Selection',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'flare',
+              callback: () => {
+                state.gesture = new MagicWandSelectGesture();
+              },
+            },
+            {
+              name: 'Invert Selection',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'fullscreen_exit',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                if (state.gesture instanceof SelectGesture) {
+                  state.gesture.invert();
+                } else {
+                  alert('Only valid when something is selected.');
+                }
+              },
+            },
+            {
+              name: 'Copy',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'content_copy',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                if (state.gesture instanceof SelectGesture) {
+                  state.gesture.copy();
+                } else {
+                  alert('Only valid when something is selected.');
+                }
+              },
+            },
+            {
+              name: 'Paste',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'content_paste',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                stage.gesture = new PasteGesture();
+              },
+            },
+            {
+              name: 'Rotate Left',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'rotate_left',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                if (state.gesture instanceof PasteGesture) {
+                  state.gesture.rotateLeft();
+                } else {
+                  alert('Only valid when the paste tool is active.');
+                }
+              },
+            },
+            {
+              name: 'Rotate Right',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'rotate_right',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                if (state.gesture instanceof PasteGesture) {
+                  state.gesture.rotateRight();
+                } else {
+                  alert('Only valid when the paste tool is active.');
+                }
+              },
+            },
+            {
+              name: 'Flip Horizontally',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'flip',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                if (state.gesture instanceof PasteGesture) {
+                  state.gesture.flipForizontally();
+                } else {
+                  alert('Only valid when the paste tool is active.');
+                }
+              },
+            },
+            {
+              name: 'Flip Vertically',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'flip',
+              enabledInReadonlyMode: false,
+              classNames: ['rotate-90'],
+              callback: () => {
+                if (state.gesture instanceof PasteGesture) {
+                  state.gesture.flipVertically();
+                } else {
+                  alert('Only valid when the paste tool is active.');
+                }
+              },
+            },
+          ],
+        },
+      },
+      {
         name: 'Share',
         presentation: 'icon',
         materialIcon: 'share',

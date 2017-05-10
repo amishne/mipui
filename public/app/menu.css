@@ -9,6 +9,10 @@
   overflow-x: auto;
 }
 
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
 .menu-top {
   align-items: center;
   padding: 4px;
