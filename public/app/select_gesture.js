@@ -21,6 +21,7 @@ class SelectGesture extends Gesture {
   }
 
   onUnselect() {
+    super.onUnselect();
     this.clearSelection();
   }
 
@@ -36,6 +37,7 @@ class SelectGesture extends Gesture {
       anchor: this.anchorCell_,
       cells: cellMapping,
     };
+    this.clearSelection();
   }
 
   keyForCopy_(anchorCell, cell) {

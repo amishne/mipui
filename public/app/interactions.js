@@ -10,6 +10,8 @@ function handleKeyDownEvent(keyDownEvent) {
         break;
       case 'v': state.gesture = new PasteGesture(); break;
     }
+  } else if (keyDownEvent.key == 'Escape') {
+    state.menu.setToInitialSelection();
   }
 }
 

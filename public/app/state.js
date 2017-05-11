@@ -59,9 +59,7 @@ class State {
   }
   
   set gesture(newGesture) {
-    if (this.gesture_ && this.gesture_.onUnselect) {
-      this.gesture_.onUnselect();
-    }
+    if (this.gesture_) this.gesture_.onUnselect();
     this.gesture_ = newGesture;
   }
   

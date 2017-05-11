@@ -461,6 +461,7 @@ class OperationCenter {
   }
 
   updateMetadata_() {
+    if (!state.metadata) return;
     if (state.metadata.created) {
       document.getElementById('createdOn').textContent =
           'Created on ' + new Date(state.metadata.created).toUTCString();

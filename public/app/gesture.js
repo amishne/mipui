@@ -4,4 +4,7 @@ class Gesture {
   startGesture() {}
   continueGesture(cell) {}
   stopGesture() {}
+  onUnselect() {
+    this.stopHover();
+  }
 }

@@ -1,40 +1,32 @@
 class PasteGesture extends Gesture {
   constructor() {
     super();
-    this.relocatedCells_ = new Map();
+    this.relocatedCells_ = [];
+    this.clipboard_ = state.clipboard;
   }
 
   startHover(cell) {
-    if (!state.clipboard) return;
-    if (cell.role != state.clipboard.anchor.role) return;
+    if (!this.clipboard_) return;
+    if (cell.role != this.clipboard_.anchor.role) return;
     this.relocateCells_(cell);
-    this.relocatedCells_.forEach((cell, key) => {
-      const targetCell = state.theMap.cells.get(key);
-      if (!targetCell) return;
-      ct.children.forEach(layer => {
-        targetCell.showHighlight(layer, cell.getLayerContent(layer));
-      });
+    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+      targetCell.showHighlight(layer, content);
     });
   }
 
   stopHover() {
-    this.relocatedCells_.forEach((_, key) => {
-      const targetCell = state.theMap.cells.get(key);
-      ct.children.forEach(layer => {
-        targetCell.hideHighlight(layer);
-      });
+    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+      targetCell.hideHighlight(layer);
     });
-    this.relocatedCells_ = new Map();
+    this.relocatedCells_ = [];
   }
 
   startGesture() {
-    this.relocatedCells_.forEach((cell, key) => {
-      const targetCell = state.theMap.cells.get(key);
-      if (!targetCell) return;
-      ct.children.forEach(layer => {
-        targetCell.setLayerContent(layer, cell.getLayerContent(layer), true);
-      });
+    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+      targetCell.setLayerContent(layer, content, true);
     });
+    // Completing a paste resets the gesture selection.
+    state.menu.setToInitialSelection();
   }
 
   continueGesture(cell) {}
@@ -48,10 +40,30 @@ class PasteGesture extends Gesture {
   flipVertically() {}
   flipHorizontally() {}
 
+  forEachRelocatedCellLayerContent_(callback) {
+    this.relocatedCells_.forEach(({key, location, layerContents}) => {
+      const targetCell = state.theMap.cells.get(key);
+      if (!targetCell) return;
+      layerContents.forEach((content, layer) => {
+        callback(targetCell, layer, content);
+      });
+    });
+  }
+
   relocateCells_(newAnchor) {
-    state.clipboard.cells.forEach((cell, location) => {
+    this.clipboard_.cells.forEach((cell, location) => {
       const key = this.calcKey_(newAnchor, cell, location);
-      this.relocatedCells_.set(key, cell);
+      const layerContents = new Map();
+      ct.children.forEach(layer => {
+        if (cell.hasLayerContent(layer)) {
+          layerContents.set(layer, cell.getLayerContent(layer));
+        }
+      });
+      this.relocatedCells_.push({
+        key,
+        location,
+        layerContents,
+      });
     });
   }
 
