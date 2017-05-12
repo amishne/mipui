@@ -1,5 +1,5 @@
 // Maximum number of operations stored in the undo stack.
-const MAX_STORED_OPERATIONS = 1000;
+const MAX_STORED_OPERATIONS = 10000;
 
 // This class is responsible for synchronizing operations between clients, and
 // for managing the undo stack.

@@ -723,6 +723,20 @@ class Menu {
               },
             },
             {
+              name: 'Cut',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'content_cut',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                if (state.gesture instanceof SelectGesture) {
+                  state.gesture.cut();
+                } else {
+                  alert('Only valid when something is selected.');
+                }
+              },
+            },
+            {
               name: 'Copy',
               type: 'button',
               presentation: 'icon',
@@ -746,6 +760,21 @@ class Menu {
                 state.gesture = new PasteGesture();
               },
             },
+            {
+              name: 'Delete Selection',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'clear',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                if (state.gesture instanceof SelectGesture) {
+                  state.gesture.deleteSelection();
+                } else {
+                  alert('Only valid when something is selected.');
+                }
+              },
+            },
+            /*
             {
               name: 'Rotate Left',
               type: 'button',
@@ -803,6 +832,7 @@ class Menu {
                 }
               },
             },
+            */
           ],
         },
       },
