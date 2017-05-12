@@ -941,6 +941,34 @@ class Menu {
                 resetView();
               },
             },
+            {
+              name: 'Zoom In',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'zoom_in',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                zoom({
+                  x: 0,
+                  y: 0,
+                  deltaY: -1,
+                });
+              },
+            },
+            {
+              name: 'Zoom Out',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'zoom_out',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                zoom({
+                  x: 0,
+                  y: 0,
+                  deltaY: 1,
+                });
+              },
+            },
           ],
         },
       },
@@ -967,6 +995,26 @@ class Menu {
               materialIcon: 'settings_overscan',
               callback: () => {
                 expandGrid(2);
+              },
+            },
+            {
+              name: 'Undo',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'undo',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                state.opCenter.undo();
+              },
+            },
+            {
+              name: 'Redo',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'redo',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                state.opCenter.redo();
               },
             },
           ],
