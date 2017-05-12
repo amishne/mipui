@@ -3,6 +3,11 @@ function handleKeyDownEvent(keyDownEvent) {
     switch (keyDownEvent.key) {
       case 'z': state.opCenter.undo(); break;
       case 'y': state.opCenter.redo(); break;
+      case 'x':
+        if (state.gesture instanceof SelectGesture) {
+          state.gesture.cut();
+        }
+        break;
       case 'c':
         if (state.gesture instanceof SelectGesture) {
           state.gesture.copy();
@@ -10,8 +15,15 @@ function handleKeyDownEvent(keyDownEvent) {
         break;
       case 'v': state.gesture = new PasteGesture(); break;
     }
-  } else if (keyDownEvent.key == 'Escape') {
-    state.menu.setToInitialSelection();
+  } else {
+    switch (keyDownEvent.key) {
+      case 'Escape': state.menu.setToInitialSelection(); break;
+      case 'Delete':
+        if (state.gesture instanceof SelectGesture) {
+          state.gesture.deleteSelection();
+        }
+        break;
+    }
   }
 }
 

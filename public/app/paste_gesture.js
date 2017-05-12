@@ -2,13 +2,12 @@ class PasteGesture extends Gesture {
   constructor() {
     super();
     this.relocatedCells_ = [];
-    this.clipboard_ = state.clipboard;
     this.hoveredCell_ = null;
   }
 
   startHover(cell) {
-    if (!this.clipboard_) return;
-    if (cell.role != this.clipboard_.anchor.role) return;
+    if (!state.clipboard) return;
+    if (cell.role != state.clipboard.anchor.role) return;
     this.hoveredCell_ = cell;
     this.relocateCells_(cell);
     this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
@@ -87,16 +86,13 @@ class PasteGesture extends Gesture {
   }
 
   relocateCells_(newAnchor) {
-    this.clipboard_.cells.forEach(({location, cell}) => {
-      const key = this.calcKey_(newAnchor, cell, location);
-      const layerContents = new Map();
-      ct.children.forEach(layer => {
-        if (cell.hasLayerContent(layer)) {
-          layerContents.set(
-              layer, 
-              this.updateContent_(location, cell.getLayerContent(layer)));
-        }
-      });
+    state.clipboard.cells.forEach(({location, role, layerContents}) => {
+      const key = this.calcKey_(newAnchor, role, location);
+      const updatedLayerContents = new Map();
+      layerContents.forEach((content, layer) => {
+        updatedLayerContents.set(
+            layer, this.updateContent_(location, content));
+      })
       this.relocatedCells_.push({
         key,
         location,
@@ -106,10 +102,11 @@ class PasteGesture extends Gesture {
   }
 
   updateContent_(location, content) {
+    if (!content) return content;
     const newContent = Object.assign({}, content);
     if (content[ck.startCell]) {
       const startCell = state.theMap.cells.get(content[ck.startCell]);
-      if (!this.clipboard_.cells.some(({_, cell}) => cell == startCell)) {
+      if (!state.clipboard.cells.some(({key}) => key == startCell.key)) {
         return null;
       } else {
         newContent[ck.startCell] =
@@ -118,7 +115,7 @@ class PasteGesture extends Gesture {
     }
     if (content[ck.endCell]) {
       const endCell = state.theMap.cells.get(content[ck.endCell]);
-      if (!this.clipboard_.cells.some(({_, cell}) => cell == endCell)) {
+      if (!state.clipboard.cells.some(({key}) => key == endCell.key)) {
         delete newContent[ck.endCell];
       } else {
         newContent[ck.endCell] =
@@ -129,8 +126,8 @@ class PasteGesture extends Gesture {
   }
   
   relocateCellKey_(location, key) {
-    const rowDiff = this.hoveredCell_.row - this.clipboard_.anchor.row;
-    const columnDiff = this.hoveredCell_.column - this.clipboard_.anchor.column;
+    const rowDiff = this.hoveredCell_.row - state.clipboard.anchor.row;
+    const columnDiff = this.hoveredCell_.column - state.clipboard.anchor.column;
     return key.split(':').map(part => {
       const coords = part.split(',');
       return Math.floor(Number(coords[0]) + rowDiff) + ',' +
@@ -138,10 +135,10 @@ class PasteGesture extends Gesture {
     }).join(':');
   }
 
-  calcKey_(anchor, cell, location) {
+  calcKey_(anchor, cellRole, location) {
     const row = anchor.row + location.row;
     const column = anchor.column + location.column;
-    switch (cell.role) {
+    switch (cellRole) {
       case 'primary':
         return TheMap.primaryCellKey(row, column);
       case 'vertical':

@@ -23,24 +23,78 @@ class SelectGesture extends Gesture {
   onUnselect() {
     super.onUnselect();
     this.clearSelection();
+    this.anchorCell_ = null;
   }
 
   stopHover() {}
   stopGesture() {}
 
   copy() {
+    if (!this.anchorCell_) return;
+    this.copyWithoutClearingSelection_();
+    this.clearSelection();
+    this.anchorCell_ = null;
+  }
+  
+  copyWithoutClearingSelection_() {
     const cellMapping = [];
     this.selectedCells_.forEach(cell => {
+      const layerContents = new Map();
+      ct.children.forEach(layer => {
+        layerContents.set(
+            layer, 
+            cell.getLayerContent(layer));
+      });
       cellMapping.push({
         location: this.locationForCopy_(this.anchorCell_, cell),
-        cell,
+        key: cell.key,
+        role: cell.role,
+        layerContents,
       });
     });
     state.clipboard = {
-      anchor: this.anchorCell_,
+      anchor: {
+        role: this.anchorCell_.role,
+        location: {
+          row: this.anchorCell_.row,
+          column: this.anchorCell_.column,
+        },
+      },
       cells: cellMapping,
     };
+  }
+
+  cut() {
+    if (!this.anchorCell_) return;
+    this.copyWithoutClearingSelection_();
+    this.deleteSelection();
+  }
+
+  deleteSelection() {
+    if (!this.anchorCell_) return;
+    this.selectedCells_.forEach(cell => {
+      ct.children.forEach(layer => {
+        const affectedCells = [cell];
+        const content = cell.getLayerContent(layer);
+        if (content && content[ck.endCell]) {
+          const endCell = state.theMap.cells.get(content[ck.endCell]);
+          cell.getPrimaryCellsInSquareTo(endCell)
+              .forEach(affectedCell => affectedCells.push(affectedCell));
+        }
+        if (content && content[ck.startCell]) {
+          const startCell = state.theMap.cells.get(content[ck.startCell]);
+          const endCell = state.theMap.cells.get(
+              startCell.getLayerContent(layer)[ck.endCell]);
+          startCell.getPrimaryCellsInSquareTo(endCell)
+              .forEach(affectedCell => affectedCells.push(affectedCell));
+        }
+        affectedCells.forEach(
+            affectedCell => affectedCell.setLayerContent(layer, null, true));
+      });
+    });
+    state.opCenter.recordOperationComplete();
     this.clearSelection();
+    this.anchorCell_ = null;
   }
 
   locationForCopy_(anchorCell, cell) {
