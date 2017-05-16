@@ -8,6 +8,11 @@ class Menu {
   createMenu() {
     const appElement = document.getElementById('app');
     const menuElement = createAndAppendDivWithClass(appElement, 'menu');
+    menuElement.onwheel = (e) => e.stopPropagation();
+    menuElement.onmousemove = (e) => e.stopPropagation();
+    menuElement.ontouchstart = (e) => e.stopPropagation();
+    menuElement.ontouchmove = (e) => e.stopPropagation();
+    menuElement.ontouchend = (e) => e.stopPropagation();
 
     const topElement = createAndAppendDivWithClass(menuElement, 'menu-top');
     const bottomElement =

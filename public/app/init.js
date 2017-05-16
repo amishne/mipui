@@ -17,7 +17,7 @@ function createTheMapAndUpdateElements() {
 }
 
 function wireUiElements() {
-  const theMap = document.getElementById('theMap');
+  const theMap = document.getElementById('app');
   document.onkeydown = (keyDownEvent) => { handleKeyDownEvent(keyDownEvent); };
   theMap.onwheel = (wheelEvent) => { handleWheelEvent(wheelEvent); };
   theMap.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
