@@ -8,8 +8,11 @@ function getUrlParams() {
 }
 
 function createTheMapAndUpdateElements() {
-  const gridData = state.getGridData();
-  state.theMap.create(gridData.from, gridData.from, gridData.to, gridData.to);
+  state.theMap.create(
+    state.getProperty(pk.firstColumn),
+    state.getProperty(pk.firstRow),
+    state.getProperty(pk.lastColumn),
+    state.getProperty(pk.lastRow));
   state.theMap.updateAllCells();
 }
 
@@ -51,6 +54,7 @@ function start() {
   const params = getUrlParams();
   state.menu = new Menu();
   state.menu.createMenu();
+  state.menu.descChanged();
   setStatus(Status.INITIALIZING);
   createTheMapAndUpdateElements();
   initializeFirebase(() => {

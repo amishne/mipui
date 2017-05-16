@@ -7,10 +7,8 @@ class Operation {
       i: {},
       // Cell changes.
       c: {},
-      // Grid changes.
-      g: {},
-      // Desc changes.
-      d: {},
+      // Property changes.
+      p: {},
     };
   }
 
@@ -28,20 +26,45 @@ class Operation {
     singleCellChanges[layer.id] = {o: oldValue, n: newValue};
   }
 
-  addGridDataChange(property, oldValue, newValue) {
-    this.data.g[property] = {o: oldValue, n: newValue};
-  }
-
-  addDescChange(property, oldValue, newValue) {
-    this.data.d[property] = {o: oldValue, n: newValue};
+  addPropertyChange(property, oldValue, newValue) {
+    this.data.p[property] = {o: oldValue, n: newValue};
   }
 
   undo() {
     this.undoOrRedo_('o');
+    this.markComplete();
   }
 
   redo() {
     this.undoOrRedo_('n');
+    this.markComplete();
+  }
+
+  markComplete() {
+    let mapNeedsUpdate = false;
+    let descNeedsUpdate = false;
+    if (this.data && this.data.p) {
+      Object.keys(this.data.p).forEach(property => {
+        switch (property) {
+          case pk.firstRow:
+          case pk.lastRow:
+          case pk.firstColumn:
+          case pk.lastColumn:
+            mapNeedsUpdate = true;
+            break;
+          case pk.title:
+          case pk.longDescription:
+            descNeedsUpdate = true;
+            break;
+        }
+      });
+    }
+    if (mapNeedsUpdate) {
+      createTheMapAndUpdateElements();
+    }
+    if (descNeedsUpdate) {
+      state.menu.descChanged();
+    }
   }
 
   undoOrRedo_(contentToUse) {
@@ -57,39 +80,21 @@ class Operation {
         });
       });
     }
-    if (this.data.g) {
-      let gridDataChanged = false;
-      Object.keys(this.data.g).forEach(property => {
-        const updatedGridData = {};
-        Object.assign(updatedGridData, state.getGridData());
-        updatedGridData[property] = this.data.g[property][contentToUse];
-        state.setGridData(updatedGridData);
-        gridDataChanged = true;
+    if (this.data.p) {
+      let mapUpdateRequired = false;
+      Object.keys(this.data.p).forEach(property => {
+        const newValue = this.data.p[property][contentToUse];
+        if (state.getProperty(property) != this.data.p[property]) {
+          state.setProperty(property, newValue, false);
+        }
       });
-      if (gridDataChanged) {
-        createTheMapAndUpdateElements();
-      }
-    }
-    if (this.data.d) {
-      let descChanged = false;
-      Object.keys(this.data.d).forEach(property => {
-        const updatedDesc = {};
-        Object.assign(updatedDesc, state.getDesc());
-        updatedDesc[property] = this.data.d[property][contentToUse];
-        state.setDesc(updatedDesc);
-        descChanged = true;
-      });
-      if (descChanged) {
-        state.menu.descChanged();
-      }
     }
   }
 
   get length() {
     if (!this.data || !this.data.c) return 0;
     return Object.keys(this.data.c || {}).length +
-        Object.keys(this.data.g || {}).length +
-        Object.keys(this.data.d || {}).length;
+        Object.keys(this.data.p || {}).length;
   }
 
   get num() {
@@ -125,8 +130,7 @@ class Operation {
   isLegalToRedo() {
     if (!this.data) return true;
     return this.cellChangesAreLegalToRedo_() &&
-        this.gridChangesAreLegalToRedo_() &&
-        this.descChangesAreLegalToRedo_();
+        this.propertyChangesAreLegalToRedo_();
   }
 
   reverse() {
@@ -147,18 +151,11 @@ class Operation {
         });
       });
     }
-    if (this.data.g) {
-      result.data.g = {};
-      Object.keys(this.data.g).forEach(property => {
-        const propertyChange = this.data.g[property];
-        result.data.g[property] = {o: propertyChange.n, n: propertyChange.o};
-      });
-    }
-    if (this.data.d) {
-      result.data.d = {};
-      Object.keys(this.data.d).forEach(property => {
-        const propertyChange = this.data.d[property];
-        result.data.d[property] = {o: propertyChange.n, n: propertyChange.o};
+    if (this.data.p) {
+      result.data.p = {};
+      Object.keys(this.data.p).forEach(property => {
+        const propertyChange = this.data.p[property];
+        result.data.p[property] = {o: propertyChange.n, n: propertyChange.o};
       });
     }
     return result;
@@ -178,23 +175,13 @@ class Operation {
     });
   }
 
-  gridChangesAreLegalToRedo_() {
-    if (!this.data.g) return true;
-    return Object.keys(this.data.g).every(property => {
-      const opChange = this.data.g[property];
+  propertyChangesAreLegalToRedo_() {
+    if (!this.data.p) return true;
+    return Object.keys(this.data.p).every(property => {
+      const opChange = this.data.p[property];
       if (!opChange) return true;
-      const thisChange = this.data.g[property];
-      return thisChange.o == state.getGridData()[property];
-    });
-  }
-
-  descChangesAreLegalToRedo_() {
-    if (!this.data.d) return true;
-    return Object.keys(this.data.d).every(property => {
-      const opChange = this.data.d[property];
-      if (!opChange) return true;
-      const thisChange = this.data.d[property];
-      return thisChange.o == state.getDesc()[property];
+      const thisChange = this.data.p[property];
+      return thisChange.o == state.getProperty(property);
     });
   }
 }

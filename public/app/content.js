@@ -132,6 +132,16 @@ const ck = {
   connections: 'c',
 };
 
+// Property keys.
+const pk = {
+  title: 'n',
+  longDescription: 'd',
+  firstRow: 't',
+  lastRow: 'b',
+  firstColumn: 'l',
+  lastColumn: 'r',
+};
+
 function sameContent(c1, c2) {
   if (!c1 && !c2) return true;
   if (!!c1 != !!c2) return false;

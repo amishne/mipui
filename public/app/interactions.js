@@ -1,8 +1,14 @@
 function handleKeyDownEvent(keyDownEvent) {
   if (keyDownEvent.ctrlKey) {
     switch (keyDownEvent.key) {
-      case 'z': state.opCenter.undo(); break;
-      case 'y': state.opCenter.redo(); break;
+      case 'z':
+        state.opCenter.undo();
+        state.opCenter.recordOperationComplete();
+        break;
+      case 'y':
+        state.opCenter.redo();
+        state.opCenter.recordOperationComplete();
+        break;
       case 'x':
         if (state.gesture instanceof SelectGesture) {
           state.gesture.cut();
@@ -45,13 +51,13 @@ function handleWheelEvent(wheelEvent) {
     useWheelForZooming = false;
   }
   if (useWheelForZooming || wheelEvent.ctrlKey) {
-    zoom(wheelEvent);
+    zoom(wheelEvent, !useWheelForZooming);
   } else {
     pan(-wheelEvent.deltaX, -wheelEvent.deltaY);
   }
 }
 
-function zoom(wheelEvent) {
+function zoom(wheelEvent, incremental = false) {
   const nav = state.navigation;
   let scaleDiff = 1.0;
   if (wheelEvent.deltaY > 0 && nav.scale > 0.3) {
@@ -60,6 +66,9 @@ function zoom(wheelEvent) {
     scaleDiff = 0.2;
   } else {
     return;
+  }
+  if (incremental) {
+    scaleDiff *= 0.3 * nav.scale;
   }
   const growth = scaleDiff / nav.scale;
   nav.scale += scaleDiff;
@@ -126,30 +135,31 @@ function handleTouchEndEvent(touchEvent) {
 //  return key;
 //}
 
-function expandGrid(n) {
+function resizeGridBy(
+    firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff) {
+  // First, complete pending ops.
   state.opCenter.recordOperationComplete();
-  const gridData = state.getGridData();
-  changeGridDimensions(gridData.from - n, gridData.to + n);
-  createTheMapAndUpdateElements();
-  const offsetX = n * (state.theMap.cellWidth + state.theMap.dividerWidth);
-  const offsetY = n * (state.theMap.cellHeight + state.theMap.dividerHeight);
+  // Update the state's grid data.
+  [
+    {diff: firstColumnDiff, prop: pk.firstColumn},
+    {diff: lastColumnDiff, prop: pk.lastColumn},
+    {diff: firstRowDiff, prop: pk.firstRow},
+    {diff: lastRowDiff, prop: pk.lastRow},
+  ].forEach(({diff, prop}) => {
+    if (diff != 0) {
+      state.setProperty(prop, state.getProperty(prop) + diff, true);
+    }
+  });
+  // Update transform so that elements on the viewport won't move around.
+  const offsetX = -firstColumnDiff *
+      (state.theMap.cellWidth + state.theMap.dividerWidth);
+  const offsetY = -firstRowDiff *
+      (state.theMap.cellHeight + state.theMap.dividerHeight);
   const nav = state.navigation;
   nav.translate.x -= offsetX * nav.scale;
   nav.translate.y -= offsetY * nav.scale;
   updateMapTransform();
   state.opCenter.recordOperationComplete();
-}
-
-function changeGridDimensions(newFrom, newTo) {
-  const gridData = state.getGridData();
-  const oldFrom = gridData.from;
-  const oldTo = gridData.to;
-  if (oldFrom == newFrom && oldTo == newTo) {
-    return;
-  }
-  state.setGridData({ from: newFrom, to: newTo });
-  state.opCenter.recordGridDataChange('from', oldFrom, newFrom);
-  state.opCenter.recordGridDataChange('to', oldTo, newTo);
 }
 
 function resetView() {
@@ -163,8 +173,9 @@ function resetView() {
 function resetGrid() {
   state.opCenter.recordOperationComplete();
   state.theMap.resetToDefault();
-  state.setGridData(null);
-  createTheMapAndUpdateElements();
+  [pk.firstColumn, pk.firstRow, pk.lastColumn, pk.lastRow].forEach(property => {
+    state.setProperty(property, null, true);
+  });
   resetView();
   state.opCenter.recordOperationComplete();
 }

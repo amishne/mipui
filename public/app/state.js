@@ -1,9 +1,8 @@
 class State {
   constructor() {
     this.pstate_ = {
-      version: '1.0',
-      gridData: null,
-      desc: null,
+      ver: '1.0',
+      props: {},
       // Map cell key to a map which maps layer IDs to the content of that
       // layer.
       // "Content" is a mapping of content key (ck) to content type (ct) IDs.
@@ -36,12 +35,14 @@ class State {
       [ck.variation]: ct.floors.floor.generic.id,
     };
 
-    this.defaultGridData_ = {
-      from: 0,
-      to: 25,
+    this.defaultProperties_ = {
+      [pk.title]: 'Unnamed',
+      [pk.longDescription]: '',
+      [pk.firstRow]: 0,
+      [pk.lastRow]: 20,
+      [pk.firstColumn]: 0,
+      [pk.lastColumn]: 20,
     };
-
-    this.defaultDesc_ = {title: 'Unnamed', long: ''};
 
     this.autoSaveTimerId_ = null;
 
@@ -111,28 +112,23 @@ class State {
     cellContent[layer.id] = content;
   }
 
-  getGridData() {
-    return this.pstate_.gridData || this.defaultGridData_;
+  getProperty(property) {
+    return this.pstate_.props[property] ||
+        this.defaultProperties_[property];
   }
-
-  setGridData(gridData) {
-    if (gridData && gridData.from == this.defaultGridData_.from &&
-        gridData.to == this.defaultGridData_.to) {
-      gridData = null;
+  
+  setProperty(property, value, recordChange) {
+    if (value == this.defaultProperties_[property]) {
+      value = null;
     }
-    this.pstate_.gridData = gridData;
-  }
-
-  getDesc() {
-    return this.pstate_.desc || this.defaultDesc_;
-  }
-
-  setDesc(desc) {
-    if (desc && desc.title == this.defaultDesc_.title &&
-        desc.long == this.defaultDesc_.long) {
-      desc = null;
+    const oldValue = this.getProperty(property);
+    const newValue = value != this.defaultProperties_[property] ? value : null;
+    if (oldValue != newValue) {
+      this.pstate_.props[property] = value != null ? value : undefined;
+      if (recordChange) {
+        state.opCenter.recordPropertyChange(property, oldValue, newValue);
+      }
     }
-    this.pstate_.desc = desc;
   }
 
   setMid(mid) {

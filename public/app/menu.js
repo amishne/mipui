@@ -24,9 +24,10 @@ class Menu {
   }
 
   descChanged() {
-    document.querySelector('#mapTitle textarea').value = state.getDesc().title;
+    document.querySelector('#mapTitle textarea').value =
+        state.getProperty(pk.title);
     document.querySelector('#mapLongDesc textarea').value =
-        state.getDesc().long;
+        state.getProperty(pk.longDescription);
   }
 
   createMenuItems_(topElement, bottomElement) {
@@ -653,7 +654,7 @@ class Menu {
               rows: 1,
               enabledInReadonlyMode: false,
               onChange: (oldText, newText) => {
-                state.opCenter.recordDescChange('title', oldText, newText);
+                state.setProperty(pk.title, newText, true);
                 state.opCenter.recordOperationComplete();
               }
             },
@@ -666,7 +667,7 @@ class Menu {
               presentation: 'textarea',
               enabledInReadonlyMode: false,
               onChange: (oldText, newText) => {
-                state.opCenter.recordDescChange('long', oldText, newText);
+                state.setProperty(pk.longDescription, newText, true);
                 state.opCenter.recordOperationComplete();
               }
             },
@@ -980,24 +981,6 @@ class Menu {
         submenu: {
           items: [
             {
-              name: 'Reset grid',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'delete',
-              callback: () => {
-                resetGrid();
-              },
-            },
-            {
-              name: 'Expand grid',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'settings_overscan',
-              callback: () => {
-                expandGrid(2);
-              },
-            },
-            {
               name: 'Undo',
               type: 'button',
               presentation: 'icon',
@@ -1005,6 +988,7 @@ class Menu {
               enabledInReadonlyMode: false,
               callback: () => {
                 state.opCenter.undo();
+                state.opCenter.recordOperationComplete();
               },
             },
             {
@@ -1015,6 +999,102 @@ class Menu {
               enabledInReadonlyMode: false,
               callback: () => {
                 state.opCenter.redo();
+                state.opCenter.recordOperationComplete();
+              },
+            },
+            {
+              name: 'Add Right Column',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'keyboard_capslock',
+              classNames: ['rotate-90'],
+              enabledInReadonlyMode: false,
+              callback: () => {
+                resizeGridBy(0, 1, 0, 0);
+              },
+            },
+            {
+              name: 'Add Bottom Row',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'keyboard_capslock',
+              classNames: ['rotate-180'],
+              enabledInReadonlyMode: false,
+              callback: () => {
+                resizeGridBy(0, 0, 0, 1);
+              },
+            },
+            {
+              name: 'Add Left Column',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'keyboard_capslock',
+              classNames: ['rotate-270'],
+              enabledInReadonlyMode: false,
+              callback: () => {
+                resizeGridBy(-1, 0, 0, 0);
+              },
+            },
+            {
+              name: 'Add Top Row',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'keyboard_capslock',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                resizeGridBy(0,0, -1, 0);
+              },
+            },
+            {
+              name: 'Remove Right Column',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'last_page',
+              classNames: ['rotate-180'],
+              enabledInReadonlyMode: false,
+              callback: () => {
+                resizeGridBy(0, -1, 0, 0);
+              },
+            },
+            {
+              name: 'Remove Bottom Row',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'last_page',
+              classNames: ['rotate-270'],
+              enabledInReadonlyMode: false,
+              callback: () => {
+                resizeGridBy(0, 0, 0, -1);
+              },
+            },
+            {
+              name: 'Remove Left Column',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'last_page',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                resizeGridBy(1, 0, 0, 0);
+              },
+            },
+            {
+              name: 'Remove Top Row',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'last_page',
+              enabledInReadonlyMode: false,
+              classNames: ['rotate-90'],
+              callback: () => {
+                resizeGridBy(0, 0, 1, 0);
+              },
+            },
+            {
+              name: 'Reset grid',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'delete',
+              callback: () => {
+                resetGrid();
               },
             },
           ],

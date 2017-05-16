@@ -62,17 +62,12 @@ class OperationCenter {
     this.recordChange_();
   }
 
-  // Records that a grid change has just been performed, as part of a complete
-  // op.
+  // Records that a property change has just been performed, as part of a
+  // complete op.
   // This is used for constructing the current operation, and this starts an
   // operation-completed timer.
-  recordGridDataChange(property, oldContent, newContent) {
-    this.currentOperation_.addGridDataChange(property, oldContent, newContent);
-    this.recordChange_();
-  }
-
-  recordDescChange(property, oldContent, newContent) {
-    this.currentOperation_.addDescChange(property, oldContent, newContent);
+  recordPropertyChange(property, oldContent, newContent) {
+    this.currentOperation_.addPropertyChange(property, oldContent, newContent);
     this.recordChange_();
   }
 
@@ -127,6 +122,7 @@ class OperationCenter {
   // This updates the undo stack and sends the op to the server.
   recordOperationComplete() {
     if (this.currentOperation_.length == 0) return;
+    this.currentOperation_.markComplete();
     this.addLocalOperation_(this.currentOperation_);
     this.currentOperation_ = new Operation();
     if (this.autoSaveTimerId_) {
