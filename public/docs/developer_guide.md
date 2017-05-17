@@ -5,16 +5,16 @@ This is the developer's guide; see [the main site](www.mipui.net) or just [jump 
 
 ## Implementation
 
-*Mipui* is a hobby project implemented by just one developer with no background in web development; please don't judge the code quality :-)
+*Mipui* is a hobby project implemented by just one developer with no background in web development; please don't judge the code quality :-) in particular while some areas underwent extensive planning (like operation_center) others were completely hacked together in an hurry (like the menu).
 
-It's a client-side web application, written entire in Javascript.
+It's a client-side web application, written entirely in Javascript.
 The server-side component is done using [Firebase](firebase.google.com).
 With the exception of Firebase and a couple of Javascript libraries used for exporting to image, no external code libraries are used.
 
 ### Some implementation pointers
 
 1. Gestures are used for drawing content on the map; but content can also come from non-gesture sources (e.g. loaded from the server), so *every cell must know how to correctly draw its content even when no gestures are involved*.
-This is why cells contain the "setImage", "setText" etc. methods, and its not a part of the image or text gestures.
+This is why cells contain the "setImage", "setText" etc. methods, instead of those being a part of the image or text gestures.
 
 2. Map syncorinization is guaranteed by serializaing the operations, so all clients agree on the order of all operations. Never break that invariant.
 
@@ -29,7 +29,7 @@ This is why cells contain the "setImage", "setText" etc. methods, and its not a 
 There are three live firebase database repositories: mipui-prod, mipui-dev and mipui-test.
 
 * mipui-prod is the repository serving the live version at mipui.net. **Never use that repository**.
-* mipui-dev is the repository used for development. Feel free to use that repository when testing any changes. This is the default repository used in the code. Information on this repository might get wiped from time to time, though, so don't rely on it for long-term storage.
+* mipui-dev is the repository used for development. Feel free to use that repository when testing any changes. This is the default repository used in the code. Information in this repository might get wiped from time to time, though, so don't rely on it for long-term storage.
 * mipui-test is used for running unit tests. Please immediately clean any information you create there.
 
 ## License
