@@ -132,19 +132,7 @@ class NoncardinalWallGesture extends ShapeGesture {
         if (connections == 15) return connectionlessContent;
         return content;
       case 'corner':
-        if (this.mode_ == 'removing') {
-          let numConnections = 0;
-          if (this.isNeighborWall_(cell, 'top')) numConnections++;
-          if (this.isNeighborWall_(cell, 'right')) numConnections++;
-          if (this.isNeighborWall_(cell, 'bottom')) numConnections++;
-          if (this.isNeighborWall_(cell, 'left')) numConnections++;
-          if (numConnections >= 2) connections = 15;
-        }
-        if (connections == 15) return connectionlessContent;
-        if (connections == 0) {
-          return this.mode_ == 'adding' ? connectionlessContent : null;
-        }
-        return content;
+        return connectionlessContent;
       case 'horizontal':
       case 'vertical':
         return this.mode_ == 'adding' ? connectionlessContent : null;
