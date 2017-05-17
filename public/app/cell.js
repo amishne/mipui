@@ -110,18 +110,6 @@ class Cell {
     return result;
   }
 
-  generateAngledWallSvg(connections) {
-    // 1: top
-    // 2: right
-    // 4: bottom
-    // 8: left
-    // 16: top-right
-    // 32: bottom-right
-    // 64: bottom-left
-    // 128: top-left
-    
-  }
-
   populateElementFromContent_(element, layer, content) {
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, content);
