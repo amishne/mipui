@@ -21,6 +21,7 @@ const ct = {
       },
       angled: {
         classNames: [
+          'angled-wall-cell-_ROLE_',
           'angled-wall-cell-_ROLE_-_CONNECTIONS_',
           'angled-wall-cell-_ADDING_',
           'angled-wall-cell-_REMOVING_',
