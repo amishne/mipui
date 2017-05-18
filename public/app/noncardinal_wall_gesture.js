@@ -70,7 +70,7 @@ class NoncardinalWallGesture extends ShapeGesture {
         break;
     }
   }
-  
+
   isNeighborWall_(cell, dir) {
     if (!cell) return false;
     let divider = null;
@@ -108,6 +108,10 @@ class NoncardinalWallGesture extends ShapeGesture {
     if (this.isNeighborWall_(cell, 'right')) mask |= 2;
     if (this.isNeighborWall_(cell, 'bottom')) mask |= 4;
     if (this.isNeighborWall_(cell, 'left')) mask |= 8;
+    if (this.isNeighborWall_(cell, 'top-right')) mask |= 16;
+    if (this.isNeighborWall_(cell, 'bottom-right')) mask |= 32;
+    if (this.isNeighborWall_(cell, 'bottom-left')) mask |= 64;
+    if (this.isNeighborWall_(cell, 'top-left')) mask |= 128;
     return super.populateCellMask_(cell, mask);
   }
 

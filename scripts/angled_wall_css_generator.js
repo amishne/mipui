@@ -29,7 +29,29 @@ The 8 potential connections (lowercase letters) control which parts are walls
 and which aren't; sectionsFromDirs contains the logic.
 */
 
-function emitSection(section) {
+function emitLines(section) {
+  let l = [];
+  switch (section) {
+    case 'A': l = ['7 6.5, 14 6.5']; break;
+    case 'B': l = ['24 6.5, 32 6.5', '31.5 0, 31.5 7']; break;
+    case 'C': l = ['6.5 7, 6.5 14']; break;
+    case 'G': l = ['31.5 7, 31.5 14']; break;
+    case 'J': l = ['31.5 14, 31.5 24']; break;
+    case 'K': l = ['7 31.5, 14 31.5']; break;
+    case 'L': l = ['31.5 24, 31.5 32', '24 31.5, 32 31.5']; break;
+    case 'M': l = ['6.5 24, 6.5 32', '0 31.5, 7 31.5']; break;
+    case 'N': l = ['14 31.5, 24 31.5']; break;
+    case 'O': l = ['32 31.5, 39 31.5']; break;
+    case 'Q': l = ['31.5 32, 31.5 39']; break;
+  }
+  l.forEach(points => {
+    const [[x1, y1], [x2, y2]] =
+        points.split(',').map(s => s.trim()).map(s => s.split(' '));
+    out.write(`<line x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' />`);
+  });
+}
+
+function emitPolygon(section) {
   let p = null;
   switch (section) {
     case 'A': p = '7 0, 14 7, 7 7'; break;
@@ -86,7 +108,7 @@ function emitClassForConnections(connections) {
 }
 
 function emitSvgBackground(connections) {
-  out.write("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><style>polygon {fill: rgb(222, 184, 135);}</style>");
+  out.write("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' shape-rendering='crispEdges'><style>polygon {fill: rgb(222, 184, 135);} line {stroke-width: 1; stroke: bisque;}</style>");
   const directions = {
     't': 1,
     'r': 2,
@@ -107,7 +129,15 @@ function emitSvgBackground(connections) {
 }
 
 function emitSvgPolygons(d) {
-  sectionsFromDirs(d).forEach(section => emitSection(section));
+  const sections = sectionsFromDirs(d);
+  // Two separate loops because we want all polygons preceding all lines, for
+  // layering.
+  sections.forEach(section => {
+    emitPolygon(section);
+  });
+  sections.forEach(section => {
+    emitLines(section);
+  });
 }
 
 function emitSvgLines(d) {
