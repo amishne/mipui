@@ -240,7 +240,7 @@ class Menu {
     };
   }
 
-  createNoncardinalWallTool_(kind, variation) {
+  createAngledWallToll_(kind, variation) {
     const kindClassNames = kind.id == ct.shapes.square.id ? [
       'square-cell-0',
       'square-cell-primary',
@@ -255,7 +255,7 @@ class Menu {
       classNames: ['menu-walls-angled'],
       isSelected: false,
       callback: () => {
-        state.gesture = new NoncardinalWallGesture(ct.walls, kind, variation);
+        state.gesture = new AngledWallGesture(ct.walls, kind, variation);
       },
       cells: [
         {
@@ -269,7 +269,7 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'angled-wall-cell-primary-12',
+            'angled-wall-cell-179',
           ],
         },
       ],
@@ -1118,7 +1118,7 @@ class Menu {
             this.createWallTool_(7, false, false),
             this.createWallTool_(9, false, false),
             this.createWallTool_(1, true, false),
-            this.createNoncardinalWallTool_(ct.walls.smooth, ct.walls.smooth.angled),
+            this.createAngledWallToll_(ct.walls.smooth, ct.walls.smooth.angled),
           ],
         },
       },
