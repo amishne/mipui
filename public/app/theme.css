@@ -35,6 +35,10 @@
   filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
 }
 
+.angled-wall-cell-editing {
+  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
+}
+
 .angled-wall-cell-removing {
   filter: hue-rotate(13deg) saturate(0.92) brightness(1.16);
 }
