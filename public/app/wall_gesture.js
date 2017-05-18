@@ -30,7 +30,7 @@ class WallGesture extends Gesture {
   }
 
   hasDoor_(cell) {
-    return cell && cell.isKind(ct.doors, ct.doors.door);
+    return cell && cell.isKind(ct.separators, ct.separators.door);
   }
 
   startHover(targetedCell) {
@@ -46,8 +46,9 @@ class WallGesture extends Gesture {
     this.cellsToSet.forEach(cell => {
       this.showHighlight_(cell);
       if (this.shouldRemoveDoors_(cell)) {
-        const removeDoorGesture = new DoorGesture(null);
-        removeDoorGesture.toDoor = false;
+        const removeDoorGesture =
+            new SeparatorGesture(ct.separators, ct.separators.door, false);
+        removeDoorGesture.mode = 'removing';
         removeDoorGesture.startHover(cell);
         this.removeDoorGestures.set(cell, removeDoorGesture);
       }
@@ -144,7 +145,7 @@ class WallGesture extends Gesture {
     if (!this.toWall && cell.role == 'corner') {
       const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => {
         return neighbor.dividerCell &&
-            neighbor.dividerCell.isKind(ct.doors, ct.doors.door) &&
+            neighbor.dividerCell.isKind(ct.separators, ct.separators.door) &&
             !this.shouldRemoveDoors_(neighbor.dividerCell);
       });
       if (aNeighborHasADoor) return;

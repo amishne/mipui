@@ -40,7 +40,8 @@ const ct = {
       black: {classNames: ['image-black']},
     }
   },
-  doors: {
+  separators: {
+    classNames: ['separator-cell'],
     door: {
       classNames: [
         'door-cell',
@@ -50,6 +51,46 @@ const ct = {
       single: {},
       double: {classNames: ['double-door-cell-_ROLE_']},
       secret: {classNames: ['secret-door-cell']},
+    },
+    window: {
+      classNames: [
+        'window-cell',
+        'window-cell-_ROLE_',
+        'window-cell-_ADDING-REMOVING_'
+      ],
+      generic: {},
+    },
+    bars: {
+      classNames: [
+        'bars-cell',
+        'bars-cell-_ROLE_',
+        'bars-cell-_ADDING-REMOVING_'
+      ],
+      generic: {},
+    },
+    fence: {
+      classNames: [
+        'fence-cell',
+        'fence-cell-_ROLE_',
+        'fence-cell-_ADDING-REMOVING_'
+      ],
+      generic: {},
+    },
+    curtain: {
+      classNames: [
+        'curtain-cell',
+        'curtain-cell-_ROLE_',
+        'curtain-cell-_ADDING-REMOVING_'
+      ],
+      generic: {},
+    },
+    arch: {
+      classNames: [
+        'arch-cell',
+        'arch-cell-_ROLE_',
+        'arch-cell-_ADDING-REMOVING_'
+      ],
+      generic: {},
     },
   },
   text: {

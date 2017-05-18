@@ -276,24 +276,33 @@ class Menu {
     };
   }
 
-  createDoorTool_(name, variation, isSelected) {
-    let doorClassName = '';
-    switch (variation.id) {
-      case ct.doors.door.double.id:
-        doorClassName = 'double-door-cell-vertical';
+  createSeparatorTool_(name, kind, variation, requiredWall, isSelected) {
+    const separatorClassNames = [];
+    switch (kind.id) {
+      case ct.separators.door.id:
+        separatorClassNames.push('door-cell');
         break;
-      case ct.doors.door.secret.id:
-        doorClassName = 'secret-door-cell';
+      case ct.separators.window.id:
+        separatorClassNames.push('window-cell');
+        separatorClassNames.push('window-cell-vertical');
+        break;
+    }
+    switch (variation.id) {
+      case ct.separators.door.double.id:
+        separatorClassNames.push('double-door-cell-vertical');
+        break;
+      case ct.separators.door.secret.id:
+        separatorClassNames.push('secret-door-cell');
         break;
     }
     return {
       name,
       type: 'tool',
       presentation: 'cells',
-      classNames: ['menu-doors'],
+      classNames: ['menu-separators'],
       isSelected,
       callback: () => {
-        state.gesture = new DoorGesture(variation);
+        state.gesture = new SeparatorGesture(kind, variation, requiredWall);
       },
       cells: [
         {
@@ -307,15 +316,15 @@ class Menu {
           classNames: [
             'grid-cell',
             'vertical-cell',
-            'wall-cell',
+            requiredWall ? 'wall-cell' : 'floor-cell',
+            requiredWall ? 'square-wall-cell' : '',
           ],
         },
         {
           classNames: [
             'vertical-cell',
-            'door-cell',
-            'door-cell-vertical',
-          ].concat([doorClassName]),
+            'separator-cell',
+          ].concat(separatorClassNames),
         },
         {
           classNames: [
@@ -1123,15 +1132,28 @@ class Menu {
         },
       },
       {
-        name: 'Doors',
+        name: 'Separators',
         presentation: 'selected child',
-        tip: 'Drag when placing to create a multi-cell door.',
-        classNames: ['menu-doors'],
+        tip: 'Drag when placing to create a multi-cell separator.',
+        classNames: ['menu-separators'],
         submenu: {
           items: [
-            this.createDoorTool_('Single door', ct.doors.door.single, true),
-            this.createDoorTool_('Double door', ct.doors.door.double, false),
-            this.createDoorTool_('Secret door', ct.doors.door.secret, false),
+            this.createSeparatorTool_('Single door', ct.separators.door,
+                ct.separators.door.single, true, true),
+            this.createSeparatorTool_('Double door', ct.separators.door,
+                ct.separators.door.double, true, false),
+            this.createSeparatorTool_('Secret door', ct.separators.door,
+                ct.separators.door.secret, true, false),
+            this.createSeparatorTool_('Window', ct.separators.window,
+                ct.separators.window.generic, true, false),
+            this.createSeparatorTool_('Bars', ct.separators.bars,
+                ct.separators.bars.generic, false, false),
+            this.createSeparatorTool_('Fence', ct.separators.fence,
+                ct.separators.fence.generic, false, false),
+            this.createSeparatorTool_('Curtain', ct.separators.curtain,
+                ct.separators.curtain.generic, false, false),
+            this.createSeparatorTool_('Arch', ct.separators.arch,
+                ct.separators.arch.generic, false, false),
           ],
         },
       },

@@ -139,21 +139,27 @@
   z-index: 2;
 }
 
-.menu-doors .grid-cell {
+.menu-separators .grid-cell {
   position: relative;
   top: 2px;
 }
 
-.menu-doors .floor-cell {
+.menu-separators .floor-cell {
   width: 10px;
 }
 
-.menu-doors .door-cell {
+.menu-separators .separator-cell {
   position: absolute;
   width: 8px;
   height: 16px;
   z-index: 1;
-  left: 13px;
+  left: 11px;
+  top: 7px;
+}
+
+.menu-separators .window-cell {
+  width: 3px;
+  left: 12px;
   top: 4px;
 }
 

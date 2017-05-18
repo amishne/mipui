@@ -80,7 +80,7 @@ body {
   z-index: 8;
 }
 
-#doorsLayer {
+#separatorsLayer {
   z-index: 7;
 }
 
@@ -135,7 +135,7 @@ body {
   border-bottom: 1px solid;
 }
 
-.door-cell {
+.separator-cell {
   position: absolute;
 }
 

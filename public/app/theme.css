@@ -70,14 +70,27 @@
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='10'>S</text></svg>") rgb(255, 250, 240) no-repeat;
 }
 
-.door-cell-adding {
+.window-cell {
+  background-color: rgb(255, 250, 240);
+  border: 1px solid rgb(100, 100, 100);
+}
+
+.door-cell-adding, .window-cell-adding {
   background-color: rgba(255, 250, 240, 0.2);
   border-color: rgba(100, 100, 100, 0.8);
 }
 
-.door-cell-removing {
+.door-cell-removing, .window-cell-removing {
   background-color: rgba(255, 250, 240, 0.5);
   border-color: rgba(100, 100, 100, 0.8);
+}
+
+.window-cell-vertical {
+  margin: 3px 2px 4px 1px;
+}
+
+.window-cell-horizontal {
+  margin: 1px 4px 2px 3px;
 }
 
 .text-cell {
