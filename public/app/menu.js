@@ -1213,6 +1213,37 @@ class Menu {
           ],
         },
       },
+      {
+        name: 'About',
+        presentation: 'icon',
+        materialIcon: 'help',
+        tip: '',
+        enabledInReadonlyMode: true,
+        submenu: {
+          items: [
+            {
+              name: 'About',
+              type: 'button',
+              presentation: 'label',
+              text: 'About',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('../index.html', '_blank');
+              },
+            },
+            {
+              name: 'Feedback',
+              type: 'button',
+              presentation: 'label',
+              text: 'Feedback',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('https://feedback.userreport.com/7e918812-4e93-4a8f-9541-9af34d0f4231/', '_blank');
+              },
+            },
+          ],
+        },
+      },
     ];
   }
 }
