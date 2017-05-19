@@ -93,11 +93,11 @@
   margin: 1px 4px 2px 3px;
 }
 
-.bars-cell-adding {
+.bars-cell-adding, .fence-cell-adding, .curtain-cell-adding {
   opacity: 0.7;
 }
 
-.bars-cell-removing {
+.bars-cell-removing, .fence-cell-removing, .curtain-cell-removing {
   opacity: 0.3;
 }
 

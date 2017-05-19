@@ -1160,8 +1160,6 @@ class Menu {
                 ct.separators.fence.generic, false, false),
             this.createSeparatorTool_('Curtain', ct.separators.curtain,
                 ct.separators.curtain.generic, false, false),
-            this.createSeparatorTool_('Arch', ct.separators.arch,
-                ct.separators.arch.generic, false, false),
           ],
         },
       },

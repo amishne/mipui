@@ -83,14 +83,6 @@ const ct = {
       ],
       generic: {},
     },
-    arch: {
-      classNames: [
-        'arch-cell',
-        'arch-cell-_ROLE_',
-        'arch-cell-_ADDING-REMOVING_'
-      ],
-      generic: {},
-    },
   },
   text: {
     text: {
