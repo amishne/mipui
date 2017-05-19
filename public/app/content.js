@@ -63,10 +63,9 @@ const ct = {
     bars: {
       classNames: [
         'bars-cell',
-        'bars-cell-_ROLE_',
         'bars-cell-_ADDING-REMOVING_'
       ],
-      generic: {},
+      generic: {imagePath: 'assets/bars.svg'},
     },
     fence: {
       classNames: [
@@ -74,7 +73,7 @@ const ct = {
         'fence-cell-_ROLE_',
         'fence-cell-_ADDING-REMOVING_'
       ],
-      generic: {},
+      generic: {imagePath: 'assets/bars.svg'},
     },
     curtain: {
       classNames: [

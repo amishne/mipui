@@ -286,6 +286,9 @@ class Menu {
         separatorClassNames.push('window-cell');
         separatorClassNames.push('window-cell-vertical');
         break;
+      case ct.separators.fence.id:
+        separatorClassNames.push('fence-cell-vertical');
+        break;
     }
     switch (variation.id) {
       case ct.separators.door.double.id:
@@ -321,6 +324,8 @@ class Menu {
           ],
         },
         {
+          innerHTML:
+              variation.imagePath ? `<img src=${variation.imagePath} >` : '',
           classNames: [
             'vertical-cell',
             'separator-cell',

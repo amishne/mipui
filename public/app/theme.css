@@ -93,6 +93,24 @@
   margin: 1px 4px 2px 3px;
 }
 
+.bars-cell-adding {
+  opacity: 0.7;
+}
+
+.bars-cell-removing {
+  opacity: 0.3;
+}
+
+.fence-cell-horizontal {
+  margin-right: 1px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='7'><line x1='0' y1='3' x2='100%' y2='3' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") no-repeat;
+}
+
+.fence-cell-vertical {
+  margin-right: 1px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='7' height='100%'><line x1='3' y1='0' x2='3' y2='100%' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") no-repeat;
+}
+
 .text-cell {
   color: rgb(50, 50, 50);
 }
