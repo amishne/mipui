@@ -289,6 +289,9 @@ class Menu {
       case ct.separators.fence.id:
         separatorClassNames.push('fence-cell-vertical');
         break;
+      case ct.separators.curtain.id:
+        separatorClassNames.push('curtain-cell-vertical');
+        break;
     }
     switch (variation.id) {
       case ct.separators.door.double.id:
