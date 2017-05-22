@@ -163,23 +163,10 @@
   top: 4px;
 }
 
-.menu-separators .separator-cell img {
-  width: 8px;
-  height: 26px;
-  top: -3px;
-  left: 3px;
-  position: absolute;
-}
-
-.menu-separators .fence-cell-vertical {
+.menu-separators .fence-cell-vertical, .menu-separators .bars-cell-vertical {
   left: 14px;
   height: 26px;
-  top: 3px;
-}
-
-.menu-separators .fence-cell-vertical img {
-  left: 0;
-  top: 1px;
+  top: 4px;
 }
 
 .menu-separators .curtain-cell-vertical {

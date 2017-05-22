@@ -286,6 +286,9 @@ class Menu {
         separatorClassNames.push('window-cell');
         separatorClassNames.push('window-cell-vertical');
         break;
+      case ct.separators.bars.id:
+        separatorClassNames.push('bars-cell-vertical');
+        break;
       case ct.separators.fence.id:
         separatorClassNames.push('fence-cell-vertical');
         break;
@@ -420,11 +423,7 @@ class Menu {
       classNames: ['menu-stairs'],
       isSelected,
       callback: () => {
-        state.gesture = new ImageGesture(
-            ct.stairs,
-            kind,
-            kind.generic,
-            false);
+        state.gesture = new StaticBoxGesture(ct.stairs, kind, kind.generic);
       },
       cells: [
         {
@@ -435,12 +434,11 @@ class Menu {
           ],
         },
         {
-          innerHTML: `<img src=${kind.generic.imagePath} >`,
           classNames: [
             'grid-cell',
             'primary-cell',
             'stairs-cell',
-          ],
+          ].concat(kind.generic.classNames),
         },
       ],
     };

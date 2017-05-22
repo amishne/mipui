@@ -101,14 +101,24 @@
   opacity: 0.3;
 }
 
+.bars-cell-horizontal {
+  margin-right: 1px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><circle cx='4' cy='3' r='2' stroke='rgb(80, 80, 80)' stroke-width='1' fill='white' /></svg>") repeat-x;
+}
+
+.bars-cell-vertical {
+  margin-bottom: 1px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><circle cx='3' cy='4' r='2' stroke='rgb(80, 80, 80)' stroke-width='1' fill='white' /></svg>") repeat-y;
+}
+
 .fence-cell-horizontal {
   margin-right: 1px;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='7'><line x1='0' y1='3' x2='100%' y2='3' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") no-repeat;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='0' y1='3' x2='100%' y2='3' stroke-width='1' stroke='rgb(100, 100, 100)' /><circle cx='4' cy='3' r='2' stroke='rgb(80, 80, 80)' stroke-width='1' fill='white' /></svg>") repeat-x;
 }
 
 .fence-cell-vertical {
-  margin-right: 1px;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='7' height='100%'><line x1='3' y1='0' x2='3' y2='100%' stroke-width='1' stroke='rgb(100, 100, 100)' /></svg>") no-repeat;
+  margin-bottom: 1px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='3' y1='0' x2='3' y2='100%' stroke-width='1' stroke='rgb(100, 100, 100)' /><circle cx='3' cy='4' r='2' stroke='rgb(80, 80, 80)' stroke-width='1' fill='white' /></svg>") repeat-y;
 }
 
 .curtain-cell-vertical {
@@ -189,4 +199,19 @@
 .white-square-adding, .white-circle-adding, .white-square-removing,
 .white-circle-removing {
   filter: grayscale(100%) brightness(4.3) contrast(4);
+}
+
+.stairs-cell-horizontal {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='100%'><line x1='3.4' y1='0' x2='3.4' y2='100%' stroke='rgb(80, 80, 80)' stroke-width='2' /></svg>");
+}
+
+.stairs-cell-vertical {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='6'><line x1='0' y1='3.4' x2='100%' y2='3.4' stroke='rgb(80, 80, 80)' stroke-width='2' /></svg>");
+}
+
+.stairs-cell-spiral {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><style>path, line {stroke: rgb(80, 80, 80); stroke-width: 1.5; fill: transparent; vector-effect: non-scaling-stroke;}</style> <path d='M 50 5 A 45 45 0 1 0 95 50'/> <line x1='50' y1='50' x2='50' y2='5'/> <line x1='50' y1='50' x2='50' y2='5' transform='rotate(90 50 50)'/><line x1='50' y1='50' x2='50' y2='5' transform='rotate(135 50 50)'/><line x1='50' y1='50' x2='50' y2='5' transform='rotate(180 50 50)'/><line x1='50' y1='50' x2='50' y2='5' transform='rotate(225 50 50)'/><line x1='50' y1='50' x2='50' y2='5' transform='rotate(270 50 50)'/><line x1='50' y1='50' x2='50' y2='5' transform='rotate(315 50 50)'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }

@@ -591,7 +591,9 @@ class BoxGesture extends Gesture {
   createStartCellContent_() {
     let kind = this.startCell_.getVal(this.getLayer_(), ck.kind);
     let variation = this.startCell_.getVal(this.getLayer_(), ck.variation);
-    let value = this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
+    const valueKey = this.getValueKey_();
+    let value = valueKey == null ? undefined :
+        this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     switch (this.mode_) {
       case 'removing':
         value = null;
@@ -600,12 +602,13 @@ class BoxGesture extends Gesture {
       case 'moving':
         kind = this.anchorCell_.getVal(this.getLayer_(), ck.kind);
         variation = this.anchorCell_.getVal(this.getLayer_(), ck.variation);
-        value = this.anchorCell_.getVal(this.getLayer_(), this.getValueKey_());
+        value = valueKey == null ? undefined : 
+            this.anchorCell_.getVal(this.getLayer_(), valueKey);
         break;
       case 'adding':
         kind = this.getKind_().id;
         variation = this.getVariation_().id;
-        value = this.getDefaultContent_();
+        value = valueKey == null ? undefined : this.getDefaultContent_();
         // Intentional fallthrough.
       case 'editing':
         if (this.inputElement_) {
@@ -616,12 +619,14 @@ class BoxGesture extends Gesture {
         value = this.originalValue_;
         break;
     }
-    if (!value) return null;
+    if (valueKey != null && !value) return null;
     const content = {
       [ck.kind]: kind,
       [ck.variation]: variation,
-      [this.getValueKey_()]: value,
     };
+    if (valueKey != null) {
+      content[valueKey] = value;
+    }
     if (this.endCell_) {
       content[ck.endCell] = this.endCell_.key;
     }

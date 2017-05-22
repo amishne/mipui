@@ -63,9 +63,10 @@ const ct = {
     bars: {
       classNames: [
         'bars-cell',
+        'bars-cell-_ROLE_',
         'bars-cell-_ADDING-REMOVING_'
       ],
-      generic: {imagePath: 'assets/bars.svg'},
+      generic: {},
     },
     fence: {
       classNames: [
@@ -73,7 +74,7 @@ const ct = {
         'fence-cell-_ROLE_',
         'fence-cell-_ADDING-REMOVING_'
       ],
-      generic: {imagePath: 'assets/bars.svg'},
+      generic: {},
     },
     curtain: {
       classNames: [
@@ -147,9 +148,9 @@ const ct = {
       'stairs-cell-_ADDING-REMOVING_',
       'stairs-cell-_EDITING_',
     ],
-    horizontal: { generic: {imagePath: 'assets/stairs-horizontal.svg'} },
-    vertical: { generic: {imagePath: 'assets/stairs-vertical.svg'} },
-    spiral: { generic: {imagePath: 'assets/stairs-spiral.svg'} },
+    horizontal: { generic: {classNames: ['stairs-cell-horizontal']} },
+    vertical: { generic: {classNames: ['stairs-cell-vertical']} },
+    spiral: { generic: {classNames: ['stairs-cell-spiral']} },
   }
 };
 
@@ -162,7 +163,6 @@ const ck = {
   text: 't',
   image: 'i',
   imageHash: 'h',
-  useVariationImage: 'u',
   connections: 'c',
 };
 
