@@ -27,6 +27,7 @@ function wireUiElements() {
 }
 
 function initializeFirebase(callback) {
+  const isInTestingMode = true;
   const isProd =
       window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/);
   var config = isProd ? {
@@ -38,6 +39,9 @@ function initializeFirebase(callback) {
     authDomain: "mipui-dev.firebaseapp.com",
     databaseURL: "https://mipui-dev.firebaseio.com",
   };
+  if (!isProd || isInTestingMode) {
+    document.getElementById('warning').style.display = 'inline-block';
+  }
   firebase.initializeApp(config);
   firebase.database.enableLogging(true);
   firebase.auth().signInAnonymously()
