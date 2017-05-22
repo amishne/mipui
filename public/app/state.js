@@ -113,8 +113,10 @@ class State {
   }
 
   getProperty(property) {
-    return this.pstate_.props[property] ||
-        this.defaultProperties_[property];
+    if (this.pstate_.props && this.pstate_.props[property]) {
+      return this.pstate_.props[property];
+    }
+    return this.defaultProperties_[property];
   }
   
   setProperty(property, value, recordChange) {
