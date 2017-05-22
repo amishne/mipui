@@ -865,6 +865,16 @@ class Menu {
         submenu: {
           items: [
             {
+              name: 'New',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'create_new_folder',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('/app', '_blank');
+              },
+            },
+            {
               name: 'Read-only URL',
               type: 'button',
               presentation: 'icon',
@@ -1233,10 +1243,20 @@ class Menu {
               name: 'Feedback',
               type: 'button',
               presentation: 'label',
-              text: 'Feedback',
+              text: 'Report bug or request feature',
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('https://feedback.userreport.com/7e918812-4e93-4a8f-9541-9af34d0f4231/', '_blank');
+              },
+            },
+            {
+              name: 'Contact',
+              type: 'button',
+              presentation: 'label',
+              text: 'Contact',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('mailto:contact@mipui.net', '_blank');
               },
             },
           ],
