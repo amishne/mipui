@@ -122,8 +122,10 @@ class SeparatorGesture extends Gesture {
   continueGesture(cell) {
     // Can only continue separator-creation gestures.
     if (this.mode != 'adding') return;
-    // Only enable for eligible cells.
-    if (!this.isCellEligible_(cell)) return;
+    // Only enable for eligible, non-separator cells.
+    if (!this.isCellEligible_(cell) || cell.hasLayerContent(ct.separators)) {
+      return;
+    }
 
     const prevCell = this.getPrevCell_(cell)
     const nextCell = this.getNextCell_(cell);
