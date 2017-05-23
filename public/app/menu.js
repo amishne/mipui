@@ -919,8 +919,12 @@ class Menu {
                     createAndAppendDivWithClass(document.body, 'modal-overlay');
                 overlay.textContent = 'Constructing PNG...';
                 setTimeout(() => {
-                  domtoimage.toBlob(document.getElementById('theMap'))
-                      .then(blob => {
+                  const appElement = document.getElementById('app');
+                  const theMapElement = document.getElementById('theMap');
+                  domtoimage.toBlob(theMapElement, {
+                    width: appElement.clientWidth,
+                    height: appElement.clientHeight,
+                  }).then(blob => {
                     saveAs(blob, 'mipui.png');
                     overlay.parentElement.removeChild(overlay);
                   }).catch(() => {
@@ -940,8 +944,12 @@ class Menu {
                     createAndAppendDivWithClass(document.body, 'modal-overlay');
                 overlay.textContent = 'Constructing SVG...';
                 setTimeout(() => {
-                  domtoimage.toSvg(document.getElementById('theMap'))
-                      .then(dataUrl => {
+                  const appElement = document.getElementById('app');
+                  const theMapElement = document.getElementById('theMap');
+                  domtoimage.toSvg(theMapElement, {
+                    width: appElement.clientWidth,
+                    height: appElement.clientHeight,
+                  }).then(dataUrl => {
                     const blob = new Blob([dataUrl.substr(33)], {type: "image/svg+xml"});
                     saveAs(blob, 'mipui.svg');
                     overlay.parentElement.removeChild(overlay);
