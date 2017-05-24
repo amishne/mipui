@@ -919,6 +919,44 @@ class Menu {
                     createAndAppendDivWithClass(document.body, 'modal-overlay');
                 overlay.textContent = 'Constructing PNG...';
                 setTimeout(() => {
+                  const scale = 2.058823529411765;
+                  const numColumns = (state.getProperty(pk.lastColumn) -
+                      state.getProperty(pk.firstColumn)) - 1;
+                  const numRows = (state.getProperty(pk.lastRow) -
+                      state.getProperty(pk.firstRow)) - 1;
+                  const width = scale * (2 + numColumns *
+                      (state.theMap.cellWidth + 1 +
+                      state.theMap.dividerWidth + 1));
+                  const height = scale * (2 + numRows *
+                      (state.theMap.cellHeight + 1 +
+                      state.theMap.dividerHeight + 1));
+                  const theMapElement = document.getElementById('theMap');
+                  domtoimage.toBlob(theMapElement, {
+                    style: {
+                      transform: `matrix(${scale}, 0, 0, ${scale}, 0, 0)`,
+                    },
+                    width,
+                    height,
+                  }).then(blob => {
+                    saveAs(blob, 'mipui.png');
+                    overlay.parentElement.removeChild(overlay);
+                  }).catch(() => {
+                    overlay.parentElement.removeChild(overlay);
+                  });
+                }, 10);
+              },
+            },
+            {
+              name: 'Download PNG of viewport',
+              type: 'button',
+              presentation: 'label',
+              text: 'PNG (view)',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const overlay =
+                    createAndAppendDivWithClass(document.body, 'modal-overlay');
+                overlay.textContent = 'Constructing PNG...';
+                setTimeout(() => {
                   const appElement = document.getElementById('app');
                   const theMapElement = document.getElementById('theMap');
                   domtoimage.toBlob(theMapElement, {
@@ -944,11 +982,21 @@ class Menu {
                     createAndAppendDivWithClass(document.body, 'modal-overlay');
                 overlay.textContent = 'Constructing SVG...';
                 setTimeout(() => {
-                  const appElement = document.getElementById('app');
+                  const numColumns = (state.getProperty(pk.lastColumn) -
+                      state.getProperty(pk.firstColumn)) - 1;
+                  const numRows = (state.getProperty(pk.lastRow) -
+                      state.getProperty(pk.firstRow)) - 1;
+                  const width = 2 + numColumns *
+                      (state.theMap.cellWidth + 1 +
+                      state.theMap.dividerWidth + 1);
+                  const height = 2 + numRows *
+                      (state.theMap.cellHeight + 1 +
+                      state.theMap.dividerHeight + 1);
                   const theMapElement = document.getElementById('theMap');
                   domtoimage.toSvg(theMapElement, {
-                    width: appElement.clientWidth,
-                    height: appElement.clientHeight,
+                    style: { transform: '' },
+                    width,
+                    height,
                   }).then(dataUrl => {
                     const blob = new Blob([dataUrl.substr(33)], {type: "image/svg+xml"});
                     saveAs(blob, 'mipui.svg');
