@@ -79,55 +79,77 @@ class PasteGesture extends Gesture {
     this.relocatedCells_.forEach(({key, location, layerContents}) => {
       const targetCell = state.theMap.cells.get(key);
       if (!targetCell) return;
-      layerContents.forEach((content, layer) => {
-        callback(targetCell, layer, content);
+      ct.children.forEach(layer => {
+        callback(targetCell, layer, layerContents.get(layer));
       });
     });
   }
 
   relocateCells_(newAnchor) {
-    state.clipboard.cells.forEach(({location, role, layerContents}) => {
-      const key = this.calcKey_(newAnchor, role, location);
+    state.clipboard.cells.forEach(({location, key, role, layerContents}) => {
       const updatedLayerContents = new Map();
       layerContents.forEach((content, layer) => {
         updatedLayerContents.set(
-            layer, this.updateContent_(location, content));
-      })
+            layer, this.updateContent_(layer, key, location, content));
+      });
       this.relocatedCells_.push({
-        key,
+        key: this.calcKey_(newAnchor, role, location),
         location,
-        layerContents,
+        layerContents: updatedLayerContents,
       });
     });
   }
 
-  updateContent_(location, content) {
+  updateContent_(layer, key, location, content) {
     if (!content) return content;
     const newContent = Object.assign({}, content);
-    if (content[ck.startCell]) {
-      const startCell = state.theMap.cells.get(content[ck.startCell]);
-      if (!state.clipboard.cells.some(({key}) => key == startCell.key)) {
+    // We only copy multi-cell layer content if *all* the relevant cells are
+    // being copied.
+    const startCellKey = content[ck.startCell];
+    if (startCellKey) {
+      const endCellKey = state.theMap.cells.get(startCellKey)
+          .getLayerContent(layer, [ck.endCell]);
+      if (!this.areAllCellsBeingCopied_(layer, startCellKey, endCellKey)) {
         return null;
-      } else {
-        newContent[ck.startCell] =
-            this.relocateCellKey_(location, content[ck.startCell]);
       }
+      newContent[ck.startCell] = this.relocateCellKey_(location, startCellKey);
     }
-    if (content[ck.endCell]) {
-      const endCell = state.theMap.cells.get(content[ck.endCell]);
-      if (!state.clipboard.cells.some(({key}) => key == endCell.key)) {
-        delete newContent[ck.endCell];
-      } else {
-        newContent[ck.endCell] =
-            this.relocateCellKey_(location, content[ck.endCell]);
+    const endCellKey = content[ck.endCell];
+    if (endCellKey) {
+      if (!this.areAllCellsBeingCopied_(layer, key, endCellKey)) {
+        return null;
       }
+      newContent[ck.endCell] = this.relocateCellKey_(location, endCellKey);
     }
+
     return newContent;
   }
-  
+
+  areAllCellsBeingCopied_(layer, startCellKey, endCellKey) {
+    if (!state.clipboard.cells.some(({key}) => key == startCellKey)) {
+      // The start cell is not being copied.
+      return false;
+    }
+    for (let cell of state.theMap.cells.values()) {
+      const cellLayerContent = cell.getLayerContent(layer);
+      if (!cellLayerContent) continue;
+      const cellStartCellKey = cellLayerContent[ck.startCell];
+      if (cellStartCellKey && startCellKey == cellStartCellKey) {
+        // This cell belongs to the same object!
+        if (!state.clipboard.cells.some(({key}) => key == cell.key)) {
+          // This cell doesn't appear in the clipboard.
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   relocateCellKey_(location, key) {
-    const rowDiff = this.hoveredCell_.row - state.clipboard.anchor.row;
-    const columnDiff = this.hoveredCell_.column - state.clipboard.anchor.column;
+    const rowDiff =
+        this.hoveredCell_.row - state.clipboard.anchor.location.row;
+    const columnDiff =
+        this.hoveredCell_.column - state.clipboard.anchor.location.column;
     return key.split(':').map(part => {
       const coords = part.split(',');
       return Math.floor(Number(coords[0]) + rowDiff) + ',' +
