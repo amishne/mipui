@@ -871,7 +871,7 @@ class Menu {
               materialIcon: 'create_new_folder',
               enabledInReadonlyMode: true,
               callback: () => {
-                window.open('/app', '_blank');
+                window.open('.', '_blank');
               },
             },
             {
