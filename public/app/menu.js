@@ -919,7 +919,7 @@ class Menu {
                     createAndAppendDivWithClass(document.body, 'modal-overlay');
                 overlay.textContent = 'Constructing PNG...';
                 setTimeout(() => {
-                  const scale = 2.058823529411765;
+                  const scale = 2.1875;
                   const numColumns = (state.getProperty(pk.lastColumn) -
                       state.getProperty(pk.firstColumn)) - 1;
                   const numRows = (state.getProperty(pk.lastRow) -
