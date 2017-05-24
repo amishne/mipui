@@ -10,22 +10,28 @@ class PasteGesture extends Gesture {
     if (cell.role != state.clipboard.anchor.role) return;
     this.hoveredCell_ = cell;
     this.relocateCells_(cell);
-    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+    this.forEachRelocatedAndGroupCell_((targetCell, layer, content) => {
       targetCell.showHighlight(layer, content);
+    }, (objectCell, layer) => {
+      objectCell.showHighlight(layer, null);
     });
   }
 
   stopHover() {
-    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+    this.forEachRelocatedAndGroupCell_((targetCell, layer, content) => {
       targetCell.hideHighlight(layer);
+    }, (objectCell, layer) => {
+      objectCell.hideHighlight(layer);
     });
     this.relocatedCells_ = [];
     this.hoveredCell_ = null;
   }
 
   startGesture() {
-    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+    this.forEachRelocatedAndGroupCell_((targetCell, layer, content) => {
       targetCell.setLayerContent(layer, content, true);
+    }, (objectCell, layer) => {
+      objectCell.setLayerContent(layer, null, true);
     });
     // Completing a paste resets the gesture selection.
     state.menu.setToInitialSelection();
@@ -75,6 +81,19 @@ class PasteGesture extends Gesture {
     }
   }
 
+  forEachRelocatedAndGroupCell_(cellCallback, groupCallback) {
+    // First, apply to existing colliding objects.
+    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+      this.forEachObjectCell_(targetCell, layer, objectCell => {
+        groupCallback(objectCell, layer);
+      });
+    });
+    // Then apply to relocated cells.
+    this.forEachRelocatedCellLayerContent_((targetCell, layer, content) => {
+      cellCallback(targetCell, layer, content);
+    });
+  }
+
   forEachRelocatedCellLayerContent_(callback) {
     this.relocatedCells_.forEach(({key, location, layerContents}) => {
       const targetCell = state.theMap.cells.get(key);
@@ -82,6 +101,21 @@ class PasteGesture extends Gesture {
       ct.children.forEach(layer => {
         callback(targetCell, layer, layerContents.get(layer));
       });
+    });
+  }
+
+  forEachObjectCell_(cell, layer, callback) {
+    const content = cell.getLayerContent(layer);
+    if (!content) return;
+    const endCellKey = content[ck.endCell];
+    const startCellKey = content[ck.startCell];
+    if (!endCellKey && !startCellKey) return;
+    const startCell =
+        startCellKey ? state.theMap.cells.get(startCellKey) : cell;
+    const endCell =
+        state.theMap.cells.get(startCell.getLayerContent(layer)[ck.endCell]);
+    startCell.getPrimaryCellsInSquareTo(endCell).forEach(groupCell => {
+      callback(groupCell);
     });
   }
 

@@ -92,6 +92,7 @@
 .stairs-cell-adding, .stairs-cell-removing, .stairs-cell-editing {
   border: 1px dashed rgb(50, 50, 50);
   margin: -1px 0 0 -1px;
+  filter: opacity(0.6);
 }
 
 .image-cell-removing {
