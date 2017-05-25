@@ -3,6 +3,7 @@
   display: inline-block;
   cursor: crosshair;
   overflow: hidden;
+  position: relative;
 }
 
 .the-map * {
@@ -53,6 +54,8 @@
 #wallsLayer {
   z-index: 3;
   filter: drop-shadow(2px 2px 3px #919191);
+  border-color: bisque;
+  box-shadow: 2px 2px 6px 0px #919191;
 }
 
 #wallsShadowLayer {
@@ -61,6 +64,7 @@
 
 #floorsLayer {
   z-index: 1;
+  border-color: bisque;
 }
 
 #wallsShadowLayer > div {
@@ -87,6 +91,8 @@
   position: absolute;
   border-right: 1px solid;
   border-bottom: 1px solid;
+  background-color: rgb(245, 245, 220);
+  border-color: bisque;
 }
 
 .separator-cell {
@@ -202,32 +208,6 @@
   margin: -2px -3px -3px -2px;
 }
 
-.the-map {
-  transform-origin: top left;
-  display: inline-block;
-  cursor: crosshair;
-  position: relative;
-}
-
-.the-map * {
-  box-sizing: border-box;
-}
-
-.layer {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-left: 1px solid;
-  border-top: 1px solid;
-  border-color: rgba(0, 0, 0, 0);
-  background-clip: padding-box;
-}
-
-.row-container {
-  display: block;
-  white-space: nowrap;
-}
-
 .primary-cell {
   width: 25px;
   height: 25px;
@@ -248,49 +228,8 @@
   height: 7px;
 }
 
-.grid-cell {
-  position: relative;
-  display: inline-block;
-  border-right: 1px solid rgba(0, 0, 0, 0);
-  border-bottom: 1px solid rgba(0, 0, 0, 0);
-}
-
 .selected-cell {
   background: rgba(80, 80, 80, 0.15) content-box;
-}
-
-.separator-cell {
-  position: absolute;
-}
-
-.image-cell {
-  position: absolute;
-}
-
-.shape-cell {
-  position: absolute;
-}
-
-.stairs-cell {
-  position: absolute;
-  margin: 0 1px 1px 0;
-}
-
-.text-cell {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-  text-align: center;
-  margin: 2px 3px 3px 2px;
-  white-space: pre-wrap;
-}
-
-.text-cell-adding, .text-cell-removing, .text-cell-editing,
-.image-cell-adding, .image-cell-removing, .image-cell-editing {
-  border: 1px dashed rgb(50, 50, 50);
-  margin: 1px 2px 2px 1px;
 }
 
 .stairs-cell-adding, .stairs-cell-removing, .stairs-cell-editing {
@@ -467,25 +406,11 @@
   margin: -7px;
 }
 
-#floorsLayer {
-  border-color: bisque;
-}
-
-#wallsLayer {
-  border-color: bisque;
-  box-shadow: 2px 2px 6px 0px #919191;
-}
-
 /* hsl(34, 56.9, 70.0) */
 .square-wall-cell {
   background-color: rgb(222, 184, 135);
   border-right: 1px solid;
   border-bottom: 1px solid;
-  border-color: bisque;
-}
-
-.floor-cell {
-  background-color: rgb(245, 245, 220);
   border-color: bisque;
 }
 
@@ -684,4 +609,3 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-
