@@ -146,14 +146,25 @@ class PasteGesture extends Gesture {
       if (!this.areAllCellsBeingCopied_(layer, startCellKey, endCellKey)) {
         return null;
       }
-      newContent[ck.startCell] = this.relocateCellKey_(location, startCellKey);
+      const relocatedStartCellKey =
+          this.relocateCellKey_(location, startCellKey);
+      if (!state.theMap.cells.get(relocatedStartCellKey)) {
+        // Pasted group ends beyond the bounds.
+        return null;
+      }
+      newContent[ck.startCell] = relocatedStartCellKey;
     }
     const endCellKey = content[ck.endCell];
     if (endCellKey) {
       if (!this.areAllCellsBeingCopied_(layer, key, endCellKey)) {
         return null;
       }
-      newContent[ck.endCell] = this.relocateCellKey_(location, endCellKey);
+      const relocatedEndCellKey = this.relocateCellKey_(location, endCellKey);
+      if (!state.theMap.cells.get(relocatedEndCellKey)) {
+        // Pasted group ends beyond the bounds.
+        return null;
+      }
+      newContent[ck.endCell] = relocatedEndCellKey
     }
 
     return newContent;
