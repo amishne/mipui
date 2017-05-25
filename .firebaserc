@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "mipui-prod"
+    "default": "mipui-prod",
+    "dev": "mipui-dev",
+    "test": "mipui-test"
   }
 }
