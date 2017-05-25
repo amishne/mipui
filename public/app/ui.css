@@ -179,11 +179,6 @@ body {
   margin: 1px 2px 2px 1px;
 }
 
-.stairs-cell-adding, .stairs-cell-removing, .stairs-cell-editing {
-  border: 1px dashed rgb(50, 50, 50);
-  margin: -1px 0 0 -1px;
-}
-
 .image-cell-removing {
   border-color: red;
 }

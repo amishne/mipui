@@ -596,8 +596,7 @@ class BoxGesture extends Gesture {
         this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     switch (this.mode_) {
       case 'removing':
-        value = null;
-        break;
+        return null;
       case 'resizing':
       case 'moving':
         kind = this.anchorCell_.getVal(this.getLayer_(), ck.kind);

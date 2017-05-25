@@ -90,9 +90,19 @@
 }
 
 .stairs-cell-adding, .stairs-cell-removing, .stairs-cell-editing {
-  border: 1px dashed rgb(50, 50, 50);
   margin: -1px 0 0 -1px;
+}
+
+.stairs-cell-adding, .stairs-cell-removing {
   filter: opacity(0.6);
+}
+
+.stairs-cell-adding, .stairs-cell-editing {
+  border: 1px dashed rgb(50, 50, 50);
+}
+
+.stairs-cell-removing {
+  border: 1px dashed red;
 }
 
 .image-cell-removing {
