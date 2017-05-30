@@ -906,6 +906,7 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 state.opCenter.fork();
+                alert('Forked!');
               },
             },
             {
