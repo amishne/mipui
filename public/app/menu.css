@@ -36,7 +36,7 @@
 }
 
 .menu-item {
-  height: 30px;
+  min-height: 30px;
   min-width: 30px;
   margin: 4px;
   border: 1px solid rgba(31, 31, 31, 0.6);
@@ -67,8 +67,13 @@
   color: aliceblue;
 }
 
+.menu-input-container {
+  cursor: auto;
+}
+
 .menu-textarea {
   white-space: nowrap;
+  z-index: 1;
 }
 
 .menu-textarea-label {
@@ -86,6 +91,7 @@
 .menu-textarea-input {
   display: inline-block;
   vertical-align: middle;
+  z-index: 1;
 }
 
 .selected-menu-item {
@@ -240,5 +246,7 @@
 }
 
 #createdOn {
-  color: white;
+  color: aliceblue;
+  cursor: auto;
+  padding: 0 4px;
 }

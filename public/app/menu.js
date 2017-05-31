@@ -482,9 +482,9 @@ class Menu {
   createTokenSelector_() {
     const selector = {
       name: 'Find by name',
-      type: 'textarea',
+      type: 'inputContainer',
       id: 'tokenSelector',
-      classNames: ['menu-textarea'],
+      classNames: ['menu-textarea', 'menu-input-container'],
       presentation: 'input',
       datalistId: 'gameIcons',
       rows: 1,
@@ -685,9 +685,9 @@ class Menu {
           items: [
             {
               name: 'Title',
-              type: 'textarea',
+              type: 'inputContainer',
               id: 'mapTitle',
-              classNames: ['menu-textarea'],
+              classNames: ['menu-textarea', 'menu-input-container'],
               presentation: 'textarea',
               rows: 1,
               enabledInReadonlyMode: false,
@@ -698,9 +698,9 @@ class Menu {
             },
             {
               name: 'Description',
-              type: 'textarea',
+              type: 'inputContainer',
               id: 'mapLongDesc',
-              classNames: ['menu-textarea'],
+              classNames: ['menu-textarea', 'menu-input-container'],
               rows: 2,
               presentation: 'textarea',
               enabledInReadonlyMode: false,
@@ -711,8 +711,9 @@ class Menu {
             },
             {
               name: 'Theme',
-              type: 'button',
+              type: 'inputContainer',
               presentation: 'dropdown',
+              classNames: ['menu-input-container'],
               id: 'mapTheme',
               dropdownValues: themes.map(theme => theme.name),
               enabledInReadonlyMode: false,
