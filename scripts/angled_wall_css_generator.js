@@ -6,7 +6,7 @@ const beigeLandParams = {
 };
 const graphPaperParams = {
   fillColor: 'rgb(210, 210, 210)',
-  strokeColor: 'rgb(220, 220, 220)',
+  strokeColor: 'rgb(183, 195, 199)',
 };
 
 const params = graphPaperParams;
