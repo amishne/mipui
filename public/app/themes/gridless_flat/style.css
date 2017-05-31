@@ -1,0 +1,40 @@
+#wallsLayer {
+  filter: drop-shadow(1px 0px 0px #919191) drop-shadow(-1px 0px 0px #919191)
+      drop-shadow(0px 1px 0px #919191) drop-shadow(0px -1px 0px #919191);
+}
+
+.floor-cell {
+  background-color: white;
+  border-color: white;
+}
+
+/* hsl(0, 0, 82) */
+.square-wall-cell {
+  background-color: rgb(210, 210, 210);
+  border-color: rgb(210, 210, 210);
+}
+
+/* hsl(26, 0, 92.66) */
+.square-wall-cell-adding {
+  background-color: rgb(235, 235, 234);
+}
+
+/* hsl(13, 0, 95.12) */
+.square-wall-cell-removing {
+  background-color: rgb(243, 242, 242);
+  z-index: 1;
+}
+
+.door-cell {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(100, 100, 100);
+  border-radius: 2px;
+}
+
+.door-cell-horizontal {
+  margin: -2px 4px -2px 3px;
+}
+
+.door-cell-vertical {
+  margin: 3px -2px 4px -2px;
+}

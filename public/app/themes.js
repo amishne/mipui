@@ -6,10 +6,17 @@ const themes = [
     files: [],
   },
   {
-    name: 'Graph Paper (print-friendly)',
+    name: 'Graph Paper',
     files: [
       'themes/graph_paper/style.css',
       'themes/graph_paper/angled_wall.css',
     ],
-  }
+  },
+  {
+    name: 'Gridless Flat',
+    files: [
+      'themes/gridless_flat/style.css',
+      'themes/gridless_flat/angled_wall.css',
+    ],
+  },
 ];
