@@ -126,6 +126,7 @@ class State {
     const oldValue = this.getProperty(property);
     const newValue = value != this.defaultProperties_[property] ? value : null;
     if (oldValue != newValue) {
+      if (!this.pstate_.props) this.pstate_.props = {};
       this.pstate_.props[property] = value != null ? value : undefined;
       if (recordChange) {
         state.opCenter.recordPropertyChange(property, oldValue, newValue);
