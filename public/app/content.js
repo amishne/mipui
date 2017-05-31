@@ -174,6 +174,7 @@ const pk = {
   lastRow: 'b',
   firstColumn: 'l',
   lastColumn: 'r',
+  theme: 'h',
 };
 
 function sameContent(c1, c2) {

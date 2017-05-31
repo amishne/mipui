@@ -43,6 +43,7 @@ class Operation {
   markComplete() {
     let mapNeedsUpdate = false;
     let descNeedsUpdate = false;
+    let reloadTheme = false;
     if (this.data && this.data.p) {
       Object.keys(this.data.p).forEach(property => {
         switch (property) {
@@ -56,6 +57,10 @@ class Operation {
           case pk.longDescription:
             descNeedsUpdate = true;
             break;
+          case pk.theme:
+            descNeedsUpdate = true;
+            reloadTheme = true;
+            break;
         }
       });
     }
@@ -64,6 +69,9 @@ class Operation {
     }
     if (descNeedsUpdate) {
       state.menu.descChanged();
+    }
+    if (reloadTheme) {
+      state.reloadTheme();
     }
   }
 

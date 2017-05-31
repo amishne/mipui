@@ -77,6 +77,12 @@
   padding: 0 4px;
 }
 
+.menu-select-label {
+  display: inline-block;
+  color: aliceblue;
+  padding: 0 4px;
+}
+
 .menu-textarea-input {
   display: inline-block;
   vertical-align: middle;

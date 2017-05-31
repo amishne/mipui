@@ -33,6 +33,8 @@ class Menu {
         state.getProperty(pk.title);
     document.querySelector('#mapLongDesc textarea').value =
         state.getProperty(pk.longDescription);
+    document.querySelector('#mapTheme select').selectedIndex =
+        themes[state.getProperty(pk.theme)];
   }
 
   createMenuItems_(topElement, bottomElement) {
@@ -134,6 +136,22 @@ class Menu {
             item.onInput(item.oldText, textarea.value);
             item.oldText = textarea.value;
           }
+        }
+        break;
+      case 'dropdown':
+        const dropdownLabel =
+            createAndAppendDivWithClass(item.element, 'menu-select-label');
+        dropdownLabel.textContent = item.name;
+        const select = document.createElement('select');
+        item.element.appendChild(select);
+        item.dropdownValues.forEach((dropdownValue, index) => {
+          const option = document.createElement('option');
+          option.textContent = dropdownValue;
+          if (index == 0) option.selected = true;
+          select.add(option);
+        });
+        if (item.onChange) {
+          select.onchange = event => item.onChange(event.target.selectedIndex);
         }
         break;
     }
@@ -690,6 +708,18 @@ class Menu {
                 state.setProperty(pk.longDescription, newText, true);
                 state.opCenter.recordOperationComplete();
               }
+            },
+            {
+              name: 'Theme',
+              type: 'button',
+              presentation: 'dropdown',
+              id: 'mapTheme',
+              dropdownValues: themes.map(theme => theme.name),
+              enabledInReadonlyMode: false,
+              onChange: newChoiceNum => {
+                state.setProperty(pk.theme, newChoiceNum, true);
+                state.reloadTheme();
+              },
             },
             {
               name: 'Created on',

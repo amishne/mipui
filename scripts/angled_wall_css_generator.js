@@ -1,4 +1,16 @@
 const out = process.stdout;
+
+const beigeLandParams = {
+  fillColor: 'rgb(222, 184, 135)',
+  strokeColor: 'bisque',
+};
+const graphPaperParams = {
+  fillColor: 'rgb(210, 210, 210)',
+  strokeColor: 'rgb(220, 220, 220)',
+};
+
+const params = graphPaperParams;
+
 /*
 // An angled cell is composed of 17 parts (uppercase letters):
 
@@ -32,14 +44,14 @@ and which aren't; sectionsFromDirs contains the logic.
 function emitLines(section) {
   let l = [];
   switch (section) {
-    case 'A': l = ['7 6.5, 14 6.5']; break;
-    case 'B': l = ['24 6.5, 32 6.5', '31.5 0, 31.5 7']; break;
-    case 'C': l = ['6.5 7, 6.5 14']; break;
-    case 'G': l = ['31.5 7, 31.5 14']; break;
+    case 'A': l = ['7 6.5, 13 6.5']; break;
+    case 'B': l = ['25 6.5, 32 6.5', '31.5 0, 31.5 7']; break;
+    case 'C': l = ['6.5 7, 6.5 13']; break;
+    case 'G': l = ['31.5 7, 31.5 13']; break;
     case 'J': l = ['31.5 14, 31.5 24']; break;
-    case 'K': l = ['7 31.5, 14 31.5']; break;
-    case 'L': l = ['31.5 24, 31.5 32', '24 31.5, 32 31.5']; break;
-    case 'M': l = ['6.5 24, 6.5 32', '0 31.5, 7 31.5']; break;
+    case 'K': l = ['7 31.5, 13 31.5']; break;
+    case 'L': l = ['31.5 25, 31.5 32', '25 31.5, 32 31.5']; break;
+    case 'M': l = ['6.5 25, 6.5 32', '0 31.5, 7 31.5']; break;
     case 'N': l = ['14 31.5, 24 31.5']; break;
     case 'O': l = ['32 31.5, 39 31.5']; break;
     case 'Q': l = ['31.5 32, 31.5 39']; break;
@@ -47,7 +59,7 @@ function emitLines(section) {
   l.forEach(points => {
     const [[x1, y1], [x2, y2]] =
         points.split(',').map(s => s.trim()).map(s => s.split(' '));
-    out.write(`<line x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' />`);
+    out.write(`<line stroke-linecap='round' x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' />`);
   });
 }
 
@@ -108,7 +120,7 @@ function emitClassForConnections(connections) {
 }
 
 function emitSvgBackground(connections) {
-  out.write("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' shape-rendering='crispEdges'><style>polygon {fill: rgb(222, 184, 135);} line {stroke-width: 1; stroke: bisque;}</style>");
+  out.write(`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' shape-rendering='crispEdges'><style>polygon {fill: ${params.fillColor};} line {stroke-width: 1; stroke: ${params.strokeColor};}</style>`);
   const directions = {
     't': 1,
     'r': 2,

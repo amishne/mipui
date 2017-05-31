@@ -1,0 +1,14 @@
+#wallsLayer {
+  filter: drop-shadow(1px 0px 0px #919191) drop-shadow(-1px 0px 0px #919191)
+      drop-shadow(0px 1px 0px #919191) drop-shadow(0px -1px 0px #919191);
+}
+
+.floor-cell {
+  background-color: white;
+  border-color: rgb(197, 239, 255);
+}
+
+.square-wall-cell {
+  background-color: rgb(210, 210, 210);
+  border-color: rgb(183, 195, 199);
+}

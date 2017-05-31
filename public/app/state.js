@@ -42,6 +42,7 @@ class State {
       [pk.lastRow]: 20,
       [pk.firstColumn]: 0,
       [pk.lastColumn]: 20,
+      [pk.theme]: 0,
     };
 
     this.autoSaveTimerId_ = null;
@@ -57,13 +58,15 @@ class State {
     this.menu = null;
 
     this.clipboard = null;
+
+    this.appliedTheme_ = 0;
   }
-  
+
   set gesture(newGesture) {
     if (this.gesture_) this.gesture_.onUnselect();
     this.gesture_ = newGesture;
   }
-  
+
   get gesture() {
     return this.gesture_;
   }
@@ -118,7 +121,7 @@ class State {
     }
     return this.defaultProperties_[property];
   }
-  
+
   setProperty(property, value, recordChange) {
     if (value == this.defaultProperties_[property]) {
       value = null;
@@ -131,6 +134,28 @@ class State {
         state.opCenter.recordPropertyChange(property, oldValue, newValue);
       }
     }
+  }
+
+  reloadTheme() {
+    const newNum = this.getProperty(pk.theme);
+    if (this.appliedTheme_ == null && newNum == 0) return;
+    if (this.appliedTheme_ && this.appliedTheme_.num == newNum) return;
+    const newTheme = themes[newNum];
+    if (this.appliedTheme_) {
+      this.appliedTheme_.elements.forEach(element => {
+        element.parentNode.removeChild(element);
+      });
+    }
+    this.appliedTheme_ = {elements: [], num: newNum};
+    const head = document.getElementsByTagName('head')[0];
+    newTheme.files.forEach(file => {
+      var css = document.createElement('link');
+      css.type = 'text/css';
+      css.rel = 'stylesheet';
+      css.href = file;
+      head.appendChild(css);
+      this.appliedTheme_.elements.push(css);
+    });
   }
 
   setMid(mid) {
