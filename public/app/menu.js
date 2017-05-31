@@ -34,7 +34,7 @@ class Menu {
     document.querySelector('#mapLongDesc textarea').value =
         state.getProperty(pk.longDescription);
     document.querySelector('#mapTheme select').selectedIndex =
-        themes[state.getProperty(pk.theme)];
+        state.getProperty(pk.theme);
   }
 
   createMenuItems_(topElement, bottomElement) {
