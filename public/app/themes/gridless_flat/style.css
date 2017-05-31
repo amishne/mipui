@@ -22,7 +22,6 @@
 /* hsl(13, 0, 95.12) */
 .square-wall-cell-removing {
   background-color: rgb(243, 242, 242);
-  z-index: 1;
 }
 
 .door-cell {

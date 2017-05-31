@@ -19,4 +19,10 @@ const themes = [
       'themes/gridless_flat/angled_wall.css',
     ],
   },
+  {
+    name: 'Cutout',
+    files: [
+      'themes/cutout/style.css',
+    ],
+  },
 ];
