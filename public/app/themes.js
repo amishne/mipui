@@ -23,6 +23,7 @@ const themes = [
     name: 'Cutout',
     files: [
       'themes/cutout/style.css',
+      'themes/cutout/angled_wall.css',
     ],
   },
 ];

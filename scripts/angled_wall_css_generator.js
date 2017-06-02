@@ -8,8 +8,12 @@ const graphPaperParams = {
   fillColor: 'rgb(210, 210, 210)',
   strokeColor: 'rgb(183, 195, 199)',
 };
+const cutoutParams = {
+  fillColor: 'rgb(205, 222, 222)',
+  strokeColor: 'rgb(205, 222, 222)',
+};
 
-const params = graphPaperParams;
+const params = cutoutParams;
 
 /*
 // An angled cell is composed of 17 parts (uppercase letters):
