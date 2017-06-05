@@ -161,6 +161,7 @@ function resizeGridBy(
   nav.translate.y -= offsetY * nav.scale;
   updateMapTransform();
   state.opCenter.recordOperationComplete();
+  refreshMapResizeButtonLocations();
 }
 
 function resetView() {
