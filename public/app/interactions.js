@@ -38,6 +38,7 @@ function updateMapTransform() {
   document.getElementById('theMap').style.transform =
       `translate(${nav.translate.x}px, ${nav.translate.y}px) ` +
       `scale(${nav.scale})`;
+  refreshMapResizeButtonLocations();
 }
 
 let useWheelForZooming = true;
@@ -179,3 +180,39 @@ function resetGrid() {
   resetView();
   state.opCenter.recordOperationComplete();
 }
+
+function refreshMapResizeButtonLocations() {
+  const uiOverlay = document.getElementById('uiOverlay');
+  const theMap = document.getElementById('theMap');
+  const rect = theMap.getBoundingClientRect();
+  [
+    {name: 'add-column-right', pos: 'right', place: 0},
+    {name: 'remove-column-right', pos: 'right', place: 1},
+    {name: 'add-row-bottom', pos: 'bottom', place: 0},
+    {name: 'remove-row-bottom', pos: 'bottom', place: 1},
+    {name: 'add-column-left', pos: 'left', place: 0},
+    {name: 'remove-column-left', pos: 'left', place: 1},
+    {name: 'add-row-top', pos: 'top', place: 0},
+    {name: 'remove-row-top', pos: 'top', place: 1},
+  ].forEach(button => {
+    const element =
+        document.getElementsByClassName('map-resize-button-' + button.name)[0];
+    let x =
+        Math.min(rect.right - 80,
+            Math.max(uiOverlay.offsetWidth / 2, rect.left + 60));
+    let y =
+        Math.min(rect.bottom - 80,
+            Math.max(uiOverlay.offsetHeight / 2, rect.top + 60));
+    let offsetX = button.place == 0 ? -70 : 40;
+    let offsetY = offsetX;
+    switch(button.pos) {
+      case 'right': x = rect.right; offsetX = 20; break;
+      case 'bottom': y = rect.bottom; offsetY = 20; break;
+      case 'left': x = rect.left; offsetX = -70; break;
+      case 'top': y = rect.top; offsetY = -70; break;
+    }
+    element.style.left = x + offsetX;
+    element.style.top = y + offsetY;
+  });
+}
+

@@ -54,6 +54,27 @@ function initializeFirebase(callback) {
   });
 }
 
+function createMapResizeButtons() {
+  const uiOverlay = document.getElementById('uiOverlay');
+  [
+    {name: 'add-column-right', callback: () => resizeGridBy(0, 1, 0, 0)},
+    {name: 'remove-column-right', callback: () => resizeGridBy(0, -1, 0, 0)},
+    {name: 'add-row-bottom', callback: () => resizeGridBy(0, 0, 0, 1)},
+    {name: 'remove-row-bottom', callback: () => resizeGridBy(0, 0, 0, -1)},
+    {name: 'add-column-left', callback: () => resizeGridBy(-1, 0, 0, 0)},
+    {name: 'remove-column-left', callback: () => resizeGridBy(1, 0, 0, 0)},
+    {name: 'add-row-top', callback: () => resizeGridBy(0, 0, -1, 0)},
+    {name: 'remove-row-top', callback: () => resizeGridBy(0, 0, 1, 0)},
+  ].forEach(({name, callback}) => {
+    const button = createAndAppendDivWithClass(
+        uiOverlay, `map-resize-button map-resize-button-${name}`);
+    button.onclick = (e) => callback();
+    button.title =
+        name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ');
+  });
+  refreshMapResizeButtonLocations();
+}
+
 function start() {
   const params = getUrlParams();
   state.menu = new Menu();
@@ -61,6 +82,7 @@ function start() {
   state.menu.descChanged();
   setStatus(Status.INITIALIZING);
   createTheMapAndUpdateElements();
+  createMapResizeButtons();
   initializeFirebase(() => {
     const mid = params.mid ? decodeURIComponent(params.mid) : null;
     const secret = params.secret ? decodeURIComponent(params.secret) : null;

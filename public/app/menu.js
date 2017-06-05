@@ -1039,6 +1039,15 @@ class Menu {
                 }, 10);
               },
             },
+            {
+              name: 'Reset grid',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'delete',
+              callback: () => {
+                resetGrid();
+              },
+            },
           ],
         },
       },
@@ -1086,133 +1095,6 @@ class Menu {
                   y: 0,
                   deltaY: 1,
                 });
-              },
-            },
-          ],
-        },
-      },
-      {
-        name: 'Grid',
-        presentation: 'icon',
-        materialIcon: 'grid_on',
-        tip: '',
-        submenu: {
-          items: [
-            {
-              name: 'Undo',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'undo',
-              enabledInReadonlyMode: false,
-              callback: () => {
-                state.opCenter.undo();
-                state.opCenter.recordOperationComplete();
-              },
-            },
-            {
-              name: 'Redo',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'redo',
-              enabledInReadonlyMode: false,
-              callback: () => {
-                state.opCenter.redo();
-                state.opCenter.recordOperationComplete();
-              },
-            },
-            {
-              name: 'Add Right Column',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'keyboard_capslock',
-              classNames: ['rotate-90'],
-              enabledInReadonlyMode: false,
-              callback: () => {
-                resizeGridBy(0, 1, 0, 0);
-              },
-            },
-            {
-              name: 'Add Bottom Row',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'keyboard_capslock',
-              classNames: ['rotate-180'],
-              enabledInReadonlyMode: false,
-              callback: () => {
-                resizeGridBy(0, 0, 0, 1);
-              },
-            },
-            {
-              name: 'Add Left Column',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'keyboard_capslock',
-              classNames: ['rotate-270'],
-              enabledInReadonlyMode: false,
-              callback: () => {
-                resizeGridBy(-1, 0, 0, 0);
-              },
-            },
-            {
-              name: 'Add Top Row',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'keyboard_capslock',
-              enabledInReadonlyMode: false,
-              callback: () => {
-                resizeGridBy(0,0, -1, 0);
-              },
-            },
-            {
-              name: 'Remove Right Column',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'last_page',
-              classNames: ['rotate-180'],
-              enabledInReadonlyMode: false,
-              callback: () => {
-                resizeGridBy(0, -1, 0, 0);
-              },
-            },
-            {
-              name: 'Remove Bottom Row',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'last_page',
-              classNames: ['rotate-270'],
-              enabledInReadonlyMode: false,
-              callback: () => {
-                resizeGridBy(0, 0, 0, -1);
-              },
-            },
-            {
-              name: 'Remove Left Column',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'last_page',
-              enabledInReadonlyMode: false,
-              callback: () => {
-                resizeGridBy(1, 0, 0, 0);
-              },
-            },
-            {
-              name: 'Remove Top Row',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'last_page',
-              enabledInReadonlyMode: false,
-              classNames: ['rotate-90'],
-              callback: () => {
-                resizeGridBy(0, 0, 1, 0);
-              },
-            },
-            {
-              name: 'Reset grid',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'delete',
-              callback: () => {
-                resetGrid();
               },
             },
           ],
