@@ -27,7 +27,7 @@ function wireUiElements() {
 }
 
 function initializeFirebase(callback) {
-  const isInTestingMode = true;
+  const isInTestingMode = false;
   const isProd =
       window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/);
   var config = isProd ? {
