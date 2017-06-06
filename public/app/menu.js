@@ -1229,6 +1229,16 @@ class Menu {
                 window.open('mailto:contact@mipui.net', '_blank');
               },
             },
+            {
+              name: 'Source Code',
+              type: 'button',
+              presentation: 'label',
+              text: 'Source Code',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('https://github.com/amishne/mipui', '_blank');
+              },
+            },
           ],
         },
       },
