@@ -170,6 +170,13 @@ function resetView() {
   nav.translate.x = 8;
   nav.translate.y = 8;
   updateMapTransform();
+  const app = document.getElementById('app');
+  const theMap = document.getElementById('theMap');
+  const appRect = app.getBoundingClientRect();
+  const theMapRect = theMap.getBoundingClientRect();
+  pan(appRect.width / 2 - theMapRect.width / 2,
+      appRect.height / 2 - theMapRect.height / 2);
+  updateMapTransform();
 }
 
 function resetGrid() {
