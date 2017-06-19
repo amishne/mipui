@@ -24,6 +24,7 @@
 .menu-top {
   align-items: center;
   padding: 4px;
+  white-space: nowrap;
 }
 
 .menu-bottom {
@@ -48,6 +49,21 @@
   cursor: pointer;
   display: inline-block;
   position: relative;
+}
+
+.menu-item-container {
+  display: inline-table;
+  text-align: center;
+  margin: 0 1px;
+}
+
+.menu-item-label {
+  text-align: center;
+  color: aliceblue;
+  font-size: 10pt;
+  margin-top: -4px;
+  display: table-caption;
+  caption-side: bottom;
 }
 
 .disabled-menu-item {
@@ -76,22 +92,10 @@
   z-index: 1;
 }
 
-.menu-textarea-label {
+.menu-label {
   display: inline-block;
   color: aliceblue;
   padding: 0 4px;
-}
-
-.menu-select-label {
-  display: inline-block;
-  color: aliceblue;
-  padding: 0 4px;
-}
-
-.menu-textarea-input {
-  display: inline-block;
-  vertical-align: middle;
-  z-index: 1;
 }
 
 .selected-menu-item {
@@ -107,6 +111,14 @@
 .submenu {
   display: none;
   min-height: 40px;
+}
+
+.menu-input-element {
+  margin: 5px 0;
+}
+
+.menu-select-element {
+  margin: 6px 0;
 }
 
 .selector-submenu {

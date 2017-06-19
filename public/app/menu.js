@@ -67,9 +67,15 @@ class Menu {
   }
 
   createItem_(parent, item, callback) {
+    const container =
+        createAndAppendDivWithClass(parent, 'menu-item-container');
     const element =
         createAndAppendDivWithClass(
-            parent, 'menu-item ' + ((item.classNames || []).join(' ') || ''));
+            container,
+            'menu-item ' + ((item.classNames || []).join(' ') || ''));
+    const elementLabel =
+        createAndAppendDivWithClass(container, 'menu-item-label');
+    elementLabel.innerText = item.name;
     element.title = item.name;
     if (item.id) element.id = item.id;
     element.onclick = callback;
@@ -86,7 +92,13 @@ class Menu {
       case 'icon':
         const image = document.createElement('img');
         item.element.classList.add('menu-icon');
-        image.src = `assets/ic_${item.materialIcon}_white_24px.svg`;
+        if (item.materialIcon) {
+          image.src = `assets/ic_${item.materialIcon}_white_24px.svg`;
+        } else if (item.icon) {
+          image.src = item.icon;
+          image.style.height = '24px';
+          image.style.width = '24px';
+        }
         item.element.appendChild(image);
         break;
       case 'label':
@@ -111,15 +123,15 @@ class Menu {
         break;
       case 'input':
       case 'textarea':
-        const label =
-            createAndAppendDivWithClass(item.element, 'menu-textarea-label');
-        label.textContent = item.name;
         const textarea = document.createElement(
             item.presentation == 'input' ? 'input' : 'textarea');
         if (item.presentation == 'textarea') {
           textarea.rows = item.rows;
         }
-        textarea.className = 'menu-textarea-input';
+        if (item.rows == '1' || item.presentation == 'input') {
+          textarea.classList.add('menu-input-element');
+        }
+        textarea.classList.add('menu-textarea-input');
         if (item.datalistId) {
           textarea.setAttribute('list', item.datalistId);
         }
@@ -139,11 +151,9 @@ class Menu {
         }
         break;
       case 'dropdown':
-        const dropdownLabel =
-            createAndAppendDivWithClass(item.element, 'menu-select-label');
-        dropdownLabel.textContent = item.name;
         const select = document.createElement('select');
         item.element.appendChild(select);
+        select.classList.add('menu-select-element');
         item.dropdownValues.forEach((dropdownValue, index) => {
           const option = document.createElement('option');
           option.textContent = dropdownValue;
@@ -267,7 +277,7 @@ class Menu {
       'circle-cell-primary',
     ];
     return {
-      name,
+      name: 'Angled wall',
       type: 'tool',
       presentation: 'cells',
       classNames: ['menu-walls-angled'],
@@ -659,10 +669,10 @@ class Menu {
     // ]
     return [
       {
-        name: 'Status',
+        name: 'Info',
         presentation: 'icon',
+        materialIcon: 'error_outline',
         id: 'statusIcon',
-        materialIcon: 'swap_vertical_circle',
         enabledInReadonlyMode: true,
         submenu: {
           items: [
@@ -670,19 +680,10 @@ class Menu {
               name: 'Status',
               type: 'label',
               presentation: 'label',
+              classNames: ['menu-label'],
               id: 'statusText',
               enabledInReadonlyMode: true,
             },
-          ],
-        },
-      },
-      {
-        name: 'Info',
-        presentation: 'icon',
-        materialIcon: 'error_outline',
-        enabledInReadonlyMode: true,
-        submenu: {
-          items: [
             {
               name: 'Title',
               type: 'inputContainer',
@@ -1202,8 +1203,8 @@ class Menu {
             {
               name: 'About',
               type: 'button',
-              presentation: 'label',
-              text: 'About',
+              presentation: 'icon',
+              materialIcon: 'live_help',
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('../index.html', '_blank');
@@ -1212,8 +1213,8 @@ class Menu {
             {
               name: 'Feedback',
               type: 'button',
-              presentation: 'label',
-              text: 'Report bug or request feature',
+              presentation: 'icon',
+              materialIcon: 'bug_report',
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('https://feedback.userreport.com/7e918812-4e93-4a8f-9541-9af34d0f4231/', '_blank');
@@ -1222,8 +1223,8 @@ class Menu {
             {
               name: 'Contact',
               type: 'button',
-              presentation: 'label',
-              text: 'Contact',
+              presentation: 'icon',
+              materialIcon: 'email',
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('mailto:contact@mipui.net', '_blank');
@@ -1232,8 +1233,8 @@ class Menu {
             {
               name: 'Source Code',
               type: 'button',
-              presentation: 'label',
-              text: 'Source Code',
+              presentation: 'icon',
+              icon: 'assets/GitHub-Mark-Light-32px.png',
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('https://github.com/amishne/mipui', '_blank');
