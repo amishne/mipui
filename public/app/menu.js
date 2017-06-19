@@ -1193,7 +1193,7 @@ class Menu {
         },
       },
       {
-        name: 'About',
+        name: 'Help',
         presentation: 'icon',
         materialIcon: 'help',
         tip: '',
@@ -1204,7 +1204,7 @@ class Menu {
               name: 'About',
               type: 'button',
               presentation: 'icon',
-              materialIcon: 'live_help',
+              materialIcon: 'help',
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('../index.html', '_blank');
