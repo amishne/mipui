@@ -1,4 +1,5 @@
 function handleKeyDownEvent(keyDownEvent) {
+  if (!state.secret_) return;
   if (keyDownEvent.ctrlKey) {
     switch (keyDownEvent.key) {
       case 'z':
@@ -138,6 +139,7 @@ function handleTouchEndEvent(touchEvent) {
 
 function resizeGridBy(
     firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff) {
+  if (!state.secret_) return;
   // First, complete pending ops.
   state.opCenter.recordOperationComplete();
   // Update the state's grid data.
@@ -161,7 +163,6 @@ function resizeGridBy(
   nav.translate.y -= offsetY * nav.scale;
   updateMapTransform();
   state.opCenter.recordOperationComplete();
-  refreshMapResizeButtonLocations();
 }
 
 function resetView() {
@@ -180,6 +181,7 @@ function resetView() {
 }
 
 function resetGrid() {
+  if (!state.secret_) return;
   state.opCenter.recordOperationComplete();
   state.theMap.resetToDefault();
   [pk.firstColumn, pk.firstRow, pk.lastColumn, pk.lastRow].forEach(property => {
