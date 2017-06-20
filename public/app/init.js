@@ -90,7 +90,6 @@ function start() {
       state.opCenter.connectToExistingMap(mid, secret, () => {
         if (secret) state.menu.setToInitialSelection();
         resetView();
-        refreshMapResizeButtonLocations();
         setStatus(Status.READY);
       });
     } else {

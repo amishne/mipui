@@ -62,6 +62,10 @@ class State {
     this.appliedTheme_ = 0;
   }
 
+  isReadOnly() {
+    return this.mid_ && !this.secret_;
+  }
+
   set gesture(newGesture) {
     if (this.gesture_) this.gesture_.onUnselect();
     this.gesture_ = newGesture;
@@ -191,6 +195,7 @@ class State {
   load(pstate) {
     this.pstate_ = pstate;
     createTheMapAndUpdateElements();
+    refreshMapResizeButtonLocations();
   }
 
   setupNewMid(callback) {

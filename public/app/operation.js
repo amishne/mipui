@@ -40,7 +40,7 @@ class Operation {
     this.markComplete();
   }
 
-  markComplete() {
+  markComplete(directlyCalled) {
     let mapNeedsUpdate = false;
     let descNeedsUpdate = false;
     let reloadTheme = false;
@@ -66,6 +66,7 @@ class Operation {
     }
     if (mapNeedsUpdate) {
       createTheMapAndUpdateElements();
+      if (!directlyCalled) refreshMapResizeButtonLocations();
     }
     if (descNeedsUpdate) {
       state.menu.descChanged();

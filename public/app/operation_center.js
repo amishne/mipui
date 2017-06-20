@@ -122,7 +122,7 @@ class OperationCenter {
   // This updates the undo stack and sends the op to the server.
   recordOperationComplete() {
     if (this.currentOperation_.length == 0) return;
-    this.currentOperation_.markComplete();
+    this.currentOperation_.markComplete(true);
     this.addLocalOperation_(this.currentOperation_);
     this.currentOperation_ = new Operation();
     if (this.autoSaveTimerId_) {

@@ -1,5 +1,5 @@
 function handleKeyDownEvent(keyDownEvent) {
-  if (!state.secret_) return;
+  if (state.isReadOnly()) return;
   if (keyDownEvent.ctrlKey) {
     switch (keyDownEvent.key) {
       case 'z':
@@ -34,12 +34,14 @@ function handleKeyDownEvent(keyDownEvent) {
   }
 }
 
-function updateMapTransform() {
+function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
   const nav = state.navigation;
   document.getElementById('theMap').style.transform =
       `translate(${nav.translate.x}px, ${nav.translate.y}px) ` +
       `scale(${nav.scale})`;
-  refreshMapResizeButtonLocations();
+  if (shouldRefreshMapResizeButtonLocations) {
+    refreshMapResizeButtonLocations();
+  }
 }
 
 let useWheelForZooming = true;
@@ -76,7 +78,7 @@ function zoom(wheelEvent, incremental = false) {
   nav.scale += scaleDiff;
   nav.translate.x -= growth * (wheelEvent.x - nav.translate.x);
   nav.translate.y -= growth * (wheelEvent.y - nav.translate.y);
-  updateMapTransform();
+  updateMapTransform(true);
 }
 
 //let prevGridCell = null;
@@ -102,7 +104,7 @@ function pan(x, y) {
   const nav = state.navigation;
   nav.translate.x += x;
   nav.translate.y += y;
-  updateMapTransform();
+  updateMapTransform(true);
 }
 
 function handleTouchStartEvent(touchEvent) {
@@ -139,7 +141,7 @@ function handleTouchEndEvent(touchEvent) {
 
 function resizeGridBy(
     firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff) {
-  if (!state.secret_) return;
+  if (state.isReadOnly()) return;
   // First, complete pending ops.
   state.opCenter.recordOperationComplete();
   // Update the state's grid data.
@@ -161,7 +163,7 @@ function resizeGridBy(
   const nav = state.navigation;
   nav.translate.x -= offsetX * nav.scale;
   nav.translate.y -= offsetY * nav.scale;
-  updateMapTransform();
+  updateMapTransform(false);
   state.opCenter.recordOperationComplete();
 }
 
@@ -170,18 +172,18 @@ function resetView() {
   nav.scale = 1.0;
   nav.translate.x = 8;
   nav.translate.y = 8;
-  updateMapTransform();
+  updateMapTransform(false);
   const app = document.getElementById('app');
   const theMap = document.getElementById('theMap');
   const appRect = app.getBoundingClientRect();
   const theMapRect = theMap.getBoundingClientRect();
   pan(appRect.width / 2 - theMapRect.width / 2,
       appRect.height / 2 - theMapRect.height / 2);
-  updateMapTransform();
+  updateMapTransform(true);
 }
 
 function resetGrid() {
-  if (!state.secret_) return;
+  if (state.isReadOnly()) return;
   state.opCenter.recordOperationComplete();
   state.theMap.resetToDefault();
   [pk.firstColumn, pk.firstRow, pk.lastColumn, pk.lastRow].forEach(property => {
