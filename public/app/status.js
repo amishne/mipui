@@ -1,47 +1,25 @@
 const Status = {
-  INITIALIZING: 'Initializing...',
-  READY: 'Ready',
-  LOADING: 'Loading...',
-  LOADING_FAILED: 'Loading failed',
-  UNSAVED: 'Unsaved',
-  SAVING: 'Saving...',
-  SAVED: 'Saved',
-  SAVE_ERROR: 'Save error',
-  UPDATING: 'Updating...',
-  UPDATE_ERROR: 'Update error',
-  AUTH_ERROR: 'Authentication error',
+  INITIALIZING: {text: 'Initializing...', icon: 'cloud_queue', type: 'bad'},
+  READY: {text: 'Ready', icon: 'cloud_done', type: 'good'},
+  LOADING: {text: 'Loading...', icon: 'cloud_download', type: 'bad'},
+  LOADING_FAILED: {text: 'Loading failed', icon: 'cloud_off', type: 'bad'},
+  SAVING: {text: 'Saving...', icon: 'cloud_upload', type: 'unstable'},
+  SAVED: {text: 'Saved', icon: 'cloud_done', type: 'good'},
+  SAVE_ERROR: {text: 'Save error', icon: 'cloud_off', type: 'unstable'},
+  UPDATING: {text: 'Updating...', icon: 'cloud_download', type: 'unstable'},
+  UPDATE_ERROR: {text: 'Update error', icon: 'cloud_off', type: 'unstable'},
+  AUTH_ERROR:
+      {text: 'Authentication error', icon: 'cloud_off', type: 'unstable'},
 };
 
 function setStatus(status) {
+  const statusIconParent = document.getElementById('statusIconParent');
   const statusIcon = document.getElementById('statusIcon');
-  const statusText = document.getElementById('statusText');
-  const setClass = (className) => {
-    [statusIcon, statusText].forEach(element => {
-      element.classList
-          .remove('status-error', 'status-unstable', 'status-good');
-      element.classList.add(className);
-    });
-  };
-  statusText.textContent = status;
-  switch(status) {
-    // No work can be done in these cases:
-    case Status.INITIALIZING:
-    case Status.LOADING:
-    case Status.LOADING_FAILED:
-      setClass('status-error');
-      break;
-    // Something's still progress or not quite right, but work can be done:
-    case Status.UNSAVED:
-    case Status.SAVING:
-    case Status.UPDATING:
-    case Status.UPDATE_ERROR:
-    case Status.AUTH_ERROR:
-      setClass('status-unstable');
-      break;
-    // Everything's good:
-    case Status.READY:
-    case Status.SAVED:
-      setClass('status-good');
-      break;
-  }
+  const className = 'status-' + status.type;
+  [statusIconParent, statusIcon].forEach(element => {
+    element.classList.remove('status-bad', 'status-unstable', 'status-good');
+    element.classList.add(className);
+  });
+  statusIcon.title = status.text;
+  statusIcon.innerHTML = `<img src="assets/ic_${status.icon}_white_24px.svg">`;
 }

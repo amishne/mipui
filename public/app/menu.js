@@ -669,78 +669,21 @@ class Menu {
     // ]
     return [
       {
-        name: 'Info',
+        name: 'File',
         presentation: 'icon',
-        materialIcon: 'error_outline',
-        id: 'statusIcon',
+        materialIcon: 'insert_drive_file',
+        id: 'statusIconParent',
         enabledInReadonlyMode: true,
         submenu: {
           items: [
             {
               name: 'Status',
-              type: 'label',
-              presentation: 'label',
+              presentation: 'icon',
+              materialIcon: 'cloud_queue',
               classNames: ['menu-label'],
-              id: 'statusText',
+              id: 'statusIcon',
               enabledInReadonlyMode: true,
             },
-            {
-              name: 'Title',
-              type: 'inputContainer',
-              id: 'mapTitle',
-              classNames: ['menu-textarea', 'menu-input-container'],
-              presentation: 'textarea',
-              rows: 1,
-              enabledInReadonlyMode: false,
-              onChange: (oldText, newText) => {
-                state.setProperty(pk.title, newText, true);
-                state.opCenter.recordOperationComplete();
-              }
-            },
-            {
-              name: 'Description',
-              type: 'inputContainer',
-              id: 'mapLongDesc',
-              classNames: ['menu-textarea', 'menu-input-container'],
-              rows: 2,
-              presentation: 'textarea',
-              enabledInReadonlyMode: false,
-              onChange: (oldText, newText) => {
-                state.setProperty(pk.longDescription, newText, true);
-                state.opCenter.recordOperationComplete();
-              }
-            },
-            {
-              name: 'Theme',
-              type: 'inputContainer',
-              presentation: 'dropdown',
-              classNames: ['menu-input-container'],
-              id: 'mapTheme',
-              dropdownValues: themes.map(theme => theme.name),
-              enabledInReadonlyMode: false,
-              onChange: newChoiceNum => {
-                state.setProperty(pk.theme, newChoiceNum, true);
-                state.reloadTheme();
-              },
-            },
-            {
-              name: 'Created on',
-              type: 'label',
-              id: 'createdOn',
-              presentation: 'label',
-              enabledInReadonlyMode: true,
-              text: 'Map not yet created',
-            },
-          ],
-        },
-      },
-      {
-        name: 'File',
-        presentation: 'icon',
-        materialIcon: 'insert_drive_file',
-        enabledInReadonlyMode: true,
-        submenu: {
-          items: [
             {
               name: 'New',
               type: 'button',
@@ -884,6 +827,50 @@ class Menu {
                   });
                 }, 10);
               },
+            },
+          ],
+        },
+      },
+      {
+        name: 'Info',
+        presentation: 'icon',
+        materialIcon: 'error_outline',
+        enabledInReadonlyMode: true,
+        submenu: {
+          items: [
+            {
+              name: 'Title',
+              type: 'inputContainer',
+              id: 'mapTitle',
+              classNames: ['menu-textarea', 'menu-input-container'],
+              presentation: 'textarea',
+              rows: 1,
+              enabledInReadonlyMode: false,
+              onChange: (oldText, newText) => {
+                state.setProperty(pk.title, newText, true);
+                state.opCenter.recordOperationComplete();
+              }
+            },
+            {
+              name: 'Description',
+              type: 'inputContainer',
+              id: 'mapLongDesc',
+              classNames: ['menu-textarea', 'menu-input-container'],
+              rows: 2,
+              presentation: 'textarea',
+              enabledInReadonlyMode: false,
+              onChange: (oldText, newText) => {
+                state.setProperty(pk.longDescription, newText, true);
+                state.opCenter.recordOperationComplete();
+              }
+            },
+            {
+              name: 'Created on',
+              type: 'label',
+              id: 'createdOn',
+              presentation: 'label',
+              enabledInReadonlyMode: true,
+              text: 'Map not yet created',
             },
           ],
         },
@@ -1051,6 +1038,19 @@ class Menu {
         tip: 'Pan with middle mouse button or touch pad, zoom with mousewheel or pinch.',
         submenu: {
           items: [
+            {
+              name: 'Theme',
+              type: 'inputContainer',
+              presentation: 'dropdown',
+              classNames: ['menu-input-container'],
+              id: 'mapTheme',
+              dropdownValues: themes.map(theme => theme.name),
+              enabledInReadonlyMode: false,
+              onChange: newChoiceNum => {
+                state.setProperty(pk.theme, newChoiceNum, true);
+                state.reloadTheme();
+              },
+            },
             {
               name: 'Zoom in',
               type: 'button',

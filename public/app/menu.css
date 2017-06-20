@@ -34,6 +34,7 @@
 .menu-tip {
   color: lightgrey;
   display: inline-block;
+  padding: 1px;
 }
 
 .menu-item {
@@ -126,7 +127,7 @@
   overflow-x: auto;
 }
 
-.status-error {
+.status-bad {
   background-color: firebrick;
 }
 
