@@ -1046,23 +1046,13 @@ class Menu {
       {
         name: 'Map',
         presentation: 'icon',
-        materialIcon: 'search',
+        materialIcon: 'grid_on',
         enabledInReadonlyMode: true,
         tip: 'Pan with middle mouse button or touch pad, zoom with mousewheel or pinch.',
         submenu: {
           items: [
             {
-              name: 'Reset view',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'zoom_out_map',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                resetView();
-              },
-            },
-            {
-              name: 'Zoom In',
+              name: 'Zoom in',
               type: 'button',
               presentation: 'icon',
               materialIcon: 'zoom_in',
@@ -1076,7 +1066,7 @@ class Menu {
               },
             },
             {
-              name: 'Zoom Out',
+              name: 'Zoom out',
               type: 'button',
               presentation: 'icon',
               materialIcon: 'zoom_out',
@@ -1087,6 +1077,16 @@ class Menu {
                   y: 0,
                   deltaY: 1,
                 });
+              },
+            },
+            {
+              name: 'Reset view',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'zoom_out_map',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                resetView();
               },
             },
             {
@@ -1110,7 +1110,7 @@ class Menu {
               },
             },
             {
-              name: 'Reset grid',
+              name: 'Clear map',
               type: 'button',
               presentation: 'icon',
               materialIcon: 'delete',
