@@ -735,6 +735,160 @@ class Menu {
         },
       },
       {
+        name: 'File',
+        presentation: 'icon',
+        materialIcon: 'insert_drive_file',
+        enabledInReadonlyMode: true,
+        submenu: {
+          items: [
+            {
+              name: 'New',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'create_new_folder',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('.', '_blank');
+              },
+            },
+            {
+              name: 'Share read-only',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'share',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                this.showShareDialog_(state.getMid(), null);
+              },
+            },
+            {
+              name: 'Share editable',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'lock_open',
+              callback: () => {
+                const secret = state.getSecret();
+                if (!secret) {
+                  alert('Cannot share a writable version of a read-only map.');
+                  return;
+                }
+                this.showShareDialog_(state.getMid(), state.getSecret());
+              },
+            },
+            {
+              name: 'Fork',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'call_split',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                state.opCenter.fork();
+                alert('Forked!');
+              },
+            },
+            {
+              name: 'Download PNG',
+              type: 'button',
+              presentation: 'label',
+              text: 'PNG',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const overlay =
+                    createAndAppendDivWithClass(document.body, 'modal-overlay');
+                overlay.textContent = 'Constructing PNG...';
+                setTimeout(() => {
+                  const scale = 2.1875;
+                  const numColumns = (state.getProperty(pk.lastColumn) -
+                      state.getProperty(pk.firstColumn)) - 1;
+                  const numRows = (state.getProperty(pk.lastRow) -
+                      state.getProperty(pk.firstRow)) - 1;
+                  const width = scale * (2 + numColumns *
+                      (state.theMap.cellWidth + 1 +
+                      state.theMap.dividerWidth + 1));
+                  const height = scale * (2 + numRows *
+                      (state.theMap.cellHeight + 1 +
+                      state.theMap.dividerHeight + 1));
+                  const theMapElement = document.getElementById('theMap');
+                  domtoimage.toBlob(theMapElement, {
+                    style: {
+                      transform: `matrix(${scale}, 0, 0, ${scale}, 0, 0)`,
+                    },
+                    width,
+                    height,
+                  }).then(blob => {
+                    saveAs(blob, 'mipui.png');
+                    overlay.parentElement.removeChild(overlay);
+                  }).catch(() => {
+                    overlay.parentElement.removeChild(overlay);
+                  });
+                }, 10);
+              },
+            },
+            {
+              name: 'Download PNG of viewport',
+              type: 'button',
+              presentation: 'label',
+              text: 'PNG (view)',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const overlay =
+                    createAndAppendDivWithClass(document.body, 'modal-overlay');
+                overlay.textContent = 'Constructing PNG...';
+                setTimeout(() => {
+                  const appElement = document.getElementById('app');
+                  const theMapElement = document.getElementById('theMap');
+                  domtoimage.toBlob(theMapElement, {
+                    width: appElement.clientWidth,
+                    height: appElement.clientHeight,
+                  }).then(blob => {
+                    saveAs(blob, 'mipui.png');
+                    overlay.parentElement.removeChild(overlay);
+                  }).catch(() => {
+                    overlay.parentElement.removeChild(overlay);
+                  });
+                }, 10);
+              },
+            },
+            {
+              name: 'Download SVG',
+              type: 'button',
+              presentation: 'label',
+              text: 'SVG',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const overlay =
+                    createAndAppendDivWithClass(document.body, 'modal-overlay');
+                overlay.textContent = 'Constructing SVG...';
+                setTimeout(() => {
+                  const numColumns = (state.getProperty(pk.lastColumn) -
+                      state.getProperty(pk.firstColumn)) - 1;
+                  const numRows = (state.getProperty(pk.lastRow) -
+                      state.getProperty(pk.firstRow)) - 1;
+                  const width = 2 + numColumns *
+                      (state.theMap.cellWidth + 1 +
+                      state.theMap.dividerWidth + 1);
+                  const height = 2 + numRows *
+                      (state.theMap.cellHeight + 1 +
+                      state.theMap.dividerHeight + 1);
+                  const theMapElement = document.getElementById('theMap');
+                  domtoimage.toSvg(theMapElement, {
+                    style: { transform: '' },
+                    width,
+                    height,
+                  }).then(dataUrl => {
+                    const blob = new Blob([dataUrl.substr(33)], {type: "image/svg+xml"});
+                    saveAs(blob, 'mipui.svg');
+                    overlay.parentElement.removeChild(overlay);
+                  }).catch(() => {
+                    overlay.parentElement.removeChild(overlay);
+                  });
+                }, 10);
+              },
+            },
+          ],
+        },
+      },
+      {
         name: 'Select',
         presentation: 'icon',
         materialIcon: 'select_all',
@@ -890,170 +1044,7 @@ class Menu {
         },
       },
       {
-        name: 'Share',
-        presentation: 'icon',
-        materialIcon: 'share',
-        enabledInReadonlyMode: true,
-        submenu: {
-          items: [
-            {
-              name: 'New',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'create_new_folder',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                window.open('.', '_blank');
-              },
-            },
-            {
-              name: 'Read-only URL',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'lock',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                this.showShareDialog_(state.getMid(), null);
-              },
-            },
-            {
-              name: 'Read-write URL',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'lock_open',
-              callback: () => {
-                const secret = state.getSecret();
-                if (!secret) {
-                  alert('Cannot share a writable version of a read-only map.');
-                  return;
-                }
-                this.showShareDialog_(state.getMid(), state.getSecret());
-              },
-            },
-            {
-              name: 'Fork',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'call_split',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                state.opCenter.fork();
-                alert('Forked!');
-              },
-            },
-            {
-              name: 'Download PNG',
-              type: 'button',
-              presentation: 'label',
-              text: 'PNG',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                const overlay =
-                    createAndAppendDivWithClass(document.body, 'modal-overlay');
-                overlay.textContent = 'Constructing PNG...';
-                setTimeout(() => {
-                  const scale = 2.1875;
-                  const numColumns = (state.getProperty(pk.lastColumn) -
-                      state.getProperty(pk.firstColumn)) - 1;
-                  const numRows = (state.getProperty(pk.lastRow) -
-                      state.getProperty(pk.firstRow)) - 1;
-                  const width = scale * (2 + numColumns *
-                      (state.theMap.cellWidth + 1 +
-                      state.theMap.dividerWidth + 1));
-                  const height = scale * (2 + numRows *
-                      (state.theMap.cellHeight + 1 +
-                      state.theMap.dividerHeight + 1));
-                  const theMapElement = document.getElementById('theMap');
-                  domtoimage.toBlob(theMapElement, {
-                    style: {
-                      transform: `matrix(${scale}, 0, 0, ${scale}, 0, 0)`,
-                    },
-                    width,
-                    height,
-                  }).then(blob => {
-                    saveAs(blob, 'mipui.png');
-                    overlay.parentElement.removeChild(overlay);
-                  }).catch(() => {
-                    overlay.parentElement.removeChild(overlay);
-                  });
-                }, 10);
-              },
-            },
-            {
-              name: 'Download PNG of viewport',
-              type: 'button',
-              presentation: 'label',
-              text: 'PNG (view)',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                const overlay =
-                    createAndAppendDivWithClass(document.body, 'modal-overlay');
-                overlay.textContent = 'Constructing PNG...';
-                setTimeout(() => {
-                  const appElement = document.getElementById('app');
-                  const theMapElement = document.getElementById('theMap');
-                  domtoimage.toBlob(theMapElement, {
-                    width: appElement.clientWidth,
-                    height: appElement.clientHeight,
-                  }).then(blob => {
-                    saveAs(blob, 'mipui.png');
-                    overlay.parentElement.removeChild(overlay);
-                  }).catch(() => {
-                    overlay.parentElement.removeChild(overlay);
-                  });
-                }, 10);
-              },
-            },
-            {
-              name: 'Download SVG',
-              type: 'button',
-              presentation: 'label',
-              text: 'SVG',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                const overlay =
-                    createAndAppendDivWithClass(document.body, 'modal-overlay');
-                overlay.textContent = 'Constructing SVG...';
-                setTimeout(() => {
-                  const numColumns = (state.getProperty(pk.lastColumn) -
-                      state.getProperty(pk.firstColumn)) - 1;
-                  const numRows = (state.getProperty(pk.lastRow) -
-                      state.getProperty(pk.firstRow)) - 1;
-                  const width = 2 + numColumns *
-                      (state.theMap.cellWidth + 1 +
-                      state.theMap.dividerWidth + 1);
-                  const height = 2 + numRows *
-                      (state.theMap.cellHeight + 1 +
-                      state.theMap.dividerHeight + 1);
-                  const theMapElement = document.getElementById('theMap');
-                  domtoimage.toSvg(theMapElement, {
-                    style: { transform: '' },
-                    width,
-                    height,
-                  }).then(dataUrl => {
-                    const blob = new Blob([dataUrl.substr(33)], {type: "image/svg+xml"});
-                    saveAs(blob, 'mipui.svg');
-                    overlay.parentElement.removeChild(overlay);
-                  }).catch(() => {
-                    overlay.parentElement.removeChild(overlay);
-                  });
-                }, 10);
-              },
-            },
-            {
-              name: 'Reset grid',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'delete',
-              callback: () => {
-                resetGrid();
-              },
-            },
-          ],
-        },
-      },
-      {
-        name: 'View',
+        name: 'Map',
         presentation: 'icon',
         materialIcon: 'search',
         enabledInReadonlyMode: true,
@@ -1096,6 +1087,35 @@ class Menu {
                   y: 0,
                   deltaY: 1,
                 });
+              },
+            },
+            {
+              name: 'Undo',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'undo',
+              callback: () => {
+                state.opCenter.undo();
+                state.opCenter.recordOperationComplete();
+              },
+            },
+            {
+              name: 'Redo',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'redo',
+              callback: () => {
+                state.opCenter.redo();
+                state.opCenter.recordOperationComplete();
+              },
+            },
+            {
+              name: 'Reset grid',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'delete',
+              callback: () => {
+                resetGrid();
               },
             },
           ],
