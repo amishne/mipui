@@ -117,6 +117,7 @@ class Menu {
       item.element.classList.add('disabled-in-read-only-mode');
     }
     let cells = null;
+    let deferredSvg = null;
     switch (item.presentation) {
       case 'icon':
         const image = document.createElement('img');
@@ -142,6 +143,7 @@ class Menu {
         }
         let selectedChild = item.submenu.allItems.find(item => item.isSelected);
         cells = selectedChild.cells;
+        deferredSvg = selectedChild.deferredSvg;
         item.element.className = 'menu-item';
         if (item.isSelected) item.element.classList.add('selected-menu-item');
         item.element.classList.add(...selectedChild.classNames);
@@ -149,6 +151,21 @@ class Menu {
       case 'cells':
         item.element.innerHTML = '';
         this.createCellsForItem_(item.element, cells || item.cells);
+        deferredSvg = deferredSvg || item.deferredSvg;
+        if (deferredSvg) {
+          var xhr = new XMLHttpRequest();
+          xhr.open('get', deferredSvg.path, true);
+          xhr.onreadystatechange = () => {
+            if (xhr.readyState != 4) return;
+            const svgElement = xhr.responseXML.documentElement;
+            svgElement.classList.add('image');
+            svgElement.classList.add(...deferredSvg.classNames);
+            const element = item.element.children[deferredSvg.childNum];
+            element.innerHTML = '';
+            element.appendChild(svgElement);
+          };
+          xhr.send();
+        }
         break;
       case 'input':
       case 'textarea':
@@ -247,6 +264,9 @@ class Menu {
             .classList[isThisItem && otherSubmenuItem.type == 'tool' ?
                 'add' : 'remove']('selected-submenu-item');
       });
+    }
+    submenuItem.callback();
+    if (submenuItem.type == 'tool') {
       if (submenuItem.parent.presentation == 'selected child') {
         this.updateItem_(submenuItem.parent);
       }
@@ -255,7 +275,6 @@ class Menu {
         this.updateItem_(submenuItem.parent.parent);
       }
     }
-    submenuItem.callback();
   }
 
   createWallTool_(size, isManual, isSelected) {
@@ -621,18 +640,14 @@ class Menu {
         'image-cell',
       ].concat(variation.classNames),
     }];
-    var xhr = new XMLHttpRequest();
-    xhr.open('get', path, true);
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState != 4) return;
-      const svgElement = xhr.responseXML.documentElement;
-      svgElement.classList.add('image');
-      svgElement.classList.add(...variation.classNames);
-      const element = item.element.children[1];
-      element.innerHTML = '';
-      element.appendChild(svgElement);
+    item.deferredSvg = {
+      path,
+      classNames: variation.classNames,
+      childNum: 1,
     };
-    xhr.send();
+    if (item.element) {
+      this.updateItem_(item);
+    }
   }
 
   createTokenButton_(gameIcon) {
