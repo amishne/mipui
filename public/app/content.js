@@ -38,6 +38,10 @@ const ct = {
         'image-cell-_EDITING_',
       ],
       black: {classNames: ['image-black']},
+      green: {classNames: ['image-green']},
+      brown: {classNames: ['image-brown']},
+      blue: {classNames: ['image-blue']},
+      red: {classNames: ['image-red']},
     }
   },
   separators: {

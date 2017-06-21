@@ -1,7 +1,6 @@
 class Menu {
   constructor() {
     this.gameIcons_ = gameIcons;
-    this.currentImageVariation_ = ct.images.image.black;
     this.groups_ = {
       shapeKindTools: {
         selectedKind: ct.shapes.square,
@@ -11,6 +10,14 @@ class Menu {
         selectedVariation: ct.shapes.square.green,
         items: [],
       },
+      imageIconTools: {
+        selectedIcon: gameIcons.find(icon => icon.name == 'wyvern'),
+        items: [],
+      },
+      imageVariationTools: {
+        selectedVariation: ct.images.image.black,
+        items: [],
+      }
     };
     this.menuItems_ = this.setupMenuItems_();
   }
@@ -428,7 +435,7 @@ class Menu {
       ],
     };
   }
-  
+
   updateShapeTool_(item, kind, variation) {
     item.callback = () => {
       state.gesture = new ShapeGesture(ct.shapes, kind, variation);
@@ -579,83 +586,69 @@ class Menu {
     return selector;
   }
 
-  createTokenButtons_() {
-    return [
-      this.createTokenButton_(
-          this.gameIcons_.find(icon => icon.name == 'wyvern')),
-    ];
+  updateImageTool_(item, gameIcon, variation) {
+    const path = gameIcon.path.replace('public/app/', '');
+    item.callback = () => {
+      this.groups_.imageIconTools.selectedIcon = gameIcon;
+      state.gesture = new ImageGesture(
+          ct.images,
+          ct.images.image,
+          variation,
+          path,
+          false,
+          gameIcon.hash);
+      if (item.group == this.groups_.imageIconTools) {
+        this.groups_.imageVariationTools.items.forEach(variationItem => {
+          this.updateImageTool_(
+              variationItem, gameIcon, variationItem.variation);
+        });
+      } else {
+        this.groups_.imageIconTools.items.forEach(iconItem => {
+          this.updateImageTool_(iconItem, iconItem.gameIcon, variation);
+        });
+      }
+    };
+    item.cells = [{
+      classNames: [
+        'grid-cell',
+        'primary-cell',
+        'floor-cell',
+      ],
+    }, {
+      classNames: [
+        'grid-cell',
+        'primary-cell',
+        'image-cell',
+      ].concat(variation.classNames),
+    }];
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', path, true);
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState != 4) return;
+      const svgElement = xhr.responseXML.documentElement;
+      svgElement.classList.add('image');
+      svgElement.classList.add(...variation.classNames);
+      const element = item.element.children[1];
+      element.innerHTML = '';
+      element.appendChild(svgElement);
+    };
+    xhr.send();
   }
 
   createTokenButton_(gameIcon) {
-    const path = gameIcon.path.replace('public/app/', '');
-    return {
+    const item = {
       name: gameIcon.name.replace('-', ' '),
       type: 'tool',
       presentation: 'cells',
+      group: this.groups_.imageIconTools,
       classNames: ['menu-tokens'],
-      isSelected: gameIcon.name == 'wyvern',
+      isSelected: false,
       id: 'token_' + gameIcon.name,
-      callback: () => {
-        state.gesture = new ImageGesture(
-            ct.images,
-            ct.images.image,
-            this.currentImageVariation_,
-            path,
-            false,
-            gameIcon.hash);
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-        {
-          innerHTML: `<img src="${path}">`,
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'image-cell',
-          ],
-        },
-      ],
+      gameIcon,
     };
-  }
-
-  createTokenColorSelector_(variation) {
-    return {
-      name: 'wyvern',
-      type: 'tool',
-      presentation: 'cells',
-      classNames: ['menu-tokens'],
-      callback: () => {
-        this.currentImageVariation_ = variation;
-        if (state.gesture instanceof ImageGesture) {
-          state.gesture.setVariation(variation);
-        }
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-        {
-          innerHTML:
-              `<img src="assets/wyvern.svg" ` +
-              `class="${(variation.classList || []).join(' ')}">`,
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'image-cell',
-          ],
-        },
-      ],
-    };
+    this.updateImageTool_(
+        item, gameIcon, this.groups_.imageVariationTools.selectedVariation);
+    return item;
   }
 
   updateTokenSelectorSubmenu_(selector, text) {
@@ -680,6 +673,22 @@ class Menu {
     this.populateMenuItem_(selector);
     selector.parent.submenu.allItems = selector.submenu.allItems;
     selector.submenu.element.style.display = 'block';
+  }
+
+  createTokenColorTool_(name, variation, isSelected) {
+    const gameIcon = this.groups_.imageIconTools.selectedIcon;
+    const path = gameIcon.path.replace('public/app/', '');
+    const item = {
+      name,
+      type: 'tool',
+      presentation: 'cells',
+      group: this.groups_.imageVariationTools,
+      classNames: ['menu-tokens'],
+      isSelected,
+      variation,
+    };
+    this.updateImageTool_(item, gameIcon, variation);
+    return item;
   }
 
   iconNameMatch_(gameIcon, text) {
@@ -1233,8 +1242,14 @@ class Menu {
         presentation: 'selected child',
         tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
-          items: [this.createTokenSelector_()]
-              .concat(this.createTokenButtons_()),
+          items: [
+            this.createTokenSelector_(),
+            this.createTokenColorTool_('Black', ct.images.image.black, true),
+            this.createTokenColorTool_('Green', ct.images.image.green),
+            this.createTokenColorTool_('Brown', ct.images.image.brown),
+            this.createTokenColorTool_('Blue', ct.images.image.blue),
+            this.createTokenColorTool_('Red', ct.images.image.red),
+          ]
         },
       },
       {

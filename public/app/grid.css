@@ -537,6 +537,22 @@
   fill: black;
 }
 
+.image-green {
+  fill: darkgreen;
+}
+
+.image-brown {
+  fill: brown;
+}
+
+.image-blue {
+  fill: blue;
+}
+
+.image-red {
+  fill: red;
+}
+
 .text-cell-adding {
   color: rgba(50, 50, 50, 0.6);
 }
@@ -551,12 +567,12 @@
 }
 
 .green-square, .green-circle {
-  filter: hue-rotate(160deg) brightness(2.5);
+  filter: hue-rotate(160deg) brightness(1.5);
 }
 
 .green-square-adding, .green-circle-adding, .green-square-removing,
 .green-circle-removing {
-  filter: hue-rotate(165deg) brightness(3.0);
+  filter: hue-rotate(165deg) brightness(2.0);
 }
 
 .brown-square, .brown-circle {
