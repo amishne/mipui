@@ -1,8 +1,18 @@
 class Menu {
   constructor() {
     this.gameIcons_ = gameIcons;
-    this.menuItems_ = this.setupMenuItems_();
     this.currentImageVariation_ = ct.images.image.black;
+    this.groups_ = {
+      shapeKindTools: {
+        selectedKind: ct.shapes.square,
+        items: [],
+      },
+      shapeVariationTools: {
+        selectedVariation: ct.shapes.square.green,
+        items: [],
+      },
+    };
+    this.menuItems_ = this.setupMenuItems_();
   }
 
   createMenu() {
@@ -73,14 +83,26 @@ class Menu {
         createAndAppendDivWithClass(
             container,
             'menu-item ' + ((item.classNames || []).join(' ') || ''));
-    const elementLabel =
-        createAndAppendDivWithClass(container, 'menu-item-label');
-    elementLabel.innerText = item.name;
-    element.title = item.name;
+    if (item.name) {
+      const elementLabel =
+          createAndAppendDivWithClass(container, 'menu-item-label');
+      elementLabel.innerText = item.name;
+      element.title = item.name;
+    }
     if (item.id) element.id = item.id;
     element.onclick = callback;
     item.element = element;
+    if (item.group) {
+      item.group.items.push(item);
+    }
     this.updateItem_(item);
+  }
+
+  createSeparator_() {
+    return {
+      presentation: 'separator',
+      classNames: ['menu-separator'],
+    };
   }
 
   updateItem_(item) {
@@ -211,6 +233,7 @@ class Menu {
     if (submenuItem.type == 'tool') {
       state.gesture = null;
       submenuItem.parent.submenu.allItems.forEach(otherSubmenuItem => {
+        if (submenuItem.group != otherSubmenuItem.group) return;
         const isThisItem = submenuItem == otherSubmenuItem;
         otherSubmenuItem.isSelected = isThisItem;
         otherSubmenuItem.element
@@ -405,8 +428,22 @@ class Menu {
       ],
     };
   }
+  
+  updateShapeTool_(item, kind, variation) {
+    item.callback = () => {
+      state.gesture = new ShapeGesture(ct.shapes, kind, variation);
+      if (item.group == this.groups_.shapeKindTools) {
+        this.groups_.shapeVariationTools.items.forEach(shapeVariationItem => {
+          this.updateShapeTool_(
+              shapeVariationItem, kind, shapeVariationItem.variation);
+        });
+      } else {
+        this.groups_.shapeKindTools.items.forEach(shapeKindItem => {
+          this.updateShapeTool_(shapeKindItem, shapeKindItem.kind, variation);
+        });
+      }
+    }
 
-  createShapeTool_(name, kind, variation, isSelected) {
     const kindClassNames = kind.id == ct.shapes.square.id ? [
       'square-cell-0',
       'square-cell-primary',
@@ -414,33 +451,52 @@ class Menu {
       'circle-cell-0',
       'circle-cell-primary',
     ];
-    return {
+    item.cells = [{
+      classNames: [
+        'grid-cell',
+        'primary-cell',
+        'floor-cell',
+      ]
+    }, {
+      classNames: [
+        'grid-cell',
+        'primary-cell',
+        'shape-cell',
+      ].concat(kindClassNames).concat(variation.classNames),
+    }];
+    if (item.element) {
+      this.updateItem_(item);
+    }
+  }
+
+  createShapeTool_(name, kind, variation, group, isSelected) {
+    const item = {
       name,
       type: 'tool',
       presentation: 'cells',
       classNames: ['menu-shapes'],
+      group,
       isSelected,
-      callback: () => {
-        state.gesture =
-          new ShapeGesture(ct.shapes, kind, variation);
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'shape-cell',
-          ].concat(kindClassNames).concat(variation.classNames),
-        },
-      ],
+      kind,
+      variation,
     };
+    this.updateShapeTool_(item, kind, variation);
+    return item;
+  }
+
+  createShapeKindTool_(name, kind, isSelected) {
+    const variation = this.groups_.shapeVariationTools.selectedVariation;
+    this.groups_.shapeKindTools.selectedKind = kind;
+    return this.createShapeTool_(
+        name, kind, variation, this.groups_.shapeKindTools, isSelected);
+  }
+
+  createShapeVariationTool_(name, variationName, isSelected) {
+    const kind = this.groups_.shapeKindTools.selectedKind;
+    const variation = kind[variationName];
+    this.groups_.shapeVariationTools.selectedVariation = variation;
+    return this.createShapeTool_(
+        name, kind, variation, this.groups_.shapeVariationTools, isSelected);
   }
 
   createStairsTool_(name, kind, isSelected) {
@@ -1186,16 +1242,14 @@ class Menu {
         presentation: 'selected child',
         submenu: {
           items: [
-            this.createShapeTool_('Green square', ct.shapes.square, ct.shapes.square.green, true),
-            this.createShapeTool_('Green circle', ct.shapes.circle, ct.shapes.square.green, false),
-            this.createShapeTool_('Brown square', ct.shapes.square, ct.shapes.square.brown, false),
-            this.createShapeTool_('Brown circle', ct.shapes.circle, ct.shapes.square.brown, false),
-            this.createShapeTool_('Blue square', ct.shapes.square, ct.shapes.square.blue, false),
-            this.createShapeTool_('blue circle', ct.shapes.circle, ct.shapes.square.blue, false),
-            this.createShapeTool_('Red square', ct.shapes.square, ct.shapes.square.red, false),
-            this.createShapeTool_('Red circle', ct.shapes.circle, ct.shapes.square.red, false),
-            this.createShapeTool_('White square', ct.shapes.square, ct.shapes.square.white, false),
-            this.createShapeTool_('White circle', ct.shapes.circle, ct.shapes.square.white, false),
+            this.createShapeKindTool_('Square', ct.shapes.square, true),
+            this.createShapeKindTool_('Circle', ct.shapes.circle),
+            this.createSeparator_(),
+            this.createShapeVariationTool_('Green', 'green', true),
+            this.createShapeVariationTool_('Brown', 'brown'),
+            this.createShapeVariationTool_('Blue', 'blue'),
+            this.createShapeVariationTool_('Red', 'red'),
+            this.createShapeVariationTool_('White', 'white'),
           ],
         },
       },

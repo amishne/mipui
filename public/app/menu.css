@@ -58,6 +58,12 @@
   margin: 0 1px;
 }
 
+.menu-separator {
+  display: inline-table;
+  min-width: 6px;
+  visibility: hidden;
+}
+
 .menu-item-label {
   text-align: center;
   color: aliceblue;
