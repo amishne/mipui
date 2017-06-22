@@ -1,15 +1,15 @@
 const Status = {
-  INITIALIZING: {text: 'Initializing...', icon: 'cloud_queue', type: 'bad'},
+  INITIALIZING: {text: 'Initializing...', icon: 'cloud_queue', type: 'unstable'},
   READY: {text: 'Ready', icon: 'cloud_done', type: 'good'},
-  LOADING: {text: 'Loading...', icon: 'cloud_download', type: 'bad'},
+  LOADING: {text: 'Loading...', icon: 'cloud_download', type: 'unstable'},
   LOADING_FAILED: {text: 'Loading failed', icon: 'cloud_off', type: 'bad'},
   SAVING: {text: 'Saving...', icon: 'cloud_upload', type: 'unstable'},
   SAVED: {text: 'Saved', icon: 'cloud_done', type: 'good'},
-  SAVE_ERROR: {text: 'Save error', icon: 'cloud_off', type: 'unstable'},
+  SAVE_ERROR: {text: 'Save error', icon: 'cloud_off', type: 'bad'},
   UPDATING: {text: 'Updating...', icon: 'cloud_download', type: 'unstable'},
-  UPDATE_ERROR: {text: 'Update error', icon: 'cloud_off', type: 'unstable'},
+  UPDATE_ERROR: {text: 'Update error', icon: 'cloud_off', type: 'bad'},
   AUTH_ERROR:
-      {text: 'Authentication error', icon: 'cloud_off', type: 'unstable'},
+      {text: 'Authentication error', icon: 'cloud_off', type: 'bad'},
 };
 
 function setStatus(status) {

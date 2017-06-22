@@ -108,15 +108,15 @@ function pan(x, y) {
 }
 
 function handleTouchStartEvent(touchEvent) {
-  console.log('touchStart: ' + touchEvent);
+  debug('touchStart: ' + touchEvent);
 }
 
 function handleTouchMoveEvent(touchEvent) {
-  console.log('touchMove: ' + touchEvent);
+  debug('touchMove: ' + touchEvent);
 }
 
 function handleTouchEndEvent(touchEvent) {
-  console.log('touchEnd: ' + touchEvent);
+  debug('touchEnd: ' + touchEvent);
 }
 
 //function getCurrentGridCell(mouseEvent) {

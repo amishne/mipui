@@ -41,9 +41,10 @@ function initializeFirebase(callback) {
   };
   if (!isProd || isInTestingMode) {
     document.getElementById('warning').style.display = 'inline-block';
+    debug = s => console.log(s);
   }
   firebase.initializeApp(config);
-  firebase.database.enableLogging(true);
+  firebase.database.enableLogging(!isProd || isInTestingMode);
   firebase.auth().signInAnonymously()
       .then(user => {state.user = user; callback();})
       .catch(error => setStatus(Status.AUTH_ERROR));

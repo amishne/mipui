@@ -12,3 +12,5 @@ function hashString(s) {
     return a&a;
   }, 0);
 }
+
+let debug = () => {};

@@ -208,7 +208,7 @@ class OperationCenter {
 
   // Loads all the operations with numbers from fromNum to toNum.
   loadOperations_(fromNum, toNum) {
-    console.log(`Loading operations ${fromNum} to ${toNum}...`);
+    debug(`Loading operations ${fromNum} to ${toNum}...`);
     let i = fromNum;
     for (; i < toNum; i++) {
       this.loadOperation_(i, false);
@@ -217,15 +217,15 @@ class OperationCenter {
   }
 
   loadOperation_(num, isLast) {
-    console.log(`Loading operation ${num}...`);
+    debug(`Loading operation ${num}...`);
     if (this.opBeingSentWasAccepted_ && num == this.opBeingSent_.num) {
       // This is a local op.
-      console.log(`Skipping loading operation ${num} since it's local.`);
+      debug(`Skipping loading operation ${num} since it's local.`);
       return;
     }
     if (this.incomingRemoteOperations_[num]) {
       // The operation has already been loaded, do nothing.
-      console.log(`Operation ${num} already loaded.`);
+      debug(`Operation ${num} already loaded.`);
       return;
     }
     const path = `/maps/${state.getMid()}/payload/operations/${num}`;
@@ -255,7 +255,7 @@ class OperationCenter {
   // applied.
   addRemoteOperation_(num, op) {
     // Store it locally.
-    console.log(`Loaded remote operation ${num}.`);
+    debug(`Loaded remote operation ${num}.`);
     this.incomingRemoteOperations_[num] = op;
     // If it's the next operation we should apply, apply it!
     if (num == state.getLastOpNum() + 1) {
@@ -266,7 +266,7 @@ class OperationCenter {
   // Applies a remote operation locally.
   // This might cancel some of the pending local ops.
   applyRemoteOperation_(num, op) {
-    console.log(`Applying remote operation ${num}...`);
+    debug(`Applying remote operation ${num}...`);
     // Stop the current operation.
     this.recordOperationComplete();
     // A remote operation is ready and loaded. Since it's remote, it hasn't
@@ -278,8 +278,8 @@ class OperationCenter {
     this.addOperation_(op);
     op.redo();
     state.setLastOpNum(num);
-    console.log(`Remote operation ${num} applied:`);
-    console.log(op);
+    debug(`Remote operation ${num} applied:`);
+    debug(op);
     delete this.incomingRemoteOperations_[num];
     // If there's another remote operation waiting, apply it; otherwise redo
     // pending ops that were undoed.
@@ -334,8 +334,8 @@ class OperationCenter {
       } else {
         // Operations that are now illegal to redo are considered "conflicting
         // operations". Report them and skip adding/applying them.
-        console.log(`Pending op #${i} in conflict`);
-        console.log(op);
+        debug(`Pending op #${i} in conflict`);
+        debug(op);
       }
     }
     this.pendingLocalOperations_ = newPendingLocalOperations;
@@ -511,8 +511,8 @@ class OperationCenter {
 
   // Handles a successful operation.
   handleOperationSendSuccess_(op) {
-    console.log('Local operation accepted');
-    console.log(op);
+    debug('Local operation accepted');
+    debug(op);
     this.pendingLocalOperations_.shift();
     if (state.getLastOpNum() < op.num) {
       state.setLastOpNum(op.num);
@@ -572,7 +572,7 @@ class OperationCenter {
 
   // Rewrites the full map on the server to be up-to-date to 'num'.
   rewrite_(num) {
-    console.log(`Rewriting map to operation ${num}...`);
+    debug(`Rewriting map to operation ${num}...`);
     const snapshot = JSON.parse(JSON.stringify(state.pstate_));
     const payloadPath = `/maps/${state.getMid()}/payload`;
     firebase.database().ref(payloadPath).transaction(currData => {
@@ -591,7 +591,7 @@ class OperationCenter {
       };
     }, (error, committed, snapshot) => {
       if (!error && committed) {
-        console.log(`Rewriting map to operation ${num} complete.`);
+        debug(`Rewriting map to operation ${num} complete.`);
         this.lastFullMapNum_ = num;
       }
     }, false /* suppress updates on intermediate states */);
