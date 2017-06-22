@@ -19,6 +19,9 @@ class Menu {
         items: [],
       }
     };
+    this.tokenSelector_ = null;
+    this.tokenSelectedCategory_ = '<all>';
+    this.tokenSelectedText_ = '';
     this.menuItems_ = this.setupMenuItems_();
   }
 
@@ -571,6 +574,28 @@ class Menu {
     window.prompt(message, url);
   }
 
+  createTokenCategoryDropdown_() {
+    const valueSet = new Set();
+    this.gameIcons_.forEach(gameIcon => {
+      gameIcon.tags.forEach(tag => valueSet.add(tag));
+    });
+    const values = Array.from(valueSet).concat('<all>');
+    values.sort();
+    return {
+      name: 'Category',
+      type: 'inputContainer',
+      presentation: 'dropdown',
+      classNames: ['menu-input-container'],
+      id: 'tokenCategory',
+      dropdownValues: values,
+      enabledInReadonlyMode: false,
+      onChange: newChoiceNum => {
+        this.tokenSelectedCategory_ = values[newChoiceNum];
+        this.updateTokenSelectorSubmenu_();
+      },
+    }
+  }
+
   createTokenSelector_() {
     const selector = {
       name: 'Find by name',
@@ -584,7 +609,8 @@ class Menu {
       submenu: {},
     };
     selector.onInput = (oldText, newText) => {
-      this.updateTokenSelectorSubmenu_(selector, newText);
+      this.tokenSelectedText_ = newText;
+      this.updateTokenSelectorSubmenu_();
     };
     // Completions. Disable until a more intuitive solution is in place, for
     // example having both a category drop-down AND a free-text filter.
@@ -602,6 +628,7 @@ class Menu {
 //      datalist.appendChild(option);
 //    });
 //    document.getElementById('app').appendChild(datalist);
+    this.tokenSelector_ = selector;
     return selector;
   }
 
@@ -666,28 +693,43 @@ class Menu {
     return item;
   }
 
-  updateTokenSelectorSubmenu_(selector, text) {
+  updateTokenSelectorSubmenu_() {
+    const selector = this.tokenSelector_;
+    const text = this.tokenSelectedText_;
+    const category = this.tokenSelectedCategory_;
     if (!selector.submenu.element) {
       selector.submenu.element =
           createAndAppendDivWithClass(selector.parent.submenu.element, 'selector-submenu');
     }
     this.selectSubmenuItem_(selector.parent.submenu.items[1]);
-    if (text.length < 2) {
+    if (category == '<all>' && text.length < 2) {
       selector.submenu.element.style.display = 'none';
       return;
     }
 
     selector.submenu.element.innerHTML = '';
-    let matchingIcons = text.length < 2 ? [] :
-        this.gameIcons_.filter(gameIcon => this.iconNameMatch_(gameIcon, text));
+    let matchingIcons = this.gameIcons_.filter(gameIcon => {
+      if (category != '<all>' && !gameIcon.tags.includes(category)) {
+        // Not in current category.
+        return false;
+      }
+      if (gameIcon.name.includes(text)) return true;
+      return category == '<all>' &&
+          gameIcon.tags.some(tag => tag.includes(text));
+    });
     matchingIcons = matchingIcons.slice(0, 200);
     const buttons = matchingIcons.map(icon => this.createTokenButton_(icon));
     selector.submenu.items = buttons;
     selector.submenu.allItems =
-        buttons.concat(selector.parent.submenu.items.slice(1));
+        buttons.concat(selector.parent.submenu.items.slice(2));
     this.populateMenuItem_(selector);
     selector.parent.submenu.allItems = selector.submenu.allItems;
     selector.submenu.element.style.display = 'block';
+  }
+
+  iconNameMatch_(gameIcon, text) {
+    return gameIcon.name.includes(text) ||
+        gameIcon.tags.find(tag => tag.includes(text));
   }
 
   createTokenColorTool_(name, variation, isSelected) {
@@ -704,11 +746,6 @@ class Menu {
     };
     this.updateImageTool_(item, gameIcon, variation);
     return item;
-  }
-
-  iconNameMatch_(gameIcon, text) {
-    return gameIcon.name.includes(text) ||
-        gameIcon.tags.find(tag => tag.includes(text));
   }
 
   setupMenuItems_() {
@@ -1258,6 +1295,7 @@ class Menu {
         tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
           items: [
+            this.createTokenCategoryDropdown_(),
             this.createTokenSelector_(),
             this.createTokenColorTool_('Black', ct.images.image.black, true),
             this.createTokenColorTool_('Green', ct.images.image.green),
