@@ -17,7 +17,7 @@ class Menu {
       imageVariationTools: {
         selectedVariation: ct.images.image.black,
         items: [],
-      }
+      },
     };
     this.tokenSelector_ = null;
     this.tokenSelectedCategory_ = '<all>';
@@ -644,11 +644,13 @@ class Menu {
           false,
           gameIcon.hash);
       if (item.group == this.groups_.imageIconTools) {
+        this.groups_.imageIconTools.selectedIcon = gameIcon;
         this.groups_.imageVariationTools.items.forEach(variationItem => {
           this.updateImageTool_(
               variationItem, gameIcon, variationItem.variation);
         });
       } else {
+        this.groups_.imageVariationTools.selectedVariation = variation;
         this.groups_.imageIconTools.items.forEach(iconItem => {
           this.updateImageTool_(iconItem, iconItem.gameIcon, variation);
         });
