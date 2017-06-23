@@ -27,14 +27,24 @@
 
 .door-cell {
   background-color: rgb(255, 255, 255);
-  border: 1px solid rgb(100, 100, 100);
-  border-radius: 2px;
 }
 
 .door-cell-horizontal {
-  margin: -2px 4px -2px 3px;
+  margin: -2px 3px -2px 3px;
 }
 
 .door-cell-vertical {
-  margin: 3px -2px 4px -2px;
+  margin: 3px -2px 3px -2px;
+}
+
+.window-cell {
+  background-color: rgb(255, 255, 255);
+}
+
+.window-cell-horizontal {
+  margin: 1px 3px 1px 3px;
+}
+
+.window-cell-vertical {
+  margin: 3px 1px 3px 1px;
 }
