@@ -78,15 +78,13 @@ class SelectGesture extends Gesture {
         const content = cell.getLayerContent(layer);
         if (content && content[ck.endCell]) {
           const endCell = state.theMap.cells.get(content[ck.endCell]);
-          cell.getPrimaryCellsInSquareTo(endCell)
-              .forEach(affectedCell => affectedCells.push(affectedCell));
+          this.forEachCellWithStartCell_(layer, cell, affectedCell =>
+              affectedCells.push(affectedCell));
         }
         if (content && content[ck.startCell]) {
           const startCell = state.theMap.cells.get(content[ck.startCell]);
-          const endCell = state.theMap.cells.get(
-              startCell.getLayerContent(layer)[ck.endCell]);
-          startCell.getPrimaryCellsInSquareTo(endCell)
-              .forEach(affectedCell => affectedCells.push(affectedCell));
+          this.forEachCellWithStartCell_(layer, startCell, affectedCell =>
+              affectedCells.push(affectedCell));
         }
         affectedCells.forEach(
             affectedCell => affectedCell.setLayerContent(layer, null, true));
@@ -95,6 +93,12 @@ class SelectGesture extends Gesture {
     state.opCenter.recordOperationComplete();
     this.clearSelection();
     this.anchorCell_ = null;
+  }
+
+  allCellsWithStartCell_(layer, startCell, callback) {
+    state.theMap.cells.forEach(cell => {
+      if (cell == startCell) callback(cell);
+    });
   }
 
   locationForCopy_(anchorCell, cell) {
