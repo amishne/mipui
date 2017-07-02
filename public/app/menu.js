@@ -280,111 +280,6 @@ class Menu {
     }
   }
 
-  createWallTool_(size, isManual, isSelected) {
-    const descriptionCells = [];
-    if (size > 1 || isManual) {
-      descriptionCells.push({
-        innerHTML: size > 1 ? `${size}x${size}` : 'Man-<br/>ual',
-        classNames: [
-          'grid-cell',
-          'primary-cell',
-          'text-cell',
-        ],
-      });
-    }
-    return {
-      name: `Wall/floor, ${size}x${size}`,
-      type: 'tool',
-      presentation: 'cells',
-      classNames: ['menu-walls'],
-      isSelected,
-      callback: () => {
-        state.gesture = new WallGesture(size, isManual);
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'square-wall-cell',
-          ],
-        },
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-      ].concat(descriptionCells),
-    };
-  }
-
-  createRoomGesture_(isHollow) {
-    return {
-      name: isHollow ? 'Walled room' : 'Room',
-      type: 'tool',
-      presentation: 'cells',
-      classNames: ['menu-walls'],
-      isSelected: false,
-      callback: () => {
-        state.gesture = new RoomGesture(isHollow);
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'square-wall-cell',
-          ],
-        },
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-      ],
-    };
-  }
-
-  createAngledWallToll_(kind, variation) {
-    const kindClassNames = kind.id == ct.shapes.square.id ? [
-      'square-cell-0',
-      'square-cell-primary',
-    ] : [
-      'circle-cell-0',
-      'circle-cell-primary',
-    ];
-    return {
-      name: 'Angled wall',
-      type: 'tool',
-      presentation: 'cells',
-      classNames: ['menu-walls-angled'],
-      isSelected: false,
-      callback: () => {
-        state.gesture = new AngledWallGesture(ct.walls, kind, variation);
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'angled-wall-cell-179',
-          ],
-        },
-      ],
-    };
-  }
-
   createSeparatorTool_(name, kind, variation, requiredWall, isSelected) {
     const separatorClassNames = [];
     switch (kind.id) {
@@ -1276,11 +1171,137 @@ class Menu {
         isSelected: true,
         submenu: {
           items: [
-            this.createWallTool_(1, false, true),
-            this.createWallTool_(1, true, false),
-            this.createAngledWallToll_(ct.walls.smooth, ct.walls.smooth.angled),
-            this.createRoomGesture_(false),
-            this.createRoomGesture_(true),
+            {
+              name: 'Wall (auto)',
+              type: 'tool',
+              presentation: 'cells',
+              classNames: ['menu-walls'],
+              isSelected: true,
+              callback: () => {
+                state.gesture = new WallGesture(1, false);
+              },
+              cells: [
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'square-wall-cell',
+                  ],
+                },
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'floor-cell',
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Wall (manual)',
+              type: 'tool',
+              presentation: 'cells',
+              classNames: ['menu-walls'],
+              isSelected: false,
+              callback: () => {
+                state.gesture = new WallGesture(1, true);
+              },
+              cells: [
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'square-wall-cell',
+                  ],
+                },
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'floor-cell',
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Angled wall',
+              type: 'tool',
+              presentation: 'cells',
+              classNames: ['menu-walls-angled'],
+              isSelected: false,
+              callback: () => {
+                state.gesture = new AngledWallGesture(
+                    ct.walls, ct.walls.smooth, ct.walls.smooth.angled);
+              },
+              cells: [
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'floor-cell',
+                  ],
+                },
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'angled-wall-cell-179',
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Room',
+              type: 'tool',
+              presentation: 'cells',
+              classNames: ['menu-walls'],
+              isSelected: false,
+              callback: () => {
+                state.gesture = new RoomGesture(false);
+              },
+              cells: [
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'square-wall-cell',
+                  ],
+                },
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'floor-cell',
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Walled room',
+              type: 'tool',
+              presentation: 'cells',
+              classNames: ['menu-walls'],
+              isSelected: false,
+              callback: () => {
+                state.gesture = new RoomGesture(true);
+              },
+              cells: [
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'square-wall-cell',
+                  ],
+                },
+                {
+                  classNames: [
+                    'grid-cell',
+                    'primary-cell',
+                    'floor-cell',
+                  ],
+                },
+              ],
+            },
           ],
         },
       },
