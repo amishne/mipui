@@ -320,6 +320,35 @@ class Menu {
     };
   }
 
+  createRoomGesture_(isHollow) {
+    return {
+      name: isHollow ? 'Walled room' : 'Room',
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-walls'],
+      isSelected: false,
+      callback: () => {
+        state.gesture = new RoomGesture(isHollow);
+      },
+      cells: [
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'square-wall-cell',
+          ],
+        },
+        {
+          classNames: [
+            'grid-cell',
+            'primary-cell',
+            'floor-cell',
+          ],
+        },
+      ],
+    };
+  }
+
   createAngledWallToll_(kind, variation) {
     const kindClassNames = kind.id == ct.shapes.square.id ? [
       'square-cell-0',
@@ -1248,12 +1277,10 @@ class Menu {
         submenu: {
           items: [
             this.createWallTool_(1, false, true),
-            this.createWallTool_(3, false, false),
-            this.createWallTool_(5, false, false),
-            this.createWallTool_(7, false, false),
-            this.createWallTool_(9, false, false),
             this.createWallTool_(1, true, false),
             this.createAngledWallToll_(ct.walls.smooth, ct.walls.smooth.angled),
+            this.createRoomGesture_(false),
+            this.createRoomGesture_(true),
           ],
         },
       },
