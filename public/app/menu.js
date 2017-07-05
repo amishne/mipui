@@ -221,6 +221,7 @@ class Menu {
       const element =
           createAndAppendDivWithClass(parent, cell.classNames.join(' '));
       element.innerHTML = cell.innerHTML || '';
+      if (cell.children) this.createCellsForItem_(element, cell.children);
     });
   }
 
@@ -672,6 +673,62 @@ class Menu {
     };
     this.updateImageTool_(item, gameIcon, variation);
     return item;
+  }
+
+  createWallTool_(name, isSelected, callback, cellClasses, extraCells) {
+    const createDividerRow = () => {
+      return {
+        classNames: ['menu-wall-tool-cell-row'],
+        children: [
+          {classNames: ['corner-cell']},
+          {classNames: ['horizontal-cell']},
+          {classNames: ['corner-cell']},
+          {classNames: ['horizontal-cell']},
+          {classNames: ['corner-cell']},
+        ],
+      };
+    };
+    const createPrimaryRow = () => {
+      return {
+        classNames: ['menu-wall-tool-cell-row'],
+        children: [
+          {classNames: ['vertical-cell']},
+          {classNames: ['primary-cell']},
+          {classNames: ['vertical-cell']},
+          {classNames: ['primary-cell']},
+          {classNames: ['vertical-cell']},
+        ],
+      };
+    };
+    const cells = [
+      createDividerRow(),
+      createPrimaryRow(),
+      createDividerRow(),
+      createPrimaryRow(),
+      createDividerRow(),
+    ];
+    cells.forEach(cell => {
+      cell.children.forEach(child => child.classNames.push('grid-cell'));
+    });
+    cellClasses.forEach((cellClass, index) => {
+      cells[Math.floor(index / 5)]
+          .children[index % 5].classNames.push(cellClass);
+    });
+    (extraCells || []).forEach(extraCell => {
+      const index = extraCell.index;
+      const parentCell = cells[Math.floor(index / 5)].children[index % 5];
+      if (!parentCell.children) parentCell.children = [];
+      parentCell.children.push({classNames: extraCell.classNames});
+    })
+    return {
+      name,
+      type: 'tool',
+      presentation: 'cells',
+      classNames: ['menu-wall-tool'],
+      isSelected,
+      callback,
+      cells,
+    };
   }
 
   setupMenuItems_() {
@@ -1171,137 +1228,77 @@ class Menu {
         isSelected: true,
         submenu: {
           items: [
-            {
-              name: 'Wall (auto)',
-              type: 'tool',
-              presentation: 'cells',
-              classNames: ['menu-walls'],
-              isSelected: true,
-              callback: () => {
-                state.gesture = new WallGesture(1, false);
-              },
-              cells: [
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'square-wall-cell',
-                  ],
-                },
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'floor-cell',
-                  ],
-                },
-              ],
-            },
-            {
-              name: 'Wall (manual)',
-              type: 'tool',
-              presentation: 'cells',
-              classNames: ['menu-walls'],
-              isSelected: false,
-              callback: () => {
-                state.gesture = new WallGesture(1, true);
-              },
-              cells: [
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'square-wall-cell',
-                  ],
-                },
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'floor-cell',
-                  ],
-                },
-              ],
-            },
-            {
-              name: 'Angled wall',
-              type: 'tool',
-              presentation: 'cells',
-              classNames: ['menu-walls-angled'],
-              isSelected: false,
-              callback: () => {
-                state.gesture = new AngledWallGesture(
-                    ct.walls, ct.walls.smooth, ct.walls.smooth.angled);
-              },
-              cells: [
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'floor-cell',
-                  ],
-                },
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'angled-wall-cell-179',
-                  ],
-                },
-              ],
-            },
-            {
-              name: 'Room',
-              type: 'tool',
-              presentation: 'cells',
-              classNames: ['menu-walls'],
-              isSelected: false,
-              callback: () => {
-                state.gesture = new RoomGesture(false);
-              },
-              cells: [
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'square-wall-cell',
-                  ],
-                },
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'floor-cell',
-                  ],
-                },
-              ],
-            },
-            {
-              name: 'Walled room',
-              type: 'tool',
-              presentation: 'cells',
-              classNames: ['menu-walls'],
-              isSelected: false,
-              callback: () => {
-                state.gesture = new RoomGesture(true);
-              },
-              cells: [
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'square-wall-cell',
-                  ],
-                },
-                {
-                  classNames: [
-                    'grid-cell',
-                    'primary-cell',
-                    'floor-cell',
-                  ],
-                },
-              ],
-            },
+            this.createWallTool_(
+                'Wall (auto)',
+                true,
+                () => state.gesture = new WallGesture(1, false),
+                new Array(3).fill('square-wall-cell')
+                    .concat(new Array(2).fill('floor-cell'))
+                    .concat(new Array(3).fill('square-wall-cell'))
+                    .concat(new Array(2).fill('floor-cell'))
+                    .concat(new Array(5).fill('square-wall-cell'))
+                    .concat(new Array(2).fill('floor-cell'))
+                    .concat(new Array(3).fill('square-wall-cell'))
+                    .concat(new Array(2).fill('floor-cell'))
+                    .concat(new Array(3).fill('square-wall-cell'))),
+            this.createWallTool_(
+                'Wall (manual)',
+                false,
+                () => state.gesture = new WallGesture(1, true),
+                new Array(6).fill('floor-cell')
+                    .concat(['square-wall-cell'])
+                    .concat(new Array(5).fill('floor-cell'))
+                    .concat(['square-wall-cell'])
+                    .concat(new Array(3).fill('floor-cell'))
+                    .concat(['square-wall-cell'])
+                    .concat(new Array(2).fill('floor-cell'))
+                    .concat(['square-wall-cell'])
+                    .concat(new Array(3).fill('floor-cell'))
+                    .concat(['square-wall-cell'])
+                    .concat(['floor-cell'])),
+            this.createWallTool_(
+                'Angled wall',
+                false,
+                () => state.gesture = new AngledWallGesture(
+                    ct.walls, ct.walls.smooth, ct.walls.smooth.angled),
+              // 2f,w,3f,angled-wall-cell angled-wall-cell-118,1w,200,1f,3w,3f,145,1f,128,6f
+                new Array(2).fill('floor-cell')
+                    .concat(['square-wall-cell'])
+                    .concat(new Array(4).fill('floor-cell'))
+                    .concat(['square-wall-cell'])
+                    .concat(new Array(2).fill('floor-cell'))
+                    .concat(new Array(3).fill('square-wall-cell'))
+                    .concat(new Array(11).fill('floor-cell'))
+                    .concat(['square-wall-cell']),
+                [{
+                  index: 6,
+                  classNames: ['angled-wall-cell', 'angled-wall-cell-118'],
+                }, {
+                  index: 8,
+                  classNames: ['angled-wall-cell', 'angled-wall-cell-200'],
+                }, {
+                  index: 16,
+                  classNames: ['angled-wall-cell', 'angled-wall-cell-145'],
+                }, {
+                  index: 18,
+                  classNames: ['angled-wall-cell', 'angled-wall-cell-160'],
+                }]),
+            this.createWallTool_(
+                'Square',
+                false,
+                () => state.gesture = new RoomGesture(false),
+                new Array(25).fill('square-wall-cell')),
+            this.createWallTool_(
+                'Room',
+                false,
+                () => state.gesture = new RoomGesture(true),
+                new Array(6).fill('square-wall-cell')
+                    .concat(new Array(3).fill('floor-cell'))
+                    .concat(new Array(2).fill('square-wall-cell'))
+                    .concat(new Array(3).fill('floor-cell'))
+                    .concat(new Array(2).fill('square-wall-cell'))
+                    .concat(new Array(3).fill('floor-cell'))
+                    .concat(new Array(6).fill('square-wall-cell'))),
           ],
         },
       },

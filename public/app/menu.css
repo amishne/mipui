@@ -150,24 +150,40 @@
   background-color: black;
 }
 
-.menu-walls .primary-cell {
-  width: 14px;
+.menu-wall-tool-cell-row {
+  display: block;
+}
+
+.menu-wall-tool .grid-cell {
+  display: inline-block;
   position: relative;
-  top: 2px;
 }
 
-.menu-walls-angled .primary-cell {
-  position: absolute;
-  top: 3px;
-  left: 3px;
+.menu-wall-tool .corner-cell, .menu-wall-tool .vertical-cell {
+  width: 3px;
 }
 
-.menu-walls .text-cell {
-  position: absolute;
-  font-size: 8pt;
-  line-height: 8pt;
-  top: 4px;
-  z-index: 2;
+.menu-wall-tool .corner-cell, .menu-wall-tool .horizontal-cell{
+  height: 3px;
+}
+
+.menu-wall-tool .primary-cell, .menu-wall-tool .horizontal-cell {
+  width: 7px;
+}
+
+.menu-wall-tool .primary-cell, .menu-wall-tool .vertical-cell {
+  height: 7px;
+}
+
+.menu-wall-tool .angled-wall-cell {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  z-index: 1;
+  top: -12px;
+  left: -12px;
+  transform: scale(0.308);
+  margin: -4px;
 }
 
 .menu-separators .grid-cell {
