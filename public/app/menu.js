@@ -1286,12 +1286,12 @@ class Menu {
             this.createWallTool_(
                 'Square',
                 false,
-                () => state.gesture = new RoomGesture(false),
+                () => state.gesture = new SquareRoomGesture(false),
                 new Array(25).fill('square-wall-cell')),
             this.createWallTool_(
                 'Room',
                 false,
-                () => state.gesture = new RoomGesture(true),
+                () => state.gesture = new SquareRoomGesture(true),
                 new Array(6).fill('square-wall-cell')
                     .concat(new Array(3).fill('floor-cell'))
                     .concat(new Array(2).fill('square-wall-cell'))
