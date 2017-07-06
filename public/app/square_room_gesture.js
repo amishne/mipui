@@ -3,6 +3,10 @@ class SquareRoomGesture extends RoomGesture {
     super();
     this.hollow_ = hollow;
     this.borders_ = new Set();
+    this.wallContent_ = {
+      [ck.kind]: ct.walls.smooth.id,
+      [ck.variation]: ct.walls.smooth.square.id,
+    };
   }
 
   startHover(cell) {
@@ -29,21 +33,12 @@ class SquareRoomGesture extends RoomGesture {
     });
   }
 
-  apply_(highlightOnly) {
-    const wallContent = {
-      [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.square.id,
-    };
+  shouldApplyContentTo_(cell) {
+    return !(this.mode_ == 'toFloor' && this.borders_.has(cell));
+  }
 
-    this.cells_.forEach(cell => {
-      if (this.mode_ == 'toFloor' && this.borders_.has(cell)) return;
-      const content = this.mode_ == 'toWall' || this.borders_.has(cell) ?
-          wallContent : null;
-      if (highlightOnly) {
-        cell.showHighlight(ct.walls, content);
-      } else {
-        cell.setLayerContent(ct.walls, content, true);
-      }
-    });
+  calculateContent_(cell) {
+    return (this.mode_ == 'toWall' || this.borders_.has(cell)) ?
+        this.wallContent_ : null;
   }
 }

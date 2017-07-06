@@ -60,8 +60,18 @@ class RoomGesture extends Gesture {
   showHighlight_() {
     this.apply_(true);
   }
-  
-  apply_(highlightOnly) {}
 
   process_() {}
+
+  apply_(highlightOnly) {
+    this.cells_.forEach(cell => {
+      if (!this.shouldApplyContentTo_(cell)) return;
+      const content = this.calculateContent_(cell);
+      if (highlightOnly) {
+        cell.showHighlight(ct.walls, content);
+      } else {
+        cell.setLayerContent(ct.walls, content, true);
+      }
+    });
+  }
 }
