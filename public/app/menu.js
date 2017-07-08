@@ -1289,6 +1289,11 @@ class Menu {
                 () => state.gesture = new SquareRoomGesture(false),
                 new Array(25).fill('square-wall-cell')),
             this.createWallTool_(
+                'Oval',
+                false,
+                () => state.gesture = new OvalRoomGesture(),
+                new Array(25).fill('square-wall-cell')),
+            this.createWallTool_(
                 'Room',
                 false,
                 () => state.gesture = new SquareRoomGesture(true),

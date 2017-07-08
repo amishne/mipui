@@ -18,6 +18,14 @@ class TheMap {
   static primaryCellKey(row, column) {
     return `${row},${column}`;
   }
+  
+  static cellKey(row, column) {
+    if (row == Math.floor(row) && column == Math.floor(column)) {
+      return this.primaryCellKey(row, column);
+    }
+    return this.dividerCellKey(
+        Math.floor(row), Math.floor(column), Math.ceil(row), Math.ceil(column));
+  }
 
   resetToDefault() {
     this.cells.forEach(cell => {

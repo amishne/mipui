@@ -18,13 +18,7 @@ class SquareRoomGesture extends RoomGesture {
     this.borders_ = new Set();
     if (this.mode_ == 'toWall') return;
 
-    let [minX, minY, maxX, maxY] = [null, null, null, null];
-    this.cells_.forEach(cell => {
-      minX = minX === null ? cell.column : Math.min(minX, cell.column);
-      minY = minY === null ? cell.row : Math.min(minY, cell.row);
-      maxX = maxX === null ? cell.column : Math.max(maxX, cell.column);
-      maxY = maxY === null ? cell.row : Math.max(maxY, cell.row);
-    });
+    const {minX, minY, maxX, maxY} = this.calculateMinMaxCellPositions_(true);
     this.cells_.forEach(cell => {
       if (cell.column == minX || cell.column == maxX ||
          cell.row == minY || cell.row == maxY) {

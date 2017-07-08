@@ -117,6 +117,7 @@ class Cell {
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
     this.setImageFromVariation_(element, layer, content);
+    this.setOval_(element, content[ck.oval]);
   }
 
 //  setShadow_(element, layer, content) {
@@ -171,6 +172,27 @@ class Cell {
     theMapElement.removeChild(sizingElement);
     element.style.fontSize = fontSize + 'pt';
     element.textContent = text;
+  }
+
+  setOval_(element, oval) {
+    if (!element || !oval) return;
+    const [rx, ry, cx, cy, dir] =
+        oval.split(',').map((s, index) => index > 3 ? s : Number.parseFloat(s));
+    if (dir == 'w') {
+      element.style.clipPath = `ellipse(${rx}px ${ry}px at ${cx}px ${cy}px)`;
+    } else if (dir == 'f') {
+      const clipPathId = 'clip_path_' + Math.floor(Math.random() * 1000000000);
+      const elementBackgroundPath =
+          `M 0 0 H ${this.width} V ${this.height} H 0 z`;
+      const ovalPath = `M ${cx} ${cy - ry}` +
+          `A ${rx} ${ry} 0 1 0 ${cx} ${cy + ry}` +
+          `A ${rx} ${ry} 0 1 0 ${cx} ${cy - ry}`;
+      element.innerHTML = '<svg><defs>' +
+          `<clipPath id="${clipPathId}">` +
+          `<path d="${elementBackgroundPath} ${ovalPath}"` +
+          '/></clipPath></defs></svg>';
+      element.style.clipPath = `url("#${clipPathId}")`;
+    }
   }
 
   setImage_(element, imageUrl, variation) {

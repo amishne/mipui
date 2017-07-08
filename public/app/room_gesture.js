@@ -61,7 +61,17 @@ class RoomGesture extends Gesture {
     this.apply_(true);
   }
 
-  process_() {}
+  calculateMinMaxCellPositions_(includeDividers) {
+    let [minX, minY, maxX, maxY] = [null, null, null, null];
+    this.cells_.forEach(cell => {
+      if (!includeDividers && !(cell.role == 'primary')) return;
+      minX = minX === null ? cell.column : Math.min(minX, cell.column);
+      minY = minY === null ? cell.row : Math.min(minY, cell.row);
+      maxX = maxX === null ? cell.column : Math.max(maxX, cell.column);
+      maxY = maxY === null ? cell.row : Math.max(maxY, cell.row);
+    });
+    return {minX, minY, maxX, maxY};
+  }
 
   apply_(highlightOnly) {
     this.cells_.forEach(cell => {
@@ -73,5 +83,17 @@ class RoomGesture extends Gesture {
         cell.setLayerContent(ct.walls, content, true);
       }
     });
+  }
+
+  // Called once before per-cell calls to shouldApplyContentTo_ and to
+  // calculateContent_.
+  process_() {}
+
+  shouldApplyContentTo_() {
+    return false;
+  }
+
+  calculateContent_() {
+    return null;
   }
 }

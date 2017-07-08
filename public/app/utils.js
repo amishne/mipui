@@ -13,4 +13,8 @@ function hashString(s) {
   }, 0);
 }
 
+function clamp(min, num, max) {
+  return Math.min(max, Math.max(min, num));
+}
+
 let debug = () => {};

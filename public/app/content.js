@@ -28,6 +28,13 @@ const ct = {
           'angled-wall-cell-_EDITING_',
         ],
       },
+      oval: {
+        classNames: [
+          'square-wall-cell',
+          'square-wall-cell-_ADDING_',
+          'square-wall-cell-_REMOVING_',
+        ],
+      },
     },
   },
   images: {
@@ -168,6 +175,7 @@ const ck = {
   image: 'i',
   imageHash: 'h',
   connections: 'c',
+  oval: 'o',
 };
 
 // Property keys.
