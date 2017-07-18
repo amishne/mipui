@@ -1284,17 +1284,17 @@ class Menu {
                   classNames: ['angled-wall-cell', 'angled-wall-cell-160'],
                 }]),
             this.createWallTool_(
-                'Square',
+                'Rectangle',
                 false,
                 () => state.gesture = new SquareRoomGesture(false),
                 new Array(25).fill('square-wall-cell')),
             this.createWallTool_(
-                'Oval',
+                'Ellipse',
                 false,
-                () => state.gesture = new OvalRoomGesture(),
+                () => state.gesture = new OvalRoomGesture(false),
                 new Array(25).fill('square-wall-cell')),
             this.createWallTool_(
-                'Room',
+                'Rectangular Room',
                 false,
                 () => state.gesture = new SquareRoomGesture(true),
                 new Array(6).fill('square-wall-cell')
@@ -1304,6 +1304,11 @@ class Menu {
                     .concat(new Array(2).fill('square-wall-cell'))
                     .concat(new Array(3).fill('floor-cell'))
                     .concat(new Array(6).fill('square-wall-cell'))),
+            this.createWallTool_(
+                'Elliptical Room',
+                false,
+                () => state.gesture = new OvalRoomGesture(true),
+                new Array(25).fill('square-wall-cell')),
           ],
         },
       },

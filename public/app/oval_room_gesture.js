@@ -1,6 +1,7 @@
 class OvalRoomGesture extends RoomGesture {
-  constructor() {
+  constructor(hollow) {
     super();
+    this.hollow_ = hollow;
     // This maps each cell to either fully inside the ellipse, fully outside it,
     // or on the border - and if so, its x and y offsets from the top-left cell.
     this.cellValues_ = new Map();
@@ -10,15 +11,29 @@ class OvalRoomGesture extends RoomGesture {
     };
   }
 
+  startHover(cell) {
+    super.startHover(cell);
+    if (this.hollow_) this.mode_ = 'hollow';
+  }
+
   process_() {
+    if (this.mode_ == 'toWall' || this.mode_ == 'hollow') {
+      this.mapCellsToValues_(true, 'w');
+    }
+    if (this.mode_ == 'toFloor' || this.mode_ == 'hollow') {
+      this.mapCellsToValues_(false, 'f');
+    }
+  }
+  
+  mapCellsToValues_(includeBoundaries, mapKey) {
     // Outline:
     // 1. Find the ellipse center point.
     // 2. For each cell, find the point in that cell closest to the center and
     //    the point furthest away from the center.
-    // 3. Apply XXX
+    // 3. If the ellipse passes between those points, it means the cell needs
+    //    a special clip path.
   
     // This is in rows/cols, not pixels.
-    const includeBoundaries = this.mode_ != 'toFloor';
     const {minX, minY, maxX, maxY} =
         this.calculateMinMaxCellPositions_(includeBoundaries);
     const [centerX, centerY] =
@@ -47,12 +62,22 @@ class OvalRoomGesture extends RoomGesture {
           x, y, centerPoint.x, centerPoint.y, axes.x / 2, axes.y / 2);
     }
     this.cells_.forEach(cell => {
+      const cellValue = this.cellValues_.get(cell) || {};
+      this.cellValues_.set(cell, cellValue);
+      const keyedValue = {};
+      cellValue[mapKey] = keyedValue;
+
+      if ((this.mode_ == 'toWall' && cell.hasLayerContent(ct.walls)) ||
+          (this.mode_ == 'toFloor' && !cell.hasLayerContent(ct.walls))) {
+        keyedValue.pos = 'outside';
+        return;
+      }
       const closestPixel = {
         x: clamp(cell.offsetLeft, centerPoint.x, cell.offsetLeft + cell.width),
         y: clamp(cell.offsetTop, centerPoint.y, cell.offsetTop + cell.height),
       };
       if (check(closestPixel.x, closestPixel.y) > 1) {
-        this.cellValues_.set(cell, {pos: 'outside'});
+        keyedValue.pos = 'outside';
         return;
       }
       const furthestPixel = {
@@ -60,15 +85,13 @@ class OvalRoomGesture extends RoomGesture {
         y: cell.offsetTop + (cell.row >= centerY ? cell.height : 0),
       };
       if (check(furthestPixel.x, furthestPixel.y) < 1) {
-        this.cellValues_.set(cell, {pos: 'inside'});
+        keyedValue.pos = 'inside';
         return;
       }
-      this.cellValues_.set(cell, {
-        rx: axes.x / 2,
-        ry: axes.y / 2,
-        cx: centerPoint.x,
-        cy: centerPoint.y,
-      });
+      keyedValue.rx = axes.x / 2;
+      keyedValue.ry = axes.y / 2;
+      keyedValue.cx = centerPoint.x;
+      keyedValue.cy = centerPoint.y;
     });
     
   }
@@ -79,20 +102,30 @@ class OvalRoomGesture extends RoomGesture {
   }
 
   shouldApplyContentTo_(cell) {
-    return this.cellValues_.get(cell).pos != 'outside';
+    const val = this.cellValues_.get(cell);
+    return (val.w && val.w.pos != 'outside') ||
+        (val.f && val.f.pos != 'outside');
   }
 
   calculateContent_(cell) {
     const val = this.cellValues_.get(cell);
-    if (val.pos == 'inside') {
+    if ((val.w && val.w.pos == 'inside') ||
+        (val.f && val.f.pos == 'inside')) {
       return this.mode_ == 'toWall' ? this.wallContent_ : null;
+    }
+    let clipPath = '';
+    if (val.f && val.f.cx) {
+      clipPath += `|e,i:${val.f.rx},${val.f.ry},` +
+          `${val.f.cx - cell.offsetLeft},${val.f.cy - cell.offsetTop}`
+    }
+    if (val.w && val.w.cx) {
+      clipPath += `|e,o:${val.w.rx},${val.w.ry},` +
+          `${val.w.cx - cell.offsetLeft},${val.w.cy - cell.offsetTop}`
     }
     return {
       [ck.kind]: ct.walls.smooth.id,
       [ck.variation]: ct.walls.smooth.oval.id,
-      [ck.oval]: `${val.rx},${val.ry},` +
-          `${val.cx - cell.offsetLeft},${val.cy - cell.offsetTop},` +
-          (this.mode_ == 'toWall' ? 'w' : 'f'),
+      [ck.clipPaths]: clipPath.substr(1),
     };
   }
 }

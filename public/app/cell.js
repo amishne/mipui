@@ -113,11 +113,12 @@ class Cell {
   populateElementFromContent_(element, layer, content) {
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, content);
+    element.innerHTML = '';
     this.setText_(element, content[ck.text]);
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
     this.setImageFromVariation_(element, layer, content);
-    this.setOval_(element, content[ck.oval]);
+    this.setClipPaths_(element, content[ck.clipPaths]);
   }
 
 //  setShadow_(element, layer, content) {
@@ -174,25 +175,41 @@ class Cell {
     element.textContent = text;
   }
 
-  setOval_(element, oval) {
-    if (!element || !oval) return;
-    const [rx, ry, cx, cy, dir] =
-        oval.split(',').map((s, index) => index > 3 ? s : Number.parseFloat(s));
-    if (dir == 'w') {
-      element.style.clipPath = `ellipse(${rx}px ${ry}px at ${cx}px ${cy}px)`;
-    } else if (dir == 'f') {
-      const clipPathId = 'clip_path_' + Math.floor(Math.random() * 1000000000);
-      const elementBackgroundPath =
-          `M 0 0 H ${this.width} V ${this.height} H 0 z`;
-      const ovalPath = `M ${cx} ${cy - ry}` +
-          `A ${rx} ${ry} 0 1 0 ${cx} ${cy + ry}` +
-          `A ${rx} ${ry} 0 1 0 ${cx} ${cy - ry}`;
-      element.innerHTML = '<svg><defs>' +
-          `<clipPath id="${clipPathId}">` +
-          `<path d="${elementBackgroundPath} ${ovalPath}"` +
-          '/></clipPath></defs></svg>';
-      element.style.clipPath = `url("#${clipPathId}")`;
+  setClipPaths_(element, clipPaths) {
+    if (!element) return;
+    element.style.clipPath = null;
+    if (!clipPaths) return;
+    const svgPaths =
+        clipPaths.split('|').map(path => this.clipPathToSvgPath_(path));
+    const svg = document.createElement('svg');
+    const clipPathId = 'clip_path_' + Math.floor(Math.random() * 1000000000);
+    element.style.clipPath = `url("#${clipPathId}")`;
+    element.innerHTML = `<svg><defs><clipPath id="${clipPathId}">` +
+        `<path d="${svgPaths.join(' ')}" />` +
+        '</clipPath></defs></svg>'
+  }
+
+  clipPathToSvgPath_(clipPath) {
+    switch (clipPath[0]) {
+      case 'e':
+        return this.ellipseClipPathToSvgPath_(clipPath.substr(2));
     }
+  }
+  
+  ellipseClipPathToSvgPath_(clipPath) {
+    const pathParts = clipPath.split(':');
+    const dir = pathParts[0];
+    const [rx, ry, cx, cy] =
+        pathParts[1].split(',').map(s => Number.parseFloat(s));
+//    const arcParam = dir == 'i' ? '1' : '0';
+//    return `M ${cx} ${cy - ry}` +
+//        ` A ${rx} ${ry} 0 1 ${arcParam} ${cx} ${cy + ry}` +
+//        ` A ${rx} ${ry} 0 1 ${arcParam} ${cx} ${cy - ry}`;
+    const prefix = dir == 'i' ?
+        `M -1 -1 H ${this.width + 1} V ${this.height + 1} H -1 z` : '';
+    return `${prefix} M ${cx} ${cy - ry}` +
+        ` A ${rx} ${ry} 0 0 0 ${cx} ${cy + ry}` +
+        ` A ${rx} ${ry} 0 0 0 ${cx} ${cy - ry}`;
   }
 
   setImage_(element, imageUrl, variation) {

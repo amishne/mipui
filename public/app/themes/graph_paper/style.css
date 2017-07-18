@@ -9,18 +9,18 @@
 }
 
 /* hsl(0, 0, 82) */
-.square-wall-cell {
+.square-wall-cell, .oval-wall-cell {
   background-color: rgb(210, 210, 210);
   border-color: rgb(183, 195, 199);
 }
 
 /* hsl(26, 0, 92.66) */
-.square-wall-cell-adding {
+.square-wall-cell-adding, .oval-wall-cell-adding, .oval-wall-cell-editing {
   background-color: rgb(235, 235, 234);
 }
 
 /* hsl(13, 0, 95.12) */
-.square-wall-cell-removing {
+.square-wall-cell-removing, .oval-wall-cell-removing {
   background-color: rgb(243, 242, 242);
   z-index: 1;
 }

@@ -26,7 +26,8 @@ class WallGesture extends Gesture {
   }
 
   isWall_(cell) {
-    return cell && cell.isKind(ct.walls, ct.walls.smooth);
+    return cell &&
+        cell.isVariation(ct.walls, ct.walls.smooth, ct.walls.smooth.square);
   }
 
   hasDoor_(cell) {

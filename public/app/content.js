@@ -30,9 +30,10 @@ const ct = {
       },
       oval: {
         classNames: [
-          'square-wall-cell',
-          'square-wall-cell-_ADDING_',
-          'square-wall-cell-_REMOVING_',
+          'oval-wall-cell',
+          'oval-wall-cell-_ADDING_',
+          'oval-wall-cell-_REMOVING_',
+          'oval-wall-cell-_EDITING_'
         ],
       },
     },
@@ -175,7 +176,7 @@ const ck = {
   image: 'i',
   imageHash: 'h',
   connections: 'c',
-  oval: 'o',
+  clipPaths: 'p',
 };
 
 // Property keys.

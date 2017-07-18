@@ -52,10 +52,15 @@ class AngledWallGesture extends ShapeGesture {
         break;
     }
   }
+  
+  isWall_(cell) {
+    return cell.isVariation(this.layer_, this.kind_, ct.walls.smooth.angled) ||
+        cell.isVariation(this.layer_, this.kind_, ct.walls.smooth.square);
+  }
 
   connectIfWallOrWillBecomeWall_(cell, mask) {
     if (!cell) return;
-    if (cell.isKind(this.layer_, this.kind_) || this.cellMasks_.has(cell)) {
+    if (this.isWall_(cell) || this.cellMasks_.has(cell)) {
       this.populateCellMask_(cell, mask);
     }
   }
@@ -83,8 +88,7 @@ class AngledWallGesture extends ShapeGesture {
     }
     const neighbor = cell.getNeighbor(dir, divider);
     if (!neighbor) return false;
-    return neighbor.isKind(this.layer_, this.kind_) ||
-        this.cellMasks_.get(neighbor) != null;
+    return this.isWall_(neighbor) || this.cellMasks_.get(neighbor) != null;
   }
 
   populateCellMask_(cell, mask) {
