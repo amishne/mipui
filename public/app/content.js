@@ -176,7 +176,8 @@ const ck = {
   image: 'i',
   imageHash: 'h',
   connections: 'c',
-  clipPaths: 'p',
+  clipInclude: 'p',
+  clipExclude: 'x',
 };
 
 // Property keys.

@@ -109,23 +109,25 @@ class OvalRoomGesture extends RoomGesture {
 
   calculateContent_(cell) {
     const val = this.cellValues_.get(cell);
-    if ((val.w && val.w.pos == 'inside') ||
-        (val.f && val.f.pos == 'inside')) {
+    if ((!val.w || val.w.pos == 'inside') &&
+        (!val.f || val.f.pos == 'inside')) {
       return this.mode_ == 'toWall' ? this.wallContent_ : null;
     }
-    let clipPath = '';
-    if (val.f && val.f.cx) {
-      clipPath += `|e,i:${val.f.rx},${val.f.ry},` +
-          `${val.f.cx - cell.offsetLeft},${val.f.cy - cell.offsetTop}`
-    }
-    if (val.w && val.w.cx) {
-      clipPath += `|e,o:${val.w.rx},${val.w.ry},` +
-          `${val.w.cx - cell.offsetLeft},${val.w.cy - cell.offsetTop}`
-    }
-    return {
+    const result = {
       [ck.kind]: ct.walls.smooth.id,
       [ck.variation]: ct.walls.smooth.oval.id,
-      [ck.clipPaths]: clipPath.substr(1),
     };
+    if (val.w && val.w.cx) {
+      result[ck.clipInclude] = this.calculateEllipse_(val.w, cell);
+    }
+    if (val.f && val.f.cx) {
+      result[ck.clipExclude] = this.calculateEllipse_(val.f, cell);
+    }
+    return result;
+  }
+  
+  calculateEllipse_(val, cell) {
+    return `e:${val.rx},${val.ry},` +
+        `${val.cx - cell.offsetLeft},${val.cy - cell.offsetTop}`
   }
 }

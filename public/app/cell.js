@@ -118,7 +118,43 @@ class Cell {
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
     this.setImageFromVariation_(element, layer, content);
-    this.setClipPaths_(element, content[ck.clipPaths]);
+    this.setClip_(
+        element, content[ck.clipInclude], content[ck.clipExclude]);
+  }
+
+  setClip_(element, clipInclude, clipExclude) {
+    if (!element || (!clipInclude && !clipExclude)) return;
+    const shapes = [];
+    if (clipInclude) {
+      clipInclude.split('|').forEach(clipShape => {
+        shapes.push(this.clipToSvgShape_(clipShape, 'white'));
+      });
+    } else {
+      // If there are no inclusions, include the whole element.
+      shapes
+          .push("<rect x='0' y='0' width='100%' height='100%' fill='white'/>");
+    }
+    if (clipExclude) {
+      clipExclude.split('|').forEach(clipShape => {
+        shapes.push(this.clipToSvgShape_(clipShape, 'black'));
+      });
+    }
+    const svg =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
+        `<defs><mask id='m'>${shapes.join('')}</mask></defs>` +
+        "<rect x='0' y='0' width='100%' height='100%' mask='url(#m)' /></svg>";
+    element.style['-webkit-mask'] = `url("${svg}")`;
+    //element.style['mask'] = `url("${svg}")`;
+  }
+
+  clipToSvgShape_(clipShape, color) {
+    switch (clipShape[0]) {
+      case 'e':
+        const [rx, ry, cx, cy] =
+            clipShape.substr(2).split(',').map(s => Number.parseFloat(s));
+        return `<ellipse rx='${rx}' ry='${ry}' cx='${cx}' cy='${cy}' ` + 
+            `fill='${color}' />`;
+    }
   }
 
 //  setShadow_(element, layer, content) {
@@ -181,19 +217,35 @@ class Cell {
     if (!clipPaths) return;
     const svgPaths =
         clipPaths.split('|').map(path => this.clipPathToSvgPath_(path));
-    const svg = document.createElement('svg');
+    //svgPaths.unshift(`<rect x='0' y='0' width='100%' height='100%' fill='white'/>`);
     const clipPathId = 'clip_path_' + Math.floor(Math.random() * 1000000000);
-    element.style.clipPath = `url("#${clipPathId}")`;
-    element.innerHTML = `<svg><defs><clipPath id="${clipPathId}">` +
-        `<path d="${svgPaths.join(' ')}" />` +
-        '</clipPath></defs></svg>'
+    const svg =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
+        `<defs><mask id='m'>` +
+        svgPaths.join('') +
+        `</mask></defs><rect x='0' y='0' width='100%' height='100%' mask='url(#m)'/></svg>`;
+    element.style['-webkit-mask'] = `url("${svg}")`;
+    return;
+//    const svg = document.createElement('svg');
+//    const clipPathId = 'clip_path_' + Math.floor(Math.random() * 1000000000);
+//    element.style.clipPath = `url("#${clipPathId}")`;
+//    element.innerHTML = `<svg><defs><clipPath id="${clipPathId}">` +
+//        `<path d="${svgPaths.join(' ')}" />` +
+//        '</clipPath></defs></svg>'
   }
-
   clipPathToSvgPath_(clipPath) {
     switch (clipPath[0]) {
       case 'e':
-        return this.ellipseClipPathToSvgPath_(clipPath.substr(2));
+        return this.ellipseClipPathToSvgPathx_(clipPath.substr(2));
     }
+  }
+  
+  ellipseClipPathToSvgPathx_(clipPath) {
+    const pathParts = clipPath.split(':');
+    const dir = pathParts[0];
+    const [rx, ry, cx, cy] =
+        pathParts[1].split(',').map(s => Number.parseFloat(s));
+    return `<ellipse rx='${rx}' ry='${rx}' cx='${cx}' cy='${cy}' fill='${dir == 'o' ? 'white' : 'black'}' />`;
   }
   
   ellipseClipPathToSvgPath_(clipPath) {
