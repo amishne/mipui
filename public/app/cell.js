@@ -144,7 +144,7 @@ class Cell {
         `<defs><mask id='m'>${shapes.join('')}</mask></defs>` +
         "<rect x='0' y='0' width='100%' height='100%' mask='url(#m)' /></svg>";
     element.style['-webkit-mask'] = `url("${svg}")`;
-    //element.style['mask'] = `url("${svg}")`;
+    element.style['mask'] = `url("${svg}")`;
   }
 
   clipToSvgShape_(clipShape, color) {
@@ -209,59 +209,6 @@ class Cell {
     theMapElement.removeChild(sizingElement);
     element.style.fontSize = fontSize + 'pt';
     element.textContent = text;
-  }
-
-  setClipPaths_(element, clipPaths) {
-    if (!element) return;
-    element.style.clipPath = null;
-    if (!clipPaths) return;
-    const svgPaths =
-        clipPaths.split('|').map(path => this.clipPathToSvgPath_(path));
-    //svgPaths.unshift(`<rect x='0' y='0' width='100%' height='100%' fill='white'/>`);
-    const clipPathId = 'clip_path_' + Math.floor(Math.random() * 1000000000);
-    const svg =
-        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
-        `<defs><mask id='m'>` +
-        svgPaths.join('') +
-        `</mask></defs><rect x='0' y='0' width='100%' height='100%' mask='url(#m)'/></svg>`;
-    element.style['-webkit-mask'] = `url("${svg}")`;
-    return;
-//    const svg = document.createElement('svg');
-//    const clipPathId = 'clip_path_' + Math.floor(Math.random() * 1000000000);
-//    element.style.clipPath = `url("#${clipPathId}")`;
-//    element.innerHTML = `<svg><defs><clipPath id="${clipPathId}">` +
-//        `<path d="${svgPaths.join(' ')}" />` +
-//        '</clipPath></defs></svg>'
-  }
-  clipPathToSvgPath_(clipPath) {
-    switch (clipPath[0]) {
-      case 'e':
-        return this.ellipseClipPathToSvgPathx_(clipPath.substr(2));
-    }
-  }
-  
-  ellipseClipPathToSvgPathx_(clipPath) {
-    const pathParts = clipPath.split(':');
-    const dir = pathParts[0];
-    const [rx, ry, cx, cy] =
-        pathParts[1].split(',').map(s => Number.parseFloat(s));
-    return `<ellipse rx='${rx}' ry='${rx}' cx='${cx}' cy='${cy}' fill='${dir == 'o' ? 'white' : 'black'}' />`;
-  }
-  
-  ellipseClipPathToSvgPath_(clipPath) {
-    const pathParts = clipPath.split(':');
-    const dir = pathParts[0];
-    const [rx, ry, cx, cy] =
-        pathParts[1].split(',').map(s => Number.parseFloat(s));
-//    const arcParam = dir == 'i' ? '1' : '0';
-//    return `M ${cx} ${cy - ry}` +
-//        ` A ${rx} ${ry} 0 1 ${arcParam} ${cx} ${cy + ry}` +
-//        ` A ${rx} ${ry} 0 1 ${arcParam} ${cx} ${cy - ry}`;
-    const prefix = dir == 'i' ?
-        `M -1 -1 H ${this.width + 1} V ${this.height + 1} H -1 z` : '';
-    return `${prefix} M ${cx} ${cy - ry}` +
-        ` A ${rx} ${ry} 0 0 0 ${cx} ${cy + ry}` +
-        ` A ${rx} ${ry} 0 0 0 ${cx} ${cy - ry}`;
   }
 
   setImage_(element, imageUrl, variation) {
