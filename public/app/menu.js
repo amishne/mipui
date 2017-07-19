@@ -1261,7 +1261,6 @@ class Menu {
                 false,
                 () => state.gesture = new AngledWallGesture(
                     ct.walls, ct.walls.smooth, ct.walls.smooth.angled),
-              // 2f,w,3f,angled-wall-cell angled-wall-cell-118,1w,200,1f,3w,3f,145,1f,128,6f
                 new Array(2).fill('floor-cell')
                     .concat(['square-wall-cell'])
                     .concat(new Array(4).fill('floor-cell'))
@@ -1292,7 +1291,21 @@ class Menu {
                 'Ellipse',
                 false,
                 () => state.gesture = new OvalRoomGesture(false),
-                new Array(25).fill('square-wall-cell')),
+                new Array(25).fill('floor-cell'),
+                new Array(25).fill(null).map((_, i) => {
+                  // The corners are empty.
+                  if (i == 0 || i == 4 || i == 20 || i == 24) return null;
+                  const classNames = ['square-wall-cell'];
+                  if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
+                    // Do nothing; these are filled.
+                  } else {
+                    classNames.push('ellipse-cell-' + i);
+                  }
+                  return {
+                    index: i,
+                    classNames,
+                  };
+                }).filter(x => x != null)),
             this.createWallTool_(
                 'Rectangular Room',
                 false,
@@ -1308,7 +1321,22 @@ class Menu {
                 'Elliptical Room',
                 false,
                 () => state.gesture = new OvalRoomGesture(true),
-                new Array(25).fill('square-wall-cell')),
+                new Array(25).fill('floor-cell'),
+                new Array(25).fill(null).map((_, i) => {
+                  // The corners are empty.
+                  if (i == 0 || i == 4 || i == 20 || i == 24) return null;
+                  const classNames = [];
+                  if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
+                    // Do nothing; these are empty.
+                  } else {
+                    classNames.push('square-wall-cell');
+                    classNames.push('ellipse-hollow-cell-' + i);
+                  }
+                  return {
+                    index: i,
+                    classNames,
+                  };
+                }).filter(x => x != null)),
           ],
         },
       },
