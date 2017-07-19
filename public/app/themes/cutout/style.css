@@ -18,18 +18,18 @@
   filter: drop-shadow(0px 6px 2px #666666);
 }
 
-.square-wall-cell {
+.square-wall-cell, .oval-wall-cell {
   background-color: rgb(210, 210, 210);
   border-color: #31c8ff;
   filter: brightness(2) saturate(0.1);
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAC9UlEQVRIS13WB27cQBBEUVJZOogDHI/oAMfTOMDxYMoSjTfav6BMgODshOpUXbPzsw+/ltvb28k7z/Pk2dvbm5ZlGWPf6+vr6eDg4N4ee29ubsaZzodh7+7u7nR6ejrt7+9P88vPf5fLy8vtgcPDwwHK0Pn5+bSzszMOAMww4OY5Yq399tpn7vj4eII9P3j1ZbHQyxsLvAE2Nm1AHQZuzmO8fjIAo2w4Mz98/XUx4XXY12ZjEfGGV+YuLi6Gl8C95gHaU6pySkZkwjM/ff9z4akXiAhKV96W86urq60BuQbImP3V0l7GzR8dHd1l4sm7HwvvLJoE5AHSfMWvyPbZD3ykY+Pkun7WStuoidDKdUCx5+TkZLDEt0gA81AKnSv/1mNhtbI+0sUqz9t0r5ob9vBq5HdDXYfN5aD8R5ABvGmHMf/i05/FoPwBcvDs7OxeQf3mOU/Vzp4oDdQcYM5y2uv3SOfzj7/vum6atjmUCotFB9BTPwGNIKVQVKU2ZxgaUT1++32wq6Lx2Ob6pagYxJpYxGBEMc9oc9WLsZHiR2++DVmpeBaMzfGSA61Vu7ofsHHGra+beksmNelQDcVrETEgEusMGgNRQwaAJCHJy1pOaouhXWlURa0Ji6Ambd7vGFQ/RYxSxLjzgxDSlUQkIfWB37Gswscqh5Mj42pV6nyTlqFdCgis8JOMWBIZomk65pw6pG31UkIZjUczpkGxLC3KkwTR4eRkzbbWE88IU0MOCgu7hgJSUY072J3RV3pSiNS7TJhfX2hbgQSMAIC7JxLCNZVjYkWN8pHBuigjwEgxFQYKCGiqShQ9kWF9RSeK/18BzsKICH6Pyy/tSncy0r1egyU7XcUVX0QcLCKpU8uujGFEnwBI/6Oer7lUtj8FNSynAlpT2f5kxTqJmv1byfr6Ts/DmqpaFGlMS0RLVddvtRk0RuGYktpG0/JrXp67pIpyLfs1Yeq8/ku1jSQh3ErB5i6ow61jX4a6DiJGPVHP1Uci+QcyqXHAYPu0EQAAAABJRU5ErkJggg==);
 }
 
-.square-wall-cell-adding {
+.square-wall-cell-adding, .oval-wall-cell-adding, .oval-wall-cell-editing {
   filter: brightness(2.5) saturate(0.1) opacity(0.7);
 }
 
-.square-wall-cell-removing {
+.square-wall-cell-removing, .oval-wall-cell-removing {
   filter: brightness(2.5) saturate(0.1) opacity(0.5);
 }
 
