@@ -415,7 +415,8 @@
 }
 
 /* hsl(60, 23.8, 79.4) */
-.square-wall-cell-adding, .oval-wall-cell-editing {
+.square-wall-cell-adding, .square-wall-cell-editing,
+.oval-wall-cell-adding, .oval-wall-cell-editing {
   background-color: rgb(215, 215, 190);
 }
 

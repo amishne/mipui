@@ -17,6 +17,7 @@ const ct = {
           'square-wall-cell',
           'square-wall-cell-_ADDING_',
           'square-wall-cell-_REMOVING_',
+          'square-wall-cell-_EDITING_',
         ],
       },
       angled: {

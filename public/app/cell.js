@@ -113,7 +113,6 @@ class Cell {
   populateElementFromContent_(element, layer, content) {
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(element, content);
-    element.innerHTML = '';
     this.setText_(element, content[ck.text]);
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
@@ -123,7 +122,10 @@ class Cell {
   }
 
   setClip_(element, clipInclude, clipExclude) {
-    if (!element || (!clipInclude && !clipExclude)) return;
+    if (!element) return;
+    element.style.mask = null;
+    element.style['-webkit-mask'] = null;
+    if (!clipInclude && !clipExclude) return;
     const shapes = [];
     if (clipInclude) {
       clipInclude.split('|').forEach(clipShape => {

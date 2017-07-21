@@ -25,6 +25,13 @@ class OvalRoomGesture extends RoomGesture {
     }
   }
   
+  hasWallContentWithoutClipping_(cell) {
+    if (!cell) return false;
+    const content = cell.getLayerContent(ct.walls);
+    if (!content) return false;
+    return !(content[ck.clipInclude] || content[ck.clipExclude]);
+  }
+  
   mapCellsToValues_(includeBoundaries, mapKey) {
     // Outline:
     // 1. Find the ellipse center point.
@@ -66,9 +73,10 @@ class OvalRoomGesture extends RoomGesture {
       this.cellValues_.set(cell, cellValue);
       const keyedValue = {};
       cellValue[mapKey] = keyedValue;
-
-      if ((this.mode_ == 'toWall' && cell.hasLayerContent(ct.walls)) ||
-          (this.mode_ == 'toFloor' && !cell.hasLayerContent(ct.walls))) {
+      if ((this.mode_ == 'toWall' &&
+           this.hasWallContentWithoutClipping_(cell)) ||
+          (this.mode_ == 'toFloor' &&
+           !this.hasWallContentWithoutClipping_(cell))) {
         keyedValue.pos = 'outside';
         return;
       }
@@ -118,16 +126,21 @@ class OvalRoomGesture extends RoomGesture {
       [ck.variation]: ct.walls.smooth.oval.id,
     };
     if (val.w && val.w.cx) {
-      result[ck.clipInclude] = this.calculateEllipse_(val.w, cell);
+      result[ck.clipInclude] =
+          this.calculateEllipse_(val.w, cell, ck.clipInclude);
     }
     if (val.f && val.f.cx) {
-      result[ck.clipExclude] = this.calculateEllipse_(val.f, cell);
+      result[ck.clipExclude] =
+          this.calculateEllipse_(val.f, cell, ck.clipExclude);
     }
     return result;
   }
   
-  calculateEllipse_(val, cell) {
-    return `e:${val.rx},${val.ry},` +
-        `${val.cx - cell.offsetLeft},${val.cy - cell.offsetTop}`
+  calculateEllipse_(val, cell, key) {
+    const newEllipse = `e:${val.rx},${val.ry},` +
+        `${val.cx - cell.offsetLeft},${val.cy - cell.offsetTop}`;
+    const existingContent = cell.getLayerContent(ct.walls);
+    const existingClip = (existingContent || {})[key];
+    return existingClip ? existingClip + '|' + newEllipse : newEllipse;
   }
 }

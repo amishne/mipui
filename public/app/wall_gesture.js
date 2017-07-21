@@ -23,11 +23,19 @@ class WallGesture extends Gesture {
     this.isManual_ = isManual;
 
     this.removeDoorGestures = null;
+    
+    this.wallContent_ = {
+      [ck.kind]: ct.walls.smooth.id,
+      [ck.variation]: ct.walls.smooth.square.id,
+    };
   }
 
-  isWall_(cell) {
+  isWall_(cell, includingClipped) {
+    const isVariation = v => cell.isVariation(ct.walls, ct.walls.smooth, v);
     return cell &&
-        cell.isVariation(ct.walls, ct.walls.smooth, ct.walls.smooth.square);
+        (isVariation(ct.walls.smooth.square) ||
+         isVariation(ct.walls.smooth.angled) ||
+         (includingClipped && isVariation(ct.walls.smooth.oval)));
   }
 
   hasDoor_(cell) {
@@ -35,8 +43,10 @@ class WallGesture extends Gesture {
   }
 
   startHover(targetedCell) {
-    this.toWall = !this.isWall_(targetedCell);
-    this.mode = this.isManual_ ? 'manual' :
+    this.toWall = !this.isWall_(targetedCell, true);
+    this.mode =
+        this.isManual_ || !this.toWall && !this.isWall_(targetedCell, false) ?
+        'manual' :
         (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
     this.startHoverAfterInitialFieldsAreSet(targetedCell);
   }
@@ -113,16 +123,27 @@ class WallGesture extends Gesture {
   }
 
   addCellIfEligible_(cell) {
-    // Don't toggle cells that don't need toggling.
-    if (this.isWall_(cell) == this.toWall &&
-        (!this.toWall ||
-         !cell.getLayerContent(ct.walls).hasOwnProperty(ck.connections))) {
-      return;
-    }
     // If it's manual mode, just set the cell and be done with it.
     if (this.mode == 'manual') {
       this.cellsToSet.add(cell);
       return;
+    }
+
+    // Don't toggle cells that don't need toggling.
+    const cellIsWall = this.isWall_(cell, true);
+    if (!cellIsWall && !this.toWall) {
+      // Can't clear a clear cell.
+      return;
+    }
+    if (cellIsWall && this.toWall) {
+      // Can't turn a wall into a wall, until it has connections or clips that
+      // need to be stripped.
+      const wallContent = cell.getLayerContent(ct.walls);
+      if (!wallContent.hasOwnProperty(ck.connections) &&
+          !wallContent.hasOwnProperty(ck.clipInclude) &&
+          !wallContent.hasOwnProperty(ck.clipExclude)) {
+        return;
+      }
     }
 
     // Don't clear horizontal/vertical walls that have at least one clear
@@ -133,7 +154,9 @@ class WallGesture extends Gesture {
           cell.role == 'horizontal' ? 'top' : 'right').cells[0] || null;
       const neighbor2 = cell.getNeighbors(
           cell.role == 'horizontal' ? 'bottom' : 'left').cells[0] || null;
-      if (this.isWall_(neighbor1) || this.isWall_(neighbor2)) return;
+      if (this.isWall_(neighbor1, false) || this.isWall_(neighbor2, false)) {
+        return;
+      }
     }
 
     // Don't clear cells that contain doors, unless those are in the roots.
@@ -159,7 +182,7 @@ class WallGesture extends Gesture {
     return cells.some(cell => {
       return cell &&
           (this.rootCells.has(cell) ||
-           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell));
+           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell, false));
     });
   }
 
@@ -214,10 +237,7 @@ class WallGesture extends Gesture {
   }
 
   createContent_() {
+    return this.toWall ? this.wallContent_ : null;
     if (!this.toWall) return null;
-    return {
-      [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.square.id,
-    }
   }
 }
