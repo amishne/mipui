@@ -620,8 +620,8 @@ class BoxGesture extends Gesture {
     }
     if (valueKey != null && !value) return null;
     const content = {
-      [ck.kind]: kind,
-      [ck.variation]: variation,
+      [ck.kind]: kind || this.getKind_().id,
+      [ck.variation]: variation || this.getVariation_().id,
     };
     if (valueKey != null) {
       content[valueKey] = value;
