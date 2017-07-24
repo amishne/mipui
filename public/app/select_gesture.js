@@ -95,7 +95,7 @@ class SelectGesture extends Gesture {
     this.anchorCell_ = null;
   }
 
-  allCellsWithStartCell_(layer, startCell, callback) {
+  forEachCellWithStartCell_(layer, startCell, callback) {
     state.theMap.cells.forEach(cell => {
       if (cell == startCell) callback(cell);
     });
