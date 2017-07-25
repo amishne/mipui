@@ -119,25 +119,29 @@ function handleTouchEndEvent(touchEvent) {
   debug('touchEnd: ' + touchEvent);
 }
 
-//function getCurrentGridCell(mouseEvent) {
-//  const nav = state.navigation;
-//  const cellSize = 25 * nav.scale;
-//  const borderSize = 7 * nav.scale;
-//  const cellAndBorderSize = cellSize + borderSize;
-//  const x = mouseEvent.pageX - (nav.translate.x + 8);
-//  const y = mouseEvent.pageY - (nav.translate.y + 8);
-//
-//  const toRow = Math.floor(y / cellAndBorderSize) + state.getGridData().from;
-//  const fromRow = (y % cellAndBorderSize) / borderSize > 1 ? toRow : toRow - 1;
-//
-//  const toCol = Math.floor(x / cellAndBorderSize) + state.getGridData().from;
-//  const fromCol = (x % cellAndBorderSize) / borderSize > 1 ? toCol : toCol - 1;
-//
-//  const key = fromRow != toRow || fromCol != toCol ?
-//      TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
-//      TheMap.primaryCellKey(fromRow, fromCol);
-//  return key;
+//function getCellKeyFromMouse(mouseEvent) {
+//  return getCellKey(mouseEvent.pageX, mouseEvent.pageY);
 //}
+
+function getCellKey(pageX, pageY) {
+  const nav = state.navigation;
+  const cellSize = 25 * nav.scale;
+  const borderSize = 7 * nav.scale;
+  const cellAndBorderSize = cellSize + borderSize;
+  const x = pageX - (nav.translate.x + 8);
+  const y = pageY - (nav.translate.y + 8);
+
+  const toRow = Math.floor(y / cellAndBorderSize) + state.getGridData().from;
+  const fromRow = (y % cellAndBorderSize) / borderSize > 1 ? toRow : toRow - 1;
+
+  const toCol = Math.floor(x / cellAndBorderSize) + state.getGridData().from;
+  const fromCol = (x % cellAndBorderSize) / borderSize > 1 ? toCol : toCol - 1;
+
+  const key = fromRow != toRow || fromCol != toCol ?
+      TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
+      TheMap.primaryCellKey(fromRow, fromCol);
+  return key;
+}
 
 function resizeGridBy(
     firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff) {
@@ -228,3 +232,13 @@ function refreshMapResizeButtonLocations() {
   });
 }
 
+function switchToMobileMode() {
+  zoom({
+    x: 0,
+    y: 0,
+    deltaY: -2,
+  });
+  const mobileCursor =
+      createAndAppendDivWithClass(
+          document.getElementById('app'), 'mobile-cursor');
+}

@@ -11,7 +11,7 @@ body {
   position: relative;
 }
 
-@media (max-width: 800px), (max-height: 700px) {
+@media (max-width: 800px), (max-height: 700px), (any-hover: none) {
   #adContainer {
     display: none;
   }

@@ -7,6 +7,24 @@
   z-index: 20;
   background-color: rgba(75, 83, 107, 0.5);
   overflow-x: auto;
+  transform-origin: top left;
+}
+
+@media screen and (any-hover: none) and
+    (min-resolution: 1.0dppx) and (max-width: 800px) {
+  .menu {transform: scale(1.5, 1.5);}
+}
+@media screen and (any-hover: none) and (min-resolution: 1.5dppx) and
+    (max-width: 1200px) {
+  .menu {transform: scale(2.0, 2.0);}
+}
+@media screen and (any-hover: none) and (min-resolution: 2.0dppx) and
+    (max-width: 1600px) {
+  .menu {transform: scale(2.5, 2.5);}
+}
+@media screen and (any-hover: none) and (min-resolution: 2.5dppx) and
+    (max-width: 2000px) {
+  .menu {transform: scale(3.0, 3.0);}
 }
 
 .rotate-90 {

@@ -10,6 +10,14 @@
   box-sizing: border-box;
 }
 
+.mobile-cursor {
+  position: fixed;
+  margin: auto;
+  width: 25px;
+  height: 25px;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAYUlEQVRIS+1WQQ4AIAiS/z/aRs2tW9KhdcCzijJkIoTIzKx0AOiWthPZkCDsTSyDHCk2XVbXh3eyW8VRwxHcYF68EijtK0VK7rSgJ5uIU9kg+4TZIG2QHxpkX8DrJbr5uwYYoKkOM2ZJzgAAAABJRU5ErkJggg==");
+}
+
 .layer {
   position: absolute;
   width: 100%;

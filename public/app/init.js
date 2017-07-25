@@ -100,6 +100,9 @@ function start() {
   });
   resetView();
   wireUiElements();
+  if (window.matchMedia("(any-hover: none)").matches) {
+    switchToMobileMode();
+  }
 }
 
 const state = new State();
