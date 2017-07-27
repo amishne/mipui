@@ -3,7 +3,7 @@ body {
 }
 
 .app {
-  position: fixed;
+  position: relative;
   width: calc(100% - 182px);
   height: calc(100% - 16px);
   margin: 8px;
@@ -47,11 +47,12 @@ body {
   left: 0;
 }
 
-@media (max-width: 800px), (max-height: 700px), (any-hover: none) {
+@media (any-hover: none) {
   #adContainer {
     display: none;
   }
   .app {
+    position: fixed;
     width: 100%;
     height: 100%;
     margin: 0;

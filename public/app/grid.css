@@ -22,7 +22,7 @@
 }
 
 .mobile-cursor {
-  position: fixed;
+  position: absolute;
   margin: auto;
   width: 25px;
   height: 25px;

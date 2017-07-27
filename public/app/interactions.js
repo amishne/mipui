@@ -241,7 +241,13 @@ function switchToMobileMode() {
   while (window.matchMedia(`(min-resolution: ${ppx}dppx)`).matches) {
     ppx += 0.5;
   }
-  document.getElementById('app').style.transform = `scale(${ppx})`;
+  const scale = ppx + 0.5;
+  document.getElementById('app').style.transform = `scale(${scale})`;
+  document.getElementById('app').style.width = (100 / scale) + '%';
+  document.getElementById('app').style.height = (100 / scale) + '%';
+  //document.getElementsByClassName('menu')[0].style.transformOrigin = 'top left';
+  //document.getElementsByClassName('menu')[0].style.transform =
+  //    `scale(${ppx + 0.5})`;
   const nav = state.navigation;
   pan(50 - nav.translate.x, 50 - nav.translate.y);
   const mobileCursor =
