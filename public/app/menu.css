@@ -1,15 +1,9 @@
 .menu {
-  position: absolute;
-  max-width: calc(100% - 8px);
-  top: 4px;
-  left: 4px;
-  max-height: calc(100% - 8px);
-  z-index: 20;
   background-color: rgba(75, 83, 107, 0.5);
-  overflow-x: auto;
-  transform-origin: top left;
+  display: inline-block;
 }
 
+/*
 @media screen and (any-hover: none) and
     (min-resolution: 1.0dppx) and (max-width: 800px) {
   .menu {transform: scale(1.5, 1.5);}
@@ -26,6 +20,7 @@
     (max-width: 2000px) {
   .menu {transform: scale(3.0, 3.0);}
 }
+*/
 
 .rotate-90 {
   transform: rotate(90deg);

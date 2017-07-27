@@ -17,13 +17,13 @@ function createTheMapAndUpdateElements() {
 }
 
 function wireUiElements() {
-  const theMap = document.getElementById('app');
-  document.onkeydown = (keyDownEvent) => { handleKeyDownEvent(keyDownEvent); };
-  theMap.onwheel = (wheelEvent) => { handleWheelEvent(wheelEvent); };
-  theMap.onmousemove = (mouseEvent) => { handleMouseMoveEvent(mouseEvent); };
-  theMap.ontouchstart = (touchEvent) => { handleTouchStartEvent(touchEvent); };
-  theMap.ontouchmove = (touchEvent) => { handleTouchMoveEvent(touchEvent); };
-  theMap.ontouchend = (touchEvent) => { handleTouchEndEvent(touchEvent); };
+  document.onkeydown = keyDownEvent => handleKeyDownEvent(keyDownEvent);
+  const mapContainer = document.getElementById('mapContainer');
+  mapContainer.onwheel = wheelEvent => handleWheelEvent(wheelEvent);
+  mapContainer.onmousemove = mouseEvent => handleMouseMoveEvent(mouseEvent);
+  mapContainer.ontouchstart = touchEvent => handleTouchStartEvent(touchEvent);
+  mapContainer.ontouchmove = touchEvent => handleTouchMoveEvent(touchEvent);
+  mapContainer.ontouchend = touchEvent => handleTouchEndEvent(touchEvent);
 }
 
 function initializeFirebase(callback) {

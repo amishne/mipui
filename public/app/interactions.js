@@ -1,3 +1,5 @@
+let isTouchDevice = window.matchMedia('(any-hover: none)').matches
+
 function handleKeyDownEvent(keyDownEvent) {
   if (state.isReadOnly()) return;
   if (keyDownEvent.ctrlKey) {
@@ -83,7 +85,8 @@ function zoom(wheelEvent, incremental = false) {
 
 //let prevGridCell = null;
 function handleMouseMoveEvent(mouseEvent) {
-  if (mouseEvent.buttons == 4) {
+  if (mouseEvent.movementX == 0 && mouseEvent.movementY == 0) return;
+  if (mouseEvent.buttons == isTouchDevice ? 0 : 4) {
     // Middle button is pan.
     pan(mouseEvent.movementX, mouseEvent.movementY);
   }// else {
@@ -112,6 +115,7 @@ function handleTouchStartEvent(touchEvent) {
 }
 
 function handleTouchMoveEvent(touchEvent) {
+  pan(touchEvent.movementX, touchEvent.movementY);
   debug('touchMove: ' + touchEvent);
 }
 
@@ -177,9 +181,9 @@ function resetView() {
   nav.translate.x = 8;
   nav.translate.y = 8;
   updateMapTransform(false);
-  const app = document.getElementById('app');
+  const mapContainer = document.getElementById('mapContainer');
   const theMap = document.getElementById('theMap');
-  const appRect = app.getBoundingClientRect();
+  const appRect = mapContainer.getBoundingClientRect();
   const theMapRect = theMap.getBoundingClientRect();
   pan(appRect.width / 2 - theMapRect.width / 2,
       appRect.height / 2 - theMapRect.height / 2);
@@ -214,11 +218,11 @@ function refreshMapResizeButtonLocations() {
     const element =
         document.getElementsByClassName('map-resize-button-' + button.name)[0];
     let x =
-        Math.min(rect.right - 80,
-            Math.max(uiOverlay.offsetWidth / 2, rect.left + 60));
+        Math.min(rect.right - 70,
+            Math.max(uiOverlay.offsetWidth / 2, rect.left + 70));
     let y =
-        Math.min(rect.bottom - 80,
-            Math.max(uiOverlay.offsetHeight / 2, rect.top + 60));
+        Math.min(rect.bottom - 70,
+            Math.max(uiOverlay.offsetHeight / 2, rect.top + 70));
     let offsetX = button.place == 0 ? -70 : 40;
     let offsetY = offsetX;
     switch(button.pos) {
@@ -233,12 +237,14 @@ function refreshMapResizeButtonLocations() {
 }
 
 function switchToMobileMode() {
-  zoom({
-    x: 0,
-    y: 0,
-    deltaY: -2,
-  });
+  let ppx = 1;
+  while (window.matchMedia(`(min-resolution: ${ppx}dppx)`).matches) {
+    ppx += 0.5;
+  }
+  document.getElementById('app').style.transform = `scale(${ppx})`;
+  const nav = state.navigation;
+  pan(50 - nav.translate.x, 50 - nav.translate.y);
   const mobileCursor =
       createAndAppendDivWithClass(
-          document.getElementById('app'), 'mobile-cursor');
+          document.getElementById('mapContainer'), 'mobile-cursor');
 }
