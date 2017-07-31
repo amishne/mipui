@@ -86,7 +86,7 @@ function zoom(wheelEvent, incremental = false) {
 //let prevGridCell = null;
 function handleMouseMoveEvent(mouseEvent) {
   if (mouseEvent.movementX == 0 && mouseEvent.movementY == 0) return;
-  if (mouseEvent.buttons == isTouchDevice ? 0 : 4) {
+  if (mouseEvent.buttons == (isTouchDevice ? 0 : 4)) {
     // Middle button is pan.
     pan(mouseEvent.movementX, mouseEvent.movementY);
   }// else {
@@ -101,6 +101,12 @@ function handleMouseMoveEvent(mouseEvent) {
 //      prevGridCell = gridCell;
 //    }
 //  }
+}
+
+function handleScrollEvent(event) {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  console.log('scroll');
 }
 
 function pan(x, y) {
@@ -242,7 +248,7 @@ function switchToMobileMode() {
       window.matchMedia(`(min-resolution: ${dpi}dpi)`).matches; dpi += 48) {
     scale += 0.5;
   }
-  scale = Math.max(1, scale - 2);
+  scale = Math.max(1, scale - 2.5);
   document.getElementById('app').style.transform = `scale(${scale})`;
   document.getElementById('app').style.width = (100 / scale) + '%';
   document.getElementById('app').style.height = (100 / scale) + '%';
