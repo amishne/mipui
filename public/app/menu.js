@@ -230,6 +230,11 @@ class Menu {
       alert('This is a read-only view of this map; fork to edit.');
       return;
     }
+    if (menuItem.isSelected) {
+      // If it's already selected, just hide its content.
+      menuItem.submenu.element.style.display = 'none';
+      return;
+    }
     this.menuItems_.forEach(otherMenuItem => {
       const isThisItem = menuItem == otherMenuItem;
       otherMenuItem.isSelected = isThisItem;
