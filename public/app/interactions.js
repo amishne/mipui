@@ -237,19 +237,20 @@ function refreshMapResizeButtonLocations() {
 }
 
 function switchToMobileMode() {
-  let ppx = 1;
-  while (window.matchMedia(`(min-resolution: ${ppx}dppx)`).matches) {
-    ppx += 0.5;
+  let scale = 1;
+  for (let dpi = 96;
+      window.matchMedia(`(min-resolution: ${dpi}dpi)`).matches; dpi += 48) {
+    scale += 0.5;
   }
-  const scale = ppx + 0.5;
+  scale = Math.max(1, scale - 2);
   document.getElementById('app').style.transform = `scale(${scale})`;
   document.getElementById('app').style.width = (100 / scale) + '%';
   document.getElementById('app').style.height = (100 / scale) + '%';
   //document.getElementsByClassName('menu')[0].style.transformOrigin = 'top left';
   //document.getElementsByClassName('menu')[0].style.transform =
   //    `scale(${ppx + 0.5})`;
-  const nav = state.navigation;
-  pan(50 - nav.translate.x, 50 - nav.translate.y);
+//  const nav = state.navigation;
+//  pan(50 - nav.translate.x, 50 - nav.translate.y);
   const mobileCursor =
       createAndAppendDivWithClass(
           document.getElementById('mapContainer'), 'mobile-cursor');
