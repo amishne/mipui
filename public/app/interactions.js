@@ -243,12 +243,7 @@ function refreshMapResizeButtonLocations() {
 }
 
 function switchToMobileMode() {
-  let scale = 1;
-  for (let dpi = 96;
-      window.matchMedia(`(min-resolution: ${dpi}dpi)`).matches; dpi += 48) {
-    scale += 0.5;
-  }
-  scale = Math.max(1, scale - 2.5);
+  const scale = 1.6;
   document.getElementById('app').style.transform = `scale(${scale})`;
   document.getElementById('app').style.width = (100 / scale) + '%';
   document.getElementById('app').style.height = (100 / scale) + '%';

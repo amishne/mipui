@@ -1,6 +1,7 @@
 .menu {
   background-color: rgba(75, 83, 107, 0.5);
   display: inline-block;
+  width: 100%;
 }
 
 /*
@@ -38,6 +39,7 @@
   align-items: center;
   padding: 4px;
   white-space: nowrap;
+  overflow-x: auto;
 }
 
 .menu-bottom {
