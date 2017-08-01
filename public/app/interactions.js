@@ -103,17 +103,31 @@ function handleMouseMoveEvent(mouseEvent) {
 //  }
 }
 
+//let prevScroll = {x: 0, y: 0};
 function handleScrollEvent(event) {
-  event.preventDefault();
-  event.stopImmediatePropagation();
   console.log('scroll');
+  refreshMapResizeButtonLocations();
+//  const mapContainer = document.getElementById('mapContainer');
+//  const newX = mapContainer.scrollLeft;
+//  const newY = mapContainer.scrollTop;
+//  const diffX = newX - prevScroll.x;
+//  const diffY = newY - prevScroll.y;
+//  console.log(`scroll by (${diffX}, ${diffY})`);
+////  prevScroll.x = newX;
+////  prevScroll.y = newY;
+//  pan(-diffX, -diffY);
+//  mapContainer.scrollLeft = 100;
+//  mapContainer.scrollTop = 100;
 }
 
 function pan(x, y) {
-  const nav = state.navigation;
-  nav.translate.x += x;
-  nav.translate.y += y;
-  updateMapTransform(true);
+  if (isTouchDevice) return;
+  document.getElementById('mapContainer').scrollLeft -= x;
+  document.getElementById('mapContainer').scrollTop -= y;
+//  const nav = state.navigation;
+//  nav.translate.x += x;
+//  nav.translate.y += y;
+//  updateMapTransform(true);
 }
 
 function handleTouchStartEvent(touchEvent) {
@@ -210,7 +224,12 @@ function resetGrid() {
 function refreshMapResizeButtonLocations() {
   const uiOverlay = document.getElementById('uiOverlay');
   const theMap = document.getElementById('theMap');
-  const rect = theMap.getBoundingClientRect();
+  const mapContainer = document.getElementById('mapContainer');
+  const left = mapContainer.scrollLeft + theMap.offsetLeft;
+  const right = left + theMap.offsetWidth;
+  const top = mapContainer.scrollTop + theMap.offsetTop;
+  const bottom = top + theMap.offsetHeight;
+  const rect = {left, right, top, bottom};
   [
     {name: 'add-column-right', pos: 'right', place: 0},
     {name: 'remove-column-right', pos: 'right', place: 1},
@@ -223,13 +242,9 @@ function refreshMapResizeButtonLocations() {
   ].forEach(button => {
     const element =
         document.getElementsByClassName('map-resize-button-' + button.name)[0];
-    let x =
-        Math.min(rect.right - 70,
-            Math.max(uiOverlay.offsetWidth / 2, rect.left + 70));
-    let y =
-        Math.min(rect.bottom - 70,
-            Math.max(uiOverlay.offsetHeight / 2, rect.top + 70));
-    let offsetX = button.place == 0 ? -70 : 40;
+    let x = clamp(rect.left + 70, uiOverlay.offsetWidth / 2, rect.right - 70);
+    let y = clamp(rect.top + 70, uiOverlay.offsetHeight / 2, rect.bottom - 70);
+    let offsetX = button.place == 0 ? -80 : 30;
     let offsetY = offsetX;
     switch(button.pos) {
       case 'right': x = rect.right; offsetX = 20; break;
@@ -247,11 +262,12 @@ function switchToMobileMode() {
   document.getElementById('app').style.transform = `scale(${scale})`;
   document.getElementById('app').style.width = (100 / scale) + '%';
   document.getElementById('app').style.height = (100 / scale) + '%';
-  //document.getElementsByClassName('menu')[0].style.transformOrigin = 'top left';
-  //document.getElementsByClassName('menu')[0].style.transform =
-  //    `scale(${ppx + 0.5})`;
-//  const nav = state.navigation;
-//  pan(50 - nav.translate.x, 50 - nav.translate.y);
+  const nav = state.navigation;
+  nav.translate.x = 1000;
+  nav.translate.y = 1000;
+  document.getElementById('theMap').scrollLeft = 950;
+  document.getElementById('theMap').scrollTop = 950;
+  updateMapTransform(true);
   const mobileCursor =
       createAndAppendDivWithClass(
           document.getElementById('mapContainer'), 'mobile-cursor');

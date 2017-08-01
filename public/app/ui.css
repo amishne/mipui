@@ -28,7 +28,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
   z-index: 1;
 }
 
@@ -102,6 +102,14 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 }
+/*
+
+@media screen and (any-hover: none) {
+  .map-resize-button {
+    position: fixed;
+  }
+}
+*/
 
 .map-resize-button-add-column-right {
   background-image: url("assets/ic_keyboard_capslock_white_24px.svg");
