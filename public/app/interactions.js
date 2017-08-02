@@ -252,8 +252,8 @@ function refreshMapResizeButtonLocations() {
     let offsetX = button.place == 0 ? -65 : 45;
     let offsetY = offsetX;
     switch(button.pos) {
-      case 'right': x = rect.right; offsetX = 20; break;
-      case 'bottom': y = rect.bottom; offsetY = 20; break;
+      case 'right': x = rect.right; offsetX = 50; break;
+      case 'bottom': y = rect.bottom; offsetY = 50; break;
       case 'left': x = rect.left; offsetX = -70; break;
       case 'top': y = rect.top; offsetY = -70; break;
     }
