@@ -25,8 +25,8 @@ class State {
     this.navigation = {
       scale: 1.0,
       translate: {
-        x: 8,
-        y: 8,
+        x: 0,
+        y: 0,
       },
     };
 

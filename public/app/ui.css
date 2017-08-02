@@ -93,7 +93,7 @@ body {
 }
 
 .map-resize-button {
-  position: absolute;
+  position: fixed;
   width: 30px;
   height: 30px;
   background-color: rgba(43, 43, 44, 0.28);
