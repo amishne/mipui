@@ -30,6 +30,8 @@ body {
   height: 100%;
   overflow: auto;
   z-index: 1;
+  /* Clipping to hide the overflowing fixed children, e.g. resize buttons. */
+  clip: rect(auto, auto, auto, auto);
 }
 
 @media screen and (any-hover: none) {

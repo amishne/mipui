@@ -206,6 +206,8 @@ function resetView() {
   nav.translate.y = 0;
   updateMapTransform(false);
   const mapContainer = document.getElementById('mapContainer');
+  mapContainer.scrollLeft = mapContainer.clientWidth / 2;
+  mapContainer.scrollTop = mapContainer.clientHeight / 2;
   const theMap = document.getElementById('theMap');
   const appRect = mapContainer.getBoundingClientRect();
   const theMapRect = theMap.getBoundingClientRect();
@@ -226,7 +228,6 @@ function resetGrid() {
 }
 
 function refreshMapResizeButtonLocations() {
-  const uiOverlay = document.getElementById('uiOverlay');
   const theMap = document.getElementById('theMap');
   const mapContainer = document.getElementById('mapContainer');
   const left = theMap.offsetLeft - mapContainer.scrollLeft;
@@ -246,9 +247,9 @@ function refreshMapResizeButtonLocations() {
   ].forEach(button => {
     const element =
         document.getElementsByClassName('map-resize-button-' + button.name)[0];
-    let x = clamp(rect.left + 70, uiOverlay.offsetWidth / 2, rect.right - 70);
-    let y = clamp(rect.top + 70, uiOverlay.offsetHeight / 2, rect.bottom - 70);
-    let offsetX = button.place == 0 ? -80 : 30;
+    let x = clamp(rect.left + 70, mapContainer.offsetWidth / 2, rect.right - 70);
+    let y = clamp(rect.top + 70, mapContainer.offsetHeight / 2, rect.bottom - 70);
+    let offsetX = button.place == 0 ? -65 : 45;
     let offsetY = offsetX;
     switch(button.pos) {
       case 'right': x = rect.right; offsetX = 20; break;

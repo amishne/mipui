@@ -57,7 +57,7 @@ function initializeFirebase(callback) {
 }
 
 function createMapResizeButtons() {
-  const uiOverlay = document.getElementById('uiOverlay');
+  const mapContainer = document.getElementById('mapContainer');
   [
     {name: 'add-column-right', callback: () => resizeGridBy(0, 1, 0, 0)},
     {name: 'remove-column-right', callback: () => resizeGridBy(0, -1, 0, 0)},
@@ -69,7 +69,7 @@ function createMapResizeButtons() {
     {name: 'remove-row-top', callback: () => resizeGridBy(0, 0, 1, 0)},
   ].forEach(({name, callback}) => {
     const button = createAndAppendDivWithClass(
-        uiOverlay, `map-resize-button map-resize-button-${name}`);
+        mapContainer, `map-resize-button map-resize-button-${name}`);
     button.onclick = (e) => callback();
     button.title =
         name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ');
