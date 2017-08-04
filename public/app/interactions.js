@@ -42,9 +42,19 @@ function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
   theMap.style.transform =
       `translate(${nav.translate.x}px, ${nav.translate.y}px) ` +
       `scale(${nav.scale})`;
+  // For proper container sizing:
+  theMap.style.width = state.theMap.mapWidth * nav.scale;
+  theMap.style.height = state.theMap.mapHeight * nav.scale;
   const mapContainer = document.getElementById('mapContainer');
+  const extra = mapContainer.offsetWidth * (nav.scale - 1);
+//  theMap.style.margin =
+//      `${mapContainer.offsetHeight / 2}px ` +
+//      `${(mapContainer.offsetWidth / 2) - extra}px ` +
+//      `${(mapContainer.offsetHeight / 2) - extra}px ` +
+//      `${mapContainer.offsetWidth / 2}px `;
   theMap.style.margin =
-      `${mapContainer.clientHeight / 2}px ${mapContainer.clientWidth / 2}px`;
+      `${mapContainer.offsetHeight / 2}px ` +
+      `${mapContainer.offsetWidth / 2}px `;
   if (shouldRefreshMapResizeButtonLocations) {
     refreshMapResizeButtonLocations();
   }
@@ -82,8 +92,10 @@ function zoom(wheelEvent, incremental = false) {
   }
   const growth = scaleDiff / nav.scale;
   nav.scale += scaleDiff;
-  nav.translate.x -= growth * (wheelEvent.x - nav.translate.x);
-  nav.translate.y -= growth * (wheelEvent.y - nav.translate.y);
+  pan(growth * (wheelEvent.x - nav.translate.x),
+      growth * (wheelEvent.y - nav.translate.y));
+  //nav.translate.x -= growth * (wheelEvent.x - nav.translate.x);
+  //nav.translate.y -= growth * (wheelEvent.y - nav.translate.y);
   updateMapTransform(true);
 }
 
@@ -230,10 +242,11 @@ function resetGrid() {
 function refreshMapResizeButtonLocations() {
   const theMap = document.getElementById('theMap');
   const mapContainer = document.getElementById('mapContainer');
+  const nav = state.navigation;
   const left = theMap.offsetLeft - mapContainer.scrollLeft;
-  const right = left + theMap.offsetWidth;
+  const right = left + (theMap.offsetWidth);
   const top = theMap.offsetTop - mapContainer.scrollTop;
-  const bottom = top + theMap.offsetHeight;
+  const bottom = top + (theMap.offsetHeight);
   const rect = {left, right, top, bottom};
   [
     {name: 'add-column-right', pos: 'right', place: 0},

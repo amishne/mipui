@@ -9,6 +9,10 @@ class TheMap {
     this.dividerWidth = null;
     this.currX = null;
     this.currY = null;
+    
+    // For later use.
+    this.mapWidth = null;
+    this.mapHeight = null;
   }
 
   static dividerCellKey(previousRow, previousColumn, nextRow, nextColumn) {
@@ -73,6 +77,8 @@ class TheMap {
     const theMapElement = document.getElementById('theMap');
     theMapElement.style.width = width;
     theMapElement.style.height = height;
+    this.mapWidth = width;
+    this.mapHeight = height;
   }
 
   clearMap_() {
