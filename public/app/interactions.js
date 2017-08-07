@@ -43,18 +43,24 @@ function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
       `translate(${nav.translate.x}px, ${nav.translate.y}px) ` +
       `scale(${nav.scale})`;
   // For proper container sizing:
-  theMap.style.width = state.theMap.mapWidth * nav.scale;
-  theMap.style.height = state.theMap.mapHeight * nav.scale;
+  const mapFrame = document.getElementById('mapFrame');
   const mapContainer = document.getElementById('mapContainer');
-  const extra = mapContainer.offsetWidth * (nav.scale - 1);
+  mapFrame.style.width =
+      state.theMap.mapWidth * nav.scale + mapContainer.offsetWidth;
+  mapFrame.style.height =
+      state.theMap.mapHeight * nav.scale + mapContainer.offsetHeight;
+  theMap.style.left = mapContainer.offsetWidth / 2;
+  theMap.style.top = mapContainer.offsetHeight / 2;
+  
+//  const extra = mapContainer.offsetWidth * (nav.scale - 1);
 //  theMap.style.margin =
 //      `${mapContainer.offsetHeight / 2}px ` +
 //      `${(mapContainer.offsetWidth / 2) - extra}px ` +
 //      `${(mapContainer.offsetHeight / 2) - extra}px ` +
 //      `${mapContainer.offsetWidth / 2}px `;
-  theMap.style.margin =
-      `${mapContainer.offsetHeight / 2}px ` +
-      `${mapContainer.offsetWidth / 2}px `;
+//  theMap.style.margin =
+//      `${mapContainer.offsetHeight / 2}px ` +
+//      `${mapContainer.offsetWidth / 2}px `;
   if (shouldRefreshMapResizeButtonLocations) {
     refreshMapResizeButtonLocations();
   }
@@ -94,6 +100,8 @@ function zoom(wheelEvent, incremental = false) {
   nav.scale += scaleDiff;
   pan(growth * (wheelEvent.x - nav.translate.x),
       growth * (wheelEvent.y - nav.translate.y));
+//  nav.translate.x = document.getElementById('theMap').offsetWidth * (1/nav.scale);
+//  nav.translate.y = document.getElementById('theMap').offsetHeight * ((nav.scale - 1) * 2) / 2;
   //nav.translate.x -= growth * (wheelEvent.x - nav.translate.x);
   //nav.translate.y -= growth * (wheelEvent.y - nav.translate.y);
   updateMapTransform(true);
@@ -244,9 +252,9 @@ function refreshMapResizeButtonLocations() {
   const mapContainer = document.getElementById('mapContainer');
   const nav = state.navigation;
   const left = theMap.offsetLeft - mapContainer.scrollLeft;
-  const right = left + (theMap.offsetWidth);
+  const right = left + (theMap.offsetWidth * nav.scale);
   const top = theMap.offsetTop - mapContainer.scrollTop;
-  const bottom = top + (theMap.offsetHeight);
+  const bottom = top + (theMap.offsetHeight * nav.scale);
   const rect = {left, right, top, bottom};
   [
     {name: 'add-column-right', pos: 'right', place: 0},
