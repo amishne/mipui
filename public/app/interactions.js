@@ -120,9 +120,15 @@ function handleMouseMoveEvent(mouseEvent) {
 }
 
 //let prevScroll = {x: 0, y: 0};
+let scrollCallRequested = false;
 function handleScrollEvent(event) {
-  console.log('scroll');
-  refreshMapResizeButtonLocations();
+  if (scrollCallRequested) return;
+  scrollCallRequested = true;
+  window.requestAnimationFrame(_ => {
+    console.log('scroll');
+    refreshMapResizeButtonLocations();
+    scrollCallRequested = false;
+  });
 //  const mapContainer = document.getElementById('mapContainer');
 //  const newX = mapContainer.scrollLeft;
 //  const newY = mapContainer.scrollTop;
