@@ -204,11 +204,13 @@ function resizeGridBy(
   // Update transform so that elements on the viewport won't move around.
   if (firstColumnDiff != 0 || firstRowDiff != 0) {
     const mapContainer = document.getElementById('mapContainer');
-    mapContainer.scrollLeft -= firstColumnDiff *
+    const nav = state.navigation;
+    mapContainer.scrollLeft -= firstColumnDiff * nav.scale *
         (state.theMap.cellWidth + state.theMap.dividerWidth);
-    mapContainer.scrollTop -= firstRowDiff *
+    mapContainer.scrollTop -= firstRowDiff * nav.scale *
         (state.theMap.cellHeight + state.theMap.dividerHeight);
   }
+  updateMapTransform(false);
   state.opCenter.recordOperationComplete();
 }
 
