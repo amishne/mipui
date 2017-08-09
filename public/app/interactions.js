@@ -39,9 +39,7 @@ function handleKeyDownEvent(keyDownEvent) {
 function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
   const nav = state.navigation;
   const theMap = document.getElementById('theMap');
-  theMap.style.transform =
-      `translate(${nav.translate.x}px, ${nav.translate.y}px) ` +
-      `scale(${nav.scale})`;
+  theMap.style.transform = `scale(${nav.scale})`;
   // For proper container sizing:
   const mapFrame = document.getElementById('mapFrame');
   const mapContainer = document.getElementById('mapContainer');
@@ -51,16 +49,6 @@ function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
       state.theMap.mapHeight * nav.scale + mapContainer.offsetHeight;
   theMap.style.left = mapContainer.offsetWidth / 2;
   theMap.style.top = mapContainer.offsetHeight / 2;
-  
-//  const extra = mapContainer.offsetWidth * (nav.scale - 1);
-//  theMap.style.margin =
-//      `${mapContainer.offsetHeight / 2}px ` +
-//      `${(mapContainer.offsetWidth / 2) - extra}px ` +
-//      `${(mapContainer.offsetHeight / 2) - extra}px ` +
-//      `${mapContainer.offsetWidth / 2}px `;
-//  theMap.style.margin =
-//      `${mapContainer.offsetHeight / 2}px ` +
-//      `${mapContainer.offsetWidth / 2}px `;
   if (shouldRefreshMapResizeButtonLocations) {
     refreshMapResizeButtonLocations();
   }
@@ -90,20 +78,8 @@ function zoom(wheelEvent, incremental = false) {
   const mapContainer = document.getElementById('mapContainer');
   let distanceFromLeft = wheelEvent.x + mapContainer.scrollLeft;
   let distanceFromTop = wheelEvent.y + mapContainer.scrollTop;
-//  for (let target = wheelEvent.target; target.id != 'mapContainer';
-//      target = target.parentElement) {
-//    if (target.id == 'theMap') {
-//      distanceFromLeft *= nav.scale;
-//      distanceFromTop *= nav.scale;
-//    }
-//    distanceFromLeft += target.offsetLeft;
-//    distanceFromTop += target.offsetTop;
-//  }
-  
   distanceFromLeft -= mapContainer.offsetWidth / 2;
   distanceFromTop -= mapContainer.offsetHeight / 2;
-  //distanceFromLeft *= nav.scale;
-  //distanceFromTop *= nav.scale;
 
   let scaleDiff = 1.0;
   if (wheelEvent.deltaY > 0 && nav.scale > 0.3) {
@@ -118,20 +94,9 @@ function zoom(wheelEvent, incremental = false) {
   }
   const growth = scaleDiff / nav.scale;
   nav.scale += scaleDiff;
-  
-  
-//  pan(growth * (wheelEvent.x - mapContainer.scrollLeft),
-//      growth * (wheelEvent.y - mapContainer.scrollTop));
-//  nav.translate.x = document.getElementById('theMap').offsetWidth * (1/nav.scale);
-//  nav.translate.y = document.getElementById('theMap').offsetHeight * ((nav.scale - 1) * 2) / 2;
-  //nav.translate.x -= growth * (wheelEvent.x - nav.translate.x);
-  //nav.translate.y -= growth * (wheelEvent.y - nav.translate.y);
 
-  
   pan(-growth * distanceFromLeft, -growth * distanceFromTop);
   updateMapTransform(true);
-//  pan(growth * (wheelEvent.x - (mapContainer.offsetWidth / 2),
-//      growth * (wheelEvent.y - (mapContainer.offsetHeight / 2))));
 }
 
 //let prevGridCell = null;
@@ -175,10 +140,6 @@ function pan(x, y) {
   if (isTouchDevice) return;
   document.getElementById('mapContainer').scrollLeft -= x;
   document.getElementById('mapContainer').scrollTop -= y;
-//  const nav = state.navigation;
-//  nav.translate.x += x;
-//  nav.translate.y += y;
-//  updateMapTransform(true);
 }
 
 function handleTouchStartEvent(touchEvent) {
@@ -249,8 +210,6 @@ function resizeGridBy(
 function resetView() {
   const nav = state.navigation;
   nav.scale = 1.0;
-  nav.translate.x = 0;
-  nav.translate.y = 0;
   updateMapTransform(false);
   const mapContainer = document.getElementById('mapContainer');
   mapContainer.scrollLeft = mapContainer.clientWidth / 2;
@@ -312,15 +271,10 @@ function refreshMapResizeButtonLocations() {
 
 function switchToMobileMode() {
   const scale = 1.6;
-  document.getElementById('app').style.transform = `scale(${scale})`;
-  document.getElementById('app').style.width = (100 / scale) + '%';
-  document.getElementById('app').style.height = (100 / scale) + '%';
-//  const nav = state.navigation;
-//  nav.translate.x = 1000;
-//  nav.translate.y = 1000;
-//  document.getElementById('theMap').scrollLeft = 950;
-//  document.getElementById('theMap').scrollTop = 950;
-//  updateMapTransform(true);
+  const app = document.getElementById('app');
+  app.style.transform = `scale(${scale})`;
+  app.style.width = (100 / scale) + '%';
+  app.style.height = (100 / scale) + '%';
   const mobileCursor =
       createAndAppendDivWithClass(
           document.getElementById('mapContainer'), 'mobile-cursor');

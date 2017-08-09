@@ -24,10 +24,6 @@ class State {
 
     this.navigation = {
       scale: 1.0,
-      translate: {
-        x: 0,
-        y: 0,
-      },
     };
 
     this.defaultFloorContent_ = {

@@ -24,7 +24,8 @@ function wireUiElements() {
   mapContainer.ontouchstart = touchEvent => handleTouchStartEvent(touchEvent);
   mapContainer.ontouchmove = touchEvent => handleTouchMoveEvent(touchEvent);
   mapContainer.ontouchend = touchEvent => handleTouchEndEvent(touchEvent);
-  mapContainer.onscroll = event => handleScrollEvent(event);
+  mapContainer.addEventListener(
+      'scroll', event => handleScrollEvent(event), {passive: true});
 }
 
 function initializeFirebase(callback) {
