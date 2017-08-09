@@ -85,6 +85,26 @@ function handleWheelEvent(wheelEvent) {
 
 function zoom(wheelEvent, incremental = false) {
   const nav = state.navigation;
+
+  // Calculate distance from mapContainer edges.
+  const mapContainer = document.getElementById('mapContainer');
+  let distanceFromLeft = wheelEvent.x + mapContainer.scrollLeft;
+  let distanceFromTop = wheelEvent.y + mapContainer.scrollTop;
+//  for (let target = wheelEvent.target; target.id != 'mapContainer';
+//      target = target.parentElement) {
+//    if (target.id == 'theMap') {
+//      distanceFromLeft *= nav.scale;
+//      distanceFromTop *= nav.scale;
+//    }
+//    distanceFromLeft += target.offsetLeft;
+//    distanceFromTop += target.offsetTop;
+//  }
+  
+  distanceFromLeft -= mapContainer.offsetWidth / 2;
+  distanceFromTop -= mapContainer.offsetHeight / 2;
+  //distanceFromLeft *= nav.scale;
+  //distanceFromTop *= nav.scale;
+
   let scaleDiff = 1.0;
   if (wheelEvent.deltaY > 0 && nav.scale > 0.3) {
     scaleDiff = -0.2;
@@ -98,13 +118,20 @@ function zoom(wheelEvent, incremental = false) {
   }
   const growth = scaleDiff / nav.scale;
   nav.scale += scaleDiff;
-  pan(growth * (wheelEvent.x - nav.translate.x),
-      growth * (wheelEvent.y - nav.translate.y));
+  
+  
+//  pan(growth * (wheelEvent.x - mapContainer.scrollLeft),
+//      growth * (wheelEvent.y - mapContainer.scrollTop));
 //  nav.translate.x = document.getElementById('theMap').offsetWidth * (1/nav.scale);
 //  nav.translate.y = document.getElementById('theMap').offsetHeight * ((nav.scale - 1) * 2) / 2;
   //nav.translate.x -= growth * (wheelEvent.x - nav.translate.x);
   //nav.translate.y -= growth * (wheelEvent.y - nav.translate.y);
+
+  
+  pan(-growth * distanceFromLeft, -growth * distanceFromTop);
   updateMapTransform(true);
+//  pan(growth * (wheelEvent.x - (mapContainer.offsetWidth / 2),
+//      growth * (wheelEvent.y - (mapContainer.offsetHeight / 2))));
 }
 
 //let prevGridCell = null;
