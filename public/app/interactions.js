@@ -202,14 +202,13 @@ function resizeGridBy(
     }
   });
   // Update transform so that elements on the viewport won't move around.
-  const offsetX = -firstColumnDiff *
-      (state.theMap.cellWidth + state.theMap.dividerWidth);
-  const offsetY = -firstRowDiff *
-      (state.theMap.cellHeight + state.theMap.dividerHeight);
-  const nav = state.navigation;
-  nav.translate.x -= offsetX * nav.scale;
-  nav.translate.y -= offsetY * nav.scale;
-  updateMapTransform(false);
+  if (firstColumnDiff != 0 || firstRowDiff != 0) {
+    const mapContainer = document.getElementById('mapContainer');
+    mapContainer.scrollLeft -= firstColumnDiff *
+        (state.theMap.cellWidth + state.theMap.dividerWidth);
+    mapContainer.scrollTop -= firstRowDiff *
+        (state.theMap.cellHeight + state.theMap.dividerHeight);
+  }
   state.opCenter.recordOperationComplete();
 }
 
