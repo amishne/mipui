@@ -256,7 +256,7 @@ function refreshMapResizeButtonLocations() {
         document.getElementsByClassName('map-resize-button-' + button.name)[0];
     let x = clamp(rect.left + 70, mapContainer.scrollLeft + mapContainer.offsetWidth / 2, rect.right - 70);
     let y = clamp(rect.top + 70, mapContainer.scrollTop + mapContainer.offsetHeight / 2, rect.bottom - 70);
-    let offsetX = button.place == 0 ? -65 : 45;
+    let offsetX = button.place == 0 ? -70 : 40;
     let offsetY = offsetX;
     switch(button.pos) {
       case 'right': x = rect.right; offsetX = 50; break;
