@@ -237,9 +237,9 @@ function refreshMapResizeButtonLocations() {
   const theMap = document.getElementById('theMap');
   const mapContainer = document.getElementById('mapContainer');
   const nav = state.navigation;
-  const left = theMap.offsetLeft - mapContainer.scrollLeft;
+  const left = theMap.offsetLeft;// + mapContainer.scrollLeft;
   const right = left + (theMap.offsetWidth * nav.scale);
-  const top = theMap.offsetTop - mapContainer.scrollTop;
+  const top = theMap.offsetTop;// + mapContainer.scrollTop;
   const bottom = top + (theMap.offsetHeight * nav.scale);
   const rect = {left, right, top, bottom};
   [
@@ -254,8 +254,8 @@ function refreshMapResizeButtonLocations() {
   ].forEach(button => {
     const element =
         document.getElementsByClassName('map-resize-button-' + button.name)[0];
-    let x = clamp(rect.left + 70, mapContainer.offsetWidth / 2, rect.right - 70);
-    let y = clamp(rect.top + 70, mapContainer.offsetHeight / 2, rect.bottom - 70);
+    let x = clamp(rect.left + 70, mapContainer.scrollLeft + mapContainer.offsetWidth / 2, rect.right - 70);
+    let y = clamp(rect.top + 70, mapContainer.scrollTop + mapContainer.offsetHeight / 2, rect.bottom - 70);
     let offsetX = button.place == 0 ? -65 : 45;
     let offsetY = offsetX;
     switch(button.pos) {
