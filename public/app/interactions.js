@@ -149,16 +149,19 @@ function pan(x, y) {
 }
 
 function handleTouchStartEvent(touchEvent) {
-  debug('touchStart: ' + touchEvent);
+  document.getElementById('warning').innerText =
+      `touchstart! e.touches.length = ${touchEvent.touches.length}`;
 }
 
 function handleTouchMoveEvent(touchEvent) {
-  pan(touchEvent.movementX, touchEvent.movementY);
-  debug('touchMove: ' + touchEvent);
+  //pan(touchEvent.movementX, touchEvent.movementY);
+  document.getElementById('warning').innerText =
+      `touchmove! e.touches.length = ${touchEvent.touches.length}`;
 }
 
 function handleTouchEndEvent(touchEvent) {
-  debug('touchEnd: ' + touchEvent);
+  document.getElementById('warning').innerText =
+      `touchend! e.touches.length = ${touchEvent.touches.length}`;
 }
 
 //function getCellKeyFromMouse(mouseEvent) {
