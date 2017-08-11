@@ -148,18 +148,47 @@ function pan(x, y) {
   document.getElementById('mapContainer').scrollTop -= y;
 }
 
+let currentPinch = null;
 function handleTouchStartEvent(touchEvent) {
+  if (touchEvent.touches.length == 2) {
+    currentPinch = {
+      initialDistance:
+          Math.sqrt(
+              touchEvent.touches[1].clientX - touchEvent.touches[0].clientX,
+              touchEvent.touches[1].clientY - touchEvent.touches[0].clientY),
+      center: {
+        x: (touchEvent.touches[0].clientX + touchEvent.touches[1].clientX) / 2,
+        y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
+      },
+    }
+  }
   document.getElementById('warning').innerText =
       `touchstart! e.touches.length = ${touchEvent.touches.length}`;
 }
 
 function handleTouchMoveEvent(touchEvent) {
+  if (currentPinch && touchEvent.touches.length == 2) {
+    // First pan to new center.
+    const center = {
+      x: (touchEvent.touches[0].clientX + touchEvent.touches[1].clientX) / 2,
+      y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
+    };
+    pan(center.x - currentPinch.center.x, center.y - currentPinch.center.y);
+    currentPinch.center = center;
+    // Then zoom.
+    const distance = Math.sqrt(
+        touchEvent.touches[1].clientX - touchEvent.touches[0].clientX,
+        touchEvent.touches[1].clientY - touchEvent.touches[0].clientY);
+    state.navigation.scale *= distance / currentPinch.initialDistance;
+    updateMapTransform(true);
+  }
   //pan(touchEvent.movementX, touchEvent.movementY);
   document.getElementById('warning').innerText =
       `touchmove! e.touches.length = ${touchEvent.touches.length}`;
 }
 
 function handleTouchEndEvent(touchEvent) {
+  currentPinch = null;
   document.getElementById('warning').innerText =
       `touchend! e.touches.length = ${touchEvent.touches.length}`;
 }
