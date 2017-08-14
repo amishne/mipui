@@ -125,7 +125,6 @@ function handleScrollEvent(event) {
   if (scrollCallRequested) return;
   scrollCallRequested = true;
   window.requestAnimationFrame(_ => {
-    console.log('scroll');
     refreshMapResizeButtonLocations();
     scrollCallRequested = false;
   });
@@ -161,9 +160,9 @@ function handleTouchStartEvent(touchEvent) {
         y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
       },
     }
+    document.getElementById('warning').innerText =
+      `Start! currentPinch = {initialDistance: ${currentPinch.initialDistance}, center: ${currentPinch.center}}`;
   }
-  document.getElementById('warning').innerText =
-      `touchstart! e.touches.length = ${touchEvent.touches.length}`;
 }
 
 function handleTouchMoveEvent(touchEvent) {
@@ -173,18 +172,21 @@ function handleTouchMoveEvent(touchEvent) {
       x: (touchEvent.touches[0].clientX + touchEvent.touches[1].clientX) / 2,
       y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
     };
-    pan(center.x - currentPinch.center.x, center.y - currentPinch.center.y);
+    const panX = center.x - currentPinch.center.x;
+    const panY = center.y - currentPinch.center.y;
+    pan(panX, panY);
     currentPinch.center = center;
     // Then zoom.
     const distance = Math.sqrt(
         touchEvent.touches[1].clientX - touchEvent.touches[0].clientX,
         touchEvent.touches[1].clientY - touchEvent.touches[0].clientY);
-    state.navigation.scale *= distance / currentPinch.initialDistance;
+    const scaleBy = distance / currentPinch.initialDistance;
+    state.navigation.scale *= scaleBy;
     updateMapTransform(true);
+    document.getElementById('warning').innerText =
+      `Move! pan = (${panX},${panY}), scaleBy = ${scaleBy}`;
   }
   //pan(touchEvent.movementX, touchEvent.movementY);
-  document.getElementById('warning').innerText =
-      `touchmove! e.touches.length = ${touchEvent.touches.length}`;
 }
 
 function handleTouchEndEvent(touchEvent) {
