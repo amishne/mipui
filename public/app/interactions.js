@@ -165,26 +165,31 @@ function handleTouchStartEvent(touchEvent) {
   }
 }
 
+let pinchCallRequested = false;
 function handleTouchMoveEvent(touchEvent) {
-  if (currentPinch && touchEvent.touches.length == 2) {
-    // First pan to new center.
-    const center = {
-      x: (touchEvent.touches[0].clientX + touchEvent.touches[1].clientX) / 2,
-      y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
-    };
-    const panX = center.x - currentPinch.center.x;
-    const panY = center.y - currentPinch.center.y;
-    pan(panX, panY);
-    currentPinch.center = center;
-    // Then zoom.
-    const distance = Math.sqrt(
-        touchEvent.touches[1].clientX - touchEvent.touches[0].clientX,
-        touchEvent.touches[1].clientY - touchEvent.touches[0].clientY);
-    const scaleBy = distance / currentPinch.initialDistance;
-    state.navigation.scale *= scaleBy;
-    updateMapTransform(true);
-    document.getElementById('warning').innerText =
-      `Move! pan = (${panX},${panY}), scaleBy = ${scaleBy}`;
+  if (currentPinch && touchEvent.touches.length == 2 && !pinchCallRequested) {
+    pinchCallRequested = true;
+    window.requestAnimationFrame(_ => {
+      pinchCallRequested = false;
+      // First pan to new center.
+      const center = {
+        x: (touchEvent.touches[0].clientX + touchEvent.touches[1].clientX) / 2,
+        y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
+      };
+      const panX = center.x - currentPinch.center.x;
+      const panY = center.y - currentPinch.center.y;
+      pan(panX, panY);
+      currentPinch.center = center;
+      // Then zoom.
+      const distance = Math.sqrt(
+          touchEvent.touches[1].clientX - touchEvent.touches[0].clientX,
+          touchEvent.touches[1].clientY - touchEvent.touches[0].clientY);
+      const scaleBy = distance / currentPinch.initialDistance;
+      state.navigation.scale *= scaleBy;
+      updateMapTransform(true);
+      document.getElementById('warning').innerText =
+        `Move! pan = (${panX},${panY}), scaleBy = ${scaleBy}`;
+    });
   }
   //pan(touchEvent.movementX, touchEvent.movementY);
 }
