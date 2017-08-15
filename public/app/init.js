@@ -26,6 +26,7 @@ function wireUiElements() {
   mapContainer.ontouchend = touchEvent => handleTouchEndEvent(touchEvent);
   mapContainer.addEventListener(
       'scroll', event => handleScrollEvent(event), {passive: true});
+  window.onresize = resizeEvent => handleResizeEvent(resizeEvent);
 }
 
 function initializeFirebase(callback) {
@@ -80,6 +81,7 @@ function createMapResizeButtons() {
 
 function start() {
   const params = getUrlParams();
+  mapContainer = document.getElementById('mapContainer');
   state.menu = new Menu();
   state.menu.createMenu();
   state.menu.descChanged();

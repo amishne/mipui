@@ -1,4 +1,37 @@
-let isTouchDevice = window.matchMedia('(any-hover: none)').matches
+let isTouchDevice = window.matchMedia('(any-hover: none)').matches;
+const cached = {};
+let mapContainer;
+
+function getCached(obj, fieldName) {
+  const cachedObj = cached[obj] || {};
+  let result = cachedObj[fieldName]
+  if (!result) {
+    result = obj[fieldName];
+    cached[obj] = cachedObj;
+    cachedObj[fieldName] = result;
+  }
+  return result;
+}
+
+function setAndCache(obj, fieldName, value) {
+  obj[fieldName] = value;
+  cached[obj][fieldName] = value;
+}
+
+function incrementAndCache(obj, fieldName, valueDiff) {
+  const oldValue = obj[fieldName];
+  const newValue = oldValue + valueDiff;
+  setAndCache(obj, fieldName, newValue);
+}
+
+function invalidateCached(obj, fieldName) {
+  cached[obj][fieldName] = null;
+}
+
+function handleResizeEvent(resizeEvent) {
+  invalidateCached(mapContainer, 'offsetWidth');
+  invalidateCached(mapContainer, 'offsetHeight');
+}
 
 function handleKeyDownEvent(keyDownEvent) {
   if (state.isReadOnly()) return;
@@ -42,13 +75,14 @@ function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
   theMap.style.transform = `scale(${nav.scale})`;
   // For proper container sizing:
   const mapFrame = document.getElementById('mapFrame');
-  const mapContainer = document.getElementById('mapContainer');
+  const mapWidth = getCached(mapContainer, 'offsetWidth');
+  const mapHeight = getCached(mapContainer, 'offsetHeight');
   mapFrame.style.width =
-      state.theMap.mapWidth * nav.scale + mapContainer.offsetWidth;
+      state.theMap.mapWidth * nav.scale + mapWidth;
   mapFrame.style.height =
-      state.theMap.mapHeight * nav.scale + mapContainer.offsetHeight;
-  theMap.style.left = mapContainer.offsetWidth / 2;
-  theMap.style.top = mapContainer.offsetHeight / 2;
+      state.theMap.mapHeight * nav.scale + mapHeight;
+  theMap.style.left = mapWidth / 2;
+  theMap.style.top = mapHeight / 2;
   if (shouldRefreshMapResizeButtonLocations) {
     refreshMapResizeButtonLocations();
   }
@@ -75,11 +109,10 @@ function zoom(wheelEvent, incremental = false) {
   const nav = state.navigation;
 
   // Calculate distance from mapContainer edges.
-  const mapContainer = document.getElementById('mapContainer');
-  let distanceFromLeft = wheelEvent.x + mapContainer.scrollLeft;
-  let distanceFromTop = wheelEvent.y + mapContainer.scrollTop;
-  distanceFromLeft -= mapContainer.offsetWidth / 2;
-  distanceFromTop -= mapContainer.offsetHeight / 2;
+  let distanceFromLeft = wheelEvent.x + getCached(mapContainer, 'scrollLeft');
+  let distanceFromTop = wheelEvent.y + getCached(mapContainer, 'scrollTop');
+  distanceFromLeft -= getCached(mapContainer, 'offsetWidth') / 2;
+  distanceFromTop -= getCached(mapContainer, 'offsetHeight') / 2;
 
   let scaleDiff = 1.0;
   if (wheelEvent.deltaY > 0 && nav.scale > 0.3) {
@@ -119,36 +152,30 @@ function handleMouseMoveEvent(mouseEvent) {
 //  }
 }
 
-//let prevScroll = {x: 0, y: 0};
 let scrollCallRequested = false;
 function handleScrollEvent(event) {
   if (scrollCallRequested) return;
   scrollCallRequested = true;
   window.requestAnimationFrame(_ => {
+    invalidateCached(mapContainer, 'scrollLeft');
+    invalidateCached(mapContainer, 'scrollTop');
     refreshMapResizeButtonLocations();
     scrollCallRequested = false;
   });
-//  const mapContainer = document.getElementById('mapContainer');
-//  const newX = mapContainer.scrollLeft;
-//  const newY = mapContainer.scrollTop;
-//  const diffX = newX - prevScroll.x;
-//  const diffY = newY - prevScroll.y;
-//  console.log(`scroll by (${diffX}, ${diffY})`);
-////  prevScroll.x = newX;
-////  prevScroll.y = newY;
-//  pan(-diffX, -diffY);
-//  mapContainer.scrollLeft = 100;
-//  mapContainer.scrollTop = 100;
 }
 
 function pan(x, y) {
   if (isTouchDevice) return;
-  document.getElementById('mapContainer').scrollLeft -= x;
-  document.getElementById('mapContainer').scrollTop -= y;
+  incrementAndCache(mapContainer, 'scrollLeft', -x);
+  incrementAndCache(mapContainer, 'scrollTop', -y);
 }
 
 function calcDistance(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
+function calcCenter(x1, y1, x2, y2) {
+  return {x: (x1 + x2) / 2, y: (y1 + y2) / 2};
 }
 
 let currentPinch = null;
@@ -161,11 +188,14 @@ function handleTouchStartEvent(touchEvent) {
               touchEvent.touches[0].clientY,
               touchEvent.touches[1].clientX,
               touchEvent.touches[1].clientY),
-      center: {
-        x: (touchEvent.touches[0].clientX + touchEvent.touches[1].clientX) / 2,
-        y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
-      },
-    }
+      center:
+          calcCenter(
+              touchEvent.touches[0].clientX,
+              touchEvent.touches[0].clientY,
+              touchEvent.touches[1].clientX,
+              touchEvent.touches[1].clientY),
+      initialScale: state.navigation.scale,
+    };
     document.getElementById('warning').innerText =
       `Start! currentPinch = {initialDistance: ${currentPinch.initialDistance}, center: ${currentPinch.center}}`;
   }
@@ -178,10 +208,12 @@ function handleTouchMoveEvent(touchEvent) {
     window.requestAnimationFrame(_ => {
       pinchCallRequested = false;
       // First pan to new center.
-      const center = {
-        x: (touchEvent.touches[0].clientX + touchEvent.touches[1].clientX) / 2,
-        y: (touchEvent.touches[0].clientY + touchEvent.touches[1].clientY) / 2,
-      };
+      const center =
+          calcCenter(
+              touchEvent.touches[0].clientX,
+              touchEvent.touches[0].clientY,
+              touchEvent.touches[1].clientX,
+              touchEvent.touches[1].clientY);
       const panX = center.x - currentPinch.center.x;
       const panY = center.y - currentPinch.center.y;
       pan(panX, panY);
@@ -193,8 +225,8 @@ function handleTouchMoveEvent(touchEvent) {
               touchEvent.touches[0].clientY,
               touchEvent.touches[1].clientX,
               touchEvent.touches[1].clientY);
-      const scaleBy = distance / currentPinch.initialDistance;
-      state.navigation.scale *= scaleBy;
+      state.navigation.scale =
+          currentPinch.initialScale * (distance / currentPinch.initialDistance);
       updateMapTransform(true);
       document.getElementById('warning').innerText =
         `Move! pan = (${panX},${panY}), scaleBy = ${scaleBy}`;
@@ -251,12 +283,13 @@ function resizeGridBy(
   });
   // Update transform so that elements on the viewport won't move around.
   if (firstColumnDiff != 0 || firstRowDiff != 0) {
-    const mapContainer = document.getElementById('mapContainer');
     const nav = state.navigation;
-    mapContainer.scrollLeft -= firstColumnDiff * nav.scale *
-        (state.theMap.cellWidth + state.theMap.dividerWidth);
-    mapContainer.scrollTop -= firstRowDiff * nav.scale *
-        (state.theMap.cellHeight + state.theMap.dividerHeight);
+    incrementAndCache(mapContainer, 'scrollLeft',
+        -firstColumnDiff * nav.scale *
+        (state.theMap.cellWidth + state.theMap.dividerWidth));
+    incrementAndCache(mapContainer, 'scrollTop',
+        -firstRowDiff * nav.scale *
+        (state.theMap.cellHeight + state.theMap.dividerHeight));
   }
   updateMapTransform(false);
   state.opCenter.recordOperationComplete();
@@ -266,9 +299,10 @@ function resetView() {
   const nav = state.navigation;
   nav.scale = 1.0;
   updateMapTransform(false);
-  const mapContainer = document.getElementById('mapContainer');
-  mapContainer.scrollLeft = mapContainer.clientWidth / 2;
-  mapContainer.scrollTop = mapContainer.clientHeight / 2;
+  setAndCache(
+      mapContainer, 'scrollLeft', getCached(mapContainer, 'clientWidth') / 2);
+  setAndCache(
+      mapContainer, 'scrollTop', getCached(mapContainer, 'clientHeight') / 2);
   const theMap = document.getElementById('theMap');
   const appRect = mapContainer.getBoundingClientRect();
   const theMapRect = theMap.getBoundingClientRect();
@@ -290,11 +324,10 @@ function resetGrid() {
 
 function refreshMapResizeButtonLocations() {
   const theMap = document.getElementById('theMap');
-  const mapContainer = document.getElementById('mapContainer');
   const nav = state.navigation;
-  const left = theMap.offsetLeft;// + mapContainer.scrollLeft;
+  const left = theMap.offsetLeft;
   const right = left + (theMap.offsetWidth * nav.scale);
-  const top = theMap.offsetTop;// + mapContainer.scrollTop;
+  const top = theMap.offsetTop;
   const bottom = top + (theMap.offsetHeight * nav.scale);
   const rect = {left, right, top, bottom};
   [
@@ -309,8 +342,10 @@ function refreshMapResizeButtonLocations() {
   ].forEach(button => {
     const element =
         document.getElementsByClassName('map-resize-button-' + button.name)[0];
-    let x = clamp(rect.left + 70, mapContainer.scrollLeft + mapContainer.offsetWidth / 2, rect.right - 70);
-    let y = clamp(rect.top + 70, mapContainer.scrollTop + mapContainer.offsetHeight / 2, rect.bottom - 70);
+    let x = clamp(rect.left + 70, getCached(mapContainer, 'scrollLeft') +
+        getCached(mapContainer, 'offsetWidth') / 2, rect.right - 70);
+    let y = clamp(rect.top + 70, getCached(mapContainer, 'scrollTop') +
+        getCached(mapContainer, 'offsetHeight') / 2, rect.bottom - 70);
     let offsetX = button.place == 0 ? -70 : 40;
     let offsetY = offsetX;
     switch(button.pos) {
@@ -332,6 +367,6 @@ function switchToMobileMode() {
   app.style.height = (100 / scale) + '%';
   const mobileCursor =
       createAndAppendDivWithClass(
-          document.getElementById('mapContainer'), 'mobile-cursor');
+          mapContainer, 'mobile-cursor');
   updateMapTransform(true);
 }
