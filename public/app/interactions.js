@@ -152,7 +152,7 @@ function handleMouseMoveEvent(mouseEvent) {
 }
 
 let scrollCallRequested = false;
-let prevGridCell = null;
+let prevCellKey = null;
 function handleScrollEvent(event) {
   if (scrollCallRequested) return;
   scrollCallRequested = true;
@@ -165,21 +165,27 @@ function handleScrollEvent(event) {
     const theMap = document.getElementById('theMap');
     invalidateCached(mapContainer, 'offsetWidth');
     invalidateCached(mapContainer, 'offsetHeight');
-    const gridCell = getCellKey(
+    const currentCellKey = getCellKey(
         getCached(mapContainer, 'scrollLeft') +
         getCached(mapContainer, 'offsetWidth') / 2 -
         getCached(theMap, 'offsetLeft'),
         getCached(mapContainer, 'scrollTop') +
         getCached(mapContainer, 'offsetHeight') / 2 -
         getCached(theMap, 'offsetTop'));
-    if (!prevGridCell || prevGridCell != gridCell) {
-      if (prevGridCell) {
-        //state.theMap.cells.get(prevGridCell).onMouseLeave(mouseEvent);
-        console.log(`Leaving cell ${prevGridCell}`);
+    if (!prevCellKey || prevCellKey != currentCellKey) {
+      if (prevCellKey) {
+        const prevCell = state.theMap.cells.get(prevCellKey);
+        if (prevCell && state.gesture) {
+          state.gesture.stopHover();
+        }
+        console.log(`Leaving cell ${prevCellKey}`);
       }
-      console.log(`Entering cell ${gridCell}`);
-      //state.theMap.cells.get(gridCell).onMouseEnter(mouseEvent);
-      prevGridCell = gridCell;
+      console.log(`Entering cell ${currentCellKey}`);
+      const currentCell = state.theMap.cells.get(currentCellKey);
+      if (currentCell && state.gesture) {
+        state.gesture.startHover(currentCell);
+      }
+      prevCellKey = currentCellKey;
     }
   });
 }
