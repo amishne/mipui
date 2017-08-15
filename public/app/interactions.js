@@ -132,7 +132,6 @@ function zoom(wheelEvent, incremental = false) {
   updateMapTransform(true);
 }
 
-//let prevGridCell = null;
 function handleMouseMoveEvent(mouseEvent) {
   if (mouseEvent.movementX == 0 && mouseEvent.movementY == 0) return;
   if (mouseEvent.buttons == (isTouchDevice ? 0 : 4)) {
@@ -153,6 +152,7 @@ function handleMouseMoveEvent(mouseEvent) {
 }
 
 let scrollCallRequested = false;
+let prevGridCell = null;
 function handleScrollEvent(event) {
   if (scrollCallRequested) return;
   scrollCallRequested = true;
@@ -161,6 +161,26 @@ function handleScrollEvent(event) {
     invalidateCached(mapContainer, 'scrollTop');
     refreshMapResizeButtonLocations();
     scrollCallRequested = false;
+
+    const theMap = document.getElementById('theMap');
+    invalidateCached(mapContainer, 'offsetWidth');
+    invalidateCached(mapContainer, 'offsetHeight');
+    const gridCell = getCellKey(
+        getCached(mapContainer, 'scrollLeft') +
+        getCached(mapContainer, 'offsetWidth') / 2 -
+        getCached(theMap, 'offsetLeft'),
+        getCached(mapContainer, 'scrollTop') +
+        getCached(mapContainer, 'offsetHeight') / 2 -
+        getCached(theMap, 'offsetTop'));
+    if (!prevGridCell || prevGridCell != gridCell) {
+      if (prevGridCell) {
+        //state.theMap.cells.get(prevGridCell).onMouseLeave(mouseEvent);
+        console.log(`Leaving cell ${prevGridCell}`);
+      }
+      console.log(`Entering cell ${gridCell}`);
+      //state.theMap.cells.get(gridCell).onMouseEnter(mouseEvent);
+      prevGridCell = gridCell;
+    }
   });
 }
 
@@ -245,18 +265,18 @@ function handleTouchEndEvent(touchEvent) {
 //  return getCellKey(mouseEvent.pageX, mouseEvent.pageY);
 //}
 
-function getCellKey(pageX, pageY) {
+function getCellKey(x, y) {
   const nav = state.navigation;
-  const cellSize = 25 * nav.scale;
-  const borderSize = 7 * nav.scale;
+  const cellSize = state.theMap.cellWidth * nav.scale;
+  const borderSize = state.theMap.dividerWidth * nav.scale;
   const cellAndBorderSize = cellSize + borderSize;
-  const x = pageX - (nav.translate.x + 8);
-  const y = pageY - (nav.translate.y + 8);
 
-  const toRow = Math.floor(y / cellAndBorderSize) + state.getGridData().from;
+  const toRow =
+      Math.floor(y / cellAndBorderSize) + state.getProperty(pk.firstRow);
   const fromRow = (y % cellAndBorderSize) / borderSize > 1 ? toRow : toRow - 1;
 
-  const toCol = Math.floor(x / cellAndBorderSize) + state.getGridData().from;
+  const toCol =
+      Math.floor(x / cellAndBorderSize) + state.getProperty(pk.firstColumn);
   const fromCol = (x % cellAndBorderSize) / borderSize > 1 ? toCol : toCol - 1;
 
   const key = fromRow != toRow || fromCol != toCol ?
@@ -368,5 +388,7 @@ function switchToMobileMode() {
   const mobileCursor =
       createAndAppendDivWithClass(
           mapContainer, 'mobile-cursor');
+  invalidateCached(mapContainer, 'offsetWidth');
+  invalidateCached(mapContainer, 'offsetHeight');
   updateMapTransform(true);
 }
