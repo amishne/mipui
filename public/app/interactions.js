@@ -402,16 +402,16 @@ function switchToMobileMode() {
   updateMapTransform(true);
   const actionPane =
       createAndAppendDivWithClass(
-          document.getElementById('app'), 'action-pane');
+          document.body, 'action-pane');
   actionPane.textContent = 'Tap!';
-  actionPane.onmousedown = () => {
+  actionPane.onmousedown = (e) => {
     e.stopPropagation();
     if (state.gesture) {
       isActionClicked = true;
       state.gesture.startGesture();
     }
   }
-  actionPane.onmouseup = () => {
+  actionPane.onmouseup = (e) => {
     e.stopPropagation();
     if (state.gesture) {
       state.gesture.stopGesture();
