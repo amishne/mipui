@@ -208,56 +208,56 @@ function calcCenter(x1, y1, x2, y2) {
 
 let currentPinch = null;
 function handleTouchStartEvent(touchEvent) {
-  if (touchEvent.touches.length == 2) {
+  if (touchEvent.targetTouches.length == 2) {
     currentPinch = {
       initialDistance:
           calcDistance(
-              touchEvent.touches[0].clientX,
-              touchEvent.touches[0].clientY,
-              touchEvent.touches[1].clientX,
-              touchEvent.touches[1].clientY),
+              touchEvent.targetTouches[0].clientX,
+              touchEvent.targetTouches[0].clientY,
+              touchEvent.targetTouches[1].clientX,
+              touchEvent.targetTouches[1].clientY),
       center:
           calcCenter(
-              touchEvent.touches[0].clientX,
-              touchEvent.touches[0].clientY,
-              touchEvent.touches[1].clientX,
-              touchEvent.touches[1].clientY),
+              touchEvent.targetTouches[0].clientX,
+              touchEvent.targetTouches[0].clientY,
+              touchEvent.targetTouches[1].clientX,
+              touchEvent.targetTouches[1].clientY),
       initialScale: state.navigation.scale,
     };
     document.getElementById('warning').innerText =
-      `touches targets = ${touchEvent.touches.map(e => e.target.id)}`;
+      `touches.targetTouches = ${touchEvent.targetTouches.toString()}`;
   }
 }
 
 let pinchCallRequested = false;
 function handleTouchMoveEvent(touchEvent) {
-  if (currentPinch && touchEvent.touches.length == 2 && !pinchCallRequested) {
+  if (currentPinch && touchEvent.targetTouches.length == 2 && !pinchCallRequested) {
     pinchCallRequested = true;
     window.requestAnimationFrame(_ => {
       pinchCallRequested = false;
-      // First pan to new center.
+      // First zoom.
+      const distance =
+          calcDistance(
+              touchEvent.targetTouches[0].clientX,
+              touchEvent.targetTouches[0].clientY,
+              touchEvent.targetTouches[1].clientX,
+              touchEvent.targetTouches[1].clientY);
+      state.navigation.scale =
+          currentPinch.initialScale * (distance / currentPinch.initialDistance);
+      // Then pan to new center.
       const center =
           calcCenter(
-              touchEvent.touches[0].clientX,
-              touchEvent.touches[0].clientY,
-              touchEvent.touches[1].clientX,
-              touchEvent.touches[1].clientY);
+              touchEvent.targetTouches[0].clientX,
+              touchEvent.targetTouches[0].clientY,
+              touchEvent.targetTouches[1].clientX,
+              touchEvent.targetTouches[1].clientY);
       const panX = center.x - currentPinch.center.x;
       const panY = center.y - currentPinch.center.y;
       pan(panX, panY);
-      currentPinch.center = center;
-      // Then zoom.
-      const distance =
-          calcDistance(
-              touchEvent.touches[0].clientX,
-              touchEvent.touches[0].clientY,
-              touchEvent.touches[1].clientX,
-              touchEvent.touches[1].clientY);
-      state.navigation.scale =
-          currentPinch.initialScale * (distance / currentPinch.initialDistance);
       updateMapTransform(true);
+      currentPinch.center = center;
       document.getElementById('warning').innerText =
-        `touches targets = ${touchEvent.touches.map(e => e.target.id)}`;
+        `touches.targetTouches = ${touchEvent.targetTouches.toString()}`;
     });
   }
   //pan(touchEvent.movementX, touchEvent.movementY);
@@ -266,7 +266,7 @@ function handleTouchMoveEvent(touchEvent) {
 function handleTouchEndEvent(touchEvent) {
   currentPinch = null;
   document.getElementById('warning').innerText =
-      `touches targets = ${touchEvent.touches.map(e => e.target.id)}`;
+      `touches.targetTouches = ${touchEvent.targetTouches.toString()}`;
 }
 
 //function getCellKeyFromMouse(mouseEvent) {
