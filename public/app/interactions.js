@@ -225,7 +225,7 @@ function handleTouchStartEvent(touchEvent) {
       initialScale: state.navigation.scale,
     };
     document.getElementById('warning').innerText =
-      `touches.length = ${touchEvent.touches.length}`;
+      `touches targets = ${touchEvent.touches.map(e => e.target.id)}`;
   }
 }
 
@@ -257,7 +257,7 @@ function handleTouchMoveEvent(touchEvent) {
           currentPinch.initialScale * (distance / currentPinch.initialDistance);
       updateMapTransform(true);
       document.getElementById('warning').innerText =
-        `touches.length = ${touchEvent.touches.length}`;
+        `touches targets = ${touchEvent.touches.map(e => e.target.id)}`;
     });
   }
   //pan(touchEvent.movementX, touchEvent.movementY);
@@ -266,7 +266,7 @@ function handleTouchMoveEvent(touchEvent) {
 function handleTouchEndEvent(touchEvent) {
   currentPinch = null;
   document.getElementById('warning').innerText =
-      `touchend! e.touches.length = ${touchEvent.touches.length}`;
+      `touches targets = ${touchEvent.touches.map(e => e.target.id)}`;
 }
 
 //function getCellKeyFromMouse(mouseEvent) {
