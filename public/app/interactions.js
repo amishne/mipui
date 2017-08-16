@@ -225,7 +225,7 @@ function handleTouchStartEvent(touchEvent) {
       initialScale: state.navigation.scale,
     };
     document.getElementById('warning').innerText =
-      `Start! currentPinch = {initialDistance: ${currentPinch.initialDistance}, center: ${currentPinch.center}}`;
+      `touches.length = ${touchEvent.touches.length}`;
   }
 }
 
@@ -257,7 +257,7 @@ function handleTouchMoveEvent(touchEvent) {
           currentPinch.initialScale * (distance / currentPinch.initialDistance);
       updateMapTransform(true);
       document.getElementById('warning').innerText =
-        `Move! pan = (${panX},${panY}), scaleBy = ${scaleBy}`;
+        `touches.length = ${touchEvent.touches.length}`;
     });
   }
   //pan(touchEvent.movementX, touchEvent.movementY);
