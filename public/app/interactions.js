@@ -422,4 +422,7 @@ function switchToMobileMode() {
       }
     }
   }
+  actionPane.ontouchstart = (e) => e.stopPropagation();
+  actionPane.ontouchmove = (e) => e.stopPropagation();
+  actionPane.ontouchend = (e) => e.stopPropagation();
 }
