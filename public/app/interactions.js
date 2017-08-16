@@ -405,12 +405,14 @@ function switchToMobileMode() {
           document.getElementById('app'), 'action-pane');
   actionPane.textContent = 'Tap!';
   actionPane.onmousedown = () => {
+    e.stopPropagation();
     if (state.gesture) {
       isActionClicked = true;
       state.gesture.startGesture();
     }
   }
   actionPane.onmouseup = () => {
+    e.stopPropagation();
     if (state.gesture) {
       state.gesture.stopGesture();
       isActionClicked = false;
