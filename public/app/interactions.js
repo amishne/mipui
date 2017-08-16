@@ -178,12 +178,14 @@ function handleScrollEvent(event) {
         if (prevCell && state.gesture) {
           state.gesture.stopHover();
         }
-        console.log(`Leaving cell ${prevCellKey}`);
       }
-      console.log(`Entering cell ${currentCellKey}`);
       const currentCell = state.theMap.cells.get(currentCellKey);
       if (currentCell && state.gesture) {
-        state.gesture.startHover(currentCell);
+        if (isActionClicked) {
+          state.gesture.continueGesture(currentCell);
+        } else {
+          state.gesture.startHover(currentCell);
+        }
       }
       prevCellKey = currentCellKey;
     }
@@ -385,6 +387,7 @@ function refreshMapResizeButtonLocations() {
   });
 }
 
+let isActionClicked = false;
 function switchToMobileMode() {
   const scale = 1.6;
   const app = document.getElementById('app');
@@ -397,4 +400,24 @@ function switchToMobileMode() {
   invalidateCached(mapContainer, 'offsetWidth');
   invalidateCached(mapContainer, 'offsetHeight');
   updateMapTransform(true);
+  const actionPane =
+      createAndAppendDivWithClass(
+          document.getElementById('app'), 'action-pane');
+  actionPane.textContent = 'Tap!';
+  actionPane.onmousedown = () => {
+    if (state.gesture) {
+      isActionClicked = true;
+      state.gesture.startGesture();
+    }
+  }
+  actionPane.onmouseup = () => {
+    if (state.gesture) {
+      state.gesture.stopGesture();
+      isActionClicked = false;
+      if (prevCellKey) {
+        const prevCell = state.theMap.cells.get(prevCellKey);
+        state.gesture.startHover(prevCell);
+      }
+    }
+  }
 }
