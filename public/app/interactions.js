@@ -224,8 +224,10 @@ function handleTouchStartEvent(touchEvent) {
               touchEvent.targetTouches[1].clientY),
       initialScale: state.navigation.scale,
     };
+    const touchIds = [];
+    touchEvent.targetTouches.forEach(targetTouch => touchIds.push(targetTouch.id));
     document.getElementById('warning').innerText =
-      `touches.targetTouches = ${touchEvent.targetTouches.toString()}`;
+      `touches.targetTouches = ${touchIds}`;
   }
 }
 
@@ -256,17 +258,21 @@ function handleTouchMoveEvent(touchEvent) {
       pan(panX, panY);
       updateMapTransform(true);
       currentPinch.center = center;
+      const touchIds = [];
+      touchEvent.targetTouches.forEach(targetTouch => touchIds.push(targetTouch.id));
       document.getElementById('warning').innerText =
-        `touches.targetTouches = ${touchEvent.targetTouches.toString()}`;
-    });
+        `touches.targetTouches = ${touchIds}`;
+      });
   }
   //pan(touchEvent.movementX, touchEvent.movementY);
 }
 
 function handleTouchEndEvent(touchEvent) {
   currentPinch = null;
-  document.getElementById('warning').innerText =
-      `touches.targetTouches = ${touchEvent.targetTouches.toString()}`;
+  const touchIds = [];
+  touchEvent.targetTouches.forEach(targetTouch => touchIds.push(targetTouch.id));
+    document.getElementById('warning').innerText =
+      `touches.targetTouches = ${touchIds}`;
 }
 
 //function getCellKeyFromMouse(mouseEvent) {
