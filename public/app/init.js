@@ -21,11 +21,10 @@ function wireUiElements() {
   const mapContainer = document.getElementById('mapContainer');
   mapContainer.onwheel = wheelEvent => handleWheelEvent(wheelEvent);
   mapContainer.onmousemove = mouseEvent => handleMouseMoveEvent(mouseEvent);
-  mapContainer.ontouchstart = touchEvent => handleTouchStartEvent(touchEvent);
-  mapContainer.ontouchmove = touchEvent => handleTouchMoveEvent(touchEvent);
-  mapContainer.ontouchend = touchEvent => handleTouchEndEvent(touchEvent);
-  mapContainer.addEventListener(
-      'scroll', event => handleScrollEvent(event), {passive: true});
+  mapContainer.addEventListener('touchstart', handleTouchStartEvent);
+  mapContainer.addEventListener('touchmove', handleTouchMoveEvent);
+  mapContainer.addEventListener('touchend', handleTouchEndEvent);
+  mapContainer.addEventListener('scroll', handleScrollEvent, {passive: true});
   window.onresize = resizeEvent => handleResizeEvent(resizeEvent);
 }
 

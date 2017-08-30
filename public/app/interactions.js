@@ -193,7 +193,6 @@ function handleScrollEvent(event) {
 }
 
 function pan(x, y) {
-  if (isTouchDevice) return;
   incrementAndCache(mapContainer, 'scrollLeft', -x);
   incrementAndCache(mapContainer, 'scrollTop', -y);
 }
@@ -208,71 +207,82 @@ function calcCenter(x1, y1, x2, y2) {
 
 let currentPinch = null;
 function handleTouchStartEvent(touchEvent) {
-  if (touchEvent.targetTouches.length == 2) {
+  if (touchEvent.touches.length == 2) {
     currentPinch = {
       initialDistance:
           calcDistance(
-              touchEvent.targetTouches[0].clientX,
-              touchEvent.targetTouches[0].clientY,
-              touchEvent.targetTouches[1].clientX,
-              touchEvent.targetTouches[1].clientY),
+              touchEvent.touches[0].pageX,
+              touchEvent.touches[0].pageY,
+              touchEvent.touches[1].pageX,
+              touchEvent.touches[1].pageY),
       center:
           calcCenter(
-              touchEvent.targetTouches[0].clientX,
-              touchEvent.targetTouches[0].clientY,
-              touchEvent.targetTouches[1].clientX,
-              touchEvent.targetTouches[1].clientY),
+              touchEvent.touches[0].pageX,
+              touchEvent.touches[0].pageY,
+              touchEvent.touches[1].pageX,
+              touchEvent.touches[1].pageY),
       initialScale: state.navigation.scale,
     };
-    const touchIds = [];
-    touchEvent.targetTouches.forEach(targetTouch => touchIds.push(targetTouch.id));
-    document.getElementById('warning').innerText =
-      `touches.targetTouches = ${touchIds}`;
   }
 }
 
 let pinchCallRequested = false;
 function handleTouchMoveEvent(touchEvent) {
-  if (currentPinch && touchEvent.targetTouches.length == 2 && !pinchCallRequested) {
+  if (currentPinch && touchEvent.touches.length == 2 && !pinchCallRequested) {
     pinchCallRequested = true;
     window.requestAnimationFrame(_ => {
       pinchCallRequested = false;
-      // First zoom.
-      const distance =
-          calcDistance(
-              touchEvent.targetTouches[0].clientX,
-              touchEvent.targetTouches[0].clientY,
-              touchEvent.targetTouches[1].clientX,
-              touchEvent.targetTouches[1].clientY);
-      state.navigation.scale =
-          currentPinch.initialScale * (distance / currentPinch.initialDistance);
-      // Then pan to new center.
       const center =
           calcCenter(
-              touchEvent.targetTouches[0].clientX,
-              touchEvent.targetTouches[0].clientY,
-              touchEvent.targetTouches[1].clientX,
-              touchEvent.targetTouches[1].clientY);
-      const panX = center.x - currentPinch.center.x;
-      const panY = center.y - currentPinch.center.y;
-      pan(panX, panY);
-      updateMapTransform(true);
+              touchEvent.touches[0].pageX,
+              touchEvent.touches[0].pageY,
+              touchEvent.touches[1].pageX,
+              touchEvent.touches[1].pageY);
+      const distance =
+          calcDistance(
+              touchEvent.touches[0].pageX,
+              touchEvent.touches[0].pageY,
+              touchEvent.touches[1].pageX,
+              touchEvent.touches[1].pageY);
+
+      // First, scroll to 0,0
+      const oldScroll = {
+        x: getCached(mapContainer, 'scrollLeft'),
+        y: getCached(mapContainer, 'scrollTop'),
+      };
+      setAndCache(mapContainer, 'scrollLeft', 0);
+      setAndCache(mapContainer, 'scrollTop', 0);
+      console.log(oldScroll);
+
+      // Apply zoom.
+      const newScale =
+          currentPinch.initialScale * (distance / currentPinch.initialDistance);
+      const scaleDiff = newScale - state.navigation.scale;
+      const growth = scaleDiff / state.navigation.scale;
+      //const scaleFactor = newScale / state.navigation.scale;
+      state.navigation.scale = newScale;
+      updateMapTransform(false);
+
+      // Finally, scroll back.
+      const centerDiff = {
+        x: center.x - currentPinch.center.x,
+        y: center.y - currentPinch.center.y,
+      }
+      setAndCache(
+          mapContainer, 'scrollLeft',
+          oldScroll.x + centerDiff.x * newScale);
+      setAndCache(
+          mapContainer, 'scrollTop',
+          oldScroll.y + centerDiff.y * newScale);
+      
       currentPinch.center = center;
-      const touchIds = [];
-      touchEvent.targetTouches.forEach(targetTouch => touchIds.push(targetTouch.id));
-      document.getElementById('warning').innerText =
-        `touches.targetTouches = ${touchIds}`;
-      });
+      updateMapTransform(true);
+    });
   }
-  //pan(touchEvent.movementX, touchEvent.movementY);
 }
 
 function handleTouchEndEvent(touchEvent) {
   currentPinch = null;
-  const touchIds = [];
-  touchEvent.targetTouches.forEach(targetTouch => touchIds.push(targetTouch.id));
-    document.getElementById('warning').innerText =
-      `touches.targetTouches = ${touchIds}`;
 }
 
 //function getCellKeyFromMouse(mouseEvent) {
