@@ -208,6 +208,10 @@ function calcCenter(x1, y1, x2, y2) {
 let currentPinch = null;
 function handleTouchStartEvent(touchEvent) {
   if (touchEvent.touches.length == 2) {
+    if (touchEvent.touches[0].target.classList.contains('action-pane') ||
+        touchEvent.touches[1].target.classList.contains('action-pane')) {
+      return;
+    }
     currentPinch = {
       initialDistance:
           calcDistance(
@@ -420,14 +424,14 @@ function switchToMobileMode() {
       createAndAppendDivWithClass(
           document.body, 'action-pane');
   actionPane.textContent = 'Tap!';
-  actionPane.onmousedown = (e) => {
+  actionPane.addEventListener('touchstart', e => {
     e.stopPropagation();
     if (state.gesture) {
       isActionClicked = true;
       state.gesture.startGesture();
     }
-  }
-  actionPane.onmouseup = (e) => {
+  });
+  actionPane.addEventListener('touchend', e => {
     e.stopPropagation();
     if (state.gesture) {
       state.gesture.stopGesture();
@@ -437,8 +441,9 @@ function switchToMobileMode() {
         state.gesture.startHover(prevCell);
       }
     }
-  }
-  actionPane.ontouchstart = (e) => e.stopPropagation();
-  actionPane.ontouchmove = (e) => e.stopPropagation();
-  actionPane.ontouchend = (e) => e.stopPropagation();
+  });
+  actionPane.addEventListener('touchmove', e => {e.stopPropagation();});
+  actionPane.onmousedown = (e) => e.stopPropagation();
+  actionPane.onmousemove = (e) => e.stopPropagation();
+  actionPane.onmouseup = (e) => e.stopPropagation();
 }
