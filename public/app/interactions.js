@@ -241,6 +241,7 @@ function handleTouchStartEvent(touchEvent) {
 }
 
 let pinchCallRequested = false;
+let panRequested = false;
 function handleTouchMoveEvent(touchEvent) {
   if (currentPinch && touchEvent.touches.length == 2 && !pinchCallRequested) {
     pinchCallRequested = true;
@@ -293,17 +294,23 @@ function handleTouchMoveEvent(touchEvent) {
       updateMapTransform(true);
     });
   } else {
-    // If exactly one touch is over the map container, use it to pan.
-    const mapContainerTouches = getMapContainerTouches(touchEvent.touches);
-    if (touchEvent.touches.length > 1 && mapContainerTouches.length == 1) {
-      const pos = {
-        x: mapContainerTouches[0].pageX,
-        y: mapContainerTouches[0].pageY,
-      };
-      if (prevSingleTouchPos) {
-        pan(-(pos.x - prevSingleTouchPos.x), -(pos.y - prevSingleTouchPos.y));
+    if (!panRequested) {
+      // If exactly one touch is over the map container, use it to pan.
+      const mapContainerTouches = getMapContainerTouches(touchEvent.touches);
+      if (touchEvent.touches.length > 1 && mapContainerTouches.length == 1) {
+        panRequested = true;
+        window.requestAnimationFrame(_ => {
+          const pos = {
+            x: mapContainerTouches[0].pageX,
+            y: mapContainerTouches[0].pageY,
+          };
+          if (prevSingleTouchPos) {
+            pan(pos.x - prevSingleTouchPos.x, pos.y - prevSingleTouchPos.y);
+          }
+          prevSingleTouchPos = pos;
+          panRequested = false;
+        });
       }
-      prevSingleTouchPos = pos;
     }
   }
 }
