@@ -156,6 +156,7 @@ let prevCellKey = null;
 function handleScrollEvent(event) {
   if (scrollCallRequested) return;
   scrollCallRequested = true;
+  event.stopPropagation();
   window.requestAnimationFrame(_ => {
     invalidateCached(mapContainer, 'scrollLeft');
     invalidateCached(mapContainer, 'scrollTop');
@@ -206,6 +207,7 @@ function calcCenter(x1, y1, x2, y2) {
 }
 
 let currentPinch = null;
+let prevSingleTouchPos = null;
 function handleTouchStartEvent(touchEvent) {
   if (touchEvent.touches.length == 2) {
     if (touchEvent.touches[0].target.classList.contains('action-pane') ||
@@ -227,6 +229,14 @@ function handleTouchStartEvent(touchEvent) {
               touchEvent.touches[1].pageY),
       initialScale: state.navigation.scale,
     };
+  } else {
+    const mapContainerTouches = getMapContainerTouches(touchEvent.touches);
+    if (touchEvent.touches.length > 1 && mapContainerTouches.length == 1) {
+      prevSingleTouchPos = {
+        x: mapContainerTouches[0].pageX,
+        y: mapContainerTouches[0].pageY,
+      };
+    }
   }
 }
 
@@ -282,11 +292,32 @@ function handleTouchMoveEvent(touchEvent) {
       currentPinch.center = center;
       updateMapTransform(true);
     });
+  } else {
+    // If exactly one touch is over the map container, use it to pan.
+    const mapContainerTouches = getMapContainerTouches(touchEvent.touches);
+    if (touchEvent.touches.length > 1 && mapContainerTouches.length == 1) {
+      const pos = {
+        x: mapContainerTouches[0].pageX,
+        y: mapContainerTouches[0].pageY,
+      };
+      if (prevSingleTouchPos) {
+        pan(-(pos.x - prevSingleTouchPos.x), -(pos.y - prevSingleTouchPos.y));
+      }
+      prevSingleTouchPos = pos;
+    }
   }
+}
+
+function getMapContainerTouches(touchList) {
+  return Array.from(touchList).filter(touch => {
+    return touch.target.id == 'mapContainer' ||
+        touch.target.classList.contains('grid-cell');
+  });
 }
 
 function handleTouchEndEvent(touchEvent) {
   currentPinch = null;
+  prevSingleTouchPos = null;
 }
 
 //function getCellKeyFromMouse(mouseEvent) {
