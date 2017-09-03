@@ -17,6 +17,11 @@ function createTheMapAndUpdateElements() {
 }
 
 function wireUiElements() {
+  window.addEventListener('contextmenu', contextMenuEvent => {
+    contextMenuEvent.preventDefault();
+    contextMenuEvent.stopPropagation();
+    return true;
+  })
   document.onkeydown = keyDownEvent => handleKeyDownEvent(keyDownEvent);
   const mapContainer = document.getElementById('mapContainer');
   mapContainer.onwheel = wheelEvent => handleWheelEvent(wheelEvent);
