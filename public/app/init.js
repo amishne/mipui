@@ -41,7 +41,7 @@ function initializeFirebase(callback) {
     authDomain: "mipui-dev.firebaseapp.com",
     databaseURL: "https://mipui-dev.firebaseio.com",
   };
-  if (!isProd || isInTestingMode) {
+  if (!isTouchDevice && (!isProd || isInTestingMode)) {
     document.getElementById('warning').style.display = 'inline-block';
     debug = s => console.log(s);
   }
