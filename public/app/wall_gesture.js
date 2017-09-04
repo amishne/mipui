@@ -45,7 +45,7 @@ class WallGesture extends Gesture {
   startHover(targetedCell) {
     this.toWall = !this.isWall_(targetedCell, true);
     this.mode =
-        this.isManual_ || !this.toWall && !this.isWall_(targetedCell, false)
+        this.isManual_ || (!this.toWall && !this.isWall_(targetedCell, false))
           ? 'manual'
           : (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
     this.startHoverAfterInitialFieldsAreSet(targetedCell);
@@ -234,6 +234,5 @@ class WallGesture extends Gesture {
 
   createContent_() {
     return this.toWall ? this.wallContent_ : null;
-    if (!this.toWall) return null;
   }
 }

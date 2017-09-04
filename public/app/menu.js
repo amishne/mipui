@@ -270,8 +270,7 @@ class Menu {
         const isThisItem = submenuItem == otherSubmenuItem;
         otherSubmenuItem.isSelected = isThisItem;
         otherSubmenuItem.element
-          .classList[isThisItem && otherSubmenuItem.type == 'tool'
-            ? 'add' : 'remove']('selected-submenu-item');
+          .classList[isThisItem && otherSubmenuItem.type == 'tool' ? 'add' : 'remove']('selected-submenu-item');
       });
     }
     submenuItem.callback();

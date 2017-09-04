@@ -354,7 +354,6 @@ class OperationCenter {
           .concat(op);
     this.latestAppliedOperationIndex_ = this.appliedOperations_.length - 1;
     if (this.appliedOperations_.length > MAX_STORED_OPERATIONS) {
-      this.appliedOperations_.shift;
       this.latestAppliedOperationIndex_--;
     }
   }
