@@ -1472,6 +1472,16 @@ class Menu {
                 window.open('https://github.com/amishne/mipui', '_blank');
               },
             },
+            {
+              name: 'Subreddit',
+              type: 'button',
+              presentation: 'icon',
+              icon: 'assets/reddit_white.svg',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('https://reddit.com/r/Mipui/', '_blank');
+              },
+            },
           ],
         },
       },
