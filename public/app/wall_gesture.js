@@ -23,10 +23,10 @@ class WallGesture extends Gesture {
     this.isManual_ = isManual;
 
     this.removeDoorGestures = null;
-    
+
     this.wallContent_ = {
       [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.square.id,
+      [ck.variation]: ct.walls.smooth.square.id
     };
   }
 
@@ -45,9 +45,9 @@ class WallGesture extends Gesture {
   startHover(targetedCell) {
     this.toWall = !this.isWall_(targetedCell, true);
     this.mode =
-        this.isManual_ || !this.toWall && !this.isWall_(targetedCell, false) ?
-        'manual' :
-        (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
+        this.isManual_ || !this.toWall && !this.isWall_(targetedCell, false)
+          ? 'manual'
+          : (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
     this.startHoverAfterInitialFieldsAreSet(targetedCell);
   }
 
@@ -151,9 +151,9 @@ class WallGesture extends Gesture {
     if (!this.toWall && this.mode == 'divider only' &&
         (cell.role == 'horizontal' || cell.role == 'vertical')) {
       const neighbor1 = cell.getNeighbors(
-          cell.role == 'horizontal' ? 'top' : 'right').cells[0] || null;
+        cell.role == 'horizontal' ? 'top' : 'right').cells[0] || null;
       const neighbor2 = cell.getNeighbors(
-          cell.role == 'horizontal' ? 'bottom' : 'left').cells[0] || null;
+        cell.role == 'horizontal' ? 'bottom' : 'left').cells[0] || null;
       if (this.isWall_(neighbor1, false) || this.isWall_(neighbor2, false)) {
         return;
       }
@@ -167,11 +167,9 @@ class WallGesture extends Gesture {
     // Don't clear corner cells that are adjacent to cells with doors that are
     // not removed.
     if (!this.toWall && cell.role == 'corner') {
-      const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => {
-        return neighbor.dividerCell &&
+      const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => neighbor.dividerCell &&
             neighbor.dividerCell.isKind(ct.separators, ct.separators.door) &&
-            !this.shouldRemoveDoors_(neighbor.dividerCell);
-      });
+            !this.shouldRemoveDoors_(neighbor.dividerCell));
       if (aNeighborHasADoor) return;
     }
 
@@ -179,11 +177,9 @@ class WallGesture extends Gesture {
   }
 
   anyCellIsWall_(cells) {
-    return cells.some(cell => {
-      return cell &&
+    return cells.some(cell => cell &&
           (this.rootCells.has(cell) ||
-           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell, false));
-    });
+           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell, false)));
   }
 
   stopHover() {

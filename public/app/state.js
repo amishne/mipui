@@ -7,7 +7,7 @@ class State {
       // layer.
       // "Content" is a mapping of content key (ck) to content type (ct) IDs.
       content: {},
-      lastOpNum: 0,
+      lastOpNum: 0
     };
 
     this.metadata = {};
@@ -23,12 +23,12 @@ class State {
     this.opCenter = new OperationCenter();
 
     this.navigation = {
-      scale: 1.0,
+      scale: 1.0
     };
 
     this.defaultFloorContent_ = {
       [ck.kind]: ct.floors.floor.id,
-      [ck.variation]: ct.floors.floor.generic.id,
+      [ck.variation]: ct.floors.floor.generic.id
     };
 
     this.defaultProperties_ = {
@@ -38,7 +38,7 @@ class State {
       [pk.lastRow]: 20,
       [pk.firstColumn]: 0,
       [pk.lastColumn]: 20,
-      [pk.theme]: 0,
+      [pk.theme]: 0
     };
 
     this.autoSaveTimerId_ = null;
@@ -172,9 +172,9 @@ class State {
       return;
     }
     firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
-        .set(secret, error => {
-      setStatus(Status.AUTH_ERROR);
-    }).then(() => callback());
+      .set(secret, error => {
+        setStatus(Status.AUTH_ERROR);
+      }).then(() => callback());
     const newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
         `&secret=${encodeURIComponent(secret)}`;
     window.history.replaceState(null, '', newUrl);
@@ -202,6 +202,6 @@ class State {
   // Create a random 10-character string with characters belonging to [a-z0-9].
   generateRandomString_() {
     // From http://stackoverflow.com/a/19964557
-    return (Math.random().toString(36)+'00000000000000000').slice(2, 12);
+    return (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   }
 }

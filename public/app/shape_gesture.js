@@ -69,7 +69,7 @@ class ShapeGesture extends Gesture {
         result.set(cell, {
           [ck.kind]: this.kind_.id,
           [ck.variation]: this.variation_.id,
-          [ck.connections]: val,
+          [ck.connections]: val
         });
         return;
       }
@@ -80,14 +80,14 @@ class ShapeGesture extends Gesture {
           [ck.kind]: existingContent[ck.kind],
           [ck.variation]: existingContent[ck.variation],
           [ck.connections]:
-              this.mode_ == 'adding' ?
-                  existingConnections | val : existingConnections & ~val,
+              this.mode_ == 'adding'
+                ? existingConnections | val : existingConnections & ~val
         });
       } else {
         result.set(cell, {
           [ck.kind]: this.kind_.id,
           [ck.variation]: this.variation_.id,
-          [ck.connections]: val,
+          [ck.connections]: val
         });
       }
     });

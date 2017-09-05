@@ -35,21 +35,21 @@ class SelectGesture extends Gesture {
     this.clearSelection();
     this.anchorCell_ = null;
   }
-  
+
   copyWithoutClearingSelection_() {
     const cellMapping = [];
     this.selectedCells_.forEach(cell => {
       const layerContents = new Map();
       ct.children.forEach(layer => {
         layerContents.set(
-            layer, 
-            cell.getLayerContent(layer));
+          layer,
+          cell.getLayerContent(layer));
       });
       cellMapping.push({
         location: this.locationForCopy_(this.anchorCell_, cell),
         key: cell.key,
         role: cell.role,
-        layerContents,
+        layerContents
       });
     });
     state.clipboard = {
@@ -57,10 +57,10 @@ class SelectGesture extends Gesture {
         role: this.anchorCell_.role,
         location: {
           row: this.anchorCell_.row,
-          column: this.anchorCell_.column,
-        },
+          column: this.anchorCell_.column
+        }
       },
-      cells: cellMapping,
+      cells: cellMapping
     };
   }
 
@@ -79,15 +79,15 @@ class SelectGesture extends Gesture {
         if (content && content[ck.endCell]) {
           const endCell = state.theMap.cells.get(content[ck.endCell]);
           this.forEachCellWithStartCell_(layer, cell, affectedCell =>
-              affectedCells.push(affectedCell));
+            affectedCells.push(affectedCell));
         }
         if (content && content[ck.startCell]) {
           const startCell = state.theMap.cells.get(content[ck.startCell]);
           this.forEachCellWithStartCell_(layer, startCell, affectedCell =>
-              affectedCells.push(affectedCell));
+            affectedCells.push(affectedCell));
         }
         affectedCells.forEach(
-            affectedCell => affectedCell.setLayerContent(layer, null, true));
+          affectedCell => affectedCell.setLayerContent(layer, null, true));
       });
     });
     state.opCenter.recordOperationComplete();
@@ -104,7 +104,7 @@ class SelectGesture extends Gesture {
   locationForCopy_(anchorCell, cell) {
     return {
       row: cell.row - anchorCell.row,
-      column: cell.column - anchorCell.column,
+      column: cell.column - anchorCell.column
     };
   }
 

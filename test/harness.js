@@ -58,7 +58,7 @@ function runNextTest_() {
     test.passed = true;
     test.element = createTestElement_(document.body, test.name);
     test.fn();
-  }, 0)
+  }, 0);
 }
 
 function createTestElement_(parentElement, name) {
@@ -100,7 +100,7 @@ function mockPart_(parent, part, child) {
   const args = getArgs_(part.name);
   if (args != null) {
     return mockFunc_(
-        parent, part, part.name.replace(PATH_FUNCTION_REGEX, ''), child, args);
+      parent, part, part.name.replace(PATH_FUNCTION_REGEX, ''), child, args);
   } else {
     return mockField_(parent, part, child);
   }
@@ -114,14 +114,14 @@ function mockField_(parent, part, child) {
   if (parent) {
     currentTest.mocked.push({
       path: fullPath,
-      obj: parent[part.name],
+      obj: parent[part.name]
     });
     Object.assign(parent, field);
     return parent;
   } else {
     currentTest.mocked.push({
       path: fullPath,
-      obj: undefined,
+      obj: undefined
     });
     return field;
   }
@@ -150,14 +150,14 @@ function mockFunc_(parent, part, name, child, args) {
   if (parent) {
     currentTest.mocked.push({
       path: fullPath,
-      obj: parent[name],
+      obj: parent[name]
     });
     parent[name] = func;
     return parent;
   } else {
     currentTest.mocked.push({
       path: fullPath,
-      obj: undefined,
+      obj: undefined
     });
     return {[name]: func};
   }

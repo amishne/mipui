@@ -47,7 +47,7 @@ class SeparatorGesture extends Gesture {
     this.startCell_.showHighlight(this.layer_, this.createStartCellContent_());
     this.nonStartCells_.forEach(nonStartCell => {
       nonStartCell.showHighlight(
-          this.layer_, this.createNonStartCellContent_());
+        this.layer_, this.createNonStartCellContent_());
     });
   }
 
@@ -57,17 +57,17 @@ class SeparatorGesture extends Gesture {
       nonStartCell.hideHighlight(this.layer_);
     });
   }
-  
+
   getNextCell_(cell) {
     if (!cell) return null;
     return cell.getNeighbors(
-        cell.role == 'horizontal' ? 'right-same' : 'bottom-same').cells[0];
+      cell.role == 'horizontal' ? 'right-same' : 'bottom-same').cells[0];
   }
 
   getPrevCell_(cell) {
     if (!cell) return null;
     return cell.getNeighbors(
-        cell.role == 'horizontal' ? 'left-same' : 'top-same').cells[0];
+      cell.role == 'horizontal' ? 'left-same' : 'top-same').cells[0];
   }
 
   setCells_(cell) {
@@ -78,7 +78,7 @@ class SeparatorGesture extends Gesture {
     } else {
       // Clear the entire separator.
       this.startCell_ = state.theMap.cells.get(
-          cell.getLayerContent(this.layer_)[ck.startCell]) || cell;
+        cell.getLayerContent(this.layer_)[ck.startCell]) || cell;
       let currCell = this.startCell_;
       while (true) {
         currCell = this.getNextCell_(currCell);
@@ -108,10 +108,10 @@ class SeparatorGesture extends Gesture {
 
   apply_() {
     this.startCell_.setLayerContent(
-        this.layer_, this.createStartCellContent_(), true);
+      this.layer_, this.createStartCellContent_(), true);
     this.nonStartCells_.forEach(nonStartCell => {
       nonStartCell.setLayerContent(
-          this.layer_, this.createNonStartCellContent_(), true);
+        this.layer_, this.createNonStartCellContent_(), true);
     });
 
     if (this.shouldPaintWall_()) {
@@ -127,7 +127,7 @@ class SeparatorGesture extends Gesture {
       return;
     }
 
-    const prevCell = this.getPrevCell_(cell)
+    const prevCell = this.getPrevCell_(cell);
     const nextCell = this.getNextCell_(cell);
 
     if (prevCell == this.startCell_ || this.nonStartCells_.includes(prevCell)) {
@@ -179,7 +179,7 @@ class SeparatorGesture extends Gesture {
     if (this.mode != 'adding') return null;
     const content = {
       [ck.kind]: this.kind_.id,
-      [ck.variation]: this.variation_.id,
+      [ck.variation]: this.variation_.id
     };
     if (this.nonStartCells_.length > 0) {
       content[ck.endCell] =
@@ -193,7 +193,7 @@ class SeparatorGesture extends Gesture {
     return {
       [ck.kind]: this.kind_.id,
       [ck.variation]: this.variation_.id,
-      [ck.startCell]: this.startCell_.key,
-    }
+      [ck.startCell]: this.startCell_.key
+    };
   }
 }

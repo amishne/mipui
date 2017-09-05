@@ -16,7 +16,7 @@ class AngledWallGesture extends ShapeGesture {
       case 'vertical':
         // Can't apply to dividers adjuscent to square walls.
         if (this.isAnySquare_(
-            [cell.getNeighbor('right'), cell.getNeighbor('left')])) {
+          [cell.getNeighbor('right'), cell.getNeighbor('left')])) {
           break;
         }
         this.populateCellMask_(cell, this.mode_ == 'adding' ? 0 : null);
@@ -30,7 +30,7 @@ class AngledWallGesture extends ShapeGesture {
       case 'horizontal':
         // Can't apply to dividers adjuscent to square walls.
         if (this.isAnySquare_(
-            [cell.getNeighbor('top'), cell.getNeighbor('bottom')])) {
+          [cell.getNeighbor('top'), cell.getNeighbor('bottom')])) {
           break;
         }
         this.populateCellMask_(cell, this.mode_ == 'adding' ? 5 : null);
@@ -46,13 +46,13 @@ class AngledWallGesture extends ShapeGesture {
         // Connect primaries
         this.connectIfWallOrWillBecomeWall_(cell.getNeighbor('top-right'), 64);
         this.connectIfWallOrWillBecomeWall_(
-            cell.getNeighbor('bottom-right'), 128);
+          cell.getNeighbor('bottom-right'), 128);
         this.connectIfWallOrWillBecomeWall_(cell.getNeighbor('bottom-left'), 16);
         this.connectIfWallOrWillBecomeWall_(cell.getNeighbor('top-left'), 32);
         break;
     }
   }
-  
+
   isWall_(cell) {
     return cell.isVariation(this.layer_, this.kind_, ct.walls.smooth.angled) ||
         cell.isVariation(this.layer_, this.kind_, ct.walls.smooth.square);
@@ -106,11 +106,9 @@ class AngledWallGesture extends ShapeGesture {
   }
 
   isAnySquare_(cells) {
-    return cells.some(cell => {
-      return cell != null &&
+    return cells.some(cell => cell != null &&
           cell.isVariation(
-              this.layer_, ct.walls.smooth, ct.walls.smooth.square);
-    });
+            this.layer_, ct.walls.smooth, ct.walls.smooth.square));
   }
 
   calcFinalContent_(cell, content) {
@@ -118,7 +116,7 @@ class AngledWallGesture extends ShapeGesture {
     let connections = content[ck.connections];
     const connectionlessContent = {
       [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.square.id,
+      [ck.variation]: ct.walls.smooth.square.id
     };
     switch (cell.role) {
       case 'primary':

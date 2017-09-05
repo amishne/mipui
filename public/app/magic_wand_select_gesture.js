@@ -16,7 +16,7 @@ class MagicWandSelectGesture extends SelectGesture {
   continueGesture(cell) {
     this.addCellsLinkedTo_(cell);
   }
-  
+
   addCellsLinkedTo_(cell) {
     let front = new Set();
     front.add(cell);

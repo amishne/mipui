@@ -16,9 +16,9 @@ class StaticBoxGesture extends BoxGesture {
 
   createNewGesture_() {
     return new StaticBoxGesture(
-        this.layer_,
-        this.kind_,
-        this.variation_);
+      this.layer_,
+      this.kind_,
+      this.variation_);
   }
 
   getDefaultContent_() {
@@ -58,7 +58,7 @@ class StaticBoxGesture extends BoxGesture {
   }
 
   getHoverWidgetCssClassName_() {
-    return this.isEditable_? 'image-hover-widget' : 'fixed-image-hover-widget';
+    return this.isEditable_ ? 'image-hover-widget' : 'fixed-image-hover-widget';
   }
 
   getMoveWidgetCssClassName_() {

@@ -9,7 +9,7 @@ const Status = {
   UPDATING: {text: 'Updating...', icon: 'cloud_download', type: 'unstable'},
   UPDATE_ERROR: {text: 'Update error', icon: 'cloud_off', type: 'bad'},
   AUTH_ERROR:
-      {text: 'Authentication error', icon: 'cloud_off', type: 'bad'},
+      {text: 'Authentication error', icon: 'cloud_off', type: 'bad'}
 };
 
 function setStatus(status) {
