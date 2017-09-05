@@ -7,7 +7,7 @@ class OvalRoomGesture extends RoomGesture {
     this.cellValues_ = new Map();
     this.wallContent_ = {
       [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.square.id,
+      [ck.variation]: ct.walls.smooth.square.id
     };
   }
 
@@ -24,14 +24,14 @@ class OvalRoomGesture extends RoomGesture {
       this.mapCellsToValues_(false, 'f');
     }
   }
-  
+
   hasWallContentWithoutClipping_(cell) {
     if (!cell) return false;
     const content = cell.getLayerContent(ct.walls);
     if (!content) return false;
     return !(content[ck.clipInclude] || content[ck.clipExclude]);
   }
-  
+
   mapCellsToValues_(includeBoundaries, mapKey) {
     // Outline:
     // 1. Find the ellipse center point.
@@ -39,7 +39,7 @@ class OvalRoomGesture extends RoomGesture {
     //    the point furthest away from the center.
     // 3. If the ellipse passes between those points, it means the cell needs
     //    a special clip path.
-  
+
     // This is in rows/cols, not pixels.
     const {minX, minY, maxX, maxY} =
         this.calculateMinMaxCellPositions_(includeBoundaries);
@@ -50,24 +50,22 @@ class OvalRoomGesture extends RoomGesture {
     const bottomRightCell = state.theMap.cells.get(TheMap.cellKey(maxY, maxX));
     const topLeftPoint = {
       x: topLeftCell.offsetLeft,
-      y: topLeftCell.offsetTop,
+      y: topLeftCell.offsetTop
     };
     const bottomRightPoint = {
       x: bottomRightCell.offsetLeft + bottomRightCell.width,
-      y: bottomRightCell.offsetTop + bottomRightCell.height,
+      y: bottomRightCell.offsetTop + bottomRightCell.height
     };
     const centerPoint = {
       x: topLeftPoint.x + (bottomRightPoint.x - topLeftPoint.x) / 2,
-      y: topLeftPoint.y + (bottomRightPoint.y - topLeftPoint.y) / 2,
+      y: topLeftPoint.y + (bottomRightPoint.y - topLeftPoint.y) / 2
     };
     const axes = {
       x: bottomRightPoint.x - topLeftPoint.x,
-      y: bottomRightPoint.y - topLeftPoint.y,
+      y: bottomRightPoint.y - topLeftPoint.y
     };
-    const check = (x, y) => {
-      return this.ellipseEquation_(
-          x, y, centerPoint.x, centerPoint.y, axes.x / 2, axes.y / 2);
-    }
+    const check = (x, y) => this.ellipseEquation_(
+      x, y, centerPoint.x, centerPoint.y, axes.x / 2, axes.y / 2);
     this.cells_.forEach(cell => {
       const cellValue = this.cellValues_.get(cell) || {};
       this.cellValues_.set(cell, cellValue);
@@ -82,7 +80,7 @@ class OvalRoomGesture extends RoomGesture {
       }
       const closestPixel = {
         x: clamp(cell.offsetLeft, centerPoint.x, cell.offsetLeft + cell.width),
-        y: clamp(cell.offsetTop, centerPoint.y, cell.offsetTop + cell.height),
+        y: clamp(cell.offsetTop, centerPoint.y, cell.offsetTop + cell.height)
       };
       if (check(closestPixel.x, closestPixel.y) > 1) {
         keyedValue.pos = 'outside';
@@ -90,7 +88,7 @@ class OvalRoomGesture extends RoomGesture {
       }
       const furthestPixel = {
         x: cell.offsetLeft + (cell.column >= centerX ? cell.width : 0),
-        y: cell.offsetTop + (cell.row >= centerY ? cell.height : 0),
+        y: cell.offsetTop + (cell.row >= centerY ? cell.height : 0)
       };
       if (check(furthestPixel.x, furthestPixel.y) < 1) {
         keyedValue.pos = 'inside';
@@ -101,9 +99,8 @@ class OvalRoomGesture extends RoomGesture {
       keyedValue.cx = centerPoint.x;
       keyedValue.cy = centerPoint.y;
     });
-    
   }
-  
+
   ellipseEquation_(x, y, h, k, rx, ry) {
     return Math.pow(x - h, 2) / Math.pow(rx, 2) +
         Math.pow(y - k, 2) / Math.pow(ry, 2);
@@ -123,7 +120,7 @@ class OvalRoomGesture extends RoomGesture {
     }
     const result = {
       [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.oval.id,
+      [ck.variation]: ct.walls.smooth.oval.id
     };
     if (val.w && val.w.cx) {
       result[ck.clipInclude] =
@@ -135,7 +132,7 @@ class OvalRoomGesture extends RoomGesture {
     }
     return result;
   }
-  
+
   calculateEllipse_(val, cell, key) {
     const newEllipse = `e:${val.rx},${val.ry},` +
         `${val.cx - cell.offsetLeft},${val.cy - cell.offsetTop}`;

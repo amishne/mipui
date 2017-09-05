@@ -5,7 +5,7 @@ class SquareRoomGesture extends RoomGesture {
     this.borders_ = new Set();
     this.wallContent_ = {
       [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.square.id,
+      [ck.variation]: ct.walls.smooth.square.id
     };
   }
 
@@ -32,7 +32,7 @@ class SquareRoomGesture extends RoomGesture {
   }
 
   calculateContent_(cell) {
-    return (this.mode_ == 'toWall' || this.borders_.has(cell)) ?
-        this.wallContent_ : null;
+    return (this.mode_ == 'toWall' || this.borders_.has(cell))
+      ? this.wallContent_ : null;
   }
 }

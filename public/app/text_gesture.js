@@ -1,8 +1,4 @@
 class TextGesture extends BoxGesture {
-  constructor() {
-    super();
-  }
-
   isEditable_() {
     return true;
   }

@@ -13,7 +13,7 @@ class ImageGesture extends StaticBoxGesture {
       const icon = gameIcons.find(gameIcon => gameIcon.path == imagePath);
       if (icon) this.imageHash_ = icon.hash;
     }
-    
+
     this.valueKey_ = this.imageHash_ ? ck.imageHash : ck.image;
     this.imagePath_ = this.imageHash_ || this.image_;
   }
@@ -24,11 +24,11 @@ class ImageGesture extends StaticBoxGesture {
 
   createNewGesture_() {
     return new ImageGesture(
-        this.layer_,
-        this.kind_,
-        this.variation_,
-        this.image_,
-        this.imageHash_);
+      this.layer_,
+      this.kind_,
+      this.variation_,
+      this.image_,
+      this.imageHash_);
   }
 
   getDefaultContent_() {

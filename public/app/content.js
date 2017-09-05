@@ -6,8 +6,8 @@ const ct = {
   floors: {
     classNames: ['floor-cell'],
     floor: {
-      generic: {},
-    },
+      generic: {}
+    }
   },
   walls: {
     classNames: ['wall-cell'],
@@ -17,8 +17,8 @@ const ct = {
           'square-wall-cell',
           'square-wall-cell-_ADDING_',
           'square-wall-cell-_REMOVING_',
-          'square-wall-cell-_EDITING_',
-        ],
+          'square-wall-cell-_EDITING_'
+        ]
       },
       angled: {
         classNames: [
@@ -26,8 +26,8 @@ const ct = {
           'angled-wall-cell-_CONNECTIONS_',
           'angled-wall-cell-_ADDING_',
           'angled-wall-cell-_REMOVING_',
-          'angled-wall-cell-_EDITING_',
-        ],
+          'angled-wall-cell-_EDITING_'
+        ]
       },
       oval: {
         classNames: [
@@ -35,22 +35,22 @@ const ct = {
           'oval-wall-cell-_ADDING_',
           'oval-wall-cell-_REMOVING_',
           'oval-wall-cell-_EDITING_'
-        ],
-      },
-    },
+        ]
+      }
+    }
   },
   images: {
     image: {
       classNames: [
         'image-cell',
         'image-cell-_ADDING-REMOVING_',
-        'image-cell-_EDITING_',
+        'image-cell-_EDITING_'
       ],
       black: {classNames: ['image-black']},
       green: {classNames: ['image-green']},
       brown: {classNames: ['image-brown']},
       blue: {classNames: ['image-blue']},
-      red: {classNames: ['image-red']},
+      red: {classNames: ['image-red']}
     }
   },
   separators: {
@@ -63,7 +63,7 @@ const ct = {
       ],
       single: {},
       double: {classNames: ['double-door-cell-_ROLE_']},
-      secret: {classNames: ['secret-door-cell']},
+      secret: {classNames: ['secret-door-cell']}
     },
     window: {
       classNames: [
@@ -71,7 +71,7 @@ const ct = {
         'window-cell-_ROLE_',
         'window-cell-_ADDING-REMOVING_'
       ],
-      generic: {},
+      generic: {}
     },
     bars: {
       classNames: [
@@ -79,7 +79,7 @@ const ct = {
         'bars-cell-_ROLE_',
         'bars-cell-_ADDING-REMOVING_'
       ],
-      generic: {},
+      generic: {}
     },
     fence: {
       classNames: [
@@ -87,7 +87,7 @@ const ct = {
         'fence-cell-_ROLE_',
         'fence-cell-_ADDING-REMOVING_'
       ],
-      generic: {},
+      generic: {}
     },
     curtain: {
       classNames: [
@@ -95,18 +95,18 @@ const ct = {
         'curtain-cell-_ROLE_',
         'curtain-cell-_ADDING-REMOVING_'
       ],
-      generic: {},
-    },
+      generic: {}
+    }
   },
   text: {
     text: {
       classNames: [
         'text-cell',
         'text-cell-_ADDING-REMOVING_',
-        'text-cell-_EDITING_',
+        'text-cell-_EDITING_'
       ],
-      standard: {},
-    },
+      standard: {}
+    }
   },
   shapes: {
     classNames: ['shape-cell'],
@@ -114,56 +114,56 @@ const ct = {
       classNames: [
         'square-cell-_CONNECTIONS_',
         'square-cell-_ROLE_',
-        'square-cell-_ROLE_-_ADDING-REMOVING_',
+        'square-cell-_ROLE_-_ADDING-REMOVING_'
       ],
       green: {
-        classNames: ['green-square', 'green-square-_ADDING-REMOVING_'],
+        classNames: ['green-square', 'green-square-_ADDING-REMOVING_']
       },
       brown: {
-        classNames: ['brown-square', 'brown-square-_ADDING-REMOVING_'],
+        classNames: ['brown-square', 'brown-square-_ADDING-REMOVING_']
       },
       blue: {
-        classNames: ['blue-square', 'blue-square-_ADDING-REMOVING_'],
+        classNames: ['blue-square', 'blue-square-_ADDING-REMOVING_']
       },
       red: {
-        classNames: ['red-square', 'red-square-_ADDING-REMOVING_'],
+        classNames: ['red-square', 'red-square-_ADDING-REMOVING_']
       },
       white: {
-        classNames: ['white-square', 'white-square-_ADDING-REMOVING_'],
-      },
+        classNames: ['white-square', 'white-square-_ADDING-REMOVING_']
+      }
     },
     circle: {
       classNames: [
         'circle-cell-_CONNECTIONS_',
         'circle-cell-_ROLE_',
-        'circle-cell-_ROLE_-_ADDING-REMOVING_',
+        'circle-cell-_ROLE_-_ADDING-REMOVING_'
       ],
       green: {
-        classNames: ['green-circle', 'green-circle-_ADDING-REMOVING_'],
+        classNames: ['green-circle', 'green-circle-_ADDING-REMOVING_']
       },
       brown: {
-        classNames: ['brown-circle', 'brown-circle-_ADDING-REMOVING_'],
+        classNames: ['brown-circle', 'brown-circle-_ADDING-REMOVING_']
       },
       blue: {
-        classNames: ['blue-circle', 'blue-circle-_ADDING-REMOVING_'],
+        classNames: ['blue-circle', 'blue-circle-_ADDING-REMOVING_']
       },
       red: {
-        classNames: ['red-circle', 'red-circle-_ADDING-REMOVING_'],
+        classNames: ['red-circle', 'red-circle-_ADDING-REMOVING_']
       },
       white: {
-        classNames: ['white-circle', 'white-circle-_ADDING-REMOVING_'],
-      },
-    },
+        classNames: ['white-circle', 'white-circle-_ADDING-REMOVING_']
+      }
+    }
   },
   stairs: {
     classNames: [
       'stairs-cell',
       'stairs-cell-_ADDING-REMOVING_',
-      'stairs-cell-_EDITING_',
+      'stairs-cell-_EDITING_'
     ],
     horizontal: { generic: {classNames: ['stairs-cell-horizontal']} },
     vertical: { generic: {classNames: ['stairs-cell-vertical']} },
-    spiral: { generic: {classNames: ['stairs-cell-spiral']} },
+    spiral: { generic: {classNames: ['stairs-cell-spiral']} }
   }
 };
 
@@ -178,7 +178,7 @@ const ck = {
   imageHash: 'h',
   connections: 'c',
   clipInclude: 'p',
-  clipExclude: 'x',
+  clipExclude: 'x'
 };
 
 // Property keys.
@@ -189,7 +189,7 @@ const pk = {
   lastRow: 'b',
   firstColumn: 'l',
   lastColumn: 'r',
-  theme: 'h',
+  theme: 'h'
 };
 
 function sameContent(c1, c2) {
@@ -206,9 +206,9 @@ function sameContent(c1, c2) {
 
 function getContentType(layer, content) {
   return ct
-      .children[layer.id]
-      .children[content[ck.kind]]
-      .children[content[ck.variation]];
+    .children[layer.id]
+    .children[content[ck.kind]]
+    .children[content[ck.variation]];
 }
 
 function initializeContentTypes(obj) {

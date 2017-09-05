@@ -42,7 +42,7 @@ class PasteGesture extends Gesture {
   stopGesture() {
     state.opCenter.recordOperationComplete();
   }
-/*
+  /*
   rotateLeft() {
     this.updateLocation_(location => ({
       row: -location.column,
@@ -124,12 +124,12 @@ class PasteGesture extends Gesture {
       const updatedLayerContents = new Map();
       layerContents.forEach((content, layer) => {
         updatedLayerContents.set(
-            layer, this.updateContent_(layer, key, location, content));
+          layer, this.updateContent_(layer, key, location, content));
       });
       this.relocatedCells_.push({
         key: this.calcKey_(newAnchor, role, location),
         location,
-        layerContents: updatedLayerContents,
+        layerContents: updatedLayerContents
       });
     });
   }
@@ -142,7 +142,7 @@ class PasteGesture extends Gesture {
     const startCellKey = content[ck.startCell];
     if (startCellKey) {
       const endCellKey = state.theMap.cells.get(startCellKey)
-          .getLayerContent(layer, [ck.endCell]);
+        .getLayerContent(layer, [ck.endCell]);
       if (!this.areAllCellsBeingCopied_(layer, startCellKey, endCellKey)) {
         return null;
       }
@@ -164,7 +164,7 @@ class PasteGesture extends Gesture {
         // Pasted group ends beyond the bounds.
         return null;
       }
-      newContent[ck.endCell] = relocatedEndCellKey
+      newContent[ck.endCell] = relocatedEndCellKey;
     }
 
     return newContent;
@@ -212,8 +212,8 @@ class PasteGesture extends Gesture {
       case 'horizontal':
       case 'corner':
         return TheMap.dividerCellKey(
-            Math.floor(row), Math.floor(column),
-            Math.ceil(row), Math.ceil(column));
+          Math.floor(row), Math.floor(column),
+          Math.ceil(row), Math.ceil(column));
     }
   }
 }

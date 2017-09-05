@@ -8,7 +8,7 @@ class Operation {
       // Cell changes.
       c: {},
       // Property changes.
-      p: {},
+      p: {}
     };
   }
 
@@ -155,7 +155,7 @@ class Operation {
           const cellLayerChange = cellChange[layerId];
           result.data.c[key][layerId] = {
             o: cellLayerChange.n,
-            n: cellLayerChange.o,
+            n: cellLayerChange.o
           };
         });
       });

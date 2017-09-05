@@ -4,7 +4,7 @@ let mapContainer;
 
 function getCached(obj, fieldName) {
   const cachedObj = cached[obj] || {};
-  let result = cachedObj[fieldName]
+  let result = cachedObj[fieldName];
   if (!result) {
     result = obj[fieldName];
     cached[obj] = cachedObj;
@@ -167,10 +167,10 @@ function handleScrollEvent(event) {
     invalidateCached(mapContainer, 'offsetWidth');
     invalidateCached(mapContainer, 'offsetHeight');
     const currentCellKey = getCellKey(
-        getCached(mapContainer, 'scrollLeft') +
+      getCached(mapContainer, 'scrollLeft') +
         getCached(mapContainer, 'offsetWidth') / 2 -
         getCached(theMap, 'offsetLeft'),
-        getCached(mapContainer, 'scrollTop') +
+      getCached(mapContainer, 'scrollTop') +
         getCached(mapContainer, 'offsetHeight') / 2 -
         getCached(theMap, 'offsetTop'));
     if (!prevCellKey || prevCellKey != currentCellKey) {
@@ -217,24 +217,24 @@ function handleTouchStartEvent(touchEvent) {
     currentPinch = {
       initialDistance:
           calcDistance(
-              touchEvent.touches[0].pageX,
-              touchEvent.touches[0].pageY,
-              touchEvent.touches[1].pageX,
-              touchEvent.touches[1].pageY),
+            touchEvent.touches[0].pageX,
+            touchEvent.touches[0].pageY,
+            touchEvent.touches[1].pageX,
+            touchEvent.touches[1].pageY),
       center:
           calcCenter(
-              touchEvent.touches[0].pageX,
-              touchEvent.touches[0].pageY,
-              touchEvent.touches[1].pageX,
-              touchEvent.touches[1].pageY),
-      initialScale: state.navigation.scale,
+            touchEvent.touches[0].pageX,
+            touchEvent.touches[0].pageY,
+            touchEvent.touches[1].pageX,
+            touchEvent.touches[1].pageY),
+      initialScale: state.navigation.scale
     };
   } else {
     const mapContainerTouches = getMapContainerTouches(touchEvent.touches);
     if (touchEvent.touches.length > 1 && mapContainerTouches.length == 1) {
       prevSingleTouchPos = {
         x: mapContainerTouches[0].pageX,
-        y: mapContainerTouches[0].pageY,
+        y: mapContainerTouches[0].pageY
       };
     }
   }
@@ -249,21 +249,21 @@ function handleTouchMoveEvent(touchEvent) {
       pinchCallRequested = false;
       const center =
           calcCenter(
-              touchEvent.touches[0].pageX,
-              touchEvent.touches[0].pageY,
-              touchEvent.touches[1].pageX,
-              touchEvent.touches[1].pageY);
+            touchEvent.touches[0].pageX,
+            touchEvent.touches[0].pageY,
+            touchEvent.touches[1].pageX,
+            touchEvent.touches[1].pageY);
       const distance =
           calcDistance(
-              touchEvent.touches[0].pageX,
-              touchEvent.touches[0].pageY,
-              touchEvent.touches[1].pageX,
-              touchEvent.touches[1].pageY);
+            touchEvent.touches[0].pageX,
+            touchEvent.touches[0].pageY,
+            touchEvent.touches[1].pageX,
+            touchEvent.touches[1].pageY);
 
       // First, scroll to 0,0
       const oldScroll = {
         x: getCached(mapContainer, 'scrollLeft'),
-        y: getCached(mapContainer, 'scrollTop'),
+        y: getCached(mapContainer, 'scrollTop')
       };
       setAndCache(mapContainer, 'scrollLeft', 0);
       setAndCache(mapContainer, 'scrollTop', 0);
@@ -274,22 +274,22 @@ function handleTouchMoveEvent(touchEvent) {
           currentPinch.initialScale * (distance / currentPinch.initialDistance);
       const scaleDiff = newScale - state.navigation.scale;
       const growth = scaleDiff / state.navigation.scale;
-      //const scaleFactor = newScale / state.navigation.scale;
+      // const scaleFactor = newScale / state.navigation.scale;
       state.navigation.scale = newScale;
       updateMapTransform(false);
 
       // Finally, scroll back.
       const centerDiff = {
         x: center.x - currentPinch.center.x,
-        y: center.y - currentPinch.center.y,
-      }
+        y: center.y - currentPinch.center.y
+      };
       setAndCache(
-          mapContainer, 'scrollLeft',
-          oldScroll.x + centerDiff.x * newScale);
+        mapContainer, 'scrollLeft',
+        oldScroll.x + centerDiff.x * newScale);
       setAndCache(
-          mapContainer, 'scrollTop',
-          oldScroll.y + centerDiff.y * newScale);
-      
+        mapContainer, 'scrollTop',
+        oldScroll.y + centerDiff.y * newScale);
+
       currentPinch.center = center;
       updateMapTransform(true);
     });
@@ -302,7 +302,7 @@ function handleTouchMoveEvent(touchEvent) {
         window.requestAnimationFrame(_ => {
           const pos = {
             x: mapContainerTouches[0].pageX,
-            y: mapContainerTouches[0].pageY,
+            y: mapContainerTouches[0].pageY
           };
           if (prevSingleTouchPos) {
             pan(pos.x - prevSingleTouchPos.x, pos.y - prevSingleTouchPos.y);
@@ -316,10 +316,8 @@ function handleTouchMoveEvent(touchEvent) {
 }
 
 function getMapContainerTouches(touchList) {
-  return Array.from(touchList).filter(touch => {
-    return touch.target.id == 'mapContainer' ||
-        touch.target.classList.contains('grid-cell');
-  });
+  return Array.from(touchList).filter(touch => touch.target.id == 'mapContainer' ||
+        touch.target.classList.contains('grid-cell'));
 }
 
 function handleTouchEndEvent(touchEvent) {
@@ -327,9 +325,9 @@ function handleTouchEndEvent(touchEvent) {
   prevSingleTouchPos = null;
 }
 
-//function getCellKeyFromMouse(mouseEvent) {
+// function getCellKeyFromMouse(mouseEvent) {
 //  return getCellKey(mouseEvent.pageX, mouseEvent.pageY);
-//}
+// }
 
 function getCellKey(x, y) {
   const nav = state.navigation;
@@ -345,14 +343,14 @@ function getCellKey(x, y) {
       Math.floor(x / cellAndBorderSize) + state.getProperty(pk.firstColumn);
   const fromCol = (x % cellAndBorderSize) / borderSize > 1 ? toCol : toCol - 1;
 
-  const key = fromRow != toRow || fromCol != toCol ?
-      TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
-      TheMap.primaryCellKey(fromRow, fromCol);
+  const key = fromRow != toRow || fromCol != toCol
+    ? TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol)
+    : TheMap.primaryCellKey(fromRow, fromCol);
   return key;
 }
 
 function resizeGridBy(
-    firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff) {
+  firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff) {
   if (state.isReadOnly()) return;
   // First, complete pending ops.
   state.opCenter.recordOperationComplete();
@@ -361,7 +359,7 @@ function resizeGridBy(
     {diff: firstColumnDiff, prop: pk.firstColumn},
     {diff: lastColumnDiff, prop: pk.lastColumn},
     {diff: firstRowDiff, prop: pk.firstRow},
-    {diff: lastRowDiff, prop: pk.lastRow},
+    {diff: lastRowDiff, prop: pk.lastRow}
   ].forEach(({diff, prop}) => {
     if (diff != 0) {
       state.setProperty(prop, state.getProperty(prop) + diff, true);
@@ -371,10 +369,10 @@ function resizeGridBy(
   if (firstColumnDiff != 0 || firstRowDiff != 0) {
     const nav = state.navigation;
     incrementAndCache(mapContainer, 'scrollLeft',
-        -firstColumnDiff * nav.scale *
+      -firstColumnDiff * nav.scale *
         (state.theMap.cellWidth + state.theMap.dividerWidth));
     incrementAndCache(mapContainer, 'scrollTop',
-        -firstRowDiff * nav.scale *
+      -firstRowDiff * nav.scale *
         (state.theMap.cellHeight + state.theMap.dividerHeight));
   }
   updateMapTransform(false);
@@ -386,14 +384,14 @@ function resetView() {
   nav.scale = 1.0;
   updateMapTransform(false);
   setAndCache(
-      mapContainer, 'scrollLeft', getCached(mapContainer, 'clientWidth') / 2);
+    mapContainer, 'scrollLeft', getCached(mapContainer, 'clientWidth') / 2);
   setAndCache(
-      mapContainer, 'scrollTop', getCached(mapContainer, 'clientHeight') / 2);
+    mapContainer, 'scrollTop', getCached(mapContainer, 'clientHeight') / 2);
   const theMap = document.getElementById('theMap');
   const appRect = mapContainer.getBoundingClientRect();
   const theMapRect = theMap.getBoundingClientRect();
   pan(appRect.width / 2 - theMapRect.width / 2,
-      appRect.height / 2 - theMapRect.height / 2);
+    appRect.height / 2 - theMapRect.height / 2);
   updateMapTransform(true);
 }
 
@@ -424,7 +422,7 @@ function refreshMapResizeButtonLocations() {
     {name: 'add-column-left', pos: 'left', place: 0},
     {name: 'remove-column-left', pos: 'left', place: 1},
     {name: 'add-row-top', pos: 'top', place: 0},
-    {name: 'remove-row-top', pos: 'top', place: 1},
+    {name: 'remove-row-top', pos: 'top', place: 1}
   ].forEach(button => {
     const element =
         document.getElementsByClassName('map-resize-button-' + button.name)[0];
@@ -434,7 +432,7 @@ function refreshMapResizeButtonLocations() {
         getCached(mapContainer, 'offsetHeight') / 2, rect.bottom - 70);
     let offsetX = button.place == 0 ? -70 : 40;
     let offsetY = offsetX;
-    switch(button.pos) {
+    switch (button.pos) {
       case 'right': x = rect.right; offsetX = 50; break;
       case 'bottom': y = rect.bottom; offsetY = 50; break;
       case 'left': x = rect.left; offsetX = -70; break;
@@ -454,13 +452,13 @@ function switchToMobileMode() {
   app.style.height = (100 / scale) + '%';
   const mobileCursor =
       createAndAppendDivWithClass(
-          mapContainer, 'mobile-cursor');
+        mapContainer, 'mobile-cursor');
   invalidateCached(mapContainer, 'offsetWidth');
   invalidateCached(mapContainer, 'offsetHeight');
   updateMapTransform(true);
   const actionPane =
       createAndAppendDivWithClass(
-          document.body, 'action-pane');
+        document.body, 'action-pane');
   actionPane.textContent = 'Tap!';
   actionPane.addEventListener('touchstart', e => {
     e.stopPropagation();
@@ -480,8 +478,8 @@ function switchToMobileMode() {
       }
     }
   });
-  actionPane.addEventListener('touchmove', e => {e.stopPropagation();});
-  actionPane.onmousedown = (e) => e.stopPropagation();
-  actionPane.onmousemove = (e) => e.stopPropagation();
-  actionPane.onmouseup = (e) => e.stopPropagation();
+  actionPane.addEventListener('touchmove', e => { e.stopPropagation(); });
+  actionPane.onmousedown = e => e.stopPropagation();
+  actionPane.onmousemove = e => e.stopPropagation();
+  actionPane.onmouseup = e => e.stopPropagation();
 }

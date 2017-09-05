@@ -4,20 +4,20 @@ class Menu {
     this.groups_ = {
       shapeKindTools: {
         selectedKind: ct.shapes.square,
-        items: [],
+        items: []
       },
       shapeVariationTools: {
         selectedVariation: ct.shapes.square.green,
-        items: [],
+        items: []
       },
       imageIconTools: {
         selectedIcon: gameIcons.find(icon => icon.name == 'wyvern'),
-        items: [],
+        items: []
       },
       imageVariationTools: {
         selectedVariation: ct.images.image.black,
-        items: [],
-      },
+        items: []
+      }
     };
     this.tokenSelector_ = null;
     this.tokenSelectedCategory_ = '<all>';
@@ -28,11 +28,11 @@ class Menu {
   createMenu() {
     const containerElement = document.getElementById('menuContainer');
     const menuElement = createAndAppendDivWithClass(containerElement, 'menu');
-//    menuElement.onwheel = (e) => e.stopPropagation();
-//    menuElement.onmousemove = (e) => e.stopPropagation();
-//    menuElement.ontouchstart = (e) => e.stopPropagation();
-//    menuElement.ontouchmove = (e) => e.stopPropagation();
-//    menuElement.ontouchend = (e) => e.stopPropagation();
+    //    menuElement.onwheel = (e) => e.stopPropagation();
+    //    menuElement.onmousemove = (e) => e.stopPropagation();
+    //    menuElement.ontouchstart = (e) => e.stopPropagation();
+    //    menuElement.ontouchmove = (e) => e.stopPropagation();
+    //    menuElement.ontouchend = (e) => e.stopPropagation();
 
     const topElement = createAndAppendDivWithClass(menuElement, 'menu-top');
     const bottomElement =
@@ -91,8 +91,8 @@ class Menu {
         createAndAppendDivWithClass(parent, 'menu-item-container');
     const element =
         createAndAppendDivWithClass(
-            container,
-            'menu-item ' + ((item.classNames || []).join(' ') || ''));
+          container,
+          'menu-item ' + ((item.classNames || []).join(' ') || ''));
     if (item.name) {
       const elementLabel =
           createAndAppendDivWithClass(container, 'menu-item-label');
@@ -111,7 +111,7 @@ class Menu {
   createSeparator_() {
     return {
       presentation: 'separator',
-      classNames: ['menu-separator'],
+      classNames: ['menu-separator']
     };
   }
 
@@ -173,7 +173,7 @@ class Menu {
       case 'input':
       case 'textarea':
         const textarea = document.createElement(
-            item.presentation == 'input' ? 'input' : 'textarea');
+          item.presentation == 'input' ? 'input' : 'textarea');
         if (item.presentation == 'textarea') {
           textarea.rows = item.rows;
         }
@@ -190,13 +190,13 @@ class Menu {
           textarea.onchange = () => {
             item.onChange(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          }
+          };
         }
         if (item.onInput) {
           textarea.oninput = () => {
             item.onInput(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          }
+          };
         }
         break;
       case 'dropdown':
@@ -239,7 +239,7 @@ class Menu {
       const isThisItem = menuItem == otherMenuItem;
       otherMenuItem.isSelected = isThisItem;
       otherMenuItem.element
-          .classList[isThisItem ? 'add' : 'remove']('selected-menu-item');
+        .classList[isThisItem ? 'add' : 'remove']('selected-menu-item');
       otherMenuItem.submenu.element.style.display =
           isThisItem ? 'block' : 'none';
     });
@@ -270,8 +270,7 @@ class Menu {
         const isThisItem = submenuItem == otherSubmenuItem;
         otherSubmenuItem.isSelected = isThisItem;
         otherSubmenuItem.element
-            .classList[isThisItem && otherSubmenuItem.type == 'tool' ?
-                'add' : 'remove']('selected-submenu-item');
+          .classList[isThisItem && otherSubmenuItem.type == 'tool' ? 'add' : 'remove']('selected-submenu-item');
       });
     }
     submenuItem.callback();
@@ -328,33 +327,33 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'floor-cell',
-          ],
+            'floor-cell'
+          ]
         },
         {
           classNames: [
             'grid-cell',
             'vertical-cell',
             requiredWall ? 'wall-cell' : 'floor-cell',
-            requiredWall ? 'square-wall-cell' : '',
-          ],
+            requiredWall ? 'square-wall-cell' : ''
+          ]
         },
         {
           innerHTML:
               variation.imagePath ? `<img src=${variation.imagePath} >` : '',
           classNames: [
             'vertical-cell',
-            'separator-cell',
-          ].concat(separatorClassNames),
+            'separator-cell'
+          ].concat(separatorClassNames)
         },
         {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'floor-cell',
-          ],
-        },
-      ],
+            'floor-cell'
+          ]
+        }
+      ]
     };
   }
 
@@ -373,18 +372,18 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'floor-cell',
-          ],
+            'floor-cell'
+          ]
         },
         {
           innerHTML: 'Text',
           classNames: [
             'grid-cell',
             'primary-cell',
-            'text-cell',
-          ],
-        },
-      ],
+            'text-cell'
+          ]
+        }
+      ]
     };
   }
 
@@ -394,34 +393,34 @@ class Menu {
       if (item.group == this.groups_.shapeKindTools) {
         this.groups_.shapeVariationTools.items.forEach(shapeVariationItem => {
           this.updateShapeTool_(
-              shapeVariationItem, kind, shapeVariationItem.variation);
+            shapeVariationItem, kind, shapeVariationItem.variation);
         });
       } else {
         this.groups_.shapeKindTools.items.forEach(shapeKindItem => {
           this.updateShapeTool_(shapeKindItem, shapeKindItem.kind, variation);
         });
       }
-    }
+    };
 
     const kindClassNames = kind.id == ct.shapes.square.id ? [
       'square-cell-0',
-      'square-cell-primary',
+      'square-cell-primary'
     ] : [
       'circle-cell-0',
-      'circle-cell-primary',
+      'circle-cell-primary'
     ];
     item.cells = [{
       classNames: [
         'grid-cell',
         'primary-cell',
-        'floor-cell',
+        'floor-cell'
       ]
     }, {
       classNames: [
         'grid-cell',
         'primary-cell',
-        'shape-cell',
-      ].concat(kindClassNames).concat(variation.classNames),
+        'shape-cell'
+      ].concat(kindClassNames).concat(variation.classNames)
     }];
     if (item.element) {
       this.updateItem_(item);
@@ -437,7 +436,7 @@ class Menu {
       group,
       isSelected,
       kind,
-      variation,
+      variation
     };
     this.updateShapeTool_(item, kind, variation);
     return item;
@@ -447,7 +446,7 @@ class Menu {
     const variation = this.groups_.shapeVariationTools.selectedVariation;
     this.groups_.shapeKindTools.selectedKind = kind;
     return this.createShapeTool_(
-        name, kind, variation, this.groups_.shapeKindTools, isSelected);
+      name, kind, variation, this.groups_.shapeKindTools, isSelected);
   }
 
   createShapeVariationTool_(name, variationName, isSelected) {
@@ -455,7 +454,7 @@ class Menu {
     const variation = kind[variationName];
     this.groups_.shapeVariationTools.selectedVariation = variation;
     return this.createShapeTool_(
-        name, kind, variation, this.groups_.shapeVariationTools, isSelected);
+      name, kind, variation, this.groups_.shapeVariationTools, isSelected);
   }
 
   createStairsTool_(name, kind, isSelected) {
@@ -473,17 +472,17 @@ class Menu {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'floor-cell',
-          ],
+            'floor-cell'
+          ]
         },
         {
           classNames: [
             'grid-cell',
             'primary-cell',
-            'stairs-cell',
-          ].concat(kind.generic.classNames),
-        },
-      ],
+            'stairs-cell'
+          ].concat(kind.generic.classNames)
+        }
+      ]
     };
   }
 
@@ -522,8 +521,8 @@ class Menu {
       onChange: newChoiceNum => {
         this.tokenSelectedCategory_ = values[newChoiceNum];
         this.updateTokenSelectorSubmenu_();
-      },
-    }
+      }
+    };
   }
 
   createTokenSelector_() {
@@ -536,7 +535,7 @@ class Menu {
       datalistId: 'gameIcons',
       rows: 1,
       enabledInReadonlyMode: false,
-      submenu: {},
+      submenu: {}
     };
     selector.onInput = (oldText, newText) => {
       this.tokenSelectedText_ = newText;
@@ -544,20 +543,20 @@ class Menu {
     };
     // Completions. Disable until a more intuitive solution is in place, for
     // example having both a category drop-down AND a free-text filter.
-//    const completions = new Set();
-//    this.gameIcons_.forEach(icon => {
-//      // Disabling this for now, it leads to too many items:
-//      //completions.add(icon.name);
-//      icon.tags.forEach(tag => completions.add(tag));
-//    });
-//    const datalist = document.createElement('datalist');
-//    datalist.id = selector.datalistId;
-//    completions.forEach(completion => {
-//      const option = document.createElement('option');
-//      option.value = completion;
-//      datalist.appendChild(option);
-//    });
-//    document.getElementById('app').appendChild(datalist);
+    //    const completions = new Set();
+    //    this.gameIcons_.forEach(icon => {
+    //      // Disabling this for now, it leads to too many items:
+    //      //completions.add(icon.name);
+    //      icon.tags.forEach(tag => completions.add(tag));
+    //    });
+    //    const datalist = document.createElement('datalist');
+    //    datalist.id = selector.datalistId;
+    //    completions.forEach(completion => {
+    //      const option = document.createElement('option');
+    //      option.value = completion;
+    //      datalist.appendChild(option);
+    //    });
+    //    document.getElementById('app').appendChild(datalist);
     this.tokenSelector_ = selector;
     return selector;
   }
@@ -567,17 +566,17 @@ class Menu {
     item.callback = () => {
       this.groups_.imageIconTools.selectedIcon = gameIcon;
       state.gesture = new ImageGesture(
-          ct.images,
-          ct.images.image,
-          variation,
-          path,
-          false,
-          gameIcon.hash);
+        ct.images,
+        ct.images.image,
+        variation,
+        path,
+        false,
+        gameIcon.hash);
       if (item.group == this.groups_.imageIconTools) {
         this.groups_.imageIconTools.selectedIcon = gameIcon;
         this.groups_.imageVariationTools.items.forEach(variationItem => {
           this.updateImageTool_(
-              variationItem, gameIcon, variationItem.variation);
+            variationItem, gameIcon, variationItem.variation);
         });
       } else {
         this.groups_.imageVariationTools.selectedVariation = variation;
@@ -590,19 +589,19 @@ class Menu {
       classNames: [
         'grid-cell',
         'primary-cell',
-        'floor-cell',
-      ],
+        'floor-cell'
+      ]
     }, {
       classNames: [
         'grid-cell',
         'primary-cell',
-        'image-cell',
-      ].concat(variation.classNames),
+        'image-cell'
+      ].concat(variation.classNames)
     }];
     item.deferredSvg = {
       path,
       classNames: variation.classNames,
-      childNum: 1,
+      childNum: 1
     };
     if (item.element) {
       this.updateItem_(item);
@@ -618,10 +617,10 @@ class Menu {
       classNames: ['menu-tokens'],
       isSelected: false,
       id: 'token_' + gameIcon.name,
-      gameIcon,
+      gameIcon
     };
     this.updateImageTool_(
-        item, gameIcon, this.groups_.imageVariationTools.selectedVariation);
+      item, gameIcon, this.groups_.imageVariationTools.selectedVariation);
     return item;
   }
 
@@ -674,57 +673,53 @@ class Menu {
       group: this.groups_.imageVariationTools,
       classNames: ['menu-tokens'],
       isSelected,
-      variation,
+      variation
     };
     this.updateImageTool_(item, gameIcon, variation);
     return item;
   }
 
   createWallTool_(name, isSelected, callback, cellClasses, extraCells) {
-    const createDividerRow = () => {
-      return {
-        classNames: ['menu-wall-tool-cell-row'],
-        children: [
-          {classNames: ['corner-cell']},
-          {classNames: ['horizontal-cell']},
-          {classNames: ['corner-cell']},
-          {classNames: ['horizontal-cell']},
-          {classNames: ['corner-cell']},
-        ],
-      };
-    };
-    const createPrimaryRow = () => {
-      return {
-        classNames: ['menu-wall-tool-cell-row'],
-        children: [
-          {classNames: ['vertical-cell']},
-          {classNames: ['primary-cell']},
-          {classNames: ['vertical-cell']},
-          {classNames: ['primary-cell']},
-          {classNames: ['vertical-cell']},
-        ],
-      };
-    };
+    const createDividerRow = () => ({
+      classNames: ['menu-wall-tool-cell-row'],
+      children: [
+        {classNames: ['corner-cell']},
+        {classNames: ['horizontal-cell']},
+        {classNames: ['corner-cell']},
+        {classNames: ['horizontal-cell']},
+        {classNames: ['corner-cell']}
+      ]
+    });
+    const createPrimaryRow = () => ({
+      classNames: ['menu-wall-tool-cell-row'],
+      children: [
+        {classNames: ['vertical-cell']},
+        {classNames: ['primary-cell']},
+        {classNames: ['vertical-cell']},
+        {classNames: ['primary-cell']},
+        {classNames: ['vertical-cell']}
+      ]
+    });
     const cells = [
       createDividerRow(),
       createPrimaryRow(),
       createDividerRow(),
       createPrimaryRow(),
-      createDividerRow(),
+      createDividerRow()
     ];
     cells.forEach(cell => {
       cell.children.forEach(child => child.classNames.push('grid-cell'));
     });
     cellClasses.forEach((cellClass, index) => {
       cells[Math.floor(index / 5)]
-          .children[index % 5].classNames.push(cellClass);
+        .children[index % 5].classNames.push(cellClass);
     });
     (extraCells || []).forEach(extraCell => {
       const index = extraCell.index;
       const parentCell = cells[Math.floor(index / 5)].children[index % 5];
       if (!parentCell.children) parentCell.children = [];
       parentCell.children.push({classNames: extraCell.classNames});
-    })
+    });
     return {
       name,
       type: 'tool',
@@ -732,7 +727,7 @@ class Menu {
       classNames: ['menu-wall-tool'],
       isSelected,
       callback,
-      cells,
+      cells
     };
   }
 
@@ -787,7 +782,7 @@ class Menu {
               materialIcon: 'cloud_queue',
               classNames: ['menu-label'],
               id: 'statusIcon',
-              enabledInReadonlyMode: true,
+              enabledInReadonlyMode: true
             },
             {
               name: 'New',
@@ -797,7 +792,7 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('.', '_blank');
-              },
+              }
             },
             {
               name: 'Share read-only',
@@ -807,7 +802,7 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 this.showShareDialog_(state.getMid(), null);
-              },
+              }
             },
             {
               name: 'Share editable',
@@ -821,7 +816,7 @@ class Menu {
                   return;
                 }
                 this.showShareDialog_(state.getMid(), state.getSecret());
-              },
+              }
             },
             {
               name: 'Fork',
@@ -832,7 +827,7 @@ class Menu {
               callback: () => {
                 state.opCenter.fork();
                 alert('Forked!');
-              },
+              }
             },
             {
               name: 'Download PNG',
@@ -859,10 +854,10 @@ class Menu {
                   const theMapElement = document.getElementById('theMap');
                   domtoimage.toBlob(theMapElement, {
                     style: {
-                      transform: `matrix(${scale}, 0, 0, ${scale}, 0, 0)`,
+                      transform: `matrix(${scale}, 0, 0, ${scale}, 0, 0)`
                     },
                     width,
-                    height,
+                    height
                   }).then(blob => {
                     saveAs(blob, 'mipui.png');
                     overlay.parentElement.removeChild(overlay);
@@ -870,7 +865,7 @@ class Menu {
                     overlay.parentElement.removeChild(overlay);
                   });
                 }, 10);
-              },
+              }
             },
             {
               name: 'Download PNG of viewport',
@@ -887,7 +882,7 @@ class Menu {
                   const theMapElement = document.getElementById('theMap');
                   domtoimage.toBlob(theMapElement, {
                     width: appElement.clientWidth,
-                    height: appElement.clientHeight,
+                    height: appElement.clientHeight
                   }).then(blob => {
                     saveAs(blob, 'mipui.png');
                     overlay.parentElement.removeChild(overlay);
@@ -895,7 +890,7 @@ class Menu {
                     overlay.parentElement.removeChild(overlay);
                   });
                 }, 10);
-              },
+              }
             },
             {
               name: 'Download SVG',
@@ -922,19 +917,19 @@ class Menu {
                   domtoimage.toSvg(theMapElement, {
                     style: { transform: '' },
                     width,
-                    height,
+                    height
                   }).then(dataUrl => {
-                    const blob = new Blob([dataUrl.substr(33)], {type: "image/svg+xml"});
+                    const blob = new Blob([dataUrl.substr(33)], {type: 'image/svg+xml'});
                     saveAs(blob, 'mipui.svg');
                     overlay.parentElement.removeChild(overlay);
                   }).catch(() => {
                     overlay.parentElement.removeChild(overlay);
                   });
                 }, 10);
-              },
-            },
-          ],
-        },
+              }
+            }
+          ]
+        }
       },
       {
         name: 'Info',
@@ -975,10 +970,10 @@ class Menu {
               id: 'createdOn',
               presentation: 'label',
               enabledInReadonlyMode: true,
-              text: 'Map not yet created',
-            },
-          ],
-        },
+              text: 'Map not yet created'
+            }
+          ]
+        }
       },
       {
         name: 'Select',
@@ -996,7 +991,7 @@ class Menu {
               isSelected: true,
               callback: () => {
                 state.gesture = new RegionSelectGesture();
-              },
+              }
             },
             {
               name: 'Magic Wand Selection',
@@ -1005,7 +1000,7 @@ class Menu {
               materialIcon: 'flare',
               callback: () => {
                 state.gesture = new MagicWandSelectGesture();
-              },
+              }
             },
             {
               name: 'Invert Selection',
@@ -1019,7 +1014,7 @@ class Menu {
                 } else {
                   alert('Only valid when something is selected.');
                 }
-              },
+              }
             },
             {
               name: 'Cut',
@@ -1033,7 +1028,7 @@ class Menu {
                 } else {
                   alert('Only valid when something is selected.');
                 }
-              },
+              }
             },
             {
               name: 'Copy',
@@ -1047,7 +1042,7 @@ class Menu {
                 } else {
                   alert('Only valid when something is selected.');
                 }
-              },
+              }
             },
             {
               name: 'Paste',
@@ -1057,7 +1052,7 @@ class Menu {
               enabledInReadonlyMode: false,
               callback: () => {
                 state.gesture = new PasteGesture();
-              },
+              }
             },
             {
               name: 'Delete Selection',
@@ -1071,8 +1066,8 @@ class Menu {
                 } else {
                   alert('Only valid when something is selected.');
                 }
-              },
-            },
+              }
+            }
             /*
             {
               name: 'Rotate Left',
@@ -1132,8 +1127,8 @@ class Menu {
               },
             },
             */
-          ],
-        },
+          ]
+        }
       },
       {
         name: 'Map',
@@ -1154,7 +1149,7 @@ class Menu {
               onChange: newChoiceNum => {
                 state.setProperty(pk.theme, newChoiceNum, true);
                 state.reloadTheme();
-              },
+              }
             },
             {
               name: 'Zoom in',
@@ -1166,9 +1161,9 @@ class Menu {
                 zoom({
                   x: 0,
                   y: 0,
-                  deltaY: -1,
+                  deltaY: -1
                 });
-              },
+              }
             },
             {
               name: 'Zoom out',
@@ -1180,9 +1175,9 @@ class Menu {
                 zoom({
                   x: 0,
                   y: 0,
-                  deltaY: 1,
+                  deltaY: 1
                 });
-              },
+              }
             },
             {
               name: 'Reset view',
@@ -1192,7 +1187,7 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 resetView();
-              },
+              }
             },
             {
               name: 'Undo',
@@ -1202,7 +1197,7 @@ class Menu {
               callback: () => {
                 state.opCenter.undo();
                 state.opCenter.recordOperationComplete();
-              },
+              }
             },
             {
               name: 'Redo',
@@ -1212,7 +1207,7 @@ class Menu {
               callback: () => {
                 state.opCenter.redo();
                 state.opCenter.recordOperationComplete();
-              },
+              }
             },
             {
               name: 'Clear map',
@@ -1221,10 +1216,10 @@ class Menu {
               materialIcon: 'delete',
               callback: () => {
                 resetGrid();
-              },
-            },
-          ],
-        },
+              }
+            }
+          ]
+        }
       },
       {
         name: 'Walls',
@@ -1234,116 +1229,118 @@ class Menu {
         submenu: {
           items: [
             this.createWallTool_(
-                'Wall (auto)',
-                true,
-                () => state.gesture = new WallGesture(1, false),
-                new Array(3).fill('square-wall-cell')
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(5).fill('square-wall-cell'))
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))),
+              'Wall (auto)',
+              true,
+              () => { state.gesture = new WallGesture(1, false); },
+              new Array(3).fill('square-wall-cell')
+                .concat(new Array(2).fill('floor-cell'))
+                .concat(new Array(3).fill('square-wall-cell'))
+                .concat(new Array(2).fill('floor-cell'))
+                .concat(new Array(5).fill('square-wall-cell'))
+                .concat(new Array(2).fill('floor-cell'))
+                .concat(new Array(3).fill('square-wall-cell'))
+                .concat(new Array(2).fill('floor-cell'))
+                .concat(new Array(3).fill('square-wall-cell'))),
             this.createWallTool_(
-                'Wall (manual)',
-                false,
-                () => state.gesture = new WallGesture(1, true),
-                new Array(6).fill('floor-cell')
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(5).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(['floor-cell'])),
+              'Wall (manual)',
+              false,
+              () => { state.gesture = new WallGesture(1, true); },
+              new Array(6).fill('floor-cell')
+                .concat(['square-wall-cell'])
+                .concat(new Array(5).fill('floor-cell'))
+                .concat(['square-wall-cell'])
+                .concat(new Array(3).fill('floor-cell'))
+                .concat(['square-wall-cell'])
+                .concat(new Array(2).fill('floor-cell'))
+                .concat(['square-wall-cell'])
+                .concat(new Array(3).fill('floor-cell'))
+                .concat(['square-wall-cell'])
+                .concat(['floor-cell'])),
             this.createWallTool_(
-                'Angled wall',
-                false,
-                () => state.gesture = new AngledWallGesture(
-                    ct.walls, ct.walls.smooth, ct.walls.smooth.angled),
-                new Array(2).fill('floor-cell')
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(4).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))
-                    .concat(new Array(11).fill('floor-cell'))
-                    .concat(['square-wall-cell']),
-                [{
-                  index: 6,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-118'],
-                }, {
-                  index: 8,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-200'],
-                }, {
-                  index: 16,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-145'],
-                }, {
-                  index: 18,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-160'],
-                }]),
+              'Angled wall',
+              false,
+              () => {
+                state.gesture = new AngledWallGesture(
+                  ct.walls, ct.walls.smooth, ct.walls.smooth.angled);
+              },
+              new Array(2).fill('floor-cell')
+                .concat(['square-wall-cell'])
+                .concat(new Array(4).fill('floor-cell'))
+                .concat(['square-wall-cell'])
+                .concat(new Array(2).fill('floor-cell'))
+                .concat(new Array(3).fill('square-wall-cell'))
+                .concat(new Array(11).fill('floor-cell'))
+                .concat(['square-wall-cell']),
+              [{
+                index: 6,
+                classNames: ['angled-wall-cell', 'angled-wall-cell-118']
+              }, {
+                index: 8,
+                classNames: ['angled-wall-cell', 'angled-wall-cell-200']
+              }, {
+                index: 16,
+                classNames: ['angled-wall-cell', 'angled-wall-cell-145']
+              }, {
+                index: 18,
+                classNames: ['angled-wall-cell', 'angled-wall-cell-160']
+              }]),
             this.createWallTool_(
-                'Rectangle',
-                false,
-                () => state.gesture = new SquareRoomGesture(false),
-                new Array(25).fill('square-wall-cell')),
+              'Rectangle',
+              false,
+              () => { state.gesture = new SquareRoomGesture(false); },
+              new Array(25).fill('square-wall-cell')),
             this.createWallTool_(
-                'Ellipse',
-                false,
-                () => state.gesture = new OvalRoomGesture(false),
-                new Array(25).fill('floor-cell'),
-                new Array(25).fill(null).map((_, i) => {
-                  // The corners are empty.
-                  if (i == 0 || i == 4 || i == 20 || i == 24) return null;
-                  const classNames = ['square-wall-cell'];
-                  if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
-                    // Do nothing; these are filled.
-                  } else {
-                    classNames.push('ellipse-cell-' + i);
-                  }
-                  return {
-                    index: i,
-                    classNames,
-                  };
-                }).filter(x => x != null)),
+              'Ellipse',
+              false,
+              () => { state.gesture = new OvalRoomGesture(false); },
+              new Array(25).fill('floor-cell'),
+              new Array(25).fill(null).map((_, i) => {
+                // The corners are empty.
+                if (i == 0 || i == 4 || i == 20 || i == 24) return null;
+                const classNames = ['square-wall-cell'];
+                if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
+                  // Do nothing; these are filled.
+                } else {
+                  classNames.push('ellipse-cell-' + i);
+                }
+                return {
+                  index: i,
+                  classNames
+                };
+              }).filter(x => x != null)),
             this.createWallTool_(
-                'Rectangular Room',
-                false,
-                () => state.gesture = new SquareRoomGesture(true),
-                new Array(6).fill('square-wall-cell')
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(new Array(2).fill('square-wall-cell'))
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(new Array(2).fill('square-wall-cell'))
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(new Array(6).fill('square-wall-cell'))),
+              'Rectangular Room',
+              false,
+              () => { state.gesture = new SquareRoomGesture(true); },
+              new Array(6).fill('square-wall-cell')
+                .concat(new Array(3).fill('floor-cell'))
+                .concat(new Array(2).fill('square-wall-cell'))
+                .concat(new Array(3).fill('floor-cell'))
+                .concat(new Array(2).fill('square-wall-cell'))
+                .concat(new Array(3).fill('floor-cell'))
+                .concat(new Array(6).fill('square-wall-cell'))),
             this.createWallTool_(
-                'Elliptical Room',
-                false,
-                () => state.gesture = new OvalRoomGesture(true),
-                new Array(25).fill('floor-cell'),
-                new Array(25).fill(null).map((_, i) => {
-                  // The corners are empty.
-                  if (i == 0 || i == 4 || i == 20 || i == 24) return null;
-                  const classNames = [];
-                  if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
-                    // Do nothing; these are empty.
-                  } else {
-                    classNames.push('square-wall-cell');
-                    classNames.push('ellipse-hollow-cell-' + i);
-                  }
-                  return {
-                    index: i,
-                    classNames,
-                  };
-                }).filter(x => x != null)),
-          ],
-        },
+              'Elliptical Room',
+              false,
+              () => { state.gesture = new OvalRoomGesture(true); },
+              new Array(25).fill('floor-cell'),
+              new Array(25).fill(null).map((_, i) => {
+                // The corners are empty.
+                if (i == 0 || i == 4 || i == 20 || i == 24) return null;
+                const classNames = [];
+                if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
+                  // Do nothing; these are empty.
+                } else {
+                  classNames.push('square-wall-cell');
+                  classNames.push('ellipse-hollow-cell-' + i);
+                }
+                return {
+                  index: i,
+                  classNames
+                };
+              }).filter(x => x != null))
+          ]
+        }
       },
       {
         name: 'Separators',
@@ -1353,21 +1350,21 @@ class Menu {
         submenu: {
           items: [
             this.createSeparatorTool_('Single door', ct.separators.door,
-                ct.separators.door.single, true, true),
+              ct.separators.door.single, true, true),
             this.createSeparatorTool_('Double door', ct.separators.door,
-                ct.separators.door.double, true, false),
+              ct.separators.door.double, true, false),
             this.createSeparatorTool_('Secret door', ct.separators.door,
-                ct.separators.door.secret, true, false),
+              ct.separators.door.secret, true, false),
             this.createSeparatorTool_('Window', ct.separators.window,
-                ct.separators.window.generic, true, false),
+              ct.separators.window.generic, true, false),
             this.createSeparatorTool_('Bars', ct.separators.bars,
-                ct.separators.bars.generic, false, false),
+              ct.separators.bars.generic, false, false),
             this.createSeparatorTool_('Fence', ct.separators.fence,
-                ct.separators.fence.generic, false, false),
+              ct.separators.fence.generic, false, false),
             this.createSeparatorTool_('Curtain', ct.separators.curtain,
-                ct.separators.curtain.generic, false, false),
-          ],
-        },
+              ct.separators.curtain.generic, false, false)
+          ]
+        }
       },
       {
         name: 'Text',
@@ -1375,9 +1372,9 @@ class Menu {
         tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
           items: [
-            this.createTextTool_(),
-          ],
-        },
+            this.createTextTool_()
+          ]
+        }
       },
       {
         name: 'Tokens',
@@ -1391,9 +1388,9 @@ class Menu {
             this.createTokenColorTool_('Green', ct.images.image.green),
             this.createTokenColorTool_('Brown', ct.images.image.brown),
             this.createTokenColorTool_('Blue', ct.images.image.blue),
-            this.createTokenColorTool_('Red', ct.images.image.red),
+            this.createTokenColorTool_('Red', ct.images.image.red)
           ]
-        },
+        }
       },
       {
         name: 'Shapes',
@@ -1407,9 +1404,9 @@ class Menu {
             this.createShapeVariationTool_('Brown', 'brown'),
             this.createShapeVariationTool_('Blue', 'blue'),
             this.createShapeVariationTool_('Red', 'red'),
-            this.createShapeVariationTool_('White', 'white'),
-          ],
-        },
+            this.createShapeVariationTool_('White', 'white')
+          ]
+        }
       },
       {
         name: 'Stairs',
@@ -1420,9 +1417,9 @@ class Menu {
           items: [
             this.createStairsTool_('Horizontal stairs', ct.stairs.horizontal, true),
             this.createStairsTool_('Vertical stairs', ct.stairs.vertical, false),
-            this.createStairsTool_('Spiral stairs', ct.stairs.spiral, false),
-          ],
-        },
+            this.createStairsTool_('Spiral stairs', ct.stairs.spiral, false)
+          ]
+        }
       },
       {
         name: 'Help',
@@ -1440,7 +1437,7 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('../index.html', '_blank');
-              },
+              }
             },
             {
               name: 'Feedback',
@@ -1450,7 +1447,7 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('https://feedback.userreport.com/7e918812-4e93-4a8f-9541-9af34d0f4231/', '_blank');
-              },
+              }
             },
             {
               name: 'Contact',
@@ -1460,7 +1457,7 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('mailto:contact@mipui.net', '_blank');
-              },
+              }
             },
             {
               name: 'Source Code',
@@ -1470,11 +1467,11 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('https://github.com/amishne/mipui', '_blank');
-              },
-            },
-          ],
-        },
-      },
+              }
+            }
+          ]
+        }
+      }
     ];
   }
 }

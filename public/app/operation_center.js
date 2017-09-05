@@ -186,7 +186,7 @@ class OperationCenter {
         // that something is wrong.
         this.setStatus_(Status.UPDATE_ERROR);
       } else if (
-            this.opBeingSent_ &&
+        this.opBeingSent_ &&
             this.opBeingSent_.num == num &&
             this.opBeingSent_.fingerprint == fingerprint) {
         // This is caused by our own incomplete sendOp_().
@@ -350,11 +350,10 @@ class OperationCenter {
 
     this.appliedOperations_ =
         this.appliedOperations_
-            .slice(0, this.latestAppliedOperationIndex_ + 1)
-                .concat(op);
+          .slice(0, this.latestAppliedOperationIndex_ + 1)
+          .concat(op);
     this.latestAppliedOperationIndex_ = this.appliedOperations_.length - 1;
     if (this.appliedOperations_.length > MAX_STORED_OPERATIONS) {
-      this.appliedOperations_.shift;
       this.latestAppliedOperationIndex_--;
     }
   }
@@ -417,13 +416,13 @@ class OperationCenter {
       return;
     }
     Array.from(document.getElementsByClassName('disabled-in-read-only-mode'))
-        .forEach(element => {
-      element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
-    });
+      .forEach(element => {
+        element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
+      });
     Array.from(document.querySelector('.disabled-in-read-only-mode textarea'))
-        .forEach(element => {
-      element.readonly = secret ? false : true;
-    })
+      .forEach(element => {
+        element.readonly = !secret;
+      });
     this.startListeningForMap();
     this.startListeningForOperations();
     this.readMetadata_();
@@ -435,9 +434,9 @@ class OperationCenter {
       const data = {
         payload: {},
         metadata: {
-          created: firebase.database.ServerValue.TIMESTAMP,
+          created: firebase.database.ServerValue.TIMESTAMP
         },
-        secret: state.getSecret(),
+        secret: state.getSecret()
       };
       firebase.database().ref(`/maps/${state.getMid()}`).set(data, error => {
         setStatus(Status.AUTH_ERROR);
@@ -450,10 +449,10 @@ class OperationCenter {
   readMetadata_() {
     const mid = state.getMid();
     firebase.database().ref(`/maps/${mid}/metadata`).once('value')
-        .then(data => {
-      state.metadata = data.val();
-      this.updateMetadata_();
-    });
+      .then(data => {
+        state.metadata = data.val();
+        this.updateMetadata_();
+      });
   }
 
   updateMetadata_() {
@@ -557,7 +556,7 @@ class OperationCenter {
     if (this.isCurrentlyProcessingPendingOperations_) return;
     // or waiting:
     if (this.pendingLocalOperations_.length > 0) return;
-    
+
     const lastOpNum = state.getLastOpNum();
     // Don't rewrite if the lastFullMapNum_ isn't more than 10 operations out-
     // of-date.
@@ -587,7 +586,7 @@ class OperationCenter {
 
       // Override the entire payload :-)
       return {
-        fullMap: snapshot,
+        fullMap: snapshot
       };
     }, (error, committed, snapshot) => {
       if (!error && committed) {
