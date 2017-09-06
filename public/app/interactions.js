@@ -163,6 +163,7 @@ function handleScrollEvent(event) {
     refreshMapResizeButtonLocations();
     scrollCallRequested = false;
 
+    if (!isTouchDevice) return;
     const theMap = document.getElementById('theMap');
     invalidateCached(mapContainer, 'offsetWidth');
     invalidateCached(mapContainer, 'offsetHeight');
