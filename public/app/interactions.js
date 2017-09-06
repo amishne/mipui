@@ -137,18 +137,7 @@ function handleMouseMoveEvent(mouseEvent) {
   if (mouseEvent.buttons == (isTouchDevice ? 0 : 4)) {
     // Middle button is pan.
     pan(mouseEvent.movementX, mouseEvent.movementY);
-  }// else {
-//    const gridCell = getCurrentGridCell(mouseEvent);
-//    if (!prevGridCell || prevGridCell != gridCell) {
-//      if (prevGridCell) {
-//        //state.theMap.cells.get(prevGridCell).onMouseLeave(mouseEvent);
-//        console.log(`Leaving cell ${prevGridCell}`);
-//      }
-//      console.log(`Entering cell ${gridCell}`);
-//      //state.theMap.cells.get(gridCell).onMouseEnter(mouseEvent);
-//      prevGridCell = gridCell;
-//    }
-//  }
+  }
 }
 
 let scrollCallRequested = false;
@@ -327,10 +316,6 @@ function handleTouchEndEvent(touchEvent) {
   currentPinch = null;
   prevSingleTouchPos = null;
 }
-
-//function getCellKeyFromMouse(mouseEvent) {
-//  return getCellKey(mouseEvent.pageX, mouseEvent.pageY);
-//}
 
 function getCellKey(x, y) {
   const nav = state.navigation;
