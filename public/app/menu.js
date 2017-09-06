@@ -458,7 +458,9 @@ class Menu {
         name, kind, variation, this.groups_.shapeVariationTools, isSelected);
   }
 
-  createStairsTool_(name, kind, isSelected) {
+  createStairsTool_(name, kind, variation, isSelected) {
+    const kindClassNames = kind.classNames || [];
+    const variationClassNames = variation.classNames || [];
     return {
       name,
       type: 'tool',
@@ -466,7 +468,7 @@ class Menu {
       classNames: ['menu-stairs'],
       isSelected,
       callback: () => {
-        state.gesture = new StaticBoxGesture(ct.stairs, kind, kind.generic);
+        state.gesture = new StaticBoxGesture(ct.stairs, kind, variation);
       },
       cells: [
         {
@@ -481,7 +483,7 @@ class Menu {
             'grid-cell',
             'primary-cell',
             'stairs-cell',
-          ].concat(kind.generic.classNames),
+          ].concat(kindClassNames).concat(variationClassNames),
         },
       ],
     };
@@ -1418,9 +1420,41 @@ class Menu {
         classNames: ['menu-stairs'],
         submenu: {
           items: [
-            this.createStairsTool_('Horizontal stairs', ct.stairs.horizontal, true),
-            this.createStairsTool_('Vertical stairs', ct.stairs.vertical, false),
-            this.createStairsTool_('Spiral stairs', ct.stairs.spiral, false),
+            this.createStairsTool_(
+                'Horizontal stairs',
+                ct.stairs.horizontal,
+                ct.stairs.horizontal.generic,
+                true),
+            this.createStairsTool_(
+                'Ascending left',
+                ct.stairs.horizontal,
+                ct.stairs.horizontal.ascendingLeft,
+                false),
+            this.createStairsTool_(
+                'Ascending right',
+                ct.stairs.horizontal,
+                ct.stairs.horizontal.ascendingRight,
+                false),
+            this.createStairsTool_(
+                'Vertical stairs',
+                ct.stairs.vertical,
+                ct.stairs.vertical.generic,
+                true),
+            this.createStairsTool_(
+                'Ascending top',
+                ct.stairs.vertical,
+                ct.stairs.vertical.ascendingTop,
+                false),
+            this.createStairsTool_(
+                'Ascending bottom',
+                ct.stairs.vertical,
+                ct.stairs.vertical.ascendingBottom,
+                false),
+            this.createStairsTool_(
+                'Spiral stairs',
+                ct.stairs.spiral,
+                ct.stairs.spiral.generic,
+                false),
           ],
         },
       },

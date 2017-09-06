@@ -161,8 +161,18 @@ const ct = {
       'stairs-cell-_ADDING-REMOVING_',
       'stairs-cell-_EDITING_',
     ],
-    horizontal: { generic: {classNames: ['stairs-cell-horizontal']} },
-    vertical: { generic: {classNames: ['stairs-cell-vertical']} },
+    horizontal: {
+      classNames: ['stairs-cell-horizontal'],
+      generic: {},
+      ascendingLeft: {classNames: ['stairs-cell-ascending-left']},
+      ascendingRight: {classNames: ['stairs-cell-ascending-right']},
+    },
+    vertical: {
+      classNames: ['stairs-cell-vertical'],
+      generic: {},
+      ascendingTop: {classNames: ['stairs-cell-ascending-top']},
+      ascendingBottom: {classNames: ['stairs-cell-ascending-bottom']},
+    },
     spiral: { generic: {classNames: ['stairs-cell-spiral']} },
   }
 };

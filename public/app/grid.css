@@ -626,8 +626,24 @@
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='100%'><line x1='3.4' y1='0' x2='3.4' y2='100%' stroke='rgb(80, 80, 80)' stroke-width='2' /></svg>");
 }
 
+.stairs-cell-ascending-left {
+  clip-path: polygon(0 0, 100% 9px, 100% calc(100% - 9px), 0 100%);
+}
+
+.stairs-cell-ascending-right {
+  clip-path: polygon(0 9px, 100% 0, 100% 100%, 0 calc(100% - 9px));
+}
+
 .stairs-cell-vertical {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='6'><line x1='0' y1='3.4' x2='100%' y2='3.4' stroke='rgb(80, 80, 80)' stroke-width='2' /></svg>");
+}
+
+.stairs-cell-ascending-top {
+  clip-path: polygon(0 0, 100% 0, calc(100% - 9px) 100%, 9px 100%);
+}
+
+.stairs-cell-ascending-bottom {
+  clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 100%, 0 100%);
 }
 
 .stairs-cell-spiral {
