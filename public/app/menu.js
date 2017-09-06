@@ -44,6 +44,8 @@ class Menu {
     const selectedMenuItem =
         this.menuItems_.find(menuItem => menuItem.isSelected);
     if (selectedMenuItem) {
+      // Toggle it off so that the selection will toggle it on properly.
+      selectedMenuItem.isSelected = false;
       this.selectMenuItem_(selectedMenuItem);
     }
   }
@@ -230,7 +232,8 @@ class Menu {
       alert('This is a read-only view of this map; fork to edit.');
       return;
     }
-    if (menuItem.isSelected) {
+    if (menuItem.isSelected &&
+        menuItem.submenu.element.style.display != 'none') {
       // If it's already selected, just hide its content.
       menuItem.submenu.element.style.display = 'none';
       return;
