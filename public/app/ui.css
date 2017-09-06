@@ -4,9 +4,8 @@ body {
 
 .app {
   position: relative;
-  width: calc(100% - 182px);
-  height: calc(100% - 16px);
-  margin: 8px;
+  width: 100%;
+  height: 100%;
   background-color: darkgrey;
   overflow: hidden;
   transform-origin: top left;
@@ -65,33 +64,12 @@ body {
 }
 
 @media (any-hover: none) {
-  #adContainer {
-    display: none;
-  }
   .app {
     position: fixed;
     width: 100%;
     height: 100%;
     margin: 0;
   }
-}
-
-#adContainer {
-  position: fixed;
-  top: 4px;
-  right: 4px;
-  z-index: 1;
-}
-
-#adWhy {
-  text-align: center;
-}
-
-#ad {
-  width: 120px;
-  height: 600px;
-  border: 3px solid grey;
-  padding: 20px;
 }
 
 #warning {
