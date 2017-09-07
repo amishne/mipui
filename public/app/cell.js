@@ -359,6 +359,7 @@ class Cell {
     if (e.buttons == 1) {
       state.gesture.startGesture();
     }
+    e.preventDefault();
     e.stopPropagation();
   }
 
