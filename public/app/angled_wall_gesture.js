@@ -52,7 +52,7 @@ class AngledWallGesture extends ShapeGesture {
         break;
     }
   }
-  
+
   isWall_(cell) {
     return cell.isVariation(this.layer_, this.kind_, ct.walls.smooth.angled) ||
         cell.isVariation(this.layer_, this.kind_, ct.walls.smooth.square);
@@ -106,16 +106,14 @@ class AngledWallGesture extends ShapeGesture {
   }
 
   isAnySquare_(cells) {
-    return cells.some(cell => {
-      return cell != null &&
+    return cells.some(cell => cell != null &&
           cell.isVariation(
-              this.layer_, ct.walls.smooth, ct.walls.smooth.square);
-    });
+              this.layer_, ct.walls.smooth, ct.walls.smooth.square));
   }
 
   calcFinalContent_(cell, content) {
     if (!cell || !content) return null;
-    let connections = content[ck.connections];
+    const connections = content[ck.connections];
     const connectionlessContent = {
       [ck.kind]: ct.walls.smooth.id,
       [ck.variation]: ct.walls.smooth.square.id,

@@ -186,7 +186,7 @@ class OperationCenter {
         // that something is wrong.
         this.setStatus_(Status.UPDATE_ERROR);
       } else if (
-            this.opBeingSent_ &&
+        this.opBeingSent_ &&
             this.opBeingSent_.num == num &&
             this.opBeingSent_.fingerprint == fingerprint) {
         // This is caused by our own incomplete sendOp_().
@@ -199,7 +199,7 @@ class OperationCenter {
         this.setStatus_(Status.UPDATING);
         // Seeing 'num' as the latest operation means that we need to read
         // all the numbers from the latest one we know to that num.
-        let fromNum = this.lastFullMapNum_ + 1;
+        const fromNum = this.lastFullMapNum_ + 1;
         this.lastFullMapNum_ = num;
         this.loadOperations_(fromNum, num);
       }
@@ -351,7 +351,7 @@ class OperationCenter {
     this.appliedOperations_ =
         this.appliedOperations_
             .slice(0, this.latestAppliedOperationIndex_ + 1)
-                .concat(op);
+            .concat(op);
     this.latestAppliedOperationIndex_ = this.appliedOperations_.length - 1;
     if (this.appliedOperations_.length > MAX_STORED_OPERATIONS) {
       this.appliedOperations_.shift;
@@ -418,12 +418,12 @@ class OperationCenter {
     }
     Array.from(document.getElementsByClassName('disabled-in-read-only-mode'))
         .forEach(element => {
-      element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
-    });
+          element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
+        });
     Array.from(document.querySelector('.disabled-in-read-only-mode textarea'))
         .forEach(element => {
-      element.readonly = secret ? false : true;
-    })
+          element.readonly = !secret;
+        });
     this.startListeningForMap();
     this.startListeningForOperations();
     this.readMetadata_();
@@ -451,9 +451,9 @@ class OperationCenter {
     const mid = state.getMid();
     firebase.database().ref(`/maps/${mid}/metadata`).once('value')
         .then(data => {
-      state.metadata = data.val();
-      this.updateMetadata_();
-    });
+          state.metadata = data.val();
+          this.updateMetadata_();
+        });
   }
 
   updateMetadata_() {
@@ -557,7 +557,7 @@ class OperationCenter {
     if (this.isCurrentlyProcessingPendingOperations_) return;
     // or waiting:
     if (this.pendingLocalOperations_.length > 0) return;
-    
+
     const lastOpNum = state.getLastOpNum();
     // Don't rewrite if the lastFullMapNum_ isn't more than 10 operations out-
     // of-date.

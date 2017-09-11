@@ -90,7 +90,7 @@ class Operation {
       });
     }
     if (this.data.p) {
-      let mapUpdateRequired = false;
+      const mapUpdateRequired = false;
       Object.keys(this.data.p).forEach(property => {
         const newValue = this.data.p[property][contentToUse];
         if (state.getProperty(property) != this.data.p[property]) {

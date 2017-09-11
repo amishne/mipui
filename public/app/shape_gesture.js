@@ -81,7 +81,7 @@ class ShapeGesture extends Gesture {
           [ck.variation]: existingContent[ck.variation],
           [ck.connections]:
               this.mode_ == 'adding' ?
-                  existingConnections | val : existingConnections & ~val,
+                existingConnections | val : existingConnections & ~val,
         });
       } else {
         result.set(cell, {

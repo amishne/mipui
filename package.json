@@ -1,6 +1,7 @@
 {
   "scripts": {
     "lint": "eslint .",
+    "fix": "eslint --fix .",
     "test": "npm run lint"
   },
   "dependencies": {

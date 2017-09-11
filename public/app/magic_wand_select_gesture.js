@@ -16,14 +16,14 @@ class MagicWandSelectGesture extends SelectGesture {
   continueGesture(cell) {
     this.addCellsLinkedTo_(cell);
   }
-  
+
   addCellsLinkedTo_(cell) {
     let front = new Set();
     front.add(cell);
     this.addSelectedCell_(cell);
     while (front.size > 0) {
       const newFront = new Set();
-      for (let cell of front.values()) {
+      for (const cell of front.values()) {
         this.getImmediateNeighborCells(cell).forEach(neighborCell => {
           if (neighborCell &&
               this.predicate_(neighborCell) &&

@@ -35,14 +35,14 @@ class SelectGesture extends Gesture {
     this.clearSelection();
     this.anchorCell_ = null;
   }
-  
+
   copyWithoutClearingSelection_() {
     const cellMapping = [];
     this.selectedCells_.forEach(cell => {
       const layerContents = new Map();
       ct.children.forEach(layer => {
         layerContents.set(
-            layer, 
+            layer,
             cell.getLayerContent(layer));
       });
       cellMapping.push({
@@ -79,12 +79,12 @@ class SelectGesture extends Gesture {
         if (content && content[ck.endCell]) {
           const endCell = state.theMap.cells.get(content[ck.endCell]);
           this.forEachCellWithStartCell_(layer, cell, affectedCell =>
-              affectedCells.push(affectedCell));
+            affectedCells.push(affectedCell));
         }
         if (content && content[ck.startCell]) {
           const startCell = state.theMap.cells.get(content[ck.startCell]);
           this.forEachCellWithStartCell_(layer, startCell, affectedCell =>
-              affectedCells.push(affectedCell));
+            affectedCells.push(affectedCell));
         }
         affectedCells.forEach(
             affectedCell => affectedCell.setLayerContent(layer, null, true));
@@ -111,7 +111,7 @@ class SelectGesture extends Gesture {
   invert() {
     const newCells = [];
     this.anchorCell_ = null;
-    for (let cell of state.theMap.cells.values()) {
+    for (const cell of state.theMap.cells.values()) {
       if (!this.selectedCells_.has(cell)) {
         if (!this.anchorCell_) this.anchorCell_ = cell;
         newCells.push(cell);

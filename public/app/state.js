@@ -150,7 +150,7 @@ class State {
     this.appliedTheme_ = {elements: [], num: newNum};
     const head = document.getElementsByTagName('head')[0];
     newTheme.files.forEach(file => {
-      var css = document.createElement('link');
+      const css = document.createElement('link');
       css.type = 'text/css';
       css.rel = 'stylesheet';
       css.href = file;
@@ -173,8 +173,8 @@ class State {
     }
     firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
         .set(secret, error => {
-      setStatus(Status.AUTH_ERROR);
-    }).then(() => callback());
+          setStatus(Status.AUTH_ERROR);
+        }).then(() => callback());
     const newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
         `&secret=${encodeURIComponent(secret)}`;
     window.history.replaceState(null, '', newUrl);
@@ -202,6 +202,6 @@ class State {
   // Create a random 10-character string with characters belonging to [a-z0-9].
   generateRandomString_() {
     // From http://stackoverflow.com/a/19964557
-    return (Math.random().toString(36)+'00000000000000000').slice(2, 12);
+    return (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   }
 }

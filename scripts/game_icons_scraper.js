@@ -7,9 +7,9 @@ const scrapeIt = require('scrape-it');
 
 function hashString(s) {
   // http://stackoverflow.com/a/15710692
-  return s.split('').reduce(function(a,b) {
+  return s.split('').reduce((a, b) => {
     a = ((a << 5) - a) + b.charCodeAt(0);
-    return a&a;
+    return a & a;
   }, 0);
 }
 
@@ -21,8 +21,8 @@ function flatten(arr) {
 function getPaths(dir) {
   return flatten(fs.readdirSync(dir)
       .map(file => fs.statSync(path.join(dir, file)).isDirectory() ?
-          getPaths(path.join(dir, file)) :
-          path.join(dir, file).replace(/\\/g, '/')));
+        getPaths(path.join(dir, file)) :
+        path.join(dir, file).replace(/\\/g, '/')));
 }
 
 function getName(path) {
@@ -39,8 +39,8 @@ function scrapeTags(path, callback) {
   console.log('Scraping ' + sitePath);
   scrapeIt(sitePath, {
     tags: {
-      listItem: 'a[rel = "tag"]'
-    }
+      listItem: 'a[rel = "tag"]',
+    },
   }).then(page => {
     console.log(`Scraped from ${sitePath}: ${JSON.stringify(page)}`);
     callback(page.tags);
@@ -63,7 +63,7 @@ function getIconsFromPathsStaggered(paths, icons, index, callback) {
     };
     icons.push(icon);
     setTimeout(
-      () => getIconsFromPathsStaggered(paths, icons, index + 1, callback), 300);
+        () => getIconsFromPathsStaggered(paths, icons, index + 1, callback), 300);
   });
 }
 
@@ -74,7 +74,7 @@ function getIconsFromPaths(paths, callback) {
 
 const paths =
     getPaths('public/app/assets/icons/').filter(path => path.endsWith('.svg'));
-getIconsFromPaths(paths, (icons) => {
-  fs.writeFile("public/app/assets/game_icons.json",
-      JSON.stringify(icons, null, 2), "utf8");
+getIconsFromPaths(paths, icons => {
+  fs.writeFile('public/app/assets/game_icons.json',
+      JSON.stringify(icons, null, 2), 'utf8');
 });

@@ -28,11 +28,11 @@ class Menu {
   createMenu() {
     const containerElement = document.getElementById('menuContainer');
     const menuElement = createAndAppendDivWithClass(containerElement, 'menu');
-//    menuElement.onwheel = (e) => e.stopPropagation();
-//    menuElement.onmousemove = (e) => e.stopPropagation();
-//    menuElement.ontouchstart = (e) => e.stopPropagation();
-//    menuElement.ontouchmove = (e) => e.stopPropagation();
-//    menuElement.ontouchend = (e) => e.stopPropagation();
+    //    menuElement.onwheel = (e) => e.stopPropagation();
+    //    menuElement.onmousemove = (e) => e.stopPropagation();
+    //    menuElement.ontouchstart = (e) => e.stopPropagation();
+    //    menuElement.ontouchmove = (e) => e.stopPropagation();
+    //    menuElement.ontouchend = (e) => e.stopPropagation();
 
     const topElement = createAndAppendDivWithClass(menuElement, 'menu-top');
     const bottomElement =
@@ -146,7 +146,7 @@ class Menu {
         if (!item.submenu.allItems) {
           item.submenu.allItems = item.submenu.items;
         }
-        let selectedChild = item.submenu.allItems.find(item => item.isSelected);
+        const selectedChild = item.submenu.allItems.find(item => item.isSelected);
         cells = selectedChild.cells;
         deferredSvg = selectedChild.deferredSvg;
         item.element.className = 'menu-item';
@@ -158,7 +158,7 @@ class Menu {
         this.createCellsForItem_(item.element, cells || item.cells);
         deferredSvg = deferredSvg || item.deferredSvg;
         if (deferredSvg) {
-          var xhr = new XMLHttpRequest();
+          const xhr = new XMLHttpRequest();
           xhr.open('get', deferredSvg.path, true);
           xhr.onreadystatechange = () => {
             if (xhr.readyState != 4) return;
@@ -192,13 +192,13 @@ class Menu {
           textarea.onchange = () => {
             item.onChange(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          }
+          };
         }
         if (item.onInput) {
           textarea.oninput = () => {
             item.onInput(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          }
+          };
         }
         break;
       case 'dropdown':
@@ -274,7 +274,7 @@ class Menu {
         otherSubmenuItem.isSelected = isThisItem;
         otherSubmenuItem.element
             .classList[isThisItem && otherSubmenuItem.type == 'tool' ?
-                'add' : 'remove']('selected-submenu-item');
+              'add' : 'remove']('selected-submenu-item');
       });
     }
     submenuItem.callback();
@@ -404,7 +404,7 @@ class Menu {
           this.updateShapeTool_(shapeKindItem, shapeKindItem.kind, variation);
         });
       }
-    }
+    };
 
     const kindClassNames = kind.id == ct.shapes.square.id ? [
       'square-cell-0',
@@ -418,7 +418,7 @@ class Menu {
         'grid-cell',
         'primary-cell',
         'floor-cell',
-      ]
+      ],
     }, {
       classNames: [
         'grid-cell',
@@ -528,7 +528,7 @@ class Menu {
         this.tokenSelectedCategory_ = values[newChoiceNum];
         this.updateTokenSelectorSubmenu_();
       },
-    }
+    };
   }
 
   createTokenSelector_() {
@@ -549,20 +549,20 @@ class Menu {
     };
     // Completions. Disable until a more intuitive solution is in place, for
     // example having both a category drop-down AND a free-text filter.
-//    const completions = new Set();
-//    this.gameIcons_.forEach(icon => {
-//      // Disabling this for now, it leads to too many items:
-//      //completions.add(icon.name);
-//      icon.tags.forEach(tag => completions.add(tag));
-//    });
-//    const datalist = document.createElement('datalist');
-//    datalist.id = selector.datalistId;
-//    completions.forEach(completion => {
-//      const option = document.createElement('option');
-//      option.value = completion;
-//      datalist.appendChild(option);
-//    });
-//    document.getElementById('app').appendChild(datalist);
+    //    const completions = new Set();
+    //    this.gameIcons_.forEach(icon => {
+    //      // Disabling this for now, it leads to too many items:
+    //      //completions.add(icon.name);
+    //      icon.tags.forEach(tag => completions.add(tag));
+    //    });
+    //    const datalist = document.createElement('datalist');
+    //    datalist.id = selector.datalistId;
+    //    completions.forEach(completion => {
+    //      const option = document.createElement('option');
+    //      option.value = completion;
+    //      datalist.appendChild(option);
+    //    });
+    //    document.getElementById('app').appendChild(datalist);
     this.tokenSelector_ = selector;
     return selector;
   }
@@ -686,30 +686,26 @@ class Menu {
   }
 
   createWallTool_(name, isSelected, callback, cellClasses, extraCells) {
-    const createDividerRow = () => {
-      return {
-        classNames: ['menu-wall-tool-cell-row'],
-        children: [
-          {classNames: ['corner-cell']},
-          {classNames: ['horizontal-cell']},
-          {classNames: ['corner-cell']},
-          {classNames: ['horizontal-cell']},
-          {classNames: ['corner-cell']},
-        ],
-      };
-    };
-    const createPrimaryRow = () => {
-      return {
-        classNames: ['menu-wall-tool-cell-row'],
-        children: [
-          {classNames: ['vertical-cell']},
-          {classNames: ['primary-cell']},
-          {classNames: ['vertical-cell']},
-          {classNames: ['primary-cell']},
-          {classNames: ['vertical-cell']},
-        ],
-      };
-    };
+    const createDividerRow = () => ({
+      classNames: ['menu-wall-tool-cell-row'],
+      children: [
+        {classNames: ['corner-cell']},
+        {classNames: ['horizontal-cell']},
+        {classNames: ['corner-cell']},
+        {classNames: ['horizontal-cell']},
+        {classNames: ['corner-cell']},
+      ],
+    });
+    const createPrimaryRow = () => ({
+      classNames: ['menu-wall-tool-cell-row'],
+      children: [
+        {classNames: ['vertical-cell']},
+        {classNames: ['primary-cell']},
+        {classNames: ['vertical-cell']},
+        {classNames: ['primary-cell']},
+        {classNames: ['vertical-cell']},
+      ],
+    });
     const cells = [
       createDividerRow(),
       createPrimaryRow(),
@@ -729,7 +725,7 @@ class Menu {
       const parentCell = cells[Math.floor(index / 5)].children[index % 5];
       if (!parentCell.children) parentCell.children = [];
       parentCell.children.push({classNames: extraCell.classNames});
-    })
+    });
     return {
       name,
       type: 'tool',
@@ -929,7 +925,7 @@ class Menu {
                     width,
                     height,
                   }).then(dataUrl => {
-                    const blob = new Blob([dataUrl.substr(33)], {type: "image/svg+xml"});
+                    const blob = new Blob([dataUrl.substr(33)], {type: 'image/svg+xml'});
                     saveAs(blob, 'mipui.svg');
                     overlay.parentElement.removeChild(overlay);
                   }).catch(() => {
@@ -959,7 +955,7 @@ class Menu {
               onChange: (oldText, newText) => {
                 state.setProperty(pk.title, newText, true);
                 state.opCenter.recordOperationComplete();
-              }
+              },
             },
             {
               name: 'Description',
@@ -972,7 +968,7 @@ class Menu {
               onChange: (oldText, newText) => {
                 state.setProperty(pk.longDescription, newText, true);
                 state.opCenter.recordOperationComplete();
-              }
+              },
             },
             {
               name: 'Created on',
@@ -1397,7 +1393,7 @@ class Menu {
             this.createTokenColorTool_('Brown', ct.images.image.brown),
             this.createTokenColorTool_('Blue', ct.images.image.blue),
             this.createTokenColorTool_('Red', ct.images.image.red),
-          ]
+          ],
         },
       },
       {

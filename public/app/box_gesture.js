@@ -230,12 +230,10 @@ class BoxGesture extends Gesture {
           this.nonStartCells_ = [];
           this.endCell_ = null;
         } else {
-          const predicate = (cell) => {
-            return !cell.hasLayerContent(this.getLayer_()) ||
-                cell == this.anchorCell_ ||
-                cell.getVal(this.getLayer_(), ck.startCell) ==
-                    this.anchorCell_.key;
-          };
+          const predicate = cell => !cell.hasLayerContent(this.getLayer_()) ||
+              cell == this.anchorCell_ ||
+              cell.getVal(this.getLayer_(), ck.startCell) ==
+                  this.anchorCell_.key;
           this.calculateBoxExtentBetween_(
               this.anchorCell_, this.targetCell_, predicate);
         }
@@ -243,20 +241,18 @@ class BoxGesture extends Gesture {
       case 'editing':
         this.startCell_ =
             state.theMap.cells
-                .get(this.targetCell_.getVal(this.getLayer_(), ck.startCell))
-            || this.targetCell_;
+                .get(this.targetCell_.getVal(this.getLayer_(), ck.startCell)) ||
+            this.targetCell_;
         this.endCell_ =
             state.theMap.cells
                 .get(this.startCell_.getVal(this.getLayer_(), ck.endCell));
         this.calculateBoxExtentBetween_(this.startCell_, this.endCell_);
         break;
       case 'moving':
-        const predicate = (cell) => {
-          return !cell.hasLayerContent(this.getLayer_()) ||
-              cell == this.anchorCell_ ||
-              cell.getVal(this.getLayer_(), ck.startCell) ==
-                  this.anchorCell_.key;
-        };
+        const predicate = cell => !cell.hasLayerContent(this.getLayer_()) ||
+            cell == this.anchorCell_ ||
+            cell.getVal(this.getLayer_(), ck.startCell) ==
+                this.anchorCell_.key;
         if (!predicate(this.targetCell_)) {
           // The targeted cell is invalid. Set nothing.
         } else if (!this.originalEndCell_) {
@@ -353,15 +349,15 @@ class BoxGesture extends Gesture {
             this.getLayer_(), this.createStartCellContent_());
     this.hoverWidget_.style.width = layerElement.scrollWidth;
     this.hoverWidget_.style.height = layerElement.scrollHeight;
-    this.hoverWidget_.onmousedown = (e) => {
+    this.hoverWidget_.onmousedown = e => {
       if (e.button == 0) {
         this.startEditing_();
-        e.stopPropagation()
+        e.stopPropagation();
       }
     };
-    this.hoverWidget_.onmouseup = (e) => {
+    this.hoverWidget_.onmouseup = e => {
       if (this.mode_ != 'editing') this.stopGesture();
-    }
+    };
   }
 
   removeHoverWidget_() {
@@ -384,19 +380,19 @@ class BoxGesture extends Gesture {
     deleteGesture.startCell_ = this.startCell_;
     deleteGesture.endCell_ = this.endCell_;
     deleteGesture.nonStartCells_ = this.nonStartCells_;
-    this.deleteWidget_.onmouseenter = (e) => {
+    this.deleteWidget_.onmouseenter = e => {
       deleteGesture.startHover(this.startCell_);
-    }
-    this.deleteWidget_.onmouseleave = (e) => {
+    };
+    this.deleteWidget_.onmouseleave = e => {
       deleteGesture.stopHover();
       this.startCell_.showHighlight(
           this.getLayer_(), this.startCell_.getLayerContent(this.getLayer_()));
-    }
-    this.deleteWidget_.onmousedown = (e) => {
+    };
+    this.deleteWidget_.onmousedown = e => {
       //this.finishEditing_();
       e.stopPropagation();
     };
-    this.deleteWidget_.onmouseup = (e) => {
+    this.deleteWidget_.onmouseup = e => {
       if (e.buttons == 0) {
         deleteGesture.startGesture();
         deleteGesture.stopGesture();
@@ -405,7 +401,7 @@ class BoxGesture extends Gesture {
         this.startHover(this.startCell_);
         e.stopPropagation();
       }
-    }
+    };
   }
 
   removeDeleteWidget_() {
@@ -424,7 +420,7 @@ class BoxGesture extends Gesture {
             this.getLayer_(), this.createStartCellContent_());
     this.resizeWidget_.style.left = layerElement.scrollWidth;
     this.resizeWidget_.style.top = layerElement.scrollHeight;
-    this.resizeWidget_.onmousedown = (e) => {
+    this.resizeWidget_.onmousedown = e => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();
       this.removeMoveWidget_();
@@ -433,10 +429,10 @@ class BoxGesture extends Gesture {
       this.originalEndCell_ = this.endCell_;
       this.mode_ = 'resizing';
       e.stopPropagation();
-    }
-    this.resizeWidget_.onmouseup = (e) => {
+    };
+    this.resizeWidget_.onmouseup = e => {
       this.stopGesture();
-    }
+    };
   }
 
   removeResizeWidget_() {
@@ -452,7 +448,7 @@ class BoxGesture extends Gesture {
         this.startCell_.gridElement, this.getMoveWidgetCssClassName_());
     this.startCell_.getOrCreateLayerElement(
         this.getLayer_(), this.createStartCellContent_());
-    this.moveWidget_.onmousedown = (e) => {
+    this.moveWidget_.onmousedown = e => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();
       this.removeResizeWidget_();
@@ -461,10 +457,10 @@ class BoxGesture extends Gesture {
       this.originalEndCell_ = this.endCell_ || this.startCell_;
       this.mode_ = 'moving';
       e.stopPropagation();
-    }
-    this.moveWidget_.onmouseup = (e) => {
+    };
+    this.moveWidget_.onmouseup = e => {
       this.stopGesture();
-    }
+    };
   }
 
   removeMoveWidget_() {
@@ -499,24 +495,24 @@ class BoxGesture extends Gesture {
     this.inputElement_.style.height = layerElement.offsetHeight + 2;
     this.inputElement_.value =
         this.startCell_.hasLayerContent(this.getLayer_()) ?
-        this.startCell_.getVal(this.getLayer_(), this.getValueKey_()) :
-        this.getDefaultInputElementValue_();
+          this.startCell_.getVal(this.getLayer_(), this.getValueKey_()) :
+          this.getDefaultInputElementValue_();
     this.inputElement_.select();
     this.startCell_.gridElement.appendChild(this.inputElement_);
-    this.inputElement_.onkeydown = (e) => {
+    this.inputElement_.onkeydown = e => {
       if (this.isInputFinishingEvent_(e)) {
         this.finishEditing_(e);
       }
-    }
-    this.inputElement_.onkeyup = (e) => {
+    };
+    this.inputElement_.onkeyup = e => {
       if (this.isInputFinishingEvent_(e)) {
         return;
       }
       this.apply_();
       this.setInputGeometry_(this.inputElement_, this.startCell_, null);
-    }
-    this.inputElement_.onmousedown = (e) => e.stopPropagation();
-    this.inputElement_.onmouseup = (e) => e.stopPropagation();
+    };
+    this.inputElement_.onmousedown = e => e.stopPropagation();
+    this.inputElement_.onmouseup = e => e.stopPropagation();
     const content = this.startCell_.getLayerContent(this.getLayer_());
     if (content) {
       this.setInputGeometry_(this.inputElement_, this.startCell_, content);
@@ -593,7 +589,7 @@ class BoxGesture extends Gesture {
     let variation = this.startCell_.getVal(this.getLayer_(), ck.variation);
     const valueKey = this.getValueKey_();
     let value = valueKey == null ? undefined :
-        this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
+      this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     switch (this.mode_) {
       case 'removing':
         return null;
@@ -601,8 +597,8 @@ class BoxGesture extends Gesture {
       case 'moving':
         kind = this.anchorCell_.getVal(this.getLayer_(), ck.kind);
         variation = this.anchorCell_.getVal(this.getLayer_(), ck.variation);
-        value = valueKey == null ? undefined : 
-            this.anchorCell_.getVal(this.getLayer_(), valueKey);
+        value = valueKey == null ? undefined :
+          this.anchorCell_.getVal(this.getLayer_(), valueKey);
         break;
       case 'adding':
         kind = this.getKind_().id;

@@ -1,4 +1,4 @@
-let suiteTests_ = [{mocked: []}];
+const suiteTests_ = [{mocked: []}];
 let currentTestIndex_ = 0;
 const PATH_FUNCTION_REGEX = /\([^)]*\)$/;
 const PATH_FUNCTION_MATCH_REGEX = /\(([^)]*)\)$/;
@@ -58,7 +58,7 @@ function runNextTest_() {
     test.passed = true;
     test.element = createTestElement_(document.body, test.name);
     test.fn();
-  }, 0)
+  }, 0);
 }
 
 function createTestElement_(parentElement, name) {

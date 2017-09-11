@@ -33,6 +33,6 @@ class SquareRoomGesture extends RoomGesture {
 
   calculateContent_(cell) {
     return (this.mode_ == 'toWall' || this.borders_.has(cell)) ?
-        this.wallContent_ : null;
+      this.wallContent_ : null;
   }
 }

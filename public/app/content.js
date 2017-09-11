@@ -34,7 +34,7 @@ const ct = {
           'oval-wall-cell',
           'oval-wall-cell-_ADDING_',
           'oval-wall-cell-_REMOVING_',
-          'oval-wall-cell-_EDITING_'
+          'oval-wall-cell-_EDITING_',
         ],
       },
     },
@@ -51,7 +51,7 @@ const ct = {
       brown: {classNames: ['image-brown']},
       blue: {classNames: ['image-blue']},
       red: {classNames: ['image-red']},
-    }
+    },
   },
   separators: {
     classNames: ['separator-cell'],
@@ -59,7 +59,7 @@ const ct = {
       classNames: [
         'door-cell',
         'door-cell-_ROLE_',
-        'door-cell-_ADDING-REMOVING_'
+        'door-cell-_ADDING-REMOVING_',
       ],
       single: {},
       double: {classNames: ['double-door-cell-_ROLE_']},
@@ -69,7 +69,7 @@ const ct = {
       classNames: [
         'window-cell',
         'window-cell-_ROLE_',
-        'window-cell-_ADDING-REMOVING_'
+        'window-cell-_ADDING-REMOVING_',
       ],
       generic: {},
     },
@@ -77,7 +77,7 @@ const ct = {
       classNames: [
         'bars-cell',
         'bars-cell-_ROLE_',
-        'bars-cell-_ADDING-REMOVING_'
+        'bars-cell-_ADDING-REMOVING_',
       ],
       generic: {},
     },
@@ -85,7 +85,7 @@ const ct = {
       classNames: [
         'fence-cell',
         'fence-cell-_ROLE_',
-        'fence-cell-_ADDING-REMOVING_'
+        'fence-cell-_ADDING-REMOVING_',
       ],
       generic: {},
     },
@@ -93,7 +93,7 @@ const ct = {
       classNames: [
         'curtain-cell',
         'curtain-cell-_ROLE_',
-        'curtain-cell-_ADDING-REMOVING_'
+        'curtain-cell-_ADDING-REMOVING_',
       ],
       generic: {},
     },
@@ -174,7 +174,7 @@ const ct = {
       ascendingBottom: {classNames: ['stairs-cell-ascending-bottom']},
     },
     spiral: { generic: {classNames: ['stairs-cell-spiral']} },
-  }
+  },
 };
 
 // Content keys.

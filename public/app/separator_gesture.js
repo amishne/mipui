@@ -57,7 +57,7 @@ class SeparatorGesture extends Gesture {
       nonStartCell.hideHighlight(this.layer_);
     });
   }
-  
+
   getNextCell_(cell) {
     if (!cell) return null;
     return cell.getNeighbors(
@@ -127,7 +127,7 @@ class SeparatorGesture extends Gesture {
       return;
     }
 
-    const prevCell = this.getPrevCell_(cell)
+    const prevCell = this.getPrevCell_(cell);
     const nextCell = this.getNextCell_(cell);
 
     if (prevCell == this.startCell_ || this.nonStartCells_.includes(prevCell)) {
@@ -194,6 +194,6 @@ class SeparatorGesture extends Gesture {
       [ck.kind]: this.kind_.id,
       [ck.variation]: this.variation_.id,
       [ck.startCell]: this.startCell_.key,
-    }
+    };
   }
 }

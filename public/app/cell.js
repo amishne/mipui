@@ -36,8 +36,8 @@ class Cell {
     const newContent = this.getLayerContent(layer);
     if (!sameContent(oldContent, newContent)) {
       if (recordChange) {
-        state.opCenter.
-            recordCellChange(this.key, layer, oldContent, newContent);
+        state.opCenter
+            .recordCellChange(this.key, layer, oldContent, newContent);
       }
       this.updateElement_(layer, oldContent, newContent);
       if (layer.getShadowLayer) {
@@ -154,34 +154,34 @@ class Cell {
       case 'e':
         const [rx, ry, cx, cy] =
             clipShape.substr(2).split(',').map(s => Number.parseFloat(s));
-        return `<ellipse rx='${rx}' ry='${ry}' cx='${cx}' cy='${cy}' ` + 
+        return `<ellipse rx='${rx}' ry='${ry}' cx='${cx}' cy='${cy}' ` +
             `fill='${color}' />`;
     }
   }
 
-//  setShadow_(element, layer, content) {
-//    const shadowLayer = layer.getShadowLayer();
-//    if (!shadowLayer) return;
-//    let shadowElement = this.elements_.get(shadowLayer);
-//    if (!element && !shadowElement) {
-//      return;
-//    }
-//    if (!element && shadowElement) {
-//      this.removeElement(shadowLayer);
-//      return;
-//    };
-//    if (element && !shadowElement) {
-//      this.getOrCreateLayerElement(shadowLayer, content);
-//      return;
-//    }
-//    
-//    
-//    const shadowElement = element.cloneNode(true);
-//    this.elements_[shadowLayer].set(shadowElement);
-//    document.getElementById(shadowLayer.name + 'Layer')
-//        .appendChild(shadowElement);
-//    this.elements_[shadowLayer].set(shadowElement);
-//  }
+  //  setShadow_(element, layer, content) {
+  //    const shadowLayer = layer.getShadowLayer();
+  //    if (!shadowLayer) return;
+  //    let shadowElement = this.elements_.get(shadowLayer);
+  //    if (!element && !shadowElement) {
+  //      return;
+  //    }
+  //    if (!element && shadowElement) {
+  //      this.removeElement(shadowLayer);
+  //      return;
+  //    };
+  //    if (element && !shadowElement) {
+  //      this.getOrCreateLayerElement(shadowLayer, content);
+  //      return;
+  //    }
+  //    
+  //    
+  //    const shadowElement = element.cloneNode(true);
+  //    this.elements_[shadowLayer].set(shadowElement);
+  //    document.getElementById(shadowLayer.name + 'Layer')
+  //        .appendChild(shadowElement);
+  //    this.elements_[shadowLayer].set(shadowElement);
+  //  }
 
   setText_(element, text) {
     if (!element || !text) return;
@@ -224,7 +224,7 @@ class Cell {
       // Asynchronously replace <img> with <svg>, which then supports
       // 1. Styling
       // 2. Exporting to PNG / SVG
-      var xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest();
       xhr.open('get', imageUrl, true);
       xhr.onreadystatechange = () => {
         if (xhr.readyState != 4) return;
@@ -248,7 +248,7 @@ class Cell {
       this.setImage_(element, imageUrl.replace('public/app/', ''), variation);
     }
   }
-  
+
   setImageFromVariation_(element, layer, content) {
     if (!element) return;
     const kind = ct.children[layer.id].children[content[ck.kind]];
@@ -266,7 +266,7 @@ class Cell {
   }
 
   removeElement(layer) {
-    let element = this.elements_.get(layer);
+    const element = this.elements_.get(layer);
     if (!element) return;
     element.parentElement.removeChild(element);
     this.elements_.delete(layer);
@@ -286,9 +286,9 @@ class Cell {
     const element = this.getOrCreateLayerElement(layer, newContent);
     this.modifyElementClasses_(layer, oldContent, element, 'remove');
     this.populateElementFromContent_(element, layer, newContent);
-//    if (layer.getShadowLayer) {
-//      this.updateElement_(layer.getShadowLayer(), oldContent, newContent);
-//    }
+    //    if (layer.getShadowLayer) {
+    //      this.updateElement_(layer.getShadowLayer(), oldContent, newContent);
+    //    }
     return element;
   }
 
@@ -320,21 +320,21 @@ class Cell {
     });
   }
 
-//  setShadowElement_(shadowLayer, element) {
-//    if (!element) {
-//      this.removeElement(shadowLayer);
-//      return;
-//    }
-//    let shadowElement = this.elements_.get(shadowLayer);
-//    if (!shadowElement) {
-//      shadowElement = createAndAppendDivWithClass()
-//    }
-//    if (!element && shadowElement) {
-//      this.elements_[];
-//      element.parentElement.removeChild(element);
-//      XXX
-//    }
-//  }
+  //  setShadowElement_(shadowLayer, element) {
+  //    if (!element) {
+  //      this.removeElement(shadowLayer);
+  //      return;
+  //    }
+  //    let shadowElement = this.elements_.get(shadowLayer);
+  //    if (!shadowElement) {
+  //      shadowElement = createAndAppendDivWithClass()
+  //    }
+  //    if (!element && shadowElement) {
+  //      this.elements_[];
+  //      element.parentElement.removeChild(element);
+  //      XXX
+  //    }
+  //  }
 
   onMouseEnter(e) {
     if (!state.gesture) return;
@@ -391,8 +391,8 @@ class Cell {
 
   addNeighborKey(direction, dividerKey, cellKeys) {
     this.neighborKeys_.set(direction, {
-      dividerKey: dividerKey,
-      cellKeys : cellKeys,
+      dividerKey,
+      cellKeys,
     });
   }
 
@@ -403,11 +403,11 @@ class Cell {
       dividerCell:
           state.theMap.cells.get(neighborKeysInDirection.dividerKey),
       cells: neighborKeysInDirection.cellKeys
-          .map(cellKey => { return state.theMap.cells.get(cellKey); })
+          .map(cellKey => state.theMap.cells.get(cellKey))
           .filter(cell => !!cell),
-    }
+    };
   }
-  
+
   getNeighbor(direction, divider) {
     const neighbors = this.getNeighbors(direction);
     if (!neighbors) return null;
@@ -420,7 +420,7 @@ class Cell {
 
   getAllNeighbors() {
     const neighbors = [];
-    for (let direction of this.neighborKeys_.keys()) {
+    for (const direction of this.neighborKeys_.keys()) {
       const neighborsOfDirection = this.getNeighbors(direction);
       neighbors.push({
         direction,
@@ -451,10 +451,10 @@ class Cell {
   showHighlight(layer, content) {
     const existingContent = this.getLayerContent(layer);
     const action = existingContent && content ? 'editing' :
-        (existingContent ? 'removing' : 'adding');
+      (existingContent ? 'removing' : 'adding');
     const element = content ?
-        this.updateElement_(layer, this.getLayerContent(layer), content) :
-        this.elements_.get(layer);
+      this.updateElement_(layer, this.getLayerContent(layer), content) :
+      this.elements_.get(layer);
     if (!element) return;
     if (action == 'adding') {
       element.className = element.className

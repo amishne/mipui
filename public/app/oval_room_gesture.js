@@ -24,14 +24,14 @@ class OvalRoomGesture extends RoomGesture {
       this.mapCellsToValues_(false, 'f');
     }
   }
-  
+
   hasWallContentWithoutClipping_(cell) {
     if (!cell) return false;
     const content = cell.getLayerContent(ct.walls);
     if (!content) return false;
     return !(content[ck.clipInclude] || content[ck.clipExclude]);
   }
-  
+
   mapCellsToValues_(includeBoundaries, mapKey) {
     // Outline:
     // 1. Find the ellipse center point.
@@ -39,7 +39,7 @@ class OvalRoomGesture extends RoomGesture {
     //    the point furthest away from the center.
     // 3. If the ellipse passes between those points, it means the cell needs
     //    a special clip path.
-  
+
     // This is in rows/cols, not pixels.
     const {minX, minY, maxX, maxY} =
         this.calculateMinMaxCellPositions_(includeBoundaries);
@@ -64,10 +64,8 @@ class OvalRoomGesture extends RoomGesture {
       x: bottomRightPoint.x - topLeftPoint.x,
       y: bottomRightPoint.y - topLeftPoint.y,
     };
-    const check = (x, y) => {
-      return this.ellipseEquation_(
-          x, y, centerPoint.x, centerPoint.y, axes.x / 2, axes.y / 2);
-    }
+    const check = (x, y) => this.ellipseEquation_(
+        x, y, centerPoint.x, centerPoint.y, axes.x / 2, axes.y / 2);
     this.cells_.forEach(cell => {
       const cellValue = this.cellValues_.get(cell) || {};
       this.cellValues_.set(cell, cellValue);
@@ -101,9 +99,9 @@ class OvalRoomGesture extends RoomGesture {
       keyedValue.cx = centerPoint.x;
       keyedValue.cy = centerPoint.y;
     });
-    
+
   }
-  
+
   ellipseEquation_(x, y, h, k, rx, ry) {
     return Math.pow(x - h, 2) / Math.pow(rx, 2) +
         Math.pow(y - k, 2) / Math.pow(ry, 2);
@@ -135,7 +133,7 @@ class OvalRoomGesture extends RoomGesture {
     }
     return result;
   }
-  
+
   calculateEllipse_(val, cell, key) {
     const newEllipse = `e:${val.rx},${val.ry},` +
         `${val.cx - cell.offsetLeft},${val.cy - cell.offsetTop}`;

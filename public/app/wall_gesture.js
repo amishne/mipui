@@ -23,7 +23,7 @@ class WallGesture extends Gesture {
     this.isManual_ = isManual;
 
     this.removeDoorGestures = null;
-    
+
     this.wallContent_ = {
       [ck.kind]: ct.walls.smooth.id,
       [ck.variation]: ct.walls.smooth.square.id,
@@ -46,8 +46,8 @@ class WallGesture extends Gesture {
     this.toWall = !this.isWall_(targetedCell, true);
     this.mode =
         this.isManual_ || !this.toWall && !this.isWall_(targetedCell, false) ?
-        'manual' :
-        (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
+          'manual' :
+          (targetedCell.role == 'primary' ? 'primary only' : 'divider only');
     this.startHoverAfterInitialFieldsAreSet(targetedCell);
   }
 
@@ -92,7 +92,7 @@ class WallGesture extends Gesture {
   }
 
   calcNonManualRootCells_(targetedCell) {
-    let roots = new Set([targetedCell]);
+    const roots = new Set([targetedCell]);
     let front = new Set([targetedCell]);
     for (let i = 1; i < this.brushSize_; i += 2) {
       const newFront = new Set();
@@ -167,11 +167,9 @@ class WallGesture extends Gesture {
     // Don't clear corner cells that are adjacent to cells with doors that are
     // not removed.
     if (!this.toWall && cell.role == 'corner') {
-      const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => {
-        return neighbor.dividerCell &&
+      const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => neighbor.dividerCell &&
             neighbor.dividerCell.isKind(ct.separators, ct.separators.door) &&
-            !this.shouldRemoveDoors_(neighbor.dividerCell);
-      });
+            !this.shouldRemoveDoors_(neighbor.dividerCell));
       if (aNeighborHasADoor) return;
     }
 
@@ -179,11 +177,9 @@ class WallGesture extends Gesture {
   }
 
   anyCellIsWall_(cells) {
-    return cells.some(cell => {
-      return cell &&
+    return cells.some(cell => cell &&
           (this.rootCells.has(cell) ||
-           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell, false));
-    });
+           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell, false)));
   }
 
   stopHover() {

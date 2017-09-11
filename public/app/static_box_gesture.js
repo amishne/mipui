@@ -58,7 +58,7 @@ class StaticBoxGesture extends BoxGesture {
   }
 
   getHoverWidgetCssClassName_() {
-    return this.isEditable_? 'image-hover-widget' : 'fixed-image-hover-widget';
+    return this.isEditable_ ? 'image-hover-widget' : 'fixed-image-hover-widget';
   }
 
   getMoveWidgetCssClassName_() {

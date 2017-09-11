@@ -1,10 +1,10 @@
-let isTouchDevice = window.matchMedia('(any-hover: none)').matches;
+const isTouchDevice = window.matchMedia('(any-hover: none)').matches;
 const cached = {};
 let mapContainer;
 
 function getCached(obj, fieldName) {
   const cachedObj = cached[obj] || {};
-  let result = cachedObj[fieldName]
+  let result = cachedObj[fieldName];
   if (!result) {
     result = obj[fieldName];
     cached[obj] = cachedObj;
@@ -272,14 +272,14 @@ function handleTouchMoveEvent(touchEvent) {
       const centerDiff = {
         x: center.x - currentPinch.center.x,
         y: center.y - currentPinch.center.y,
-      }
+      };
       setAndCache(
           mapContainer, 'scrollLeft',
           oldScroll.x + centerDiff.x * newScale);
       setAndCache(
           mapContainer, 'scrollTop',
           oldScroll.y + centerDiff.y * newScale);
-      
+
       currentPinch.center = center;
       updateMapTransform(true);
     });
@@ -306,10 +306,8 @@ function handleTouchMoveEvent(touchEvent) {
 }
 
 function getMapContainerTouches(touchList) {
-  return Array.from(touchList).filter(touch => {
-    return touch.target.id == 'mapContainer' ||
-        touch.target.classList.contains('grid-cell');
-  });
+  return Array.from(touchList).filter(touch => touch.target.id == 'mapContainer' ||
+        touch.target.classList.contains('grid-cell'));
 }
 
 function handleTouchEndEvent(touchEvent) {
@@ -332,8 +330,8 @@ function getCellKey(x, y) {
   const fromCol = (x % cellAndBorderSize) / borderSize > 1 ? toCol : toCol - 1;
 
   const key = fromRow != toRow || fromCol != toCol ?
-      TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
-      TheMap.primaryCellKey(fromRow, fromCol);
+    TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
+    TheMap.primaryCellKey(fromRow, fromCol);
   return key;
 }
 
@@ -420,7 +418,7 @@ function refreshMapResizeButtonLocations() {
         getCached(mapContainer, 'offsetHeight') / 2, rect.bottom - 70);
     let offsetX = button.place == 0 ? -70 : 40;
     let offsetY = offsetX;
-    switch(button.pos) {
+    switch (button.pos) {
       case 'right': x = rect.right; offsetX = 50; break;
       case 'bottom': y = rect.bottom; offsetY = 50; break;
       case 'left': x = rect.left; offsetX = -70; break;
@@ -466,8 +464,8 @@ function switchToMobileMode() {
       }
     }
   });
-  actionPane.addEventListener('touchmove', e => {e.stopPropagation();});
-  actionPane.onmousedown = (e) => e.stopPropagation();
-  actionPane.onmousemove = (e) => e.stopPropagation();
-  actionPane.onmouseup = (e) => e.stopPropagation();
+  actionPane.addEventListener('touchmove', e => { e.stopPropagation(); });
+  actionPane.onmousedown = e => e.stopPropagation();
+  actionPane.onmousemove = e => e.stopPropagation();
+  actionPane.onmouseup = e => e.stopPropagation();
 }

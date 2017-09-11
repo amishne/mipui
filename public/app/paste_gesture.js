@@ -42,7 +42,7 @@ class PasteGesture extends Gesture {
   stopGesture() {
     state.opCenter.recordOperationComplete();
   }
-/*
+  /*
   rotateLeft() {
     this.updateLocation_(location => ({
       row: -location.column,
@@ -164,7 +164,7 @@ class PasteGesture extends Gesture {
         // Pasted group ends beyond the bounds.
         return null;
       }
-      newContent[ck.endCell] = relocatedEndCellKey
+      newContent[ck.endCell] = relocatedEndCellKey;
     }
 
     return newContent;
@@ -175,7 +175,7 @@ class PasteGesture extends Gesture {
       // The start cell is not being copied.
       return false;
     }
-    for (let cell of state.theMap.cells.values()) {
+    for (const cell of state.theMap.cells.values()) {
       const cellLayerContent = cell.getLayerContent(layer);
       if (!cellLayerContent) continue;
       const cellStartCellKey = cellLayerContent[ck.startCell];
