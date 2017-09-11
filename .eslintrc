@@ -1,4 +1,7 @@
 {
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
   "rules": {
     "standard/computed-property-even-spacing": 0,
     "handle-callback-err": 0,
@@ -16,23 +19,21 @@
     "curly": ["error", "multi-line"],
     "no-useless-escape": "error",
     "no-var": "error",
-    "padded-blocks": "error",
     "no-return-assign": "error",
     "eol-last": "error",
     "no-useless-constructor": "error",
-    "no-mixed-operators": "error",
     "no-unreachable": "error",
     "space-infix-ops": "error",
     "no-trailing-spaces": "error",
     "prefer-arrow-callback": "error",
-    "quotes": ["error", "single"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
     "operator-linebreak": "error",
-    "no-eval": "error",
     "prefer-const": "error",
-    "no-unused-vars": "error",
+    "no-unused-vars": ["error", { "vars": "local" }],
     "semi": "error",
     "eqeqeq": 0,
     "indent": ["error", 2, {
+      "SwitchCase": 1,
       "VariableDeclarator": 2,
       "MemberExpression": 2,
       "FunctionExpression": {
