@@ -146,7 +146,8 @@ class Menu {
         if (!item.submenu.allItems) {
           item.submenu.allItems = item.submenu.items;
         }
-        const selectedChild = item.submenu.allItems.find(item => item.isSelected);
+        const selectedChild =
+            item.submenu.allItems.find(item => item.isSelected);
         cells = selectedChild.cells;
         deferredSvg = selectedChild.deferredSvg;
         item.element.className = 'menu-item';
@@ -636,7 +637,8 @@ class Menu {
     const category = this.tokenSelectedCategory_;
     if (!selector.submenu.element) {
       selector.submenu.element =
-          createAndAppendDivWithClass(selector.parent.submenu.element, 'selector-submenu');
+          createAndAppendDivWithClass(
+              selector.parent.submenu.element, 'selector-submenu');
     }
     this.selectSubmenuItem_(selector.parent.submenu.items[1]);
     if (category == '<all>' && text.length < 2) {
@@ -671,7 +673,6 @@ class Menu {
 
   createTokenColorTool_(name, variation, isSelected) {
     const gameIcon = this.groups_.imageIconTools.selectedIcon;
-    const path = gameIcon.path.replace('public/app/', '');
     const item = {
       name,
       type: 'tool',
@@ -925,7 +926,8 @@ class Menu {
                     width,
                     height,
                   }).then(dataUrl => {
-                    const blob = new Blob([dataUrl.substr(33)], {type: 'image/svg+xml'});
+                    const blob =
+                        new Blob([dataUrl.substr(33)], {type: 'image/svg+xml'});
                     saveAs(blob, 'mipui.svg');
                     overlay.parentElement.removeChild(overlay);
                   }).catch(() => {
@@ -1141,7 +1143,8 @@ class Menu {
         presentation: 'icon',
         materialIcon: 'grid_on',
         enabledInReadonlyMode: true,
-        tip: 'Pan with middle mouse button or touch pad, zoom with mousewheel or pinch.',
+        tip: 'Pan with middle mouse button or touch pad, ' +
+            'zoom with mousewheel or pinch.',
         submenu: {
           items: [
             {
@@ -1237,7 +1240,7 @@ class Menu {
             this.createWallTool_(
                 'Wall (auto)',
                 true,
-                () => state.gesture = new WallGesture(1, false),
+                () => { state.gesture = new WallGesture(1, false); },
                 new Array(3).fill('square-wall-cell')
                     .concat(new Array(2).fill('floor-cell'))
                     .concat(new Array(3).fill('square-wall-cell'))
@@ -1250,7 +1253,7 @@ class Menu {
             this.createWallTool_(
                 'Wall (manual)',
                 false,
-                () => state.gesture = new WallGesture(1, true),
+                () => { state.gesture = new WallGesture(1, true); },
                 new Array(6).fill('floor-cell')
                     .concat(['square-wall-cell'])
                     .concat(new Array(5).fill('floor-cell'))
@@ -1265,8 +1268,8 @@ class Menu {
             this.createWallTool_(
                 'Angled wall',
                 false,
-                () => state.gesture = new AngledWallGesture(
-                    ct.walls, ct.walls.smooth, ct.walls.smooth.angled),
+                () => { state.gesture = new AngledWallGesture(
+                    ct.walls, ct.walls.smooth, ct.walls.smooth.angled); },
                 new Array(2).fill('floor-cell')
                     .concat(['square-wall-cell'])
                     .concat(new Array(4).fill('floor-cell'))
@@ -1291,12 +1294,12 @@ class Menu {
             this.createWallTool_(
                 'Rectangle',
                 false,
-                () => state.gesture = new SquareRoomGesture(false),
+                () => { state.gesture = new SquareRoomGesture(false); },
                 new Array(25).fill('square-wall-cell')),
             this.createWallTool_(
                 'Ellipse',
                 false,
-                () => state.gesture = new OvalRoomGesture(false),
+                () => { state.gesture = new OvalRoomGesture(false); },
                 new Array(25).fill('floor-cell'),
                 new Array(25).fill(null).map((_, i) => {
                   // The corners are empty.
@@ -1315,7 +1318,7 @@ class Menu {
             this.createWallTool_(
                 'Rectangular Room',
                 false,
-                () => state.gesture = new SquareRoomGesture(true),
+                () => { state.gesture = new SquareRoomGesture(true); },
                 new Array(6).fill('square-wall-cell')
                     .concat(new Array(3).fill('floor-cell'))
                     .concat(new Array(2).fill('square-wall-cell'))
@@ -1326,7 +1329,7 @@ class Menu {
             this.createWallTool_(
                 'Elliptical Room',
                 false,
-                () => state.gesture = new OvalRoomGesture(true),
+                () => { state.gesture = new OvalRoomGesture(true); },
                 new Array(25).fill('floor-cell'),
                 new Array(25).fill(null).map((_, i) => {
                   // The corners are empty.
@@ -1482,7 +1485,8 @@ class Menu {
               materialIcon: 'bug_report',
               enabledInReadonlyMode: true,
               callback: () => {
-                window.open('https://feedback.userreport.com/7e918812-4e93-4a8f-9541-9af34d0f4231/', '_blank');
+                window.open('https://feedback.userreport.com' +
+                    '/7e918812-4e93-4a8f-9541-9af34d0f4231/', '_blank');
               },
             },
             {

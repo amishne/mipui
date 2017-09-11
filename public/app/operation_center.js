@@ -354,7 +354,7 @@ class OperationCenter {
             .concat(op);
     this.latestAppliedOperationIndex_ = this.appliedOperations_.length - 1;
     if (this.appliedOperations_.length > MAX_STORED_OPERATIONS) {
-      this.appliedOperations_.shift;
+      this.appliedOperations_.shift();
       this.latestAppliedOperationIndex_--;
     }
   }
@@ -496,7 +496,7 @@ class OperationCenter {
       if (!currData || !currData.i || currData.i.n + 1 == op.num) {
         return op.data;
       }
-    }, (error, committed, snapshot) => {
+    }, (error, committed) => {
       this.opBeingSent_ = null;
       this.opBeingSentWasAccepted_ = false;
       if (error) {
@@ -521,7 +521,7 @@ class OperationCenter {
     this.continueSendingPendingLocalOperations_();
     // And concurrently, actually write the operation in its place.
     const opPath = `/maps/${state.getMid()}/payload/operations/${op.num}`;
-    firebase.database().ref(opPath).set(op.data, error => {
+    firebase.database().ref(opPath).set(op.data, () => {
       this.rewriteIfRequired_();
     });
   }
@@ -542,7 +542,7 @@ class OperationCenter {
   }
 
   // Handles an error encountered when sending an operation.
-  handleOperationSendError_(op, err) {
+  handleOperationSendError_(op) {
     // Not much to do here. Just hope that by the next time we send an
     // operation, the problem will be resolved. Meanwhile stop sending local
     // operations to avoid repeating the error.
@@ -589,7 +589,7 @@ class OperationCenter {
       return {
         fullMap: snapshot,
       };
-    }, (error, committed, snapshot) => {
+    }, (error, committed) => {
       if (!error && committed) {
         debug(`Rewriting map to operation ${num} complete.`);
         this.lastFullMapNum_ = num;

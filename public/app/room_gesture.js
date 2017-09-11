@@ -1,5 +1,5 @@
 class RoomGesture extends Gesture {
-  constructor(hollow) {
+  constructor() {
     super();
     this.anchorCell_ = null;
     this.hoveredCell_ = null;

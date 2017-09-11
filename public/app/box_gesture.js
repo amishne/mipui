@@ -355,7 +355,7 @@ class BoxGesture extends Gesture {
         e.stopPropagation();
       }
     };
-    this.hoverWidget_.onmouseup = e => {
+    this.hoverWidget_.onmouseup = () => {
       if (this.mode_ != 'editing') this.stopGesture();
     };
   }
@@ -380,10 +380,10 @@ class BoxGesture extends Gesture {
     deleteGesture.startCell_ = this.startCell_;
     deleteGesture.endCell_ = this.endCell_;
     deleteGesture.nonStartCells_ = this.nonStartCells_;
-    this.deleteWidget_.onmouseenter = e => {
+    this.deleteWidget_.onmouseenter = () => {
       deleteGesture.startHover(this.startCell_);
     };
-    this.deleteWidget_.onmouseleave = e => {
+    this.deleteWidget_.onmouseleave = () => {
       deleteGesture.stopHover();
       this.startCell_.showHighlight(
           this.getLayer_(), this.startCell_.getLayerContent(this.getLayer_()));
@@ -430,7 +430,7 @@ class BoxGesture extends Gesture {
       this.mode_ = 'resizing';
       e.stopPropagation();
     };
-    this.resizeWidget_.onmouseup = e => {
+    this.resizeWidget_.onmouseup = () => {
       this.stopGesture();
     };
   }
@@ -458,7 +458,7 @@ class BoxGesture extends Gesture {
       this.mode_ = 'moving';
       e.stopPropagation();
     };
-    this.moveWidget_.onmouseup = e => {
+    this.moveWidget_.onmouseup = () => {
       this.stopGesture();
     };
   }

@@ -58,7 +58,7 @@ function initializeFirebase(callback) {
   firebase.database.enableLogging(!isProd || isInTestingMode);
   firebase.auth().signInAnonymously()
       .then(user => { state.user = user; callback(); })
-      .catch(error => setStatus(Status.AUTH_ERROR));
+      .catch(() => setStatus(Status.AUTH_ERROR));
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       state.user = user;
@@ -80,7 +80,7 @@ function createMapResizeButtons() {
   ].forEach(({name, callback}) => {
     const button = createAndAppendDivWithClass(
         mapContainer, `map-resize-button map-resize-button-${name}`);
-    button.onclick = e => callback();
+    button.onclick = () => callback();
     button.title =
         name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ');
   });
@@ -126,7 +126,9 @@ window.onload = () => {
     script.type = 'text/javascript';
     script.async = true;
     script.onload = function() {
-      window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments); };
+      window.ga = window.ga || function() {
+        (ga.q = ga.q || []).push(arguments);
+      };
       ga.l = +new Date();
       ga('create', 'UA-96544349-1', 'auto');
       ga('send', 'pageview');

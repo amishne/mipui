@@ -304,7 +304,8 @@ class TheMap {
     ]);
   }
 
-  setCornerCellNeighborKeys_(cell, previousRow, previousColumn, nextRow, nextColumn) {
+  setCornerCellNeighborKeys_(
+      cell, previousRow, previousColumn, nextRow, nextColumn) {
     cell.addNeighborKey('top',
         TheMap.dividerCellKey(
             previousRow, previousColumn, previousRow, nextColumn), []);

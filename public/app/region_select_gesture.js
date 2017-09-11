@@ -1,8 +1,4 @@
 class RegionSelectGesture extends SelectGesture {
-  constructor() {
-    super();
-  }
-
   startGesture() {
     super.startGesture();
     if (!this.anchorCell_ || this.hoveredCell_.role != 'primary') {

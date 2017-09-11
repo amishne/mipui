@@ -47,7 +47,8 @@ class AngledWallGesture extends ShapeGesture {
         this.connectIfWallOrWillBecomeWall_(cell.getNeighbor('top-right'), 64);
         this.connectIfWallOrWillBecomeWall_(
             cell.getNeighbor('bottom-right'), 128);
-        this.connectIfWallOrWillBecomeWall_(cell.getNeighbor('bottom-left'), 16);
+        this.connectIfWallOrWillBecomeWall_(
+            cell.getNeighbor('bottom-left'), 16);
         this.connectIfWallOrWillBecomeWall_(cell.getNeighbor('top-left'), 32);
         break;
     }

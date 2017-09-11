@@ -17,4 +17,5 @@ function clamp(min, num, max) {
   return Math.min(max, Math.max(min, num));
 }
 
+// eslint-disable-next-line prefer-const
 let debug = () => {};

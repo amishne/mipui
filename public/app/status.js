@@ -1,5 +1,6 @@
 const Status = {
-  INITIALIZING: {text: 'Initializing...', icon: 'cloud_queue', type: 'unstable'},
+  INITIALIZING:
+      {text: 'Initializing...', icon: 'cloud_queue', type: 'unstable'},
   READY: {text: 'Ready', icon: 'cloud_done', type: 'good'},
   LOADING: {text: 'Loading...', icon: 'cloud_download', type: 'unstable'},
   LOADING_FAILED: {text: 'Loading failed', icon: 'cloud_off', type: 'bad'},

@@ -77,7 +77,6 @@ class SelectGesture extends Gesture {
         const affectedCells = [cell];
         const content = cell.getLayerContent(layer);
         if (content && content[ck.endCell]) {
-          const endCell = state.theMap.cells.get(content[ck.endCell]);
           this.forEachCellWithStartCell_(layer, cell, affectedCell =>
             affectedCells.push(affectedCell));
         }

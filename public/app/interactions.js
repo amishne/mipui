@@ -28,7 +28,7 @@ function invalidateCached(obj, fieldName) {
   cached[obj][fieldName] = null;
 }
 
-function handleResizeEvent(resizeEvent) {
+function handleResizeEvent() {
   invalidateCached(mapContainer, 'offsetWidth');
   invalidateCached(mapContainer, 'offsetHeight');
 }
@@ -146,7 +146,7 @@ function handleScrollEvent(event) {
   if (scrollCallRequested) return;
   scrollCallRequested = true;
   event.stopPropagation();
-  window.requestAnimationFrame(_ => {
+  window.requestAnimationFrame(() => {
     invalidateCached(mapContainer, 'scrollLeft');
     invalidateCached(mapContainer, 'scrollTop');
     refreshMapResizeButtonLocations();
@@ -235,7 +235,7 @@ let panRequested = false;
 function handleTouchMoveEvent(touchEvent) {
   if (currentPinch && touchEvent.touches.length == 2 && !pinchCallRequested) {
     pinchCallRequested = true;
-    window.requestAnimationFrame(_ => {
+    window.requestAnimationFrame(() => {
       pinchCallRequested = false;
       const center =
           calcCenter(
@@ -262,8 +262,8 @@ function handleTouchMoveEvent(touchEvent) {
       // Apply zoom.
       const newScale =
           currentPinch.initialScale * (distance / currentPinch.initialDistance);
-      const scaleDiff = newScale - state.navigation.scale;
-      const growth = scaleDiff / state.navigation.scale;
+      //const scaleDiff = newScale - state.navigation.scale;
+      //const growth = scaleDiff / state.navigation.scale;
       //const scaleFactor = newScale / state.navigation.scale;
       state.navigation.scale = newScale;
       updateMapTransform(false);
@@ -289,7 +289,7 @@ function handleTouchMoveEvent(touchEvent) {
       const mapContainerTouches = getMapContainerTouches(touchEvent.touches);
       if (touchEvent.touches.length > 1 && mapContainerTouches.length == 1) {
         panRequested = true;
-        window.requestAnimationFrame(_ => {
+        window.requestAnimationFrame(() => {
           const pos = {
             x: mapContainerTouches[0].pageX,
             y: mapContainerTouches[0].pageY,
@@ -306,11 +306,12 @@ function handleTouchMoveEvent(touchEvent) {
 }
 
 function getMapContainerTouches(touchList) {
-  return Array.from(touchList).filter(touch => touch.target.id == 'mapContainer' ||
-        touch.target.classList.contains('grid-cell'));
+  return Array.from(touchList).filter(
+      touch => touch.target.id == 'mapContainer' ||
+          touch.target.classList.contains('grid-cell'));
 }
 
-function handleTouchEndEvent(touchEvent) {
+function handleTouchEndEvent() {
   currentPinch = null;
   prevSingleTouchPos = null;
 }
@@ -436,9 +437,7 @@ function switchToMobileMode() {
   app.style.transform = `scale(${scale})`;
   app.style.width = (100 / scale) + '%';
   app.style.height = (100 / scale) + '%';
-  const mobileCursor =
-      createAndAppendDivWithClass(
-          mapContainer, 'mobile-cursor');
+  createAndAppendDivWithClass(mapContainer, 'mobile-cursor');
   invalidateCached(mapContainer, 'offsetWidth');
   invalidateCached(mapContainer, 'offsetHeight');
   updateMapTransform(true);

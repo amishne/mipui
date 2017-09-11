@@ -62,8 +62,9 @@ function getIconsFromPathsStaggered(paths, icons, index, callback) {
       hash: hashString(path),
     };
     icons.push(icon);
-    setTimeout(
-        () => getIconsFromPathsStaggered(paths, icons, index + 1, callback), 300);
+    setTimeout(() => {
+      getIconsFromPathsStaggered(paths, icons, index + 1, callback);
+    }, 300);
   });
 }
 

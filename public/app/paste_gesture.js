@@ -37,7 +37,7 @@ class PasteGesture extends Gesture {
     state.menu.setToInitialSelection();
   }
 
-  continueGesture(cell) {}
+  continueGesture(/* cell */) {}
 
   stopGesture() {
     state.opCenter.recordOperationComplete();

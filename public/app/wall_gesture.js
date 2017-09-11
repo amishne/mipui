@@ -167,9 +167,10 @@ class WallGesture extends Gesture {
     // Don't clear corner cells that are adjacent to cells with doors that are
     // not removed.
     if (!this.toWall && cell.role == 'corner') {
-      const aNeighborHasADoor = cell.getAllNeighbors().some(neighbor => neighbor.dividerCell &&
-            neighbor.dividerCell.isKind(ct.separators, ct.separators.door) &&
-            !this.shouldRemoveDoors_(neighbor.dividerCell));
+      const aNeighborHasADoor =
+          cell.getAllNeighbors().some(neighbor => neighbor.dividerCell &&
+              neighbor.dividerCell.isKind(ct.separators, ct.separators.door) &&
+              !this.shouldRemoveDoors_(neighbor.dividerCell));
       if (aNeighborHasADoor) return;
     }
 
@@ -179,7 +180,8 @@ class WallGesture extends Gesture {
   anyCellIsWall_(cells) {
     return cells.some(cell => cell &&
           (this.rootCells.has(cell) ||
-           this.cellsToSet.has(cell) ? this.toWall : this.isWall_(cell, false)));
+           this.cellsToSet.has(cell) ?
+            this.toWall : this.isWall_(cell, false)));
   }
 
   stopHover() {
@@ -234,6 +236,5 @@ class WallGesture extends Gesture {
 
   createContent_() {
     return this.toWall ? this.wallContent_ : null;
-    if (!this.toWall) return null;
   }
 }

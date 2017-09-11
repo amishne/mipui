@@ -30,7 +30,7 @@
     "quotes": ["error", "single", { "avoidEscape": true }],
     "operator-linebreak": ["error", "after"],
     "prefer-const": "error",
-    "no-unused-vars": ["error", { "vars": "local" }],
+    "no-unused-vars": ["error", { "vars": "local", "args": "none" }],
     "semi": "error",
     "eqeqeq": 0,
     "indent": ["error", 2, {

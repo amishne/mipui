@@ -144,7 +144,8 @@ class Cell {
     const svg =
         "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
         `<defs><mask id='m'>${shapes.join('')}</mask></defs>` +
-        "<rect x='0' y='0' width='100%' height='100%' mask='url(%23m)' /></svg>";
+        "<rect x='0' y='0' width='100%' height='100%' mask='url(%23m)' />" +
+        '</svg>';
     element.style['-webkit-mask'] = `url("${svg}")`;
     element.style['mask'] = `url("${svg}")`;
   }
