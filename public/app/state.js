@@ -178,6 +178,8 @@ class State {
     const newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
         `&secret=${encodeURIComponent(secret)}`;
     window.history.replaceState(null, '', newUrl);
+    document
+        .getElementById('overlayLayer').classList.add('revealed-overlay-layer');
   }
 
   getMid() {
