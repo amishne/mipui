@@ -38,7 +38,7 @@ class SeparatorGesture extends Gesture {
     if (this.shouldPaintWall_()) {
       this.makeWallGesture = new WallGesture(1, false);
       this.makeWallGesture.mode = 'divider only';
-      this.makeWallGesture.toWall = this.requiredWall_;
+      this.makeWallGesture.toWall = !!this.requiredWall_;
       this.makeWallGesture.startHoverAfterInitialFieldsAreSet(cell);
     }
   }
@@ -172,7 +172,7 @@ class SeparatorGesture extends Gesture {
   }
 
   shouldPaintWall_() {
-    return this.mode == 'adding' && this.requiredWall_ != null;
+    return this.mode == 'adding' && this.requiredWall_;
   }
 
   createStartCellContent_() {
