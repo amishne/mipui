@@ -179,7 +179,7 @@ class State {
         `&secret=${encodeURIComponent(secret)}`;
     window.history.replaceState(null, '', newUrl);
     document
-        .getElementById('overlayLayer').classList.add('revealed-overlay-layer');
+        .getElementById('theMap').classList.add('editor-view');
   }
 
   getMid() {

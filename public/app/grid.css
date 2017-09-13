@@ -546,6 +546,11 @@
 
 .gm-note {
   color: red;
+  display: none;
+}
+
+.editor-view .gm-note {
+  display: inherit;
 }
 
 .image-cell {
@@ -666,7 +671,7 @@
   background-color: darkgrey;
 }
 
-.revealed-overlay-layer .hidden-cell {
+.editor-view .hidden-cell {
   background-image: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,.5) 3px, rgba(255,255,255,.5) 6px);
   opacity: 0.3;
 }

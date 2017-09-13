@@ -413,6 +413,13 @@
   top: 1px;
 }
 
+.menu-text .gm-note {
+  position: absolute;
+  display: inherit;
+  top: -1px;
+  left: 2px;
+}
+
 .menu-images .floor-cell {
   position: relative;
   top: 2px;
