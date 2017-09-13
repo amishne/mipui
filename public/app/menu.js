@@ -1480,7 +1480,9 @@ class Menu {
               enabledInReadonlyMode: false,
               isSelected: true,
               callback: () => {
-                state.gesture = new RegionSelectGesture();
+                state.gesture =
+                    new OverlayGesture(
+                      ct.overlay, ct.overlay.hidden, ct.overlay.hidden.black);
               },
             },
             {
@@ -1502,7 +1504,14 @@ class Menu {
               enabledInReadonlyMode: false,
               isSelected: true,
               callback: () => {
-                state.gesture = new RegionSelectGesture();
+                state.theMap.cells.forEach(cell => {
+                  cell.setLayerContent(
+                      ct.overlay, {
+                        [ck.kind]: ct.overlay.hidden.id,
+                        [ck.variation]: ct.overlay.hidden.black.id,
+                      }, true);
+                });
+                state.opCenter.recordOperationComplete();
               },
             },
             {
@@ -1513,7 +1522,10 @@ class Menu {
               enabledInReadonlyMode: false,
               isSelected: true,
               callback: () => {
-                state.gesture = new RegionSelectGesture();
+                state.theMap.cells.forEach(cell => {
+                  cell.setLayerContent(ct.overlay, null, true);
+                });
+                state.opCenter.recordOperationComplete();
               },
             },
             this.createTextTool_(

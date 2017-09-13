@@ -37,8 +37,12 @@
 
 #gridLayer {
   display: inline-block;
-  z-index: 9;
+  z-index: 10;
   pointer-events: auto;
+}
+
+#overlayLayer {
+  z-index: 9;
 }
 
 #textLayer {
@@ -655,4 +659,14 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.hidden-cell {
+  position: absolute;
+  background-color: darkgrey;
+}
+
+.hidden-cell-adding, .hidden-cell-removing {
+  position: absolute;
+  background-color: rgba(169, 169, 169, 0.25);
 }

@@ -1,8 +1,8 @@
 class Gesture {
-  startHover(/* cell */) {}
+  startHover(cell) {}
   stopHover() {}
   startGesture() {}
-  continueGesture(/* cell */) {}
+  continueGesture(cell) {}
   stopGesture() {}
   onUnselect() {
     this.stopHover();
