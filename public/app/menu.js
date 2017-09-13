@@ -362,15 +362,20 @@ class Menu {
     };
   }
 
-  createTextTool_() {
+  createTextTool_(kind, variation, name, text) {
+    const layer = ct.text;
+    const classNames =
+        (layer.classNames || [])
+            .concat(kind.classNames || [])
+            .concat(variation.classNames || []);
     return {
-      name: 'Text',
+      name,
       type: 'tool',
       presentation: 'cells',
       classNames: ['menu-text'],
       isSelected: true,
       callback: () => {
-        state.gesture = new TextGesture();
+        state.gesture = new TextGesture(kind, variation);
       },
       cells: [
         {
@@ -381,12 +386,11 @@ class Menu {
           ],
         },
         {
-          innerHTML: 'Text',
+          innerHTML: text,
           classNames: [
             'grid-cell',
             'primary-cell',
-            'text-cell',
-          ],
+          ].concat(classNames),
         },
       ],
     };
@@ -1379,7 +1383,8 @@ class Menu {
         tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
           items: [
-            this.createTextTool_(),
+            this.createTextTool_(
+                ct.text.text, ct.text.text.standard, 'Text', 'Text'),
           ],
         },
       },
@@ -1457,6 +1462,62 @@ class Menu {
                 ct.stairs.spiral,
                 ct.stairs.spiral.generic,
                 false),
+          ],
+        },
+      },
+      {
+        name: 'GM Tools',
+        presentation: 'icon',
+        materialIcon: 'local_library',
+        enabledInReadonlyMode: false,
+        submenu: {
+          items: [
+            {
+              name: 'Hide',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'filter_tilt_shift',
+              enabledInReadonlyMode: false,
+              isSelected: true,
+              callback: () => {
+                state.gesture = new RegionSelectGesture();
+              },
+            },
+            {
+              name: 'Reveal Visible',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'my_location',
+              enabledInReadonlyMode: false,
+              isSelected: true,
+              callback: () => {
+                state.gesture = new RegionSelectGesture();
+              },
+            },
+            {
+              name: 'Hide All',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'visibility_off',
+              enabledInReadonlyMode: false,
+              isSelected: true,
+              callback: () => {
+                state.gesture = new RegionSelectGesture();
+              },
+            },
+            {
+              name: 'Reveal All',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'visibility',
+              enabledInReadonlyMode: false,
+              isSelected: true,
+              callback: () => {
+                state.gesture = new RegionSelectGesture();
+              },
+            },
+            this.createTextTool_(
+                ct.text.gmNote, ct.text.gmNote.standard, 'DM Note', 'Note'),
           ],
         },
       },

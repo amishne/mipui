@@ -99,12 +99,16 @@ const ct = {
     },
   },
   text: {
+    classNames: [
+      'text-cell',
+      'text-cell-_ADDING-REMOVING_',
+      'text-cell-_EDITING_',
+    ],
     text: {
-      classNames: [
-        'text-cell',
-        'text-cell-_ADDING-REMOVING_',
-        'text-cell-_EDITING_',
-      ],
+      standard: {},
+    },
+    gmNote: {
+      classNames: ['gm-note'],
       standard: {},
     },
   },

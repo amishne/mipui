@@ -1,4 +1,10 @@
 class TextGesture extends BoxGesture {
+  constructor(kind, variation) {
+    super();
+    this.kind_ = kind;
+    this.variation_ = variation;
+  }
+
   isEditable_() {
     return true;
   }
@@ -16,11 +22,11 @@ class TextGesture extends BoxGesture {
   }
 
   getKind_() {
-    return this.getLayer_().text;
+    return this.kind_;
   }
 
   getVariation_() {
-    return this.getKind_().standard;
+    return this.variation_;
   }
 
   createInputElement_() {

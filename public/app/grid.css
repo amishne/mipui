@@ -540,6 +540,10 @@
   color: rgb(50, 50, 50);
 }
 
+.gm-note {
+  color: red;
+}
+
 .image-cell {
   color: rgb(50, 50, 50);
 }
