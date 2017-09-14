@@ -1488,14 +1488,14 @@ class Menu {
               },
             },
             {
-              name: 'Reveal Visible',
+              name: 'Reveal in line of sight',
               type: 'tool',
               presentation: 'icon',
               materialIcon: 'my_location',
               enabledInReadonlyMode: false,
               isSelected: true,
               callback: () => {
-                state.gesture = new RegionSelectGesture();
+                state.gesture = new SightGesture();
               },
             },
             {
