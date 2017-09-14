@@ -75,7 +75,7 @@ class Menu {
     this.populateMenuItem_(menuItem);
     const tipElement =
         createAndAppendDivWithClass(submenuElement, 'menu-tip');
-    tipElement.textContent = menuItem.tip;
+    tipElement.innerHTML = menuItem.tip;
   }
 
   populateMenuItem_(menuItem) {
@@ -1470,6 +1470,8 @@ class Menu {
         presentation: 'icon',
         materialIcon: 'local_library',
         enabledInReadonlyMode: false,
+        tip: 'Tools in this menu appear hidden to non-editors. ' +
+            '<a target="_blank" href="../docs/gm_tools.html">Learn more</a>',
         submenu: {
           items: [
             {
