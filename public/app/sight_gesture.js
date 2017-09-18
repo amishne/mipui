@@ -39,23 +39,49 @@ class SightGesture extends Gesture {
     return result;
   }
 
+  isOpaque_(origin, cell) {
+    return cell.hasLayerContent(ct.walls);
+  }
+
+  mergeSectors_(sectors) {
+    const result = [];
+    if (sectors.length == 0) return result;
+    let currSector = {
+      top: sectors[0].top,
+      bottom: sectors[0].bottom,
+    };
+    sectors.slice(1).forEach(sector => {
+      if (sector.top <= sector.bottom) return;
+      if (sector.top >= currSector.bottom) {
+        currSector.bottom = sector.bottom;
+      } else {
+        result.push(currSector);
+        currSector = {
+          top: sector.top,
+          bottom: sector.bottom,
+        };
+      }
+    });
+    return result;
+  }
+
   calculateCellsInSight_(origin) {
     const cellsInSight = [];
     let currentSectors = [{
-      top: 1,
+      top: -1,
       bottom: 0,
     }];
-    let nextSectors = [];
     const originOffset = {
       top: origin.offsetTop,
       bottom: origin.offsetTop + origin.height,
       center: {
-        x: origin.offsetTop + origin.height / 2,
-        y: origin.offsetLeft + origin.width / 2,
+        x: origin.offsetLeft + origin.width / 2,
+        y: origin.offsetTop + origin.height / 2,
       },
-    }
+    };
     const maxColumn = parseInt(state.getProperty(pk.lastColumn)) + 0.5;
     for (let column = origin.column; column <= maxColumn; column += 0.5) {
+      const nextSectors = [];
       column = Math.round(column * 2) / 2;
       const columnCells =
           this.getColumnCells_(origin, column, currentSectors[0].top,
@@ -66,24 +92,31 @@ class SightGesture extends Gesture {
       columnCells.forEach(columnCell => {
         const cellOffsetTop = columnCell.offsetTop;
         const cellOffsetBottom = columnCell.offsetTop + columnCell.height;
+        const isOpaque = this.isOpaque_(origin, columnCell);
         currentSectors.forEach(currentSector => {
-          // const updatedSector = {
-          //   top: currentSector.top,
-          //   bottom: currentSector.bottom,
-          // };
           const sectorOffsetTop =
-              originOffset.center.y -
+              originOffset.center.y +
               (columnOffsetRight - originOffset.center.x) * currentSector.top;
           const sectorOffsetBottom =
-              originOffset.center.y -
+              originOffset.center.y +
               (columnOffsetLeft - originOffset.center.x) * currentSector.bottom;
           if (cellOffsetBottom >= sectorOffsetTop &&
               cellOffsetTop <= sectorOffsetBottom) {
             // The cell is visible.
             cellsInSight.push(columnCell);
           }
+//          if (!isOpaque) {
+//            nextSectors.push({
+//              top: (cellOffsetTop - originOffset.center.y) /
+//                  (columnOffsetRight - originOffset.center.x),
+//              bottom: (cellOffsetBottom - originOffset.center.y) /
+//                  (columnOffsetLeft - originOffset.center.x),
+//            });
+//          }
         });
       });
+      // currentSectors = this.mergeSectors_(nextSectors);
+      // if (currentSectors.length == 0) break;
     }
     return cellsInSight;
   }
