@@ -31,6 +31,10 @@ class TheMap {
         Math.floor(row), Math.floor(column), Math.ceil(row), Math.ceil(column));
   }
 
+  getCell(row, column) {
+    return this.cells.get(TheMap.cellKey(row, column));
+  }
+
   resetToDefault() {
     this.cells.forEach(cell => {
       cell.resetToDefault();
