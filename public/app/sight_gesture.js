@@ -5,15 +5,12 @@ class SightGesture extends Gesture {
     this.cellsInSight_ = [];
   }
   startHover(cell) {
-    if (!cell || cell.role != 'primary') return;
-    this.hoveredCell_ = cell;
-    const origins = [{
-      x: cell.offsetLeft + cell.width / 2,
-      y: cell.offsetTop + cell.height / 2,
-      sectors: [{top: -1, bottom: 1}],
-    }];
-    this.cellsInSight_ =
-        [cell].concat(this.calculateCellsInSight_(cell, origins));
+    if (cell && cell.role == 'primary') {
+      this.hoveredCell_ = cell;
+    }
+    if (!this.hoveredCell_) return;
+
+    this.cellsInSight_ = this.calculateCellsInSight_(this.hoveredCell_);
     this.cellsInSight_.forEach(cellInSight => {
       cellInSight.showHighlight(ct.overlay, {
         [ck.kind]: ct.overlay.hidden.id,
@@ -25,19 +22,23 @@ class SightGesture extends Gesture {
     this.cellsInSight_.forEach(cellInSight => {
       cellInSight.hideHighlight(ct.overlay);
     });
-    this.hoveredCell_ = null;
     this.cellsInSight_ = [];
   }
   startGesture() {}
   continueGesture(cell) {}
   stopGesture() {}
 
-  getColumnCells_(column) {
+  getColumnCells_(column, columnDiff) {
     const result = [];
     // Initial naive implementation.
-    const firstRow = parseInt(state.getProperty(pk.firstRow)) - 0.5;
-    const lastRow = parseInt(state.getProperty(pk.lastRow)) + 0.5;
-    for (let row = firstRow; row <= lastRow; row += 0.5) {
+    let firstRow = parseInt(state.getProperty(pk.firstRow)) - 0.5;
+    let lastRow = parseInt(state.getProperty(pk.lastRow)) + 0.5;
+    if (columnDiff < 0) {
+      const temp = firstRow;
+      firstRow = lastRow;
+      lastRow = temp;
+    }
+    for (let row = firstRow; row != lastRow; row += columnDiff) {
       row = Math.round(row * 2) / 2;
       const cell = state.theMap.getCell(row, column);
       if (cell) result.push(cell);
@@ -51,7 +52,7 @@ class SightGesture extends Gesture {
 
   cleanSectors_(sectors) {
     if (!sectors) return [];
-    return sectors.filter(sector => sector.top < sector.bottom);
+    return sectors.filter(sector => sector.start < sector.end);
   }
 
   isHiddenByCellsInSameColumn_(cell, originPoint) {
@@ -68,69 +69,93 @@ class SightGesture extends Gesture {
     return false;
   }
 
-  calculateCellsInSight_(originCell, originPoints) {
+  calculateCellsInSight_(cell) {
+    const createOriginPoints = () => [{
+      x: cell.offsetLeft + cell.width / 2,
+      y: cell.offsetTop + cell.height / 2,
+      sectors: [{start: -1, end: 1}],
+    }];
+    const right =
+        this.calculateCellsInQuarterSight_(cell, createOriginPoints(), 0.5);
+    const left =
+        this.calculateCellsInQuarterSight_(cell, createOriginPoints(), -0.5);
+    const uniqueCells = new Set([...right, ...left]);
+    return [cell].concat(Array.from(uniqueCells));
+  }
+
+  calculateCellsInQuarterSight_(originCell, originPoints, columnDiff) {
     const cellsInSight = [];
-    const maxColumn = parseInt(state.getProperty(pk.lastColumn)) + 0.5;
-    for (let column = originCell.column; column <= maxColumn; column += 0.5) {
+    const startColumn = originCell.column + columnDiff;
+    const endColumn =
+        parseInt(
+            state
+                .getProperty(columnDiff > 0 ? pk.lastColumn : pk.firstColumn)) +
+                columnDiff;
+    for (let column = startColumn; column != endColumn; column += columnDiff) {
       column = Math.round(column * 2) / 2;
-      const columnCells = this.getColumnCells_(column);
+      const columnCells = this.getColumnCells_(column, columnDiff);
       if (columnCells.length == 0) break;
       const columnLeft = columnCells[0].offsetLeft;
       const columnRight = columnLeft + columnCells[0].width;
       columnCells.forEach(columnCell => {
-        const cellIsBeforeOrigin = columnCell.row <= originCell.row;
+        const cellIsBeforeOrigin =
+            columnDiff > 0 ?
+              (columnCell.row <= originCell.row) :
+              (columnCell.row >= originCell.row);
         const cellTop = columnCell.offsetTop;
         const cellBottom = columnCell.offsetTop + columnCell.height;
+        const cellStart = columnDiff > 0 ? cellTop : cellBottom;
+        const cellEnd = columnDiff > 0 ? cellBottom : cellTop;
         originPoints.forEach(originPoint => {
-          const distanceToTop = cellTop - originPoint.y;
-          const distanceToBottom = cellBottom - originPoint.y;
+          const distanceToStart = cellStart - originPoint.y;
+          const distanceToEnd = cellEnd - originPoint.y;
           const distanceToLeft = columnLeft - originPoint.x;
           const distanceToRight = columnRight - originPoint.x;
-          const cellTopFromScanDirection =
-              distanceToTop /
+          const cellStartFromScanDirection =
+              distanceToStart /
               (cellIsBeforeOrigin ? distanceToLeft : distanceToRight);
-          let cellBottomFromScanDirection =
-              distanceToBottom /
+          let cellEndFromScanDirection =
+              distanceToEnd /
               (cellIsBeforeOrigin ? distanceToLeft : distanceToRight);
-          const cellTopFromAntiScanDirection =
-              distanceToTop /
+          const cellStartFromAntiScanDirection =
+              distanceToStart /
               (cellIsBeforeOrigin ? distanceToRight : distanceToLeft);
-          let cellBottomFromAntiScanDirection =
-              distanceToBottom /
+          let cellEndFromAntiScanDirection =
+              distanceToEnd /
               (cellIsBeforeOrigin ? distanceToRight : distanceToLeft);
           if (columnCell.row == originCell.row) {
-            const temp = cellBottomFromScanDirection;
-            cellBottomFromScanDirection = cellBottomFromAntiScanDirection;
-            cellBottomFromAntiScanDirection = temp;
+            const temp = cellEndFromScanDirection;
+            cellEndFromScanDirection = cellEndFromAntiScanDirection;
+            cellEndFromAntiScanDirection = temp;
           }
           originPoint.sectors.forEach((sector, sectorIndex) => {
             if (!originPoint.nextSectors) {
               originPoint.nextSectors =
                   originPoint.sectors.map(currentSector => ({
-                    top: currentSector.top,
-                    bottom: currentSector.bottom,
+                    start: currentSector.start,
+                    end: currentSector.end,
                   }));
               originPoint.additionalNextSectorsCount = 0;
             }
             const actualSectorIndex =
                 sectorIndex + originPoint.additionalNextSectorsCount;
             let nextSector = originPoint.nextSectors[actualSectorIndex];
-            if (sector.top < cellBottomFromAntiScanDirection &&
-                sector.bottom > cellTopFromScanDirection) {
+            if (sector.start < cellEndFromAntiScanDirection &&
+                sector.end > cellStartFromScanDirection) {
               const seenFromTheFront =
-                  sector.top <= (distanceToBottom / distanceToLeft) &&
-                  sector.bottom >= (distanceToTop / distanceToLeft);
+                  sector.start <= (distanceToEnd / distanceToLeft) &&
+                  sector.end >= (distanceToStart / distanceToLeft);
               if (seenFromTheFront ||
                   !this.isHiddenByCellsInSameColumn_(columnCell, originPoint)) {
                 cellsInSight.push(columnCell);
               }
               const currentCellIsOpaque = this.isOpaque_(columnCell);
               if (currentCellIsOpaque && !sector.prevColCellWasOpaque) {
-                nextSector.bottom = cellTopFromScanDirection;
+                nextSector.end = cellStartFromScanDirection;
               } else if (!currentCellIsOpaque && sector.prevColCellWasOpaque) {
                 nextSector = {
-                  top: cellTopFromAntiScanDirection,
-                  bottom: sector.bottom,
+                  start: cellStartFromAntiScanDirection,
+                  end: sector.end,
                 };
                 originPoint.nextSectors
                     .splice(actualSectorIndex + 1, 0, nextSector);
