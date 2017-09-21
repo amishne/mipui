@@ -54,6 +54,20 @@ class SightGesture extends Gesture {
     return sectors.filter(sector => sector.top < sector.bottom);
   }
 
+  isHiddenByCellsInSameColumn_(cell, originPoint) {
+    const seeTop = originPoint.y < cell.offsetTop;
+    const seeBottom = originPoint.y > cell.offsetTop + cell.height;
+    const isOpaque =
+        (row, column) => this.isOpaque_(state.theMap.getCell(row, column));
+    if (seeTop && isOpaque(cell.row - 0.5, cell.column)) {
+      return true;
+    }
+    if (seeBottom && isOpaque(cell.row + 0.5, cell.column)) {
+      return true;
+    }
+    return false;
+  }
+
   calculateCellsInSight_(originCell, originPoints) {
     const cellsInSight = [];
     const maxColumn = parseInt(state.getProperty(pk.lastColumn)) + 0.5;
@@ -103,7 +117,13 @@ class SightGesture extends Gesture {
             let nextSector = originPoint.nextSectors[actualSectorIndex];
             if (sector.top < cellBottomFromAntiScanDirection &&
                 sector.bottom > cellTopFromScanDirection) {
-              cellsInSight.push(columnCell);
+              const seenFromTheFront =
+                  sector.top <= (distanceToBottom / distanceToLeft) &&
+                  sector.bottom >= (distanceToTop / distanceToLeft);
+              if (seenFromTheFront ||
+                  !this.isHiddenByCellsInSameColumn_(columnCell, originPoint)) {
+                cellsInSight.push(columnCell);
+              }
               const currentCellIsOpaque = this.isOpaque_(columnCell);
               if (currentCellIsOpaque && !sector.prevColCellWasOpaque) {
                 nextSector.bottom = cellTopFromScanDirection;
