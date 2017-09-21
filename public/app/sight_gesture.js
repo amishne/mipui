@@ -75,15 +75,20 @@ class SightGesture extends Gesture {
           const cellTopFromScanDirection =
               distanceToTop /
               (cellIsBeforeOrigin ? distanceToLeft : distanceToRight);
-          const cellBottomFromScanDirection =
+          let cellBottomFromScanDirection =
               distanceToBottom /
               (cellIsBeforeOrigin ? distanceToLeft : distanceToRight);
           const cellTopFromAntiScanDirection =
               distanceToTop /
               (cellIsBeforeOrigin ? distanceToRight : distanceToLeft);
-          const cellBottomFromAntiScanDirection =
+          let cellBottomFromAntiScanDirection =
               distanceToBottom /
               (cellIsBeforeOrigin ? distanceToRight : distanceToLeft);
+          if (columnCell.row == originCell.row) {
+            const temp = cellBottomFromScanDirection;
+            cellBottomFromScanDirection = cellBottomFromAntiScanDirection;
+            cellBottomFromAntiScanDirection = temp;
+          }
           originPoint.sectors.forEach((sector, sectorIndex) => {
             if (!originPoint.nextSectors) {
               originPoint.nextSectors =
@@ -104,7 +109,7 @@ class SightGesture extends Gesture {
                 nextSector.bottom = cellTopFromScanDirection;
               } else if (!currentCellIsOpaque && sector.prevColCellWasOpaque) {
                 nextSector = {
-                  top: cellBottomFromAntiScanDirection,
+                  top: cellTopFromAntiScanDirection,
                   bottom: sector.bottom,
                 };
                 originPoint.nextSectors
