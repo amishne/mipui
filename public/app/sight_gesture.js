@@ -12,7 +12,8 @@ class SightGesture extends Gesture {
       y: cell.offsetTop + cell.height / 2,
       sectors: [{top: -1, bottom: 1}],
     }];
-    this.cellsInSight_ = this.calculateCellsInSight_(cell, origins);
+    this.cellsInSight_ =
+        [cell].concat(this.calculateCellsInSight_(cell, origins));
     this.cellsInSight_.forEach(cellInSight => {
       cellInSight.showHighlight(ct.overlay, {
         [ck.kind]: ct.overlay.hidden.id,
@@ -63,26 +64,26 @@ class SightGesture extends Gesture {
       const columnLeft = columnCells[0].offsetLeft;
       const columnRight = columnLeft + columnCells[0].width;
       columnCells.forEach(columnCell => {
-        const cellIsAboveOrigin = columnCell.row <= originCell.row;
-        const sideClosestToSectorTop =
-            cellIsAboveOrigin ? columnRight : columnLeft;
-        const sideClosestToSectorBottom =
-            cellIsAboveOrigin ? columnLeft : columnRight;
+        const cellIsBeforeOrigin = columnCell.row <= originCell.row;
         const cellTop = columnCell.offsetTop;
         const cellBottom = columnCell.offsetTop + columnCell.height;
         originPoints.forEach(originPoint => {
-          const sectorTopToCellTop =
-              (cellTop - originPoint.y) /
-              (sideClosestToSectorTop - originPoint.x);
-          const sectorBottomToCellTop =
-              (cellTop - originPoint.y) /
-              (sideClosestToSectorBottom - originPoint.x);
-          const sectorBottomToCellBottom =
-              (cellBottom - originPoint.y) /
-              (sideClosestToSectorBottom - originPoint.x);
-          const sectorTopToCellBottom =
-              (cellBottom - originPoint.y) /
-              (sideClosestToSectorTop - originPoint.x);
+          const distanceToTop = cellTop - originPoint.y;
+          const distanceToBottom = cellBottom - originPoint.y;
+          const distanceToLeft = columnLeft - originPoint.x;
+          const distanceToRight = columnRight - originPoint.x;
+          const cellTopFromScanDirection =
+              distanceToTop /
+              (cellIsBeforeOrigin ? distanceToLeft : distanceToRight);
+          const cellBottomFromScanDirection =
+              distanceToBottom /
+              (cellIsBeforeOrigin ? distanceToLeft : distanceToRight);
+          const cellTopFromAntiScanDirection =
+              distanceToTop /
+              (cellIsBeforeOrigin ? distanceToRight : distanceToLeft);
+          const cellBottomFromAntiScanDirection =
+              distanceToBottom /
+              (cellIsBeforeOrigin ? distanceToRight : distanceToLeft);
           originPoint.sectors.forEach((sector, sectorIndex) => {
             if (!originPoint.nextSectors) {
               originPoint.nextSectors =
@@ -95,15 +96,15 @@ class SightGesture extends Gesture {
             const actualSectorIndex =
                 sectorIndex + originPoint.additionalNextSectorsCount;
             let nextSector = originPoint.nextSectors[actualSectorIndex];
-            if (sector.top <= sectorTopToCellTop &&
-                sector.bottom >= sectorBottomToCellBottom) {
+            if (sector.top < cellBottomFromAntiScanDirection &&
+                sector.bottom > cellTopFromScanDirection) {
               cellsInSight.push(columnCell);
               const currentCellIsOpaque = this.isOpaque_(columnCell);
               if (currentCellIsOpaque && !sector.prevColCellWasOpaque) {
-                nextSector.bottom = sectorBottomToCellTop;
+                nextSector.bottom = cellTopFromScanDirection;
               } else if (!currentCellIsOpaque && sector.prevColCellWasOpaque) {
                 nextSector = {
-                  top: sectorTopToCellBottom,
+                  top: cellBottomFromAntiScanDirection,
                   bottom: sector.bottom,
                 };
                 originPoint.nextSectors
