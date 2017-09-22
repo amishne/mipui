@@ -22,6 +22,7 @@ class SightGesture extends Gesture {
     this.cellsInSight_.forEach(cellInSight => {
       cellInSight.hideHighlight(ct.overlay);
     });
+    this.hoveredCell_ = null;
     this.cellsInSight_ = [];
   }
   startGesture() {}
@@ -136,9 +137,11 @@ class SightGesture extends Gesture {
             let nextSector = originPoint.nextSectors[actualSectorIndex];
             if (sector.start < cellEndFromAntiScanDirection &&
                 sector.end > cellStartFromScanDirection) {
+              const distanceToFront =
+                  columnDiff > 0 ? distanceToLeft : distanceToRight;
               const seenFromTheFront =
-                  sector.start <= (distanceToEnd / distanceToLeft) &&
-                  sector.end >= (distanceToStart / distanceToLeft);
+                  sector.start <= (distanceToEnd / distanceToFront) &&
+                  sector.end >= (distanceToStart / distanceToFront);
               if (seenFromTheFront ||
                   !this.isHiddenByCellsInSameColumn_(columnCell, originPoint)) {
                 cellsInSight.push(columnCell);
