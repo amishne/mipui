@@ -69,7 +69,7 @@ class SightGesture extends Gesture {
   }
 
   isHiddenByCellsInSameColumn_(cell, originPoint) {
-    const seeTop = originPoint.y < cell.offsetTop;
+    const seeTop = originPoint.y < cell.offsetTop - 1;
     const seeBottom = originPoint.y > cell.offsetTop + cell.height;
     const isOpaque =
         (row, column) => this.isOpaque_(state.theMap.getCell(row, column));
@@ -83,7 +83,7 @@ class SightGesture extends Gesture {
   }
 
   isHiddenByCellsInSameRow_(cell, originPoint) {
-    const seeLeft = originPoint.x < cell.offsetLeft;
+    const seeLeft = originPoint.x < cell.offsetLeft - 1;
     const seeRight = originPoint.x > cell.offsetLeft + cell.width;
     const isOpaque =
         (row, column) => this.isOpaque_(state.theMap.getCell(row, column));
@@ -126,12 +126,12 @@ class SightGesture extends Gesture {
       column = Math.round(column * 2) / 2;
       const columnCells = this.getColumnCells_(column, columnDiff);
       if (columnCells.length == 0) break;
-      const columnLeft = columnCells[0].offsetLeft;
+      const columnLeft = columnCells[0].offsetLeft - 1;
       const columnRight = columnLeft + columnCells[0].width;
       columnCells.forEach(columnCell => {
         const cellIsBeforeOrigin = columnDiff > 0 ?
           columnCell.row <= originCell.row : columnCell.row < originCell.row;
-        const cellTop = columnCell.offsetTop;
+        const cellTop = columnCell.offsetTop - 1;
         const cellBottom = columnCell.offsetTop + columnCell.height;
         const cellStart = columnDiff > 0 ? cellTop : cellBottom;
         const cellEnd = columnDiff > 0 ? cellBottom : cellTop;
@@ -222,13 +222,13 @@ class SightGesture extends Gesture {
       row = Math.round(row * 2) / 2;
       const rowCells = this.getRowCells_(row, rowDiff);
       if (rowCells.length == 0) break;
-      const rowTop = rowCells[0].offsetTop;
+      const rowTop = rowCells[0].offsetTop - 1;
       const rowBottom = rowTop + rowCells[0].height;
       rowCells.forEach(rowCell => {
         const cellIsBeforeOrigin = rowDiff > 0 ?
           rowCell.column <= originCell.column :
           rowCell.column < originCell.column;
-        const cellLeft = rowCell.offsetLeft;
+        const cellLeft = rowCell.offsetLeft - 1;
         const cellRight = rowCell.offsetLeft + rowCell.width;
         const cellStart = rowDiff > 0 ? cellLeft : cellRight;
         const cellEnd = rowDiff > 0 ? cellRight : cellLeft;
