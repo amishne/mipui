@@ -31,7 +31,7 @@ class SightGesture extends Gesture {
 
   getColumnCells_(column, columnDiff) {
     const result = [];
-    // Initial naive implementation.
+    // Naive implementation.
     const firstRow = parseInt(state.getProperty(pk.firstRow)) - 1;
     const lastRow = parseInt(state.getProperty(pk.lastRow)) + 1;
     const startRow = columnDiff > 0 ? firstRow : lastRow;
@@ -44,8 +44,23 @@ class SightGesture extends Gesture {
     return result;
   }
 
+  getRowCells_(row, rowDiff) {
+    const result = [];
+    // Naive implementation.
+    const firstColumn = parseInt(state.getProperty(pk.firstColumn)) - 1;
+    const lastColumn = parseInt(state.getProperty(pk.lastColumn)) + 1;
+    const startColumn = rowDiff > 0 ? firstColumn : lastColumn;
+    const endColumn = rowDiff > 0 ? lastColumn : firstColumn;
+    for (let column = startColumn; column != endColumn; column += rowDiff) {
+      column = Math.round(column * 2) / 2;
+      const cell = state.theMap.getCell(row, column);
+      if (cell) result.push(cell);
+    }
+    return result;
+  }
+
   isOpaque_(cell) {
-    return cell.hasLayerContent(ct.walls);
+    return cell && cell.hasLayerContent(ct.walls);
   }
 
   cleanSectors_(sectors) {
@@ -67,6 +82,20 @@ class SightGesture extends Gesture {
     return false;
   }
 
+  isHiddenByCellsInSameRow_(cell, originPoint) {
+    const seeLeft = originPoint.x < cell.offsetLeft;
+    const seeRight = originPoint.x > cell.offsetLeft + cell.width;
+    const isOpaque =
+        (row, column) => this.isOpaque_(state.theMap.getCell(row, column));
+    if (seeLeft && isOpaque(cell.row, cell.column - 0.5)) {
+      return true;
+    }
+    if (seeRight && isOpaque(cell.row, cell.column + 0.5)) {
+      return true;
+    }
+    return false;
+  }
+
   calculateCellsInSight_(cell) {
     const createOriginPoints = () => [{
       x: cell.offsetLeft + cell.width / 2,
@@ -74,14 +103,16 @@ class SightGesture extends Gesture {
       sectors: [{start: -1, end: 1}],
     }];
     const right =
-        this.calculateCellsInQuarterSight_(cell, createOriginPoints(), 0.5);
+        this.calculateCellsInSightByColumn_(cell, createOriginPoints(), 0.5);
     const left =
-        this.calculateCellsInQuarterSight_(cell, createOriginPoints(), -0.5);
-    const uniqueCells = new Set([...right, ...left]);
+        this.calculateCellsInSightByColumn_(cell, createOriginPoints(), -0.5);
+    const bottom =
+        this.calculateCellsInSightByRow_(cell, createOriginPoints(), 0.5);
+    const uniqueCells = new Set([...right, ...left, ...bottom]);
     return [cell].concat(Array.from(uniqueCells));
   }
 
-  calculateCellsInQuarterSight_(originCell, originPoints, columnDiff) {
+  calculateCellsInSightByColumn_(originCell, originPoints, columnDiff) {
     const cellsInSight = [];
     const startColumn = originCell.column + columnDiff;
     const endColumn =
@@ -174,6 +205,103 @@ class SightGesture extends Gesture {
           originPoints.filter(originPoint => originPoint.sectors.length > 0);
       if (originPoints.length == 0) break;
     } // Column loop
+    return cellsInSight;
+  }
+
+  calculateCellsInSightByRow_(originCell, originPoints, rowDiff) {
+    const cellsInSight = [];
+    const startRow = originCell.row + rowDiff;
+    const endRow =
+        parseInt(
+            state
+                .getProperty(rowDiff > 0 ? pk.lastRow : pk.firstRow)) +
+                rowDiff * 2;
+    for (let row = startRow; row != endRow; row += rowDiff) {
+      row = Math.round(row * 2) / 2;
+      const rowCells = this.getRowCells_(row, rowDiff);
+      if (rowCells.length == 0) break;
+      const rowTop = rowCells[0].offsetTop;
+      const rowBottom = rowTop + rowCells[0].height;
+      rowCells.forEach(rowCell => {
+        const cellIsBeforeOrigin = rowDiff > 0 ?
+          rowCell.column <= originCell.column :
+          rowCell.column < originCell.column;
+        const cellLeft = rowCell.offsetLeft;
+        const cellRight = rowCell.offsetLeft + rowCell.width;
+        const cellStart = rowDiff > 0 ? cellLeft : cellRight;
+        const cellEnd = rowDiff > 0 ? cellRight : cellLeft;
+        originPoints.forEach(originPoint => {
+          const distanceToStart = cellStart - originPoint.x;
+          const distanceToEnd = cellEnd - originPoint.x;
+          const distanceToTop = rowTop - originPoint.y;
+          const distanceToBottom = rowBottom - originPoint.y;
+          const cellStartFromScanDirection =
+              distanceToStart /
+              (cellIsBeforeOrigin ? distanceToTop : distanceToBottom);
+          let cellEndFromScanDirection =
+              distanceToEnd /
+              (cellIsBeforeOrigin ? distanceToTop : distanceToBottom);
+          const cellStartFromAntiScanDirection =
+              distanceToStart /
+              (cellIsBeforeOrigin ? distanceToBottom : distanceToTop);
+          let cellEndFromAntiScanDirection =
+              distanceToEnd /
+              (cellIsBeforeOrigin ? distanceToBottom : distanceToTop);
+          if (rowCell.column == rowCell.column) {
+            const temp = cellEndFromScanDirection;
+            cellEndFromScanDirection = cellEndFromAntiScanDirection;
+            cellEndFromAntiScanDirection = temp;
+          }
+          originPoint.sectors.forEach((sector, sectorIndex) => {
+            if (!originPoint.nextSectors) {
+              originPoint.nextSectors =
+                  originPoint.sectors.map(currentSector => ({
+                    start: currentSector.start,
+                    end: currentSector.end,
+                  }));
+              originPoint.additionalNextSectorsCount = 0;
+            }
+            const actualSectorIndex =
+                sectorIndex + originPoint.additionalNextSectorsCount;
+            let nextSector = originPoint.nextSectors[actualSectorIndex];
+            if (sector.start < cellEndFromAntiScanDirection &&
+                sector.end > cellStartFromScanDirection) {
+              const distanceToFront =
+                  rowDiff > 0 ? distanceToTop : distanceToBottom;
+              const seenFromTheFront =
+                  sector.start <= (distanceToEnd / distanceToFront) &&
+                  sector.end >= (distanceToStart / distanceToFront);
+              if (seenFromTheFront ||
+                  !this.isHiddenByCellsInSameRow_(rowCell, originPoint)) {
+                cellsInSight.push(rowCell);
+              }
+              const currentCellIsOpaque = this.isOpaque_(rowCell);
+              if (currentCellIsOpaque && !sector.prevRowCellWasOpaque) {
+                nextSector.end =
+                    Math.max(nextSector.start, cellStartFromScanDirection);
+              } else if (!currentCellIsOpaque && sector.prevRowCellWasOpaque) {
+                nextSector = {
+                  start: Math.min(1, cellStartFromAntiScanDirection),
+                  end: sector.end,
+                };
+                originPoint.nextSectors
+                    .splice(actualSectorIndex + 1, 0, nextSector);
+                originPoint.additionalNextSectorsCount++;
+              }
+              sector.prevRowCellWasOpaque = currentCellIsOpaque;
+            }
+          }); // Sectors of origin point loop
+        }); // Origin point loop
+      }); // Cells in row loop
+      originPoints.forEach(originPoint => {
+        originPoint.sectors = this.cleanSectors_(originPoint.nextSectors);
+        originPoint.nextSectors = null;
+        originPoint.additionalNextSectorsCount = 0;
+      });
+      originPoints =
+          originPoints.filter(originPoint => originPoint.sectors.length > 0);
+      if (originPoints.length == 0) break;
+    } // row loop
     return cellsInSight;
   }
 }
