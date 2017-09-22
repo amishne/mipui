@@ -108,7 +108,9 @@ class SightGesture extends Gesture {
         this.calculateCellsInSightByColumn_(cell, createOriginPoints(), -0.5);
     const bottom =
         this.calculateCellsInSightByRow_(cell, createOriginPoints(), 0.5);
-    const uniqueCells = new Set([...right, ...left, ...bottom]);
+    const top =
+        this.calculateCellsInSightByRow_(cell, createOriginPoints(), -0.5);
+    const uniqueCells = new Set([...right, ...left, ...bottom, ...top]);
     return [cell].concat(Array.from(uniqueCells));
   }
 
