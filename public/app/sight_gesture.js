@@ -96,7 +96,8 @@ class SightGesture extends Gesture {
       const columnLeft = columnCells[0].offsetLeft;
       const columnRight = columnLeft + columnCells[0].width;
       columnCells.forEach(columnCell => {
-        const cellIsBeforeOrigin = columnCell.row <= originCell.row;
+        const cellIsBeforeOrigin = columnDiff > 0 ?
+          columnCell.row <= originCell.row : columnCell.row < originCell.row;
         const cellTop = columnCell.offsetTop;
         const cellBottom = columnCell.offsetTop + columnCell.height;
         const cellStart = columnDiff > 0 ? cellTop : cellBottom;
@@ -148,10 +149,11 @@ class SightGesture extends Gesture {
               }
               const currentCellIsOpaque = this.isOpaque_(columnCell);
               if (currentCellIsOpaque && !sector.prevColCellWasOpaque) {
-                nextSector.end = cellStartFromScanDirection;
+                nextSector.end =
+                    Math.max(nextSector.start, cellStartFromScanDirection);
               } else if (!currentCellIsOpaque && sector.prevColCellWasOpaque) {
                 nextSector = {
-                  start: cellStartFromAntiScanDirection,
+                  start: Math.min(1, cellStartFromAntiScanDirection),
                   end: sector.end,
                 };
                 originPoint.nextSectors
