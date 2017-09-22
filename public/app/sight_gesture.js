@@ -31,14 +31,11 @@ class SightGesture extends Gesture {
   getColumnCells_(column, columnDiff) {
     const result = [];
     // Initial naive implementation.
-    let firstRow = parseInt(state.getProperty(pk.firstRow)) - 0.5;
-    let lastRow = parseInt(state.getProperty(pk.lastRow)) + 0.5;
-    if (columnDiff < 0) {
-      const temp = firstRow;
-      firstRow = lastRow;
-      lastRow = temp;
-    }
-    for (let row = firstRow; row != lastRow; row += columnDiff) {
+    const firstRow = parseInt(state.getProperty(pk.firstRow)) - 1;
+    const lastRow = parseInt(state.getProperty(pk.lastRow)) + 1;
+    const startRow = columnDiff > 0 ? firstRow : lastRow;
+    const endRow = columnDiff > 0 ? lastRow : firstRow;
+    for (let row = startRow; row != endRow; row += columnDiff) {
       row = Math.round(row * 2) / 2;
       const cell = state.theMap.getCell(row, column);
       if (cell) result.push(cell);
@@ -90,7 +87,7 @@ class SightGesture extends Gesture {
         parseInt(
             state
                 .getProperty(columnDiff > 0 ? pk.lastColumn : pk.firstColumn)) +
-                columnDiff;
+                columnDiff * 2;
     for (let column = startColumn; column != endColumn; column += columnDiff) {
       column = Math.round(column * 2) / 2;
       const columnCells = this.getColumnCells_(column, columnDiff);
@@ -98,10 +95,7 @@ class SightGesture extends Gesture {
       const columnLeft = columnCells[0].offsetLeft;
       const columnRight = columnLeft + columnCells[0].width;
       columnCells.forEach(columnCell => {
-        const cellIsBeforeOrigin =
-            columnDiff > 0 ?
-              (columnCell.row <= originCell.row) :
-              (columnCell.row >= originCell.row);
+        const cellIsBeforeOrigin = columnCell.row <= originCell.row;
         const cellTop = columnCell.offsetTop;
         const cellBottom = columnCell.offsetTop + columnCell.height;
         const cellStart = columnDiff > 0 ? cellTop : cellBottom;
