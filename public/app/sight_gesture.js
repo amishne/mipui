@@ -52,13 +52,17 @@ class SightGesture extends Gesture {
         existingCell.hideHighlight(ct.overlay);
         existingCell.setLayerContent(ct.overlay, this.overlayContent_, true);
       });
-      this.shouldMakeOtherCellsHidden_ = false;
     }
 
     this.cellsInSight_.forEach(cellInSight => {
       cellInSight.hideHighlight(ct.overlay);
       cellInSight.setLayerContent(ct.overlay, null, true);
     });
+
+    if (this.shouldMakeOtherCellsHidden_) {
+      state.opCenter.recordOperationComplete(true);
+      this.shouldMakeOtherCellsHidden_ = false;
+    }
   }
 
   continueGesture(cell) {

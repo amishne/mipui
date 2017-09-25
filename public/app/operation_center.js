@@ -120,9 +120,10 @@ class OperationCenter {
 
   // Records that a local operation has been completed.
   // This updates the undo stack and sends the op to the server.
-  recordOperationComplete() {
+  recordOperationComplete(forceMapRewrite = false) {
     if (this.currentOperation_.length == 0) return;
     this.currentOperation_.markComplete(true);
+    this.currentOperation_.alwaysRewrite = forceMapRewrite;
     this.addLocalOperation_(this.currentOperation_);
     this.currentOperation_ = new Operation();
     if (this.autoSaveTimerId_) {
@@ -522,7 +523,7 @@ class OperationCenter {
     // And concurrently, actually write the operation in its place.
     const opPath = `/maps/${state.getMid()}/payload/operations/${op.num}`;
     firebase.database().ref(opPath).set(op.data, () => {
-      this.rewriteIfRequired_();
+      this.rewriteIfRequired_(op);
     });
   }
 
@@ -552,26 +553,37 @@ class OperationCenter {
 
   // Rewrites the full map on the server if it's determined to be this client's
   // responsibility.
-  rewriteIfRequired_() {
+  rewriteIfRequired_(op) {
     // Don't rewrite if there are still operations to send, either in progress:
     if (this.isCurrentlyProcessingPendingOperations_) return;
     // or waiting:
     if (this.pendingLocalOperations_.length > 0) return;
 
     const lastOpNum = state.getLastOpNum();
-    // Don't rewrite if the lastFullMapNum_ isn't more than 10 operations out-
-    // of-date.
-    if (lastOpNum - this.lastFullMapNum_ <= 10) return;
 
-    // To minimize two clients trying to rewrite precisely at the same time,
-    // there's some basic requirement on the current operation num.
-    if (lastOpNum % 3 != 0) return;
+    if (!op.alwaysRewrite) {
+      // Don't rewrite if the lastFullMapNum_ isn't more than 10 operations out-
+      // of-date.
+      if (lastOpNum - this.lastFullMapNum_ <= 10) return;
+
+      // To minimize two clients trying to rewrite precisely at the same time,
+      // there's some basic requirement on the current operation num.
+      if (lastOpNum % 3 != 0) return;
+    }
 
     this.rewrite_(lastOpNum);
   }
 
+  // Force a map rewrite.
+  forceMapRewrite() {
+    this.rewrite_(state.getLastOpNum(), null, () => {
+      debug('Forced rewrite failed, retrying...');
+      this.forceMapRewrite();
+    });
+  }
+
   // Rewrites the full map on the server to be up-to-date to 'num'.
-  rewrite_(num) {
+  rewrite_(num, onSuccess, onFailure) {
     debug(`Rewriting map to operation ${num}...`);
     const snapshot = JSON.parse(JSON.stringify(state.pstate_));
     const payloadPath = `/maps/${state.getMid()}/payload`;
@@ -590,9 +602,15 @@ class OperationCenter {
         fullMap: snapshot,
       };
     }, (error, committed) => {
-      if (!error && committed) {
+      if (error) {
+        debug(`Rewriting map to operation ${num} failed.`);
+        if (onFailure) onFailure(error);
+      } else if (committed) {
         debug(`Rewriting map to operation ${num} complete.`);
         this.lastFullMapNum_ = num;
+        if (onSuccess) onSuccess();
+      } else {
+        debug(`Still rewriting map to operation ${num}...`);
       }
     }, false /* suppress updates on intermediate states */);
   }

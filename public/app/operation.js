@@ -10,6 +10,7 @@ class Operation {
       // Property changes.
       p: {},
     };
+    this.alwaysRewrite = false;
   }
 
   addCellChange(key, layer, oldValue, newValue) {

@@ -1513,7 +1513,7 @@ class Menu {
                         [ck.variation]: ct.overlay.hidden.black.id,
                       }, true);
                 });
-                state.opCenter.recordOperationComplete();
+                state.opCenter.recordOperationComplete(true);
               },
             },
             {

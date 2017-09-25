@@ -55,7 +55,7 @@ function initializeFirebase(callback) {
     debug = s => console.log(s);
   }
   firebase.initializeApp(config);
-  firebase.database.enableLogging(!isProd || isInTestingMode);
+  firebase.database.enableLogging(false);
   firebase.auth().signInAnonymously()
       .then(user => { state.user = user; callback(); })
       .catch(() => setStatus(Status.AUTH_ERROR));
