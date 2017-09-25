@@ -3,6 +3,13 @@ class SightGesture extends Gesture {
     super();
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
+    this.overlayContent_ = {
+      [ck.kind]: ct.overlay.hidden.id,
+      [ck.variation]: ct.overlay.hidden.black.id,
+    };
+    this.shouldMakeOtherCellsHidden_ =
+        Array.from(state.theMap.cells.entries)
+            .every(([key, cell]) => !cell.hasLayerContent(ct.overlay));
   }
 
   startHover(cell) {
@@ -12,21 +19,44 @@ class SightGesture extends Gesture {
     if (!this.hoveredCell_) return;
 
     this.cellsInSight_ = this.calculateCellsInSight_(this.hoveredCell_);
+
+    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
+      state.theMap.cells.forEach((existingCell, key) => {
+        existingCell.showHighlight(ct.overlay, this.overlayContent_);
+      });
+    }
+
     this.cellsInSight_.forEach(cellInSight => {
+      cellInSight.hideHighlight(ct.overlay);
       cellInSight.showHighlight(ct.overlay, null);
     });
   }
 
   stopHover() {
-    this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.hideHighlight(ct.overlay);
-    });
+    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
+      state.theMap.cells.forEach((existingCell, key) => {
+        existingCell.hideHighlight(ct.overlay);
+      });
+    } else {
+      this.cellsInSight_.forEach(cellInSight => {
+        cellInSight.hideHighlight(ct.overlay);
+      });
+    }
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
   }
 
   startGesture() {
+    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
+      state.theMap.cells.forEach((existingCell, key) => {
+        existingCell.hideHighlight(ct.overlay);
+        existingCell.setLayerContent(ct.overlay, this.overlayContent_, true);
+      });
+      this.shouldMakeOtherCellsHidden_ = false;
+    }
+
     this.cellsInSight_.forEach(cellInSight => {
+      cellInSight.hideHighlight(ct.overlay);
       cellInSight.setLayerContent(ct.overlay, null, true);
     });
   }
@@ -128,8 +158,14 @@ class SightGesture extends Gesture {
         this.calculateCellsInSightByRow_(cell, createOriginPoints(), 0.5);
     const top =
         this.calculateCellsInSightByRow_(cell, createOriginPoints(), -0.5);
-    const uniqueCells = new Set([...right, ...left, ...bottom, ...top]);
-    return [cell].concat(Array.from(uniqueCells));
+    const uniqueCells =
+        Array.from(new Set([...right, ...left, ...bottom, ...top]));
+    const eligibleCells =
+        this.shouldMakeOtherCellsHidden_ ?
+          uniqueCells :
+          uniqueCells.filter(cellToReveal =>
+            cellToReveal.hasLayerContent(ct.overlay));
+    return [cell].concat(eligibleCells);
   }
 
   calculateCellsInSightByColumn_(originCell, originPoints, columnDiff) {
