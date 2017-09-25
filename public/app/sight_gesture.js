@@ -4,6 +4,7 @@ class SightGesture extends Gesture {
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
   }
+
   startHover(cell) {
     if (cell && cell.role == 'primary') {
       this.hoveredCell_ = cell;
@@ -12,12 +13,10 @@ class SightGesture extends Gesture {
 
     this.cellsInSight_ = this.calculateCellsInSight_(this.hoveredCell_);
     this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.showHighlight(ct.overlay, {
-        [ck.kind]: ct.overlay.hidden.id,
-        [ck.variation]: ct.overlay.hidden.black.id,
-      });
+      cellInSight.showHighlight(ct.overlay, null);
     });
   }
+
   stopHover() {
     this.cellsInSight_.forEach(cellInSight => {
       cellInSight.hideHighlight(ct.overlay);
@@ -25,9 +24,28 @@ class SightGesture extends Gesture {
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
   }
-  startGesture() {}
-  continueGesture(cell) {}
-  stopGesture() {}
+
+  startGesture() {
+    this.cellsInSight_.forEach(cellInSight => {
+      cellInSight.setLayerContent(ct.overlay, null, true);
+    });
+  }
+
+  continueGesture(cell) {
+    if (cell && cell.role == 'primary') {
+      this.hoveredCell_ = cell;
+    }
+    if (!this.hoveredCell_) return;
+
+    this.cellsInSight_ = this.calculateCellsInSight_(this.hoveredCell_);
+    this.cellsInSight_.forEach(cellInSight => {
+      cellInSight.setLayerContent(ct.overlay, null, true);
+    });
+  }
+
+  stopGesture() {
+    state.opCenter.recordOperationComplete();
+  }
 
   getColumnCells_(column, columnDiff) {
     const result = [];
