@@ -249,7 +249,7 @@ class SightGesture extends Gesture {
           let cellEndFromAntiScanDirection =
               distanceToEnd /
               (cellIsBeforeOrigin ? distanceToBottom : distanceToTop);
-          if (rowCell.column == rowCell.column) {
+          if (rowCell.column == originCell.column) {
             const temp = cellEndFromScanDirection;
             cellEndFromScanDirection = cellEndFromAntiScanDirection;
             cellEndFromAntiScanDirection = temp;
