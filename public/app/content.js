@@ -180,7 +180,7 @@ const ct = {
     },
     spiral: { generic: {classNames: ['stairs-cell-spiral']} },
   },
-  overlay: {
+  mask: {
     hidden: {
       black: {classNames: ['hidden-cell', 'hidden-cell-_ADDING-REMOVING_']},
     },

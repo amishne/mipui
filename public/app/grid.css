@@ -41,7 +41,7 @@
   pointer-events: auto;
 }
 
-#overlayLayer {
+#maskLayer {
   z-index: 9;
 }
 

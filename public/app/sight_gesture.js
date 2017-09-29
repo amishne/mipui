@@ -3,13 +3,13 @@ class SightGesture extends Gesture {
     super();
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
-    this.overlayContent_ = {
-      [ck.kind]: ct.overlay.hidden.id,
-      [ck.variation]: ct.overlay.hidden.black.id,
+    this.maskContent_ = {
+      [ck.kind]: ct.mask.hidden.id,
+      [ck.variation]: ct.mask.hidden.black.id,
     };
     this.shouldMakeOtherCellsHidden_ =
-        Array.from(state.theMap.cells.entries)
-            .every(([key, cell]) => !cell.hasLayerContent(ct.overlay));
+        Array.from(state.theMap.cells.entries())
+            .every(([key, cell]) => !cell.hasLayerContent(ct.mask));
   }
 
   startHover(cell) {
@@ -22,24 +22,24 @@ class SightGesture extends Gesture {
 
     if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
       state.theMap.cells.forEach((existingCell, key) => {
-        existingCell.showHighlight(ct.overlay, this.overlayContent_);
+        existingCell.showHighlight(ct.mask, this.maskContent_);
       });
     }
 
     this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.hideHighlight(ct.overlay);
-      cellInSight.showHighlight(ct.overlay, null);
+      cellInSight.hideHighlight(ct.mask);
+      cellInSight.showHighlight(ct.mask, null);
     });
   }
 
   stopHover() {
     if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
       state.theMap.cells.forEach((existingCell, key) => {
-        existingCell.hideHighlight(ct.overlay);
+        existingCell.hideHighlight(ct.mask);
       });
     } else {
       this.cellsInSight_.forEach(cellInSight => {
-        cellInSight.hideHighlight(ct.overlay);
+        cellInSight.hideHighlight(ct.mask);
       });
     }
     this.hoveredCell_ = null;
@@ -49,14 +49,14 @@ class SightGesture extends Gesture {
   startGesture() {
     if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
       state.theMap.cells.forEach((existingCell, key) => {
-        existingCell.hideHighlight(ct.overlay);
-        existingCell.setLayerContent(ct.overlay, this.overlayContent_, true);
+        existingCell.hideHighlight(ct.mask);
+        existingCell.setLayerContent(ct.mask, this.maskContent_, true);
       });
     }
 
     this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.hideHighlight(ct.overlay);
-      cellInSight.setLayerContent(ct.overlay, null, true);
+      cellInSight.hideHighlight(ct.mask);
+      cellInSight.setLayerContent(ct.mask, null, true);
     });
 
     if (this.shouldMakeOtherCellsHidden_) {
@@ -73,7 +73,7 @@ class SightGesture extends Gesture {
 
     this.cellsInSight_ = this.calculateCellsInSight_(this.hoveredCell_);
     this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.setLayerContent(ct.overlay, null, true);
+      cellInSight.setLayerContent(ct.mask, null, true);
     });
   }
 
@@ -168,7 +168,7 @@ class SightGesture extends Gesture {
         this.shouldMakeOtherCellsHidden_ ?
           uniqueCells :
           uniqueCells.filter(cellToReveal =>
-            cellToReveal.hasLayerContent(ct.overlay));
+            cellToReveal.hasLayerContent(ct.mask));
     return [cell].concat(eligibleCells);
   }
 

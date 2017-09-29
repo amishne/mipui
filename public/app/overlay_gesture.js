@@ -11,7 +11,7 @@ class OverlayGesture extends Gesture {
   startHover(cell) {
     if (!cell) return;
     this.hoveredCell_ = cell;
-    this.mode_ = cell.hasLayerContent(ct.overlay) ? 'removing' : 'adding';
+    this.mode_ = cell.hasLayerContent(ct.mask) ? 'removing' : 'adding';
     cell.showHighlight(this.layer_, this.createContent_());
   }
 

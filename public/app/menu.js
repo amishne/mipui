@@ -1487,7 +1487,7 @@ class Menu {
               callback: () => {
                 state.gesture =
                     new OverlayGesture(
-                      ct.overlay, ct.overlay.hidden, ct.overlay.hidden.black);
+                      ct.mask, ct.mask.hidden, ct.mask.hidden.black);
               },
             },
             {
@@ -1511,9 +1511,9 @@ class Menu {
               callback: () => {
                 state.theMap.cells.forEach(cell => {
                   cell.setLayerContent(
-                      ct.overlay, {
-                        [ck.kind]: ct.overlay.hidden.id,
-                        [ck.variation]: ct.overlay.hidden.black.id,
+                      ct.mask, {
+                        [ck.kind]: ct.mask.hidden.id,
+                        [ck.variation]: ct.mask.hidden.black.id,
                       }, true);
                 });
                 state.opCenter.recordOperationComplete(true);
@@ -1528,7 +1528,7 @@ class Menu {
               isSelected: true,
               callback: () => {
                 state.theMap.cells.forEach(cell => {
-                  cell.setLayerContent(ct.overlay, null, true);
+                  cell.setLayerContent(ct.mask, null, true);
                 });
                 state.opCenter.recordOperationComplete();
               },
