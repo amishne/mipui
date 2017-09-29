@@ -545,7 +545,7 @@
 }
 
 .gm-note {
-  color: red;
+  color: mediumvioletred;
   display: none;
 }
 
@@ -672,22 +672,22 @@
 }
 
 .editor-view .hidden-cell {
-  background-image: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,.5) 3px, rgba(255,255,255,.5) 6px);
-  opacity: 0.45;
+  background-image: repeating-linear-gradient(45deg, RGB(102, 51, 153), RGB(102, 51, 153) 3px, rgb(100, 100, 100) 3px, rgb(100, 100, 100) 6px);
+  opacity: 0.4;
 }
 
 .editor-view .hidden-cell-adding {
-  opacity: 0.25;
+  opacity: 0.2;
 }
 
 .editor-view .hidden-cell-removing {
-  opacity: 0.15;
+  opacity: 0.1;
 }
 
 .hidden-secret-door-cell {
   display: none;
-  border: 1px dashed red;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='10' fill='red'>S</text></svg>") rgb(255, 250, 240) no-repeat;
+  border: 1px dashed mediumvioletred;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='10' fill='mediumvioletred'>S</text></svg>") rgb(255, 250, 240) no-repeat;
 }
 
 .editor-view .hidden-secret-door-cell {
