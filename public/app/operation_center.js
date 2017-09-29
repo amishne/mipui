@@ -440,11 +440,11 @@ class OperationCenter {
         },
         secret: state.getSecret(),
       };
-      firebase.database().ref(`/maps/${state.getMid()}`).set(data, error => {
-        setStatus(Status.AUTH_ERROR);
-      }).then(() => {
+      firebase.database().ref(`/maps/${state.getMid()}`).set(data).then(() => {
         this.connectToExistingMap(state.getMid(), state.getSecret(), callback);
-      });
+      }).catch(error => {
+        setStatus(Status.AUTH_ERROR);
+      });;
     });
   }
 
@@ -522,7 +522,7 @@ class OperationCenter {
     this.continueSendingPendingLocalOperations_();
     // And concurrently, actually write the operation in its place.
     const opPath = `/maps/${state.getMid()}/payload/operations/${op.num}`;
-    firebase.database().ref(opPath).set(op.data, () => {
+    firebase.database().ref(opPath).set(op.data).then(() => {
       this.rewriteIfRequired_(op);
     });
   }
@@ -574,16 +574,8 @@ class OperationCenter {
     this.rewrite_(lastOpNum);
   }
 
-  // Force a map rewrite.
-  forceMapRewrite() {
-    this.rewrite_(state.getLastOpNum(), null, () => {
-      debug('Forced rewrite failed, retrying...');
-      this.forceMapRewrite();
-    });
-  }
-
   // Rewrites the full map on the server to be up-to-date to 'num'.
-  rewrite_(num, onSuccess, onFailure) {
+  rewrite_(num) {
     debug(`Rewriting map to operation ${num}...`);
     const snapshot = JSON.parse(JSON.stringify(state.pstate_));
     const payloadPath = `/maps/${state.getMid()}/payload`;
@@ -604,11 +596,9 @@ class OperationCenter {
     }, (error, committed) => {
       if (error) {
         debug(`Rewriting map to operation ${num} failed.`);
-        if (onFailure) onFailure(error);
       } else if (committed) {
         debug(`Rewriting map to operation ${num} complete.`);
         this.lastFullMapNum_ = num;
-        if (onSuccess) onSuccess();
       } else {
         debug(`Still rewriting map to operation ${num}...`);
       }
