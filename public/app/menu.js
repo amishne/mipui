@@ -75,7 +75,7 @@ class Menu {
     this.populateMenuItem_(menuItem);
     const tipElement =
         createAndAppendDivWithClass(submenuElement, 'menu-tip');
-    tipElement.innerHTML = menuItem.tip;
+    tipElement.innerHTML = menuItem.tip || '';
   }
 
   populateMenuItem_(menuItem) {
@@ -316,6 +316,9 @@ class Menu {
         break;
       case ct.separators.door.secret.id:
         separatorClassNames.push('secret-door-cell');
+        break;
+      case ct.separators.door.hiddenSecret.id:
+        separatorClassNames.push('hidden-secret-door-cell');
         break;
     }
     return {
@@ -1532,6 +1535,12 @@ class Menu {
             },
             this.createTextTool_(
                 ct.text.gmNote, ct.text.gmNote.standard, 'DM Note', 'Note'),
+            this.createSeparatorTool_(
+                'Hidden Secret Door',
+                ct.separators.door,
+                ct.separators.door.hiddenSecret,
+                true,
+                false),
           ],
         },
       },

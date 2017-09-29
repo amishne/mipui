@@ -107,6 +107,7 @@ function start() {
       });
     } else {
       state.menu.setToInitialSelection();
+      document.getElementById('theMap').classList.add('editor-view');
       setStatus(Status.READY);
     }
   });

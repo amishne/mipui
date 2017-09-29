@@ -420,6 +420,10 @@
   left: 2px;
 }
 
+.menu .hidden-secret-door-cell {
+  display: inherit;
+}
+
 .menu-images .floor-cell {
   position: relative;
   top: 2px;

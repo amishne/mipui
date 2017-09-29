@@ -668,7 +668,7 @@
 
 .hidden-cell {
   position: absolute;
-  background-color: darkgrey;
+  background-color: rgb(50, 50, 50);
 }
 
 .editor-view .hidden-cell {
@@ -682,4 +682,14 @@
 
 .editor-view .hidden-cell-removing {
   opacity: 0.15;
+}
+
+.hidden-secret-door-cell {
+  display: none;
+  border: 1px dashed red;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='10' fill='red'>S</text></svg>") rgb(255, 250, 240) no-repeat;
+}
+
+.editor-view .hidden-secret-door-cell {
+  display: inherit;
 }
