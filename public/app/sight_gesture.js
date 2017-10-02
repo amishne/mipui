@@ -149,19 +149,26 @@ class SightGesture extends Gesture {
   }
 
   calculateCellsInSight_(cell) {
-    const createOriginPoints = () => [{
+    const right = this.calculateCellsInSightByColumn_(cell, [{
+      x: cell.offsetLeft + cell.width / 2 - 2,
+      y: cell.offsetTop + cell.height / 2 - 1.25,
+      sectors: [{start: -1, end: 1}],
+    }], 0.5);
+    const left = this.calculateCellsInSightByColumn_(cell, [{
       x: cell.offsetLeft + cell.width / 2,
+      y: cell.offsetTop + cell.height / 2 + 0.25,
+      sectors: [{start: -1, end: 1}],
+    }], -0.5);
+    const bottom = this.calculateCellsInSightByRow_(cell, [{
+      x: cell.offsetLeft + cell.width / 2 - 1.25,
+      y: cell.offsetTop + cell.height / 2 - 2,
+      sectors: [{start: -1, end: 1}],
+    }], 0.5);
+    const top = this.calculateCellsInSightByRow_(cell, [{
+      x: cell.offsetLeft + cell.width / 2 + 0.25,
       y: cell.offsetTop + cell.height / 2,
       sectors: [{start: -1, end: 1}],
-    }];
-    const right =
-        this.calculateCellsInSightByColumn_(cell, createOriginPoints(), 0.5);
-    const left =
-        this.calculateCellsInSightByColumn_(cell, createOriginPoints(), -0.5);
-    const bottom =
-        this.calculateCellsInSightByRow_(cell, createOriginPoints(), 0.5);
-    const top =
-        this.calculateCellsInSightByRow_(cell, createOriginPoints(), -0.5);
+    }], -0.5);
     const uniqueCells =
         Array.from(new Set([...right, ...left, ...bottom, ...top]));
     const eligibleCells =
