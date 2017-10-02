@@ -181,10 +181,12 @@ const ct = {
     spiral: { generic: {classNames: ['stairs-cell-spiral']} },
   },
   gmOverlay: {
-    classNames: ['gm-overlay'],
     shape: {
       square: {
-        classNames: {classNames: ['gm-overlay-square']},
+        classNames: [
+          'gm-overlay-square',
+          'gm-overlay-square-_ADDING-REMOVING_',
+        ],
       },
     },
   },

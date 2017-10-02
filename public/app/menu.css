@@ -424,6 +424,12 @@
   display: inherit;
 }
 
+.menu .gm-overlay-square {
+  display: inherit;
+  left: 3px;
+  top: 3px;
+}
+
 .menu-images .floor-cell {
   position: relative;
   top: 2px;

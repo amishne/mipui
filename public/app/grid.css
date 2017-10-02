@@ -32,17 +32,26 @@
 }
 
 #widgetLayer {
-  z-index: 10;
+  z-index: 11;
 }
 
 #gridLayer {
   display: inline-block;
-  z-index: 10;
+  z-index: 11;
   pointer-events: auto;
 }
 
 #maskLayer {
+  z-index: 10;
+}
+
+#gmOverlayLayer {
   z-index: 9;
+  display: hidden;
+}
+
+.editor-view #gmOverlayLayer {
+  display: inherit;
 }
 
 #textLayer {
@@ -692,4 +701,18 @@
 
 .editor-view .hidden-secret-door-cell {
   display: inherit;
+}
+
+.gm-overlay-square {
+  position: absolute;
+  background-color: mediumvioletred;
+  opacity: 0.4;
+}
+
+.gm-overlay-square-adding {
+  opacity: 0.2;
+}
+
+.gm-overlay-square-removing {
+  opacity: 0.1;
 }

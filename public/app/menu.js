@@ -1483,7 +1483,6 @@ class Menu {
               presentation: 'icon',
               materialIcon: 'filter_tilt_shift',
               enabledInReadonlyMode: false,
-              isSelected: true,
               callback: () => {
                 state.gesture =
                     new OverlayGesture(
@@ -1496,7 +1495,6 @@ class Menu {
               presentation: 'icon',
               materialIcon: 'my_location',
               enabledInReadonlyMode: false,
-              isSelected: true,
               callback: () => {
                 state.gesture = new SightGesture();
               },
@@ -1507,7 +1505,6 @@ class Menu {
               presentation: 'icon',
               materialIcon: 'visibility_off',
               enabledInReadonlyMode: false,
-              isSelected: true,
               callback: () => {
                 state.theMap.cells.forEach(cell => {
                   cell.setLayerContent(
@@ -1525,7 +1522,6 @@ class Menu {
               presentation: 'icon',
               materialIcon: 'visibility',
               enabledInReadonlyMode: false,
-              isSelected: true,
               callback: () => {
                 state.theMap.cells.forEach(cell => {
                   cell.setLayerContent(ct.mask, null, true);
@@ -1541,6 +1537,26 @@ class Menu {
                 ct.separators.door.hiddenSecret,
                 true,
                 false),
+            {
+              name: 'Region',
+              type: 'tool',
+              presentation: 'cells',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                state.gesture = new OverlayGesture(
+                    ct.gmOverlay,
+                    ct.gmOverlay.shape,
+                    ct.gmOverlay.shape.square);
+              },
+              cells: [{
+                classNames: [
+                  'grid-cell',
+                  'primary-cell',
+                  'floor-cell',
+                  'gm-overlay-square',
+                ],
+              }],
+            },
           ],
         },
       },
