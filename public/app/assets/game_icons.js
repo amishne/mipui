@@ -507,6 +507,15 @@ const gameIcons = [
     "hash": -1070489859
   },
   {
+    "path": "public/app/assets/icons/cathelineau/originals/svg/000000/transparent/boar-ensign.svg",
+    "name": "boar-ensign",
+    "tags": [
+      "mammal",
+      "celtic"
+    ],
+    "hash": -1105190376
+  },
+  {
     "path": "public/app/assets/icons/cathelineau/originals/svg/000000/transparent/carnyx.svg",
     "name": "carnyx",
     "tags": [
@@ -726,6 +735,304 @@ const gameIcons = [
     "hash": -728074964
   },
   {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/acrobatic.svg",
+    "name": "acrobatic",
+    "tags": [
+      "action",
+      "body",
+      "ninja"
+    ],
+    "hash": -982716277
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/apothecary.svg",
+    "name": "apothecary",
+    "tags": [
+      "kitchenware"
+    ],
+    "hash": 1903804007
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/big-gear.svg",
+    "name": "big-gear",
+    "tags": [
+      "machine",
+      "metal"
+    ],
+    "hash": -1642180755
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/catch.svg",
+    "name": "catch",
+    "tags": [
+      "action",
+      "hand"
+    ],
+    "hash": -2097263914
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/cauldron.svg",
+    "name": "cauldron",
+    "tags": [
+      "container",
+      "kitchenware",
+      "liquid"
+    ],
+    "hash": 1732171283
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/chameleon-glyph.svg",
+    "name": "chameleon-glyph",
+    "tags": [
+      "reptile",
+      "symbol"
+    ],
+    "hash": -872635322
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/death-juice.svg",
+    "name": "death-juice",
+    "tags": [
+      "death",
+      "liquid",
+      "skull"
+    ],
+    "hash": -934738142
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/distraction.svg",
+    "name": "distraction",
+    "tags": [
+      "body",
+      "state"
+    ],
+    "hash": 604593565
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/fish-cooked.svg",
+    "name": "fish-cooked",
+    "tags": [
+      "fish",
+      "food"
+    ],
+    "hash": -2040951081
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/flying-shuriken.svg",
+    "name": "flying-shuriken",
+    "tags": [
+      "spike",
+      "weapon",
+      "ninja"
+    ],
+    "hash": 1777893206
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/fried-fish.svg",
+    "name": "fried-fish",
+    "tags": [
+      "fish",
+      "food"
+    ],
+    "hash": 1874919162
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/hooded-assassin.svg",
+    "name": "hooded-assassin",
+    "tags": [
+      "body"
+    ],
+    "hash": -851470286
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/hooded-figure.svg",
+    "name": "hooded-figure",
+    "tags": [
+      "body"
+    ],
+    "hash": 713196497
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/kusarigama.svg",
+    "name": "kusarigama",
+    "tags": [
+      "weapon",
+      "ninja"
+    ],
+    "hash": 1880783822
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/ninja-head.svg",
+    "name": "ninja-head",
+    "tags": [
+      "head",
+      "mask",
+      "ninja"
+    ],
+    "hash": 727796276
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/ninja-heroic-stance.svg",
+    "name": "ninja-heroic-stance",
+    "tags": [
+      "body",
+      "ninja"
+    ],
+    "hash": 127966305
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/north-star-shuriken.svg",
+    "name": "north-star-shuriken",
+    "tags": [
+      "spike",
+      "star",
+      "weapon",
+      "ninja"
+    ],
+    "hash": -1285228757
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/on-sight.svg",
+    "name": "on-sight",
+    "tags": [
+      "target"
+    ],
+    "hash": 1649072096
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/plants-and-animals.svg",
+    "name": "plants-and-animals",
+    "tags": [
+      "animal",
+      "plant"
+    ],
+    "hash": -1955724147
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/ram.svg",
+    "name": "ram",
+    "tags": [
+      "mammal"
+    ],
+    "hash": 104591353
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/revolt.svg",
+    "name": "revolt",
+    "tags": [
+      "hand"
+    ],
+    "hash": -750389595
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/robber-hand.svg",
+    "name": "robber-hand",
+    "tags": [
+      "hand",
+      "money"
+    ],
+    "hash": -757259123
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/running-ninja.svg",
+    "name": "running-ninja",
+    "tags": [
+      "action",
+      "body",
+      "ninja"
+    ],
+    "hash": -1497400425
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/severed-hand.svg",
+    "name": "severed-hand",
+    "tags": [
+      "bone",
+      "hand"
+    ],
+    "hash": -1200668835
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/sharp-shuriken.svg",
+    "name": "sharp-shuriken",
+    "tags": [
+      "spike",
+      "star",
+      "weapon",
+      "ninja"
+    ],
+    "hash": 924843377
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/shuriken.svg",
+    "name": "shuriken",
+    "tags": [
+      "spike",
+      "star",
+      "weapon",
+      "ninja"
+    ],
+    "hash": -230787922
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/skull-sabertooth.svg",
+    "name": "skull-sabertooth",
+    "tags": [
+      "skull"
+    ],
+    "hash": 691902728
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/smoke-bomb.svg",
+    "name": "smoke-bomb",
+    "tags": [
+      "bomb",
+      "smoke",
+      "ninja"
+    ],
+    "hash": 1922280625
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/star-shuriken.svg",
+    "name": "star-shuriken",
+    "tags": [
+      "spike",
+      "star",
+      "weapon",
+      "ninja"
+    ],
+    "hash": 1091007923
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/tabi-boot.svg",
+    "name": "tabi-boot",
+    "tags": [
+      "boot",
+      "ninja"
+    ],
+    "hash": 438500166
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/three-pointed-shuriken.svg",
+    "name": "three-pointed-shuriken",
+    "tags": [
+      "spike",
+      "weapon",
+      "ninja"
+    ],
+    "hash": 63196443
+  },
+  {
+    "path": "public/app/assets/icons/darkzaitzev/originals/svg/000000/transparent/whirlpool-shuriken.svg",
+    "name": "whirlpool-shuriken",
+    "tags": [
+      "spike",
+      "weapon",
+      "ninja"
+    ],
+    "hash": -367642803
+  },
+  {
     "path": "public/app/assets/icons/delapouite/dice/svg/000000/transparent/dice-eight-faces-eight.svg",
     "name": "dice-eight-faces-eight",
     "tags": [
@@ -907,76 +1214,49 @@ const gameIcons = [
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/deshret-red-crown.svg",
     "name": "deshret-red-crown",
-    "tags": [
-      "hat",
-      "egypt"
-    ],
+    "tags": [],
     "hash": -322950550
   },
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/egyptian-pyramids.svg",
     "name": "egyptian-pyramids",
-    "tags": [
-      "building",
-      "egypt"
-    ],
+    "tags": [],
     "hash": 556952454
   },
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/eye-of-horus.svg",
     "name": "eye-of-horus",
-    "tags": [
-      "eye",
-      "symbol",
-      "egypt"
-    ],
+    "tags": [],
     "hash": 1493831658
   },
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/fez.svg",
     "name": "fez",
-    "tags": [
-      "hat",
-      "egypt"
-    ],
+    "tags": [],
     "hash": 1549514956
   },
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/hedjet-white-crown.svg",
     "name": "hedjet-white-crown",
-    "tags": [
-      "hat",
-      "egypt"
-    ],
+    "tags": [],
     "hash": 1458570707
   },
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/palm-tree.svg",
     "name": "palm-tree",
-    "tags": [
-      "plant",
-      "wood",
-      "egypt",
-      "pirate"
-    ],
+    "tags": [],
     "hash": -679680182
   },
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/pharoah.svg",
     "name": "pharoah",
-    "tags": [
-      "mask",
-      "egypt"
-    ],
+    "tags": [],
     "hash": -1231232322
   },
   {
     "path": "public/app/assets/icons/delapouite/egypt/svg/000000/transparent/pschent-double-crown.svg",
     "name": "pschent-double-crown",
-    "tags": [
-      "hat",
-      "egypt"
-    ],
+    "tags": [],
     "hash": -1546936800
   },
   {
@@ -1486,6 +1766,15 @@ const gameIcons = [
     "hash": 1174764039
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/asian-lantern.svg",
+    "name": "asian-lantern",
+    "tags": [
+      "light",
+      "ninja"
+    ],
+    "hash": -1786954873
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/asteroid.svg",
     "name": "asteroid",
     "tags": [
@@ -1696,6 +1985,14 @@ const gameIcons = [
     "hash": -437868801
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/battle-mech.svg",
+    "name": "battle-mech",
+    "tags": [
+      "robot"
+    ],
+    "hash": -1334749092
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/beach-ball.svg",
     "name": "beach-ball",
     "tags": [
@@ -1703,6 +2000,15 @@ const gameIcons = [
       "sport"
     ],
     "hash": 1047733931
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/beam-satellite.svg",
+    "name": "beam-satellite",
+    "tags": [
+      "machine",
+      "space"
+    ],
+    "hash": 92482335
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/bear-head.svg",
@@ -1760,6 +2066,14 @@ const gameIcons = [
     "hash": -1800832204
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/belgium.svg",
+    "name": "belgium",
+    "tags": [
+      "map"
+    ],
+    "hash": -234199827
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/belt-armor.svg",
     "name": "belt-armor",
     "tags": [
@@ -1795,12 +2109,30 @@ const gameIcons = [
     "hash": 1584956210
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/black-belt.svg",
+    "name": "black-belt",
+    "tags": [
+      "clothing",
+      "ninja"
+    ],
+    "hash": 1961775259
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/black-knight-helm.svg",
     "name": "black-knight-helm",
     "tags": [
       "hat"
     ],
     "hash": 1582372890
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/blacksmith.svg",
+    "name": "blacksmith",
+    "tags": [
+      "body",
+      "tool"
+    ],
+    "hash": 1458057318
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/blindfold.svg",
@@ -1882,6 +2214,16 @@ const gameIcons = [
     "hash": -707897242
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/bonsai-tree.svg",
+    "name": "bonsai-tree",
+    "tags": [
+      "household",
+      "wood",
+      "ninja"
+    ],
+    "hash": 1631145979
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/book-cover.svg",
     "name": "book-cover",
     "tags": [
@@ -1924,6 +2266,15 @@ const gameIcons = [
       "zelda"
     ],
     "hash": 1308516993
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/bottle-cap.svg",
+    "name": "bottle-cap",
+    "tags": [
+      "bottle",
+      "metal"
+    ],
+    "hash": 447730893
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/boulder-dash.svg",
@@ -2087,6 +2438,14 @@ const gameIcons = [
     "hash": 1388554791
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/bulldozer.svg",
+    "name": "bulldozer",
+    "tags": [
+      "vehicle"
+    ],
+    "hash": -1840371981
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/buoy.svg",
     "name": "buoy",
     "tags": [
@@ -2116,6 +2475,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/buy-card.svg",
     "name": "buy-card",
     "tags": [
+      "arrow",
       "board",
       "money"
     ],
@@ -2144,6 +2504,7 @@ const gameIcons = [
     "name": "caduceus",
     "tags": [
       "life",
+      "reptile",
       "symbol",
       "greek-roman"
     ],
@@ -2187,6 +2548,25 @@ const gameIcons = [
     "hash": 1310250560
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/caltrops.svg",
+    "name": "caltrops",
+    "tags": [
+      "spike",
+      "trap"
+    ],
+    "hash": -47489176
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/camargue-cross.svg",
+    "name": "camargue-cross",
+    "tags": [
+      "heart",
+      "sea",
+      "symbol"
+    ],
+    "hash": 2086451180
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/cambodia.svg",
     "name": "cambodia",
     "tags": [
@@ -2213,6 +2593,15 @@ const gameIcons = [
       "nature"
     ],
     "hash": 1386372869
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/candles.svg",
+    "name": "candles",
+    "tags": [
+      "fire",
+      "light"
+    ],
+    "hash": 711483248
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/candlestick-phone.svg",
@@ -2283,6 +2672,23 @@ const gameIcons = [
       "board"
     ],
     "hash": -1370144042
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/card-exchange.svg",
+    "name": "card-exchange",
+    "tags": [
+      "arrow",
+      "board"
+    ],
+    "hash": -985316182
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/card-joker.svg",
+    "name": "card-joker",
+    "tags": [
+      "board"
+    ],
+    "hash": -785965576
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/cardboard-box.svg",
@@ -2384,6 +2790,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/chainsaw.svg",
     "name": "chainsaw",
     "tags": [
+      "machine",
       "tool",
       "wood",
       "zombie"
@@ -2476,6 +2883,14 @@ const gameIcons = [
     "hash": 1417867600
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/chips-bag.svg",
+    "name": "chips-bag",
+    "tags": [
+      "food"
+    ],
+    "hash": 439644236
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/church.svg",
     "name": "church",
     "tags": [
@@ -2518,6 +2933,14 @@ const gameIcons = [
     "hash": -289296957
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/closed-barbute.svg",
+    "name": "closed-barbute",
+    "tags": [
+      "hat"
+    ],
+    "hash": -352769224
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/closed-doors.svg",
     "name": "closed-doors",
     "tags": [
@@ -2542,6 +2965,14 @@ const gameIcons = [
       "vehicle"
     ],
     "hash": 387149256
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/cobra.svg",
+    "name": "cobra",
+    "tags": [
+      "reptile"
+    ],
+    "hash": 69795855
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/coffee-beans.svg",
@@ -2582,6 +3013,22 @@ const gameIcons = [
     "hash": 567470933
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/colombia.svg",
+    "name": "colombia",
+    "tags": [
+      "map"
+    ],
+    "hash": 2018542814
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/colombian-statue.svg",
+    "name": "colombian-statue",
+    "tags": [
+      "stone"
+    ],
+    "hash": 122967425
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/compact-disc.svg",
     "name": "compact-disc",
     "tags": [
@@ -2609,6 +3056,15 @@ const gameIcons = [
     "hash": 1931502819
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/concrete-bag.svg",
+    "name": "concrete-bag",
+    "tags": [
+      "building",
+      "tool"
+    ],
+    "hash": 1555291330
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/confrontation.svg",
     "name": "confrontation",
     "tags": [
@@ -2616,6 +3072,23 @@ const gameIcons = [
       "state"
     ],
     "hash": 591252184
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/congress.svg",
+    "name": "congress",
+    "tags": [
+      "building"
+    ],
+    "hash": 1994825338
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/conqueror.svg",
+    "name": "conqueror",
+    "tags": [
+      "body",
+      "flag"
+    ],
+    "hash": 1971200736
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/convict.svg",
@@ -2846,6 +3319,24 @@ const gameIcons = [
     "hash": -1000331808
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/cut-lemon.svg",
+    "name": "cut-lemon",
+    "tags": [
+      "fruit"
+    ],
+    "hash": -27084270
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/cyber-eye.svg",
+    "name": "cyber-eye",
+    "tags": [
+      "electronic",
+      "eye",
+      "robot"
+    ],
+    "hash": 1054740135
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/cyborg-face.svg",
     "name": "cyborg-face",
     "tags": [
@@ -2895,10 +3386,36 @@ const gameIcons = [
     "hash": -1518107304
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/desert.svg",
+    "name": "desert",
+    "tags": [
+      "nature"
+    ],
+    "hash": 26508951
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/deshret-red-crown.svg",
+    "name": "deshret-red-crown",
+    "tags": [
+      "hat",
+      "egypt"
+    ],
+    "hash": -2093859485
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/desk.svg",
+    "name": "desk",
+    "tags": [
+      "household"
+    ],
+    "hash": 2077284891
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/detour.svg",
     "name": "detour",
     "tags": [
-      "arrow"
+      "arrow",
+      "map"
     ],
     "hash": 2138461915
   },
@@ -2947,6 +3464,15 @@ const gameIcons = [
     "hash": -1268924854
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/diploma.svg",
+    "name": "diploma",
+    "tags": [
+      "book",
+      "rank"
+    ],
+    "hash": 1954983884
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/direction-sign.svg",
     "name": "direction-sign",
     "tags": [
@@ -2964,6 +3490,14 @@ const gameIcons = [
     "hash": -752962490
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/discussion.svg",
+    "name": "discussion",
+    "tags": [
+      "action"
+    ],
+    "hash": -880141526
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/diving-helmet.svg",
     "name": "diving-helmet",
     "tags": [
@@ -2972,6 +3506,15 @@ const gameIcons = [
       "steampunk"
     ],
     "hash": 985303027
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/dog-bowl.svg",
+    "name": "dog-bowl",
+    "tags": [
+      "bone",
+      "food"
+    ],
+    "hash": -764328363
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/dolphin.svg",
@@ -3021,6 +3564,23 @@ const gameIcons = [
     "hash": 1784501839
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/dream-catcher.svg",
+    "name": "dream-catcher",
+    "tags": [
+      "symbol"
+    ],
+    "hash": 810593864
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/drill.svg",
+    "name": "drill",
+    "tags": [
+      "machine",
+      "tool"
+    ],
+    "hash": 951747397
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/drinking.svg",
     "name": "drinking",
     "tags": [
@@ -3047,6 +3607,14 @@ const gameIcons = [
       "farm"
     ],
     "hash": -1360591813
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/dunce-cap.svg",
+    "name": "dunce-cap",
+    "tags": [
+      "hat"
+    ],
+    "hash": 119576718
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/dungeon-gate.svg",
@@ -3130,6 +3698,24 @@ const gameIcons = [
     "hash": 1847230776
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/easter-egg.svg",
+    "name": "easter-egg",
+    "tags": [
+      "food",
+      "symbol"
+    ],
+    "hash": -93359324
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/eating-pelican.svg",
+    "name": "eating-pelican",
+    "tags": [
+      "bird",
+      "fish"
+    ],
+    "hash": 428113565
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/eating.svg",
     "name": "eating",
     "tags": [
@@ -3149,6 +3735,15 @@ const gameIcons = [
     "hash": -1300009680
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/eel.svg",
+    "name": "eel",
+    "tags": [
+      "fish",
+      "reptile"
+    ],
+    "hash": -1963196618
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/egypt.svg",
     "name": "egypt",
     "tags": [
@@ -3156,6 +3751,15 @@ const gameIcons = [
       "egypt"
     ],
     "hash": -1409689787
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/egyptian-pyramids.svg",
+    "name": "egyptian-pyramids",
+    "tags": [
+      "building",
+      "egypt"
+    ],
+    "hash": -1213956481
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/egyptian-sphinx.svg",
@@ -3217,9 +3821,21 @@ const gameIcons = [
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/encirclement.svg",
     "name": "encirclement",
     "tags": [
-      "arrow"
+      "arrow",
+      "map"
     ],
     "hash": -1974085607
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/energy-tank.svg",
+    "name": "energy-tank",
+    "tags": [
+      "container",
+      "energy",
+      "tool",
+      "science-fiction"
+    ],
+    "hash": 1895457529
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/enrage.svg",
@@ -3269,6 +3885,15 @@ const gameIcons = [
     "hash": -1390448492
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/evil-tower.svg",
+    "name": "evil-tower",
+    "tags": [
+      "building",
+      "eye"
+    ],
+    "hash": -855630702
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/exit-door.svg",
     "name": "exit-door",
     "tags": [
@@ -3288,6 +3913,25 @@ const gameIcons = [
     "hash": 1478492098
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/eye-of-horus.svg",
+    "name": "eye-of-horus",
+    "tags": [
+      "eye",
+      "symbol",
+      "egypt"
+    ],
+    "hash": 359941457
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/eye-target.svg",
+    "name": "eye-target",
+    "tags": [
+      "eye",
+      "target"
+    ],
+    "hash": 2116075823
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/f-clef.svg",
     "name": "f-clef",
     "tags": [
@@ -3297,12 +3941,29 @@ const gameIcons = [
     "hash": 1483972691
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/factory-arm.svg",
+    "name": "factory-arm",
+    "tags": [
+      "robot"
+    ],
+    "hash": -1176477693
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/factory.svg",
     "name": "factory",
     "tags": [
       "building"
     ],
     "hash": -1116815500
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fairy.svg",
+    "name": "fairy",
+    "tags": [
+      "creature",
+      "wing"
+    ],
+    "hash": -2042385473
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/falcon-moon.svg",
@@ -3322,6 +3983,23 @@ const gameIcons = [
       "trap"
     ],
     "hash": -1492896942
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fallout-shelter.svg",
+    "name": "fallout-shelter",
+    "tags": [
+      "symbol"
+    ],
+    "hash": 1702875381
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/family-house.svg",
+    "name": "family-house",
+    "tags": [
+      "building",
+      "household"
+    ],
+    "hash": 276827129
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/farm-tractor.svg",
@@ -3357,6 +4035,24 @@ const gameIcons = [
       "symbol"
     ],
     "hash": -1674120626
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fencer.svg",
+    "name": "fencer",
+    "tags": [
+      "blade",
+      "sport"
+    ],
+    "hash": 1655298787
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fez.svg",
+    "name": "fez",
+    "tags": [
+      "hat",
+      "egypt"
+    ],
+    "hash": -1062763643
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/files.svg",
@@ -3395,6 +4091,23 @@ const gameIcons = [
     "hash": 341705048
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fire-flower.svg",
+    "name": "fire-flower",
+    "tags": [
+      "plant",
+      "super-mario"
+    ],
+    "hash": 790656572
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/first-aid-kit.svg",
+    "name": "first-aid-kit",
+    "tags": [
+      "life"
+    ],
+    "hash": -885826286
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fish-monster.svg",
     "name": "fish-monster",
     "tags": [
@@ -3415,6 +4128,15 @@ const gameIcons = [
       "viking"
     ],
     "hash": -680068999
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fishing-boat.svg",
+    "name": "fishing-boat",
+    "tags": [
+      "sea",
+      "vehicle"
+    ],
+    "hash": 1246230821
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fishing-pole.svg",
@@ -3587,6 +4309,14 @@ const gameIcons = [
     "hash": 1319592607
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/forklift.svg",
+    "name": "forklift",
+    "tags": [
+      "vehicle"
+    ],
+    "hash": -26999217
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fox-tail.svg",
     "name": "fox-tail",
     "tags": [
@@ -3615,6 +4345,15 @@ const gameIcons = [
     "hash": -442121919
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/frog-prince.svg",
+    "name": "frog-prince",
+    "tags": [
+      "hat",
+      "reptile"
+    ],
+    "hash": 415220732
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fruit-tree.svg",
     "name": "fruit-tree",
     "tags": [
@@ -3623,6 +4362,23 @@ const gameIcons = [
       "farm"
     ],
     "hash": 839553337
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fuel-tank.svg",
+    "name": "fuel-tank",
+    "tags": [
+      "container"
+    ],
+    "hash": 1263047819
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/fuji.svg",
+    "name": "fuji",
+    "tags": [
+      "nature",
+      "ninja"
+    ],
+    "hash": -1971381424
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/full-folder.svg",
@@ -3696,6 +4452,15 @@ const gameIcons = [
       "toy"
     ],
     "hash": 495587915
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/gargoyle.svg",
+    "name": "gargoyle",
+    "tags": [
+      "creature",
+      "stone"
+    ],
+    "hash": 536024820
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/garlic.svg",
@@ -3844,6 +4609,15 @@ const gameIcons = [
     "hash": 1587667037
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/golem-head.svg",
+    "name": "golem-head",
+    "tags": [
+      "head",
+      "medieval-fantasy"
+    ],
+    "hash": 1818951011
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/goose.svg",
     "name": "goose",
     "tags": [
@@ -3938,6 +4712,16 @@ const gameIcons = [
     "hash": 74481340
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/greenhouse.svg",
+    "name": "greenhouse",
+    "tags": [
+      "building",
+      "wood",
+      "farm"
+    ],
+    "hash": 1719194239
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/griffin-symbol.svg",
     "name": "griffin-symbol",
     "tags": [
@@ -3976,6 +4760,15 @@ const gameIcons = [
     "hash": 1031924811
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hair-strands.svg",
+    "name": "hair-strands",
+    "tags": [
+      "clothing",
+      "tool"
+    ],
+    "hash": -1638976700
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/half-body-crawling.svg",
     "name": "half-body-crawling",
     "tags": [
@@ -3984,6 +4777,14 @@ const gameIcons = [
       "zombie"
     ],
     "hash": -790114546
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hamburger-menu.svg",
+    "name": "hamburger-menu",
+    "tags": [
+      "gui"
+    ],
+    "hash": -1759445979
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hamburger.svg",
@@ -4031,6 +4832,14 @@ const gameIcons = [
     "hash": 687834638
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hand-ok.svg",
+    "name": "hand-ok",
+    "tags": [
+      "hand"
+    ],
+    "hash": 517407332
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hand-saw.svg",
     "name": "hand-saw",
     "tags": [
@@ -4048,6 +4857,15 @@ const gameIcons = [
       "police"
     ],
     "hash": 1375016194
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/handheld-fan.svg",
+    "name": "handheld-fan",
+    "tags": [
+      "household",
+      "ninja"
+    ],
+    "hash": 428575980
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hang-glider.svg",
@@ -4112,6 +4930,15 @@ const gameIcons = [
       "wing"
     ],
     "hash": -422647189
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hedjet-white-crown.svg",
+    "name": "hedjet-white-crown",
+    "tags": [
+      "hat",
+      "egypt"
+    ],
+    "hash": -1899998726
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/helicoprion.svg",
@@ -4327,6 +5154,14 @@ const gameIcons = [
     "hash": 1040125971
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/hot-meal.svg",
+    "name": "hot-meal",
+    "tags": [
+      "food"
+    ],
+    "hash": -1726572091
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/house.svg",
     "name": "house",
     "tags": [
@@ -4538,6 +5373,14 @@ const gameIcons = [
       "sound"
     ],
     "hash": -8760538
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/japan.svg",
+    "name": "japan",
+    "tags": [
+      "map"
+    ],
+    "hash": 738435440
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/jason-mask.svg",
@@ -4769,6 +5612,14 @@ const gameIcons = [
     "hash": 302285796
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/latvia.svg",
+    "name": "latvia",
+    "tags": [
+      "map"
+    ],
+    "hash": 764545937
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/laurels-trophy.svg",
     "name": "laurels-trophy",
     "tags": [
@@ -4806,6 +5657,14 @@ const gameIcons = [
     "hash": 1040018218
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/lemon.svg",
+    "name": "lemon",
+    "tags": [
+      "fruit"
+    ],
+    "hash": 1833064925
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/level-crossing.svg",
     "name": "level-crossing",
     "tags": [
@@ -4822,6 +5681,14 @@ const gameIcons = [
       "sea"
     ],
     "hash": 1133195544
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/light-backpack.svg",
+    "name": "light-backpack",
+    "tags": [
+      "container"
+    ],
+    "hash": 1144311769
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/light-sabers.svg",
@@ -4861,6 +5728,15 @@ const gameIcons = [
       "egypt"
     ],
     "hash": 1339961165
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/lipstick.svg",
+    "name": "lipstick",
+    "tags": [
+      "household",
+      "mouth"
+    ],
+    "hash": -1574021793
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/liver.svg",
@@ -5005,6 +5881,14 @@ const gameIcons = [
     "hash": -1894378176
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/magic-hat.svg",
+    "name": "magic-hat",
+    "tags": [
+      "hat"
+    ],
+    "hash": 1468093285
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/magic-potion.svg",
     "name": "magic-potion",
     "tags": [
@@ -5050,6 +5934,14 @@ const gameIcons = [
     "hash": 1121716111
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/mandrill-head.svg",
+    "name": "mandrill-head",
+    "tags": [
+      "mammal"
+    ],
+    "hash": 1299028822
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/manta-ray.svg",
     "name": "manta-ray",
     "tags": [
@@ -5058,6 +5950,15 @@ const gameIcons = [
       "sea"
     ],
     "hash": -777651442
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/manual-juicer.svg",
+    "name": "manual-juicer",
+    "tags": [
+      "fruit",
+      "kitchenware"
+    ],
+    "hash": -1181009181
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/marbles.svg",
@@ -5087,6 +5988,15 @@ const gameIcons = [
       "vehicle"
     ],
     "hash": 1926209645
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/matryoshka-dolls.svg",
+    "name": "matryoshka-dolls",
+    "tags": [
+      "container",
+      "toy"
+    ],
+    "hash": 1973921616
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/mayan-pyramid.svg",
@@ -5134,6 +6044,15 @@ const gameIcons = [
       "vehicle"
     ],
     "hash": -1930026758
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/medallist.svg",
+    "name": "medallist",
+    "tags": [
+      "body",
+      "rank"
+    ],
+    "hash": 800960511
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/medieval-gate.svg",
@@ -5209,6 +6128,14 @@ const gameIcons = [
     "hash": -2070616717
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/metal-plate.svg",
+    "name": "metal-plate",
+    "tags": [
+      "metal"
+    ],
+    "hash": -1050863046
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/metroid.svg",
     "name": "metroid",
     "tags": [
@@ -5249,6 +6176,14 @@ const gameIcons = [
       "world-wars"
     ],
     "hash": -213235595
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/millenium-key.svg",
+    "name": "millenium-key",
+    "tags": [
+      "lock"
+    ],
+    "hash": -58529960
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/mine-wagon.svg",
@@ -5293,6 +6228,14 @@ const gameIcons = [
       "building"
     ],
     "hash": -2112413629
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/moncler-jacket.svg",
+    "name": "moncler-jacket",
+    "tags": [
+      "clothing"
+    ],
+    "hash": 1654938011
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/money-stack.svg",
@@ -5340,6 +6283,14 @@ const gameIcons = [
     "hash": 250173182
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/morph-ball.svg",
+    "name": "morph-ball",
+    "tags": [
+      "ball"
+    ],
+    "hash": 1451368614
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/mortar.svg",
     "name": "mortar",
     "tags": [
@@ -5385,6 +6336,14 @@ const gameIcons = [
       "police"
     ],
     "hash": -75589046
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/multiple-targets.svg",
+    "name": "multiple-targets",
+    "tags": [
+      "target"
+    ],
+    "hash": -1831998009
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/muscular-torso.svg",
@@ -5488,6 +6447,14 @@ const gameIcons = [
     "hash": 1312865491
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/noodles.svg",
+    "name": "noodles",
+    "tags": [
+      "food"
+    ],
+    "hash": -2138788754
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/nose-front.svg",
     "name": "nose-front",
     "tags": [
@@ -5570,6 +6537,16 @@ const gameIcons = [
     "hash": -1767210388
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/ogre.svg",
+    "name": "ogre",
+    "tags": [
+      "creature",
+      "head",
+      "medieval-fantasy"
+    ],
+    "hash": 1514199181
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/oil-pump.svg",
     "name": "oil-pump",
     "tags": [
@@ -5584,6 +6561,15 @@ const gameIcons = [
       "building"
     ],
     "hash": -1861061761
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/old-microphone.svg",
+    "name": "old-microphone",
+    "tags": [
+      "electronic",
+      "sound"
+    ],
+    "hash": -554856046
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/old-wagon.svg",
@@ -5604,6 +6590,16 @@ const gameIcons = [
       "greek-roman"
     ],
     "hash": 957484229
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/oni.svg",
+    "name": "oni",
+    "tags": [
+      "creature",
+      "death",
+      "ninja"
+    ],
+    "hash": -1423202604
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/open-folder.svg",
@@ -5642,6 +6638,14 @@ const gameIcons = [
     "hash": 1290344495
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/organigram.svg",
+    "name": "organigram",
+    "tags": [
+      "gui"
+    ],
+    "hash": -914786735
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/overlord-helm.svg",
     "name": "overlord-helm",
     "tags": [
@@ -5671,9 +6675,19 @@ const gameIcons = [
     "hash": -279372493
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/pagoda.svg",
+    "name": "pagoda",
+    "tags": [
+      "building",
+      "ninja"
+    ],
+    "hash": 1031057112
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/paint-brush.svg",
     "name": "paint-brush",
     "tags": [
+      "book",
       "gui",
       "tool"
     ],
@@ -5727,6 +6741,17 @@ const gameIcons = [
     "hash": 1883930367
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/palm-tree.svg",
+    "name": "palm-tree",
+    "tags": [
+      "plant",
+      "wood",
+      "egypt",
+      "pirate"
+    ],
+    "hash": 2091516739
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/pan-flute.svg",
     "name": "pan-flute",
     "tags": [
@@ -5771,6 +6796,15 @@ const gameIcons = [
       "toy"
     ],
     "hash": 525454021
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/paper-tray.svg",
+    "name": "paper-tray",
+    "tags": [
+      "container",
+      "gui"
+    ],
+    "hash": -978743719
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/paper-windmill.svg",
@@ -5843,10 +6877,21 @@ const gameIcons = [
     "hash": 125167570
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/pencil-brush.svg",
+    "name": "pencil-brush",
+    "tags": [
+      "book",
+      "cross",
+      "gui"
+    ],
+    "hash": -1444073092
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/pencil.svg",
     "name": "pencil",
     "tags": [
       "book",
+      "gui",
       "household"
     ],
     "hash": -200860785
@@ -5885,6 +6930,15 @@ const gameIcons = [
       "body"
     ],
     "hash": -330775081
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/pharoah.svg",
+    "name": "pharoah",
+    "tags": [
+      "mask",
+      "egypt"
+    ],
+    "hash": 639805687
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/photo-camera.svg",
@@ -6052,6 +7106,16 @@ const gameIcons = [
       "food"
     ],
     "hash": -1896160521
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/plague-doctor-profile.svg",
+    "name": "plague-doctor-profile",
+    "tags": [
+      "bird",
+      "hat",
+      "mask"
+    ],
+    "hash": -1344096672
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/plane-wing.svg",
@@ -6248,6 +7312,15 @@ const gameIcons = [
     "hash": 516257338
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/price-tag.svg",
+    "name": "price-tag",
+    "tags": [
+      "gui",
+      "money"
+    ],
+    "hash": -1199336320
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/prisoner.svg",
     "name": "prisoner",
     "tags": [
@@ -6273,6 +7346,14 @@ const gameIcons = [
     "hash": 777244525
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/propeller-beanie.svg",
+    "name": "propeller-beanie",
+    "tags": [
+      "hat"
+    ],
+    "hash": -1952999732
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/protection-glasses.svg",
     "name": "protection-glasses",
     "tags": [
@@ -6281,6 +7362,15 @@ const gameIcons = [
       "mask"
     ],
     "hash": -1657595336
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/pschent-double-crown.svg",
+    "name": "pschent-double-crown",
+    "tags": [
+      "hat",
+      "egypt"
+    ],
+    "hash": 683244679
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/pterodactylus.svg",
@@ -6393,6 +7483,14 @@ const gameIcons = [
     "hash": -66095308
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/rattlesnake.svg",
+    "name": "rattlesnake",
+    "tags": [
+      "reptile"
+    ],
+    "hash": 2057508098
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/resize.svg",
     "name": "resize",
     "tags": [
@@ -6454,6 +7552,15 @@ const gameIcons = [
       "nature"
     ],
     "hash": 1369547894
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/road.svg",
+    "name": "road",
+    "tags": [
+      "building",
+      "map"
+    ],
+    "hash": 470138658
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/robber-mask.svg",
@@ -6681,6 +7788,14 @@ const gameIcons = [
     "hash": -1093110965
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sand-snake.svg",
+    "name": "sand-snake",
+    "tags": [
+      "reptile"
+    ],
+    "hash": -1756664263
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sarcophagus.svg",
     "name": "sarcophagus",
     "tags": [
@@ -6767,6 +7882,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sell-card.svg",
     "name": "sell-card",
     "tags": [
+      "arrow",
       "board",
       "money"
     ],
@@ -6867,6 +7983,25 @@ const gameIcons = [
       "police"
     ],
     "hash": -1688360000
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/shield-bash.svg",
+    "name": "shield-bash",
+    "tags": [
+      "action",
+      "body",
+      "shield"
+    ],
+    "hash": -20434910
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/shinto-shrine-mirror.svg",
+    "name": "shinto-shrine-mirror",
+    "tags": [
+      "household",
+      "ninja"
+    ],
+    "hash": -899104589
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/shinto-shrine.svg",
@@ -7007,6 +8142,14 @@ const gameIcons = [
     "hash": -844888784
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/skirt.svg",
+    "name": "skirt",
+    "tags": [
+      "clothing"
+    ],
+    "hash": 474126845
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/skull-staff.svg",
     "name": "skull-staff",
     "tags": [
@@ -7014,6 +8157,16 @@ const gameIcons = [
       "weapon"
     ],
     "hash": 1322935770
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/slalom.svg",
+    "name": "slalom",
+    "tags": [
+      "action",
+      "arrow",
+      "map"
+    ],
+    "hash": 2125885732
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sleeveless-jacket.svg",
@@ -7067,6 +8220,31 @@ const gameIcons = [
     "hash": -1353949573
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/snail-eyes.svg",
+    "name": "snail-eyes",
+    "tags": [
+      "animal",
+      "eye"
+    ],
+    "hash": 284460712
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/snake-egg.svg",
+    "name": "snake-egg",
+    "tags": [
+      "reptile"
+    ],
+    "hash": 1361813602
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/snake-tongue.svg",
+    "name": "snake-tongue",
+    "tags": [
+      "reptile"
+    ],
+    "hash": 1998284723
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sniffing-dog.svg",
     "name": "sniffing-dog",
     "tags": [
@@ -7112,6 +8290,15 @@ const gameIcons = [
     "hash": 184719933
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/solid-leaf.svg",
+    "name": "solid-leaf",
+    "tags": [
+      "plant",
+      "wood"
+    ],
+    "hash": 1601119298
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sombrero.svg",
     "name": "sombrero",
     "tags": [
@@ -7145,6 +8332,14 @@ const gameIcons = [
       "flag"
     ],
     "hash": 2120453577
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/south-africa.svg",
+    "name": "south-africa",
+    "tags": [
+      "map"
+    ],
+    "hash": -2105474692
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/south-america.svg",
@@ -7287,6 +8482,14 @@ const gameIcons = [
       "mammal"
     ],
     "hash": -1983916837
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sri-lanka.svg",
+    "name": "sri-lanka",
+    "tags": [
+      "map"
+    ],
+    "hash": -142510218
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/stabbed-note.svg",
@@ -7467,6 +8670,15 @@ const gameIcons = [
     "hash": -2119631972
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/stone-stack.svg",
+    "name": "stone-stack",
+    "tags": [
+      "nature",
+      "stone"
+    ],
+    "hash": -1596020598
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/stork-delivery.svg",
     "name": "stork-delivery",
     "tags": [
@@ -7556,6 +8768,16 @@ const gameIcons = [
     "hash": 786797442
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sunflower.svg",
+    "name": "sunflower",
+    "tags": [
+      "plant",
+      "star",
+      "farm"
+    ],
+    "hash": -595387759
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sunglasses.svg",
     "name": "sunglasses",
     "tags": [
@@ -7633,6 +8855,23 @@ const gameIcons = [
     "hash": -1070883649
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/switzerland.svg",
+    "name": "switzerland",
+    "tags": [
+      "map"
+    ],
+    "hash": -1015546995
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/sword-altar.svg",
+    "name": "sword-altar",
+    "tags": [
+      "blade",
+      "zelda"
+    ],
+    "hash": 244321332
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/table.svg",
     "name": "table",
     "tags": [
@@ -7667,6 +8906,25 @@ const gameIcons = [
       "liquid"
     ],
     "hash": -1646365811
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/teacher.svg",
+    "name": "teacher",
+    "tags": [
+      "action",
+      "body"
+    ],
+    "hash": 465317452
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/teapot-leaves.svg",
+    "name": "teapot-leaves",
+    "tags": [
+      "kitchenware",
+      "liquid",
+      "ninja"
+    ],
+    "hash": 372047246
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/templar-shield.svg",
@@ -7741,6 +8999,15 @@ const gameIcons = [
     "hash": 1477014520
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tiara.svg",
+    "name": "tiara",
+    "tags": [
+      "hat",
+      "jewellery"
+    ],
+    "hash": 948377253
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tic-tac-toe.svg",
     "name": "tic-tac-toe",
     "tags": [
@@ -7756,6 +9023,15 @@ const gameIcons = [
       "clothing"
     ],
     "hash": -1427491334
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tiger-head.svg",
+    "name": "tiger-head",
+    "tags": [
+      "animal",
+      "mammal"
+    ],
+    "hash": -325906896
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tiger.svg",
@@ -7869,6 +9145,15 @@ const gameIcons = [
     "hash": -1586293070
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/toy-mallet.svg",
+    "name": "toy-mallet",
+    "tags": [
+      "tool",
+      "toy"
+    ],
+    "hash": -300400876
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tracked-robot.svg",
     "name": "tracked-robot",
     "tags": [
@@ -7948,6 +9233,15 @@ const gameIcons = [
       "wood"
     ],
     "hash": -1237512635
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tree-swing.svg",
+    "name": "tree-swing",
+    "tags": [
+      "toy",
+      "wood"
+    ],
+    "hash": -220614767
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tribal-pendant.svg",
@@ -8066,6 +9360,14 @@ const gameIcons = [
     "hash": 203813851
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tv-tower.svg",
+    "name": "tv-tower",
+    "tags": [
+      "building"
+    ],
+    "hash": -178119936
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/tv.svg",
     "name": "tv",
     "tags": [
@@ -8115,6 +9417,14 @@ const gameIcons = [
     "hash": 52633825
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/underwear.svg",
+    "name": "underwear",
+    "tags": [
+      "clothing"
+    ],
+    "hash": -1206539967
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/unicorn.svg",
     "name": "unicorn",
     "tags": [
@@ -8149,6 +9459,32 @@ const gameIcons = [
       "board"
     ],
     "hash": -1258272404
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/upgrade.svg",
+    "name": "upgrade",
+    "tags": [
+      "arrow",
+      "rank"
+    ],
+    "hash": 1256017798
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/ursa-major.svg",
+    "name": "ursa-major",
+    "tags": [
+      "space",
+      "star"
+    ],
+    "hash": -1122149735
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/uruguay.svg",
+    "name": "uruguay",
+    "tags": [
+      "map"
+    ],
+    "hash": -159825016
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/usa-flag.svg",
@@ -8243,6 +9579,14 @@ const gameIcons = [
     "hash": 1212340045
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/vibrating-shield.svg",
+    "name": "vibrating-shield",
+    "tags": [
+      "shield"
+    ],
+    "hash": 1928568556
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/video-camera.svg",
     "name": "video-camera",
     "tags": [
@@ -8306,6 +9650,15 @@ const gameIcons = [
     "hash": -1393716714
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/virtual-marker.svg",
+    "name": "virtual-marker",
+    "tags": [
+      "target",
+      "symbol"
+    ],
+    "hash": -517242818
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/vitruvian-man.svg",
     "name": "vitruvian-man",
     "tags": [
@@ -8340,6 +9693,15 @@ const gameIcons = [
       "science-fiction"
     ],
     "hash": 1645072660
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/wall-light.svg",
+    "name": "wall-light",
+    "tags": [
+      "light",
+      "steampunk"
+    ],
+    "hash": -631623467
   },
   {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/walrus-head.svg",
@@ -8593,6 +9955,15 @@ const gameIcons = [
     "hash": -2051076424
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/wood-cabin.svg",
+    "name": "wood-cabin",
+    "tags": [
+      "building",
+      "wood"
+    ],
+    "hash": -656164021
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/wood-club.svg",
     "name": "wood-club",
     "tags": [
@@ -8660,6 +10031,14 @@ const gameIcons = [
     "hash": 1002452023
   },
   {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/xylophone.svg",
+    "name": "xylophone",
+    "tags": [
+      "sound"
+    ],
+    "hash": -234850028
+  },
+  {
     "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/yin-yang.svg",
     "name": "yin-yang",
     "tags": [
@@ -8668,6 +10047,15 @@ const gameIcons = [
       "ninja"
     ],
     "hash": 95122898
+  },
+  {
+    "path": "public/app/assets/icons/delapouite/originals/svg/000000/transparent/zipper.svg",
+    "name": "zipper",
+    "tags": [
+      "clothing",
+      "metal"
+    ],
+    "hash": 1223412062
   },
   {
     "path": "public/app/assets/icons/delapouite/social/svg/000000/transparent/rss.svg",
@@ -9117,6 +10505,31 @@ const gameIcons = [
     "hash": 1231836075
   },
   {
+    "path": "public/app/assets/icons/guard13007/originals/svg/000000/transparent/pause-button.svg",
+    "name": "pause-button",
+    "tags": [
+      "gui"
+    ],
+    "hash": -1128558975
+  },
+  {
+    "path": "public/app/assets/icons/guard13007/originals/svg/000000/transparent/play-button.svg",
+    "name": "play-button",
+    "tags": [
+      "gui"
+    ],
+    "hash": 856705279
+  },
+  {
+    "path": "public/app/assets/icons/guard13007/originals/svg/000000/transparent/soda-can.svg",
+    "name": "soda-can",
+    "tags": [
+      "bottle",
+      "food"
+    ],
+    "hash": 346941172
+  },
+  {
     "path": "public/app/assets/icons/heavenly-dog/originals/svg/000000/transparent/catapult.svg",
     "name": "catapult",
     "tags": [
@@ -9266,6 +10679,7 @@ const gameIcons = [
     "tags": [
       "machine",
       "sky",
+      "vehicle",
       "science-fiction"
     ],
     "hash": 1393716827
@@ -9622,6 +11036,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/at-sea.svg",
     "name": "at-sea",
     "tags": [
+      "ball",
       "liquid",
       "sea"
     ],
@@ -10201,6 +11616,14 @@ const gameIcons = [
     "hash": -1031279863
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/blade-drag.svg",
+    "name": "blade-drag",
+    "tags": [
+      "blade"
+    ],
+    "hash": 1309832517
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/blade-fall.svg",
     "name": "blade-fall",
     "tags": [
@@ -10473,6 +11896,14 @@ const gameIcons = [
     "hash": -142745232
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/bouncing-sword.svg",
+    "name": "bouncing-sword",
+    "tags": [
+      "blade"
+    ],
+    "hash": -1599589903
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/bowie-knife.svg",
     "name": "bowie-knife",
     "tags": [
@@ -10679,6 +12110,14 @@ const gameIcons = [
       "spike"
     ],
     "hash": 1809390538
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/broken-ribbon.svg",
+    "name": "broken-ribbon",
+    "tags": [
+      "flag"
+    ],
+    "hash": -6931458
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/broken-shield.svg",
@@ -11153,6 +12592,15 @@ const gameIcons = [
     "hash": -495323006
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/charged-arrow.svg",
+    "name": "charged-arrow",
+    "tags": [
+      "arrow",
+      "lightning"
+    ],
+    "hash": -1416747172
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/charm.svg",
     "name": "charm",
     "tags": [
@@ -11176,6 +12624,14 @@ const gameIcons = [
       "shield"
     ],
     "hash": 717431243
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/checkered-diamond.svg",
+    "name": "checkered-diamond",
+    "tags": [
+      "mineral"
+    ],
+    "hash": 1914570315
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/cheerful.svg",
@@ -11239,6 +12695,14 @@ const gameIcons = [
     "hash": 1432634731
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/chewed-skull.svg",
+    "name": "chewed-skull",
+    "tags": [
+      "skull"
+    ],
+    "hash": 988473602
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/chicken-leg.svg",
     "name": "chicken-leg",
     "tags": [
@@ -11256,6 +12720,14 @@ const gameIcons = [
       "skull"
     ],
     "hash": 1661884297
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/circle-cage.svg",
+    "name": "circle-cage",
+    "tags": [
+      "ball"
+    ],
+    "hash": -1949050935
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/circle-claws.svg",
@@ -11882,7 +13354,8 @@ const gameIcons = [
     "name": "crowned-heart",
     "tags": [
       "hat",
-      "heart"
+      "heart",
+      "jewellery"
     ],
     "hash": -1656433409
   },
@@ -12148,7 +13621,8 @@ const gameIcons = [
     "name": "dead-eye",
     "tags": [
       "death",
-      "eye"
+      "eye",
+      "target"
     ],
     "hash": 1948787396
   },
@@ -12337,6 +13811,14 @@ const gameIcons = [
     "hash": -302774715
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/direwolf.svg",
+    "name": "direwolf",
+    "tags": [
+      "mammal"
+    ],
+    "hash": -1764474810
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/disintegrate.svg",
     "name": "disintegrate",
     "tags": [
@@ -12442,6 +13924,14 @@ const gameIcons = [
     "hash": 1648852847
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/double-diaphragm.svg",
+    "name": "double-diaphragm",
+    "tags": [
+      "ball"
+    ],
+    "hash": -598463799
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/double-dragon.svg",
     "name": "double-dragon",
     "tags": [
@@ -12453,6 +13943,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/double-face-mask.svg",
     "name": "double-face-mask",
     "tags": [
+      "light",
       "mask"
     ],
     "hash": 127998172
@@ -12675,6 +14166,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/droplets.svg",
     "name": "droplets",
     "tags": [
+      "chemical",
       "liquid"
     ],
     "hash": -609897693
@@ -12703,7 +14195,8 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/duality.svg",
     "name": "duality",
     "tags": [
-      "body"
+      "body",
+      "light"
     ],
     "hash": 945991266
   },
@@ -12768,6 +14261,15 @@ const gameIcons = [
       "star"
     ],
     "hash": 717689336
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/eclipse-saw.svg",
+    "name": "eclipse-saw",
+    "tags": [
+      "spike",
+      "star"
+    ],
+    "hash": 1869624723
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/eclipse.svg",
@@ -13071,6 +14573,14 @@ const gameIcons = [
     "hash": 1919549159
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/expanded-rays.svg",
+    "name": "expanded-rays",
+    "tags": [
+      "light"
+    ],
+    "hash": -1470645043
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/explosion-rays.svg",
     "name": "explosion-rays",
     "tags": [
@@ -13101,6 +14611,14 @@ const gameIcons = [
       "state"
     ],
     "hash": 770201160
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/extraction-orb.svg",
+    "name": "extraction-orb",
+    "tags": [
+      "ball"
+    ],
+    "hash": 1438504053
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/eye-shield.svg",
@@ -13211,6 +14729,15 @@ const gameIcons = [
       "vampire"
     ],
     "hash": 1933330783
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/fangs-circle.svg",
+    "name": "fangs-circle",
+    "tags": [
+      "mouth",
+      "spike"
+    ],
+    "hash": -1120412006
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/fast-arrow.svg",
@@ -13690,9 +15217,18 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/foam.svg",
     "name": "foam",
     "tags": [
+      "chemical",
       "liquid"
     ],
     "hash": -989890383
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/foamy-disc.svg",
+    "name": "foamy-disc",
+    "tags": [
+      "chemical"
+    ],
+    "hash": 893425242
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/focused-lightning.svg",
@@ -14152,6 +15688,15 @@ const gameIcons = [
     "hash": 1449103519
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/gold-shell.svg",
+    "name": "gold-shell",
+    "tags": [
+      "ball",
+      "shell"
+    ],
+    "hash": -182999809
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/goo-explosion.svg",
     "name": "goo-explosion",
     "tags": [
@@ -14443,6 +15988,14 @@ const gameIcons = [
       "animal"
     ],
     "hash": 982196510
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/happy-skull.svg",
+    "name": "happy-skull",
+    "tags": [
+      "skull"
+    ],
+    "hash": -647918112
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/harpoon-chain.svg",
@@ -14932,6 +16485,15 @@ const gameIcons = [
     "hash": 1685372812
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/icicles-aura.svg",
+    "name": "icicles-aura",
+    "tags": [
+      "body",
+      "spike"
+    ],
+    "hash": -1354970522
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/icicles-fence.svg",
     "name": "icicles-fence",
     "tags": [
@@ -15083,6 +16645,14 @@ const gameIcons = [
       "arrow"
     ],
     "hash": -912773526
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/interleaved-claws.svg",
+    "name": "interleaved-claws",
+    "tags": [
+      "claw"
+    ],
+    "hash": 683701184
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/internal-injury.svg",
@@ -15429,6 +16999,7 @@ const gameIcons = [
     "name": "layered-armor",
     "tags": [
       "armor",
+      "metal",
       "shield"
     ],
     "hash": -2118891758
@@ -15829,7 +17400,8 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/lotus.svg",
     "name": "lotus",
     "tags": [
-      "plant"
+      "plant",
+      "ninja"
     ],
     "hash": 1391743327
   },
@@ -15929,7 +17501,8 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/magic-palm.svg",
     "name": "magic-palm",
     "tags": [
-      "hand"
+      "hand",
+      "star"
     ],
     "hash": 1600477774
   },
@@ -16067,6 +17640,15 @@ const gameIcons = [
     "hash": -923447273
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/master-of-arms.svg",
+    "name": "master-of-arms",
+    "tags": [
+      "blade",
+      "body"
+    ],
+    "hash": 1582088030
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/match-head.svg",
     "name": "match-head",
     "tags": [
@@ -16075,6 +17657,15 @@ const gameIcons = [
       "smoke"
     ],
     "hash": -1932973852
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/match-tip.svg",
+    "name": "match-tip",
+    "tags": [
+      "fire",
+      "light"
+    ],
+    "hash": -507816637
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/materials-science.svg",
@@ -16089,6 +17680,7 @@ const gameIcons = [
     "name": "maze-cornea",
     "tags": [
       "ball",
+      "eye",
       "symbol"
     ],
     "hash": -235044158
@@ -16097,6 +17689,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/maze-saw.svg",
     "name": "maze-saw",
     "tags": [
+      "spike",
       "symbol"
     ],
     "hash": -1847248681
@@ -16173,7 +17766,8 @@ const gameIcons = [
     "name": "meditation",
     "tags": [
       "action",
-      "body"
+      "body",
+      "ninja"
     ],
     "hash": -1526283686
   },
@@ -16276,6 +17870,15 @@ const gameIcons = [
       "claw"
     ],
     "hash": -1328094612
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/mighty-spanner.svg",
+    "name": "mighty-spanner",
+    "tags": [
+      "spike",
+      "tool"
+    ],
+    "hash": 1032424450
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/mine-explosion.svg",
@@ -16395,6 +17998,14 @@ const gameIcons = [
       "symbol"
     ],
     "hash": 702899539
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/moebius-trefoil.svg",
+    "name": "moebius-trefoil",
+    "tags": [
+      "symbol"
+    ],
+    "hash": -107010210
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/moebius-triangle.svg",
@@ -16651,6 +18262,15 @@ const gameIcons = [
     "hash": 1807410379
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/noodle-ball.svg",
+    "name": "noodle-ball",
+    "tags": [
+      "ball",
+      "tentacle"
+    ],
+    "hash": -1868142867
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/nothing-to-say.svg",
     "name": "nothing-to-say",
     "tags": [
@@ -16757,6 +18377,15 @@ const gameIcons = [
       "blood"
     ],
     "hash": 120786380
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/opening-shell.svg",
+    "name": "opening-shell",
+    "tags": [
+      "insect",
+      "shell"
+    ],
+    "hash": -376015573
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/oppression.svg",
@@ -16992,6 +18621,14 @@ const gameIcons = [
     "hash": -1395453445
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/pentarrows-tornado.svg",
+    "name": "pentarrows-tornado",
+    "tags": [
+      "arrow"
+    ],
+    "hash": 575839433
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/perfume-bottle.svg",
     "name": "perfume-bottle",
     "tags": [
@@ -17045,6 +18682,15 @@ const gameIcons = [
       "heart"
     ],
     "hash": -1673793531
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/piercing-sword.svg",
+    "name": "piercing-sword",
+    "tags": [
+      "arrow",
+      "blade"
+    ],
+    "hash": -889772367
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/pig-face.svg",
@@ -17258,7 +18904,8 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/potion-ball.svg",
     "name": "potion-ball",
     "tags": [
-      "bottle"
+      "bottle",
+      "glass"
     ],
     "hash": 1755818281
   },
@@ -17688,6 +19335,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/riot-shield.svg",
     "name": "riot-shield",
     "tags": [
+      "metal",
       "shield"
     ],
     "hash": -1244799318
@@ -18397,6 +20045,14 @@ const gameIcons = [
     "hash": -844137699
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/shiny-omega.svg",
+    "name": "shiny-omega",
+    "tags": [
+      "symbol"
+    ],
+    "hash": 1964037571
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/shiny-purse.svg",
     "name": "shiny-purse",
     "tags": [
@@ -18422,6 +20078,15 @@ const gameIcons = [
       "sound"
     ],
     "hash": 1798420837
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/shuriken-aperture.svg",
+    "name": "shuriken-aperture",
+    "tags": [
+      "sky",
+      "symbol"
+    ],
+    "hash": 320546704
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/shuriken.svg",
@@ -18588,6 +20253,14 @@ const gameIcons = [
     "hash": 1554418712
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/skull-slices.svg",
+    "name": "skull-slices",
+    "tags": [
+      "skull"
+    ],
+    "hash": -1555853427
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/slap.svg",
     "name": "slap",
     "tags": [
@@ -18746,6 +20419,7 @@ const gameIcons = [
     "name": "snow-bottle",
     "tags": [
       "bottle",
+      "glass",
       "ice"
     ],
     "hash": -179688192
@@ -18860,6 +20534,15 @@ const gameIcons = [
       "tool"
     ],
     "hash": -358605247
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/spark-spirit.svg",
+    "name": "spark-spirit",
+    "tags": [
+      "creature",
+      "fire"
+    ],
+    "hash": -1073081635
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/sparkling-sabre.svg",
@@ -19027,6 +20710,14 @@ const gameIcons = [
     "hash": -1933619946
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/spiked-tail.svg",
+    "name": "spiked-tail",
+    "tags": [
+      "spike"
+    ],
+    "hash": 348318671
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/spiked-tentacle.svg",
     "name": "spiked-tentacle",
     "tags": [
@@ -19098,6 +20789,14 @@ const gameIcons = [
     "hash": -798989630
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/spinning-ribbons.svg",
+    "name": "spinning-ribbons",
+    "tags": [
+      "flag"
+    ],
+    "hash": 2109728770
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/spinning-sword.svg",
     "name": "spinning-sword",
     "tags": [
@@ -19137,6 +20836,14 @@ const gameIcons = [
       "shell"
     ],
     "hash": 69461200
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/spiral-tentacle.svg",
+    "name": "spiral-tentacle",
+    "tags": [
+      "tentacle"
+    ],
+    "hash": -1094723426
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/spiral-thrust.svg",
@@ -19387,6 +21094,15 @@ const gameIcons = [
     "hash": -492213351
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/star-skull.svg",
+    "name": "star-skull",
+    "tags": [
+      "skull",
+      "star"
+    ],
+    "hash": -1980555490
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/star-swirl.svg",
     "name": "star-swirl",
     "tags": [
@@ -19403,6 +21119,14 @@ const gameIcons = [
       "symbol"
     ],
     "hash": 1485523178
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/static-guard.svg",
+    "name": "static-guard",
+    "tags": [
+      "body"
+    ],
+    "hash": -996561406
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/static-waves.svg",
@@ -19492,6 +21216,14 @@ const gameIcons = [
       "blood"
     ],
     "hash": 539101714
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/stomp-tornado.svg",
+    "name": "stomp-tornado",
+    "tags": [
+      "sky"
+    ],
+    "hash": 1764582025
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/stomp.svg",
@@ -19735,6 +21467,7 @@ const gameIcons = [
       "sky",
       "star",
       "time",
+      "ninja",
       "world-wars"
     ],
     "hash": -440719035
@@ -19948,6 +21681,23 @@ const gameIcons = [
     "hash": -473164530
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/sword-tie.svg",
+    "name": "sword-tie",
+    "tags": [
+      "blade",
+      "body"
+    ],
+    "hash": 943396592
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/sword-wound.svg",
+    "name": "sword-wound",
+    "tags": [
+      "blade"
+    ],
+    "hash": -57970317
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/swords-emblem.svg",
     "name": "swords-emblem",
     "tags": [
@@ -20100,9 +21850,21 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/temptation.svg",
     "name": "temptation",
     "tags": [
+      "fruit",
+      "reptile",
       "state"
     ],
     "hash": 697760081
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/tension-snowflake.svg",
+    "name": "tension-snowflake",
+    "tags": [
+      "cross",
+      "spike",
+      "star"
+    ],
+    "hash": -1219028921
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/tentacle-heart.svg",
@@ -20231,6 +21993,15 @@ const gameIcons = [
       "tentacle"
     ],
     "hash": -238546843
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/three-burning-balls.svg",
+    "name": "three-burning-balls",
+    "tags": [
+      "ball",
+      "fire"
+    ],
+    "hash": -1074963973
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/three-keys.svg",
@@ -20498,6 +22269,15 @@ const gameIcons = [
     "hash": -548247522
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/trap-mask.svg",
+    "name": "trap-mask",
+    "tags": [
+      "mask",
+      "robot"
+    ],
+    "hash": 890713532
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/tread.svg",
     "name": "tread",
     "tags": [
@@ -20739,6 +22519,22 @@ const gameIcons = [
     "hash": 432611896
   },
   {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/twin-shell.svg",
+    "name": "twin-shell",
+    "tags": [
+      "shell"
+    ],
+    "hash": -1689443961
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/twirl-center.svg",
+    "name": "twirl-center",
+    "tags": [
+      "sky"
+    ],
+    "hash": -201934530
+  },
+  {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/twirly-flower.svg",
     "name": "twirly-flower",
     "tags": [
@@ -20793,6 +22589,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/ultrasound.svg",
     "name": "ultrasound",
     "tags": [
+      "glass",
       "spike",
       "sound"
     ],
@@ -21055,7 +22852,8 @@ const gameIcons = [
     "name": "wave-crest",
     "tags": [
       "liquid",
-      "sea"
+      "sea",
+      "ninja"
     ],
     "hash": -1064925857
   },
@@ -21379,6 +23177,15 @@ const gameIcons = [
       "wood"
     ],
     "hash": -142743499
+  },
+  {
+    "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/wooden-fence.svg",
+    "name": "wooden-fence",
+    "tags": [
+      "spike",
+      "wood"
+    ],
+    "hash": -966462154
   },
   {
     "path": "public/app/assets/icons/lorc/originals/svg/000000/transparent/wooden-sign.svg",
@@ -22331,6 +24138,7 @@ const gameIcons = [
     "path": "public/app/assets/icons/sbed/originals/svg/000000/transparent/overkill.svg",
     "name": "overkill",
     "tags": [
+      "ball",
       "head"
     ],
     "hash": -1492514456
@@ -24173,9 +25981,20 @@ const gameIcons = [
     "hash": -622574870
   },
   {
+    "path": "public/app/assets/icons/spencerdub/originals/svg/000000/transparent/digital-trace.svg",
+    "name": "digital-trace",
+    "tags": [
+      "gui",
+      "map",
+      "target"
+    ],
+    "hash": 1242211693
+  },
+  {
     "path": "public/app/assets/icons/various-artists/public-domain/svg/000000/transparent/infinity.svg",
     "name": "infinity",
     "tags": [
+      "gui",
       "symbol"
     ],
     "hash": 1174405894

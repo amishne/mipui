@@ -166,6 +166,8 @@ class Menu {
             const svgElement = xhr.responseXML.documentElement;
             svgElement.classList.add('image');
             svgElement.classList.add(...deferredSvg.classNames);
+            Array.from(svgElement.children)
+                .forEach(svgChild => svgChild.removeAttribute('fill'));
             const element = item.element.children[deferredSvg.childNum];
             element.innerHTML = '';
             element.appendChild(svgElement);
@@ -584,7 +586,6 @@ class Menu {
           ct.images.image,
           variation,
           path,
-          false,
           gameIcon.hash);
       if (item.group == this.groups_.imageIconTools) {
         this.groups_.imageIconTools.selectedIcon = gameIcon;

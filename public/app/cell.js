@@ -234,6 +234,8 @@ class Cell {
         svgElement.classList.add(...classNames);
         svgElement.style.width = width;
         svgElement.style.height = height;
+        Array.from(svgElement.children)
+            .forEach(svgChild => svgChild.removeAttribute('fill'));
         element.innerHTML = '';
         element.appendChild(svgElement);
       };
