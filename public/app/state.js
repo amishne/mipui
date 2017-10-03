@@ -163,6 +163,7 @@ class State {
     this.mid_ = mid;
     const newUrl = 'index.html?mid=' + encodeURIComponent(this.mid_);
     window.history.replaceState(null, '', newUrl);
+    this.gesture = null;
   }
 
   setSecret(secret, callback) {

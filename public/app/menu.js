@@ -1479,7 +1479,18 @@ class Menu {
         submenu: {
           items: [
             {
-              name: 'Hide',
+              name: 'Reveal cells in line of sight',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'my_location',
+              enabledInReadonlyMode: false,
+              isSelected: true,
+              callback: () => {
+                state.gesture = new SightGesture();
+              },
+            },
+            {
+              name: 'Hide / reveal single cell',
               type: 'tool',
               presentation: 'icon',
               materialIcon: 'filter_tilt_shift',
@@ -1488,16 +1499,6 @@ class Menu {
                 state.gesture =
                     new OverlayGesture(
                       ct.mask, ct.mask.hidden, ct.mask.hidden.black);
-              },
-            },
-            {
-              name: 'Reveal in line of sight',
-              type: 'tool',
-              presentation: 'icon',
-              materialIcon: 'my_location',
-              enabledInReadonlyMode: false,
-              callback: () => {
-                state.gesture = new SightGesture();
               },
             },
             {
