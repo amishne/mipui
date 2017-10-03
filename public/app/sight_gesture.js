@@ -112,7 +112,38 @@ class SightGesture extends Gesture {
   }
 
   isOpaque_(cell) {
-    return cell && cell.hasLayerContent(ct.walls);
+    // A cell is opaque if it's a wall (unless it has a window) or if it's a
+    // curtain.
+    if (!cell) return false;
+    if (cell.isKind(ct.separators, ct.separators.window)) return false;
+    if (cell.isKind(ct.separators, ct.separators.curtain)) return true;
+    if (cell.role == 'corner') {
+      // Because corners are currently not counted as separators, find out
+      // whether a corner is a de-facto separator.
+      const neighborRight = cell.getNeighbor('right', true);
+      const separatorRight =
+          neighborRight ? neighborRight.getLayerContent(ct.separators) : null;
+      if (separatorRight && separatorRight[ck.startCell]) {
+        if (separatorRight[ck.kind] == ct.separators.window.id) {
+          return false;
+        }
+        if (separatorRight[ck.kind] == ct.separators.curtain.id) {
+          return true;
+        }
+      }
+      const neighborBottom = cell.getNeighbor('bottom', true);
+      const separatorBottom =
+          neighborBottom ? neighborBottom.getLayerContent(ct.separators) : null;
+      if (separatorBottom && separatorBottom[ck.startCell]) {
+        if (separatorBottom[ck.kind] == ct.separators.window.id) {
+          return false;
+        }
+        if (separatorBottom[ck.kind] == ct.separators.curtain.id) {
+          return true;
+        }
+      }
+    }
+    return cell.hasLayerContent(ct.walls);
   }
 
   cleanSectors_(sectors) {
