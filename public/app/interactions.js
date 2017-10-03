@@ -370,15 +370,9 @@ function resetView() {
   const nav = state.navigation;
   nav.scale = 1.0;
   updateMapTransform(false);
-  setAndCache(
-      mapContainer, 'scrollLeft', getCached(mapContainer, 'clientWidth') / 2);
-  setAndCache(
-      mapContainer, 'scrollTop', getCached(mapContainer, 'clientHeight') / 2);
   const theMap = document.getElementById('theMap');
-  const appRect = mapContainer.getBoundingClientRect();
-  const theMapRect = theMap.getBoundingClientRect();
-  pan(appRect.width / 2 - theMapRect.width / 2,
-      appRect.height / 2 - theMapRect.height / 2);
+  setAndCache(mapContainer, 'scrollLeft', theMap.clientWidth / 2);
+  setAndCache(mapContainer, 'scrollTop', theMap.clientHeight / 2);
   updateMapTransform(true);
 }
 
