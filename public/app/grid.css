@@ -47,7 +47,7 @@
 
 #gmOverlayLayer {
   z-index: 9;
-  display: hidden;
+  display: none;
 }
 
 .editor-view #gmOverlayLayer {
