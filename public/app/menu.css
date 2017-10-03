@@ -428,6 +428,8 @@
   display: inherit;
   left: 3px;
   top: 3px;
+  opacity: 1;
+  border-color: mediumvioletred;
 }
 
 .menu-images .floor-cell {
