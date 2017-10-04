@@ -411,6 +411,7 @@ class OperationCenter {
   connectToExistingMap(mid, secret, callback) {
     if (!mid) return;
     if (state.getMid() != mid) state.setMid(mid);
+    if (!secret) state.gesture = null;
     if (secret && state.getSecret() != secret) {
       state.setSecret(secret, () => {
         this.connectToExistingMap(mid, secret, callback);
