@@ -83,6 +83,7 @@ class RoomGesture extends Gesture {
         cell.setLayerContent(ct.walls, content, true);
       }
     });
+    if (!highlightOnly) state.opCenter.recordOperationComplete();
   }
 
   // Called once before per-cell calls to shouldApplyContentTo_ and to
