@@ -446,7 +446,8 @@ function switchToMobileMode() {
   const actionPane =
       createAndAppendDivWithClass(
           document.body, 'action-pane');
-  actionPane.textContent = 'Tap!';
+  actionPane.textContent = 'Tap here to Apply. ' +
+      'WARNING: Mobile/touch support is experimental and work-in-progress';
   actionPane.addEventListener('touchstart', e => {
     e.stopPropagation();
     if (state.gesture) {
