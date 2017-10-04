@@ -132,6 +132,14 @@ function zoom(wheelEvent, incremental = false) {
   updateMapTransform(true);
 }
 
+function handleMouseDownEvent(mouseEvent) {
+  if (mouseEvent.buttons == 4) {
+    // Don't propagate middle mouse click, to avoid Chrome's "mouse nav" mode.
+    mouseEvent.stopPropagation();
+    mouseEvent.preventDefault();
+  }
+}
+
 function handleMouseMoveEvent(mouseEvent) {
   if (mouseEvent.movementX == 0 && mouseEvent.movementY == 0) return;
   if (mouseEvent.buttons == (isTouchDevice ? 0 : 4)) {
