@@ -560,7 +560,7 @@
 }
 
 .editor-view .gm-note {
-  display: inherit;
+  display: flex;
 }
 
 .image-cell {
