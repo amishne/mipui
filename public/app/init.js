@@ -26,7 +26,8 @@ function wireUiElements() {
   const mapContainer = document.getElementById('mapContainer');
   mapContainer.onwheel = wheelEvent => handleWheelEvent(wheelEvent);
   mapContainer.onmousemove = mouseEvent => handleMouseMoveEvent(mouseEvent);
-  document.getElementById('app').addEventListener('mousedown', handleMouseDownEvent);
+  document.getElementById('app')
+      .addEventListener('mousedown', handleMouseDownEvent);
   mapContainer.addEventListener('touchstart', handleTouchStartEvent);
   mapContainer.addEventListener('touchmove', handleTouchMoveEvent);
   mapContainer.addEventListener('touchend', handleTouchEndEvent);
