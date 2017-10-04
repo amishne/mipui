@@ -47,6 +47,10 @@ class Menu {
       // Toggle it off so that the selection will toggle it on properly.
       selectedMenuItem.isSelected = false;
       this.selectMenuItem_(selectedMenuItem);
+      if (isTouchDevice) {
+        // Hide it.
+        this.selectMenuItem_(selectedMenuItem);
+      }
     }
   }
 

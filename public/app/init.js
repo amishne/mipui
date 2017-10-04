@@ -39,10 +39,6 @@ function initializeFirebase(callback) {
   const isInTestingMode = false;
   const isProd =
       window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/);
-  // Temporary, until mobile is implemented:
-  if (isProd) {
-    isTouchDevice = false;
-  }
   const config = isProd ? {
     apiKey: 'AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ',
     authDomain: 'mipui-prod.firebaseapp.com',
