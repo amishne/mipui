@@ -1520,6 +1520,9 @@ class Menu {
                       }, true);
                 });
                 state.opCenter.recordOperationComplete(true);
+                if (state.gesture instanceof SightGesture) {
+                  state.gesture.shouldMakeOtherCellsHidden = false;
+                }
               },
             },
             {
@@ -1533,6 +1536,9 @@ class Menu {
                   cell.setLayerContent(ct.mask, null, true);
                 });
                 state.opCenter.recordOperationComplete();
+                if (state.gesture instanceof SightGesture) {
+                  state.gesture.shouldMakeOtherCellsHidden = true;
+                }
               },
             },
             this.createTextTool_(

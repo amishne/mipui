@@ -7,7 +7,7 @@ class SightGesture extends Gesture {
       [ck.kind]: ct.mask.hidden.id,
       [ck.variation]: ct.mask.hidden.black.id,
     };
-    this.shouldMakeOtherCellsHidden_ =
+    this.shouldMakeOtherCellsHidden =
         Array.from(state.theMap.cells.entries())
             .every(([key, cell]) => !cell.hasLayerContent(ct.mask));
   }
@@ -20,7 +20,7 @@ class SightGesture extends Gesture {
 
     this.cellsInSight_ = this.calculateCellsInSight_(this.hoveredCell_);
 
-    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
+    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden) {
       state.theMap.cells.forEach((existingCell, key) => {
         existingCell.showHighlight(ct.mask, this.maskContent_);
       });
@@ -33,7 +33,7 @@ class SightGesture extends Gesture {
   }
 
   stopHover() {
-    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
+    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden) {
       state.theMap.cells.forEach((existingCell, key) => {
         existingCell.hideHighlight(ct.mask);
       });
@@ -47,7 +47,7 @@ class SightGesture extends Gesture {
   }
 
   startGesture() {
-    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden_) {
+    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden) {
       state.theMap.cells.forEach((existingCell, key) => {
         existingCell.hideHighlight(ct.mask);
         existingCell.setLayerContent(ct.mask, this.maskContent_, true);
@@ -59,9 +59,9 @@ class SightGesture extends Gesture {
       cellInSight.setLayerContent(ct.mask, null, true);
     });
 
-    if (this.shouldMakeOtherCellsHidden_) {
+    if (this.shouldMakeOtherCellsHidden) {
       state.opCenter.recordOperationComplete(true);
-      this.shouldMakeOtherCellsHidden_ = false;
+      this.shouldMakeOtherCellsHidden = false;
     }
   }
 
@@ -203,7 +203,7 @@ class SightGesture extends Gesture {
     const uniqueCells =
         Array.from(new Set([...right, ...left, ...bottom, ...top]));
     const eligibleCells =
-        this.shouldMakeOtherCellsHidden_ ?
+        this.shouldMakeOtherCellsHidden ?
           uniqueCells :
           uniqueCells.filter(cellToReveal =>
             cellToReveal.hasLayerContent(ct.mask));
