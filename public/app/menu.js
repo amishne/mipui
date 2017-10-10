@@ -920,43 +920,6 @@ class Menu {
                 }, 10);
               },
             },
-            {
-              name: 'Download SVG',
-              type: 'button',
-              presentation: 'label',
-              text: 'SVG',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                const overlay =
-                    createAndAppendDivWithClass(document.body, 'modal-overlay');
-                overlay.textContent = 'Constructing SVG...';
-                setTimeout(() => {
-                  const numColumns = (state.getProperty(pk.lastColumn) -
-                      state.getProperty(pk.firstColumn)) - 1;
-                  const numRows = (state.getProperty(pk.lastRow) -
-                      state.getProperty(pk.firstRow)) - 1;
-                  const width = 2 + numColumns *
-                      (state.theMap.cellWidth + 1 +
-                      state.theMap.dividerWidth + 1);
-                  const height = 2 + numRows *
-                      (state.theMap.cellHeight + 1 +
-                      state.theMap.dividerHeight + 1);
-                  const theMapElement = document.getElementById('theMap');
-                  domtoimage.toSvg(theMapElement, {
-                    style: { transform: '' },
-                    width,
-                    height,
-                  }).then(dataUrl => {
-                    const blob =
-                        new Blob([dataUrl.substr(33)], {type: 'image/svg+xml'});
-                    saveAs(blob, 'mipui.svg');
-                    overlay.parentElement.removeChild(overlay);
-                  }).catch(() => {
-                    overlay.parentElement.removeChild(overlay);
-                  });
-                }, 10);
-              },
-            },
           ],
         },
       },
