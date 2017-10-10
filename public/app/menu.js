@@ -1142,6 +1142,7 @@ class Menu {
               onChange: newChoiceNum => {
                 state.setProperty(pk.theme, newChoiceNum, true);
                 state.reloadTheme();
+                state.opCenter.recordOperationComplete();
               },
             },
             {
