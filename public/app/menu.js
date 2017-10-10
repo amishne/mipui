@@ -1542,6 +1542,36 @@ class Menu {
                 ],
               }],
             },
+            {
+              name: 'Hide text & secret doors',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'compare',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                state.theMap.cells.forEach(cell => {
+                  if (cell.isVariation(
+                      ct.separators, ct.separators.door,
+                      ct.separators.door.secret)) {
+                    const content = Object.assign({},
+                        cell.getLayerContent(ct.separators), {
+                          [ck.kind]: ct.separators.door.id,
+                          [ck.variation]: ct.separators.door.hiddenSecret.id,
+                        });
+                    cell.setLayerContent(ct.separators, content, true);
+                  }
+                  if (cell.isKind(ct.text, ct.text.text)) {
+                    const content = Object.assign({},
+                        cell.getLayerContent(ct.text), {
+                          [ck.kind]: ct.text.gmNote.id,
+                          [ck.variation]: ct.text.gmNote.standard.id,
+                        });
+                    cell.setLayerContent(ct.text, content, true);
+                  }
+                });
+                state.opCenter.recordOperationComplete(true);
+              },
+            },
           ],
         },
       },
