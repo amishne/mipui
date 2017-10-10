@@ -873,7 +873,9 @@ class Menu {
                   const theMapElement = document.getElementById('theMap');
                   domtoimage.toBlob(theMapElement, {
                     style: {
-                      transform: `matrix(${scale}, 0, 0, ${scale}, 0, 0)`,
+                      transform: `scale(${scale})`,
+                      left: 0,
+                      top: 0,
                     },
                     width,
                     height,
@@ -897,11 +899,18 @@ class Menu {
                     createAndAppendDivWithClass(document.body, 'modal-overlay');
                 overlay.textContent = 'Constructing PNG...';
                 setTimeout(() => {
-                  const appElement = document.getElementById('app');
                   const theMapElement = document.getElementById('theMap');
+                  const mapContainerElement =
+                      document.getElementById('mapContainer');
                   domtoimage.toBlob(theMapElement, {
-                    width: appElement.clientWidth,
-                    height: appElement.clientHeight,
+                    width: mapContainerElement.clientWidth,
+                    height: mapContainerElement.clientHeight,
+                    style: {
+                      left: theMapElement.offsetLeft -
+                          mapContainerElement.scrollLeft,
+                      top: theMapElement.offsetTop -
+                          mapContainerElement.scrollTop,
+                    },
                   }).then(blob => {
                     saveAs(blob, 'mipui.png');
                     overlay.parentElement.removeChild(overlay);
