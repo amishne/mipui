@@ -1,4 +1,6 @@
-const isTouchDevice = window.matchMedia('(any-hover: none)').matches;
+const isTouchDevice =
+    window.matchMedia(
+        '(any-hover: none) and (orientation: portrait)').matches;
 const cached = {};
 let mapContainer;
 

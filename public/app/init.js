@@ -111,7 +111,7 @@ function start() {
   });
   resetView();
   wireUiElements();
-  if (window.matchMedia('(any-hover: none)').matches) {
+  if (isTouchDevice) {
     switchToMobileMode();
   }
 }
