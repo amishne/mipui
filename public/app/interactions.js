@@ -144,7 +144,7 @@ function handleMouseDownEvent(mouseEvent) {
 
 function handleMouseMoveEvent(mouseEvent) {
   if (mouseEvent.movementX == 0 && mouseEvent.movementY == 0) return;
-  if (mouseEvent.buttons == (isTouchDevice ? 0 : 4)) {
+  if (mouseEvent.buttons == 4) {
     // Middle button is pan.
     pan(mouseEvent.movementX, mouseEvent.movementY);
   }
