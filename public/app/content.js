@@ -4,7 +4,7 @@
 // * Each "kind" contains "variation"s.
 const ct = {
   floors: {
-    classNames: ['floor-cell'],
+    classNames: ['floor-cell', 'floor-cell-_ROLE_'],
     floor: {
       generic: {},
     },

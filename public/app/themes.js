@@ -6,7 +6,7 @@ const themes = [
     files: [],
   },
   {
-    name: 'Graph Paper',
+    name: 'Graph Paper (double)',
     files: [
       'themes/graph_paper/style.css',
       'themes/graph_paper/angled_wall.css',
@@ -24,6 +24,13 @@ const themes = [
     files: [
       'themes/cutout/style.css',
       'themes/cutout/angled_wall.css',
+    ],
+  },
+  {
+    name: 'Graph Paper (single)',
+    files: [
+      'themes/graph_paper_single/style.css',
+      'themes/graph_paper_single/angled_wall.css',
     ],
   },
 ];
