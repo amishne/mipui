@@ -428,10 +428,12 @@
 
 .angled-wall-cell {
   margin: -7px;
+  image-rendering: pixelated;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAhUlEQVRYR+2Y0Q2AIAxE7R6O4viO4h4Y/KfX5CQh5PlJQ9CXu8M2jsHTnrvFecWo/se6OuOr84IJagi6OtyDYP8Kl8TM/bg4o7uHBglqgnpihmASFy4EIcgftdAAJsEkmASTMPrI5z/MZlROlm4SGneaJiUko17SII07GjQ0praWNLh6Dr6fdLooEnnIQwAAAABJRU5ErkJggg==");
 }
 
 /* hsl(34, 56.9, 70.0) */
-.square-wall-cell, .oval-wall-cell {
+.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
   background-color: rgb(222, 184, 135);
   border-right: 1px solid;
   border-bottom: 1px solid;

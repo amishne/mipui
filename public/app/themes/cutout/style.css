@@ -18,7 +18,7 @@
   filter: drop-shadow(0px 6px 2px #666666);
 }
 
-.square-wall-cell, .oval-wall-cell {
+.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
   background-color: rgb(210, 210, 210);
   border-color: #31c8ff;
   filter: brightness(2) saturate(0.1);

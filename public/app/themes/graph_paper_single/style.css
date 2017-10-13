@@ -25,8 +25,9 @@
 }
 
 /* hsl(0, 0, 82) */
-.square-wall-cell, .oval-wall-cell {
+.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
   background-color: rgb(210, 210, 210);
+  background-image: none;
   border-color: rgb(210, 210, 210);
   box-shadow: 0 0 0 0.1px rgb(210, 210, 210);
 }

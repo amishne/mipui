@@ -1,22 +1,5 @@
-const out = process.stdout;
-
-const beigeLandParams = {
-  fillColor: 'rgb(222, 184, 135)',
-  strokeColor: 'bisque',
-};
-const graphPaperParams = {
-  fillColor: 'rgb(210, 210, 210)',
-  strokeColor: 'rgb(183, 195, 199)',
-};
-const cutoutParams = {
-  fillColor: 'rgb(205, 222, 222)',
-  strokeColor: 'rgb(205, 222, 222)',
-};
-
-const params = cutoutParams;
-
 /*
-// An angled cell is composed of 17 parts (uppercase letters):
+An angled cell is composed of 17 parts (uppercase letters):
 
  0  7  14 19 2431 38
  v  v  v  v  v v  v
@@ -45,51 +28,28 @@ The 8 potential connections (lowercase letters) control which parts are walls
 and which aren't; sectionsFromDirs contains the logic.
 */
 
-function emitLines(section) {
-  let l = [];
-  switch (section) {
-    case 'A': l = ['7 6.5, 13 6.5']; break;
-    case 'B': l = ['25 6.5, 32 6.5', '31.5 0, 31.5 7']; break;
-    case 'C': l = ['6.5 7, 6.5 13']; break;
-    case 'G': l = ['31.5 7, 31.5 13']; break;
-    case 'J': l = ['31.5 14, 31.5 24']; break;
-    case 'K': l = ['7 31.5, 13 31.5']; break;
-    case 'L': l = ['31.5 25, 31.5 32', '25 31.5, 32 31.5']; break;
-    case 'M': l = ['6.5 25, 6.5 32', '0 31.5, 7 31.5']; break;
-    case 'N': l = ['14 31.5, 24 31.5']; break;
-    case 'O': l = ['32 31.5, 39 31.5']; break;
-    case 'Q': l = ['31.5 32, 31.5 39']; break;
-  }
-  l.forEach(points => {
-    const [[x1, y1], [x2, y2]] =
-        points.split(',').map(s => s.trim()).map(s => s.split(' '));
-    out.write("<line stroke-linecap='round' " +
-        `x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' />`);
-  });
-}
-
-function emitPolygon(section) {
+function createPolygon(section) {
   let p = null;
   switch (section) {
     case 'A': p = '7 0, 14 7, 7 7'; break;
-    case 'B': p = '31 0, 31 7, 24 7'; break;
+    case 'B': p = '31 0, 32 0, 32 8, 23 8'; break;
     case 'C': p = '0 7, 7 7, 7 14'; break;
     case 'D': p = '14 7, 24 7, 19 12'; break;
     case 'E': p = '31 7, 38 7, 31 14'; break;
     case 'F': p = '7 7, 14 7, 19 12, 12 19, 7 14'; break;
-    case 'G': p = '24 7, 31 7, 31 14, 26 19, 19 12'; break;
+    case 'G': p = '24 7, 32 7, 32 13, 26 19, 19 12'; break;
     case 'H': p = '7 14, 12 19, 7 24'; break;
     case 'I': p = '19 12, 26 19, 19 26, 12 19'; break;
-    case 'J': p = '31 14, 31 24, 26 19'; break;
-    case 'K': p = '12 19, 19 26, 14 31, 7 31, 7 24'; break;
-    case 'L': p = '26 19, 31 24, 31 31, 24 31, 19 26'; break;
-    case 'M': p = '7 24, 7 31, 0 31'; break;
-    case 'N': p = '19 26, 24 31, 14 31'; break;
-    case 'O': p = '31 24, 38 31, 31 31'; break;
+    case 'J': p = '32 13, 32 25, 26 19'; break;
+    case 'K': p = '12 19, 19 26, 13 32, 6 32, 6 25'; break;
+    case 'L': p = '26 19, 32 25, 32 32, 25 32, 19 26'; break;
+    case 'M': p = '7 24, 7 32, 0 32, 0 31'; break;
+    case 'N': p = '19 26, 25 32, 13 32'; break;
+    case 'O': p = '31 24, 39 32, 31 32'; break;
     case 'P': p = '7 31, 14 31, 7 38'; break;
-    case 'Q': p = '24 31, 31 31, 31 38'; break;
+    case 'Q': p = '24 31, 32 31, 32 39'; break;
   }
-  out.write(`<polygon points='${p}' />`);
+  return `<polygon points='${p}'/>`;
 }
 
 function sectionsFromDirs(d) {
@@ -117,19 +77,16 @@ function sectionsFromDirs(d) {
   return sections;
 }
 
-function emitClassForConnections(connections) {
-  console.log(`\n.angled-wall-cell-${connections} {`);
-  out.write('  background: url("');
-  emitSvgBackground(connections);
-  console.log('");\n}');
+function createClassForConnections(connections) {
+  const mask = createSvgMask(connections);
+  return `
+.angled-wall-cell-${connections} {
+  mask: ${mask};
+  -webkit-mask: ${mask};
+}`;
 }
 
-function emitSvgBackground(connections) {
-  out.write('data:image/svg+xml;utf8,' +
-      "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' " +
-      "shape-rendering='crispEdges'><style>" +
-      `polygon {fill: ${params.fillColor};}` +
-      `line {stroke-width: 1; stroke: ${params.strokeColor};}</style>`);
+function createSvgMask(connections) {
   const directions = {
     't': 1,
     'r': 2,
@@ -144,29 +101,20 @@ function emitSvgBackground(connections) {
   Object.keys(directions).forEach(key => {
     d[key] = (connections & directions[key]) != 0;
   });
-  emitSvgPolygons(d);
-  emitSvgLines(d);
-  out.write('</svg>');
+  const polygons = createPolygons(d);
+  return 'url("data:image/svg+xml;utf8,' +
+      "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' " +
+      "shape-rendering='crispEdges'><style>polygon {fill: white;}</style>" +
+      `<defs><mask id='m'>${polygons.join('')}</mask></defs>` +
+      "<rect x='0' y='0' width='40' height='40' mask='url(%23m)'/></svg>\")";
 }
 
-function emitSvgPolygons(d) {
-  const sections = sectionsFromDirs(d);
-  // Two separate loops because we want all polygons preceding all lines, for
-  // layering.
-  sections.forEach(section => {
-    emitPolygon(section);
-  });
-  sections.forEach(section => {
-    emitLines(section);
-  });
-}
-
-function emitSvgLines(d) {
-
+function createPolygons(d) {
+  return sectionsFromDirs(d).map(createPolygon);
 }
 
 console.log(
     '/* Automatically generated by scripts/angled_wall_css_generator.js */');
 for (let connections = 0; connections < 256; connections++) {
-  emitClassForConnections(connections);
+  console.log(createClassForConnections(connections));
 }

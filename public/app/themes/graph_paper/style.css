@@ -9,9 +9,13 @@
 }
 
 /* hsl(0, 0, 82) */
-.square-wall-cell, .oval-wall-cell {
+.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
   background-color: rgb(210, 210, 210);
   border-color: rgb(183, 195, 199);
+}
+
+.angled-wall-cell {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAhElEQVRYR+2YwQ3AIAwDw1g8OkAn7gA8GKsVAyR+gESJjicRItgxOBRzxtP6e1+1ePEV82qPEXcTUItJ0MxAUJWBKqMzEBxZqpPujKPiCP0cNchLEnAMxbPXDwiCIH5Q1AAiQSSIBJHQuMe/F2d0dTjq9I6axj09xagYimddaXoE/34PfrQxqjjuqIxVAAAAAElFTkSuQmCC");
 }
 
 /* hsl(26, 0, 92.66) */
