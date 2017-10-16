@@ -35,6 +35,7 @@ class PasteGesture extends Gesture {
     });
     // Completing a paste resets the gesture selection.
     state.menu.setToInitialSelection();
+    state.opCenter.recordOperationComplete();
   }
 
   continueGesture(/* cell */) {}
