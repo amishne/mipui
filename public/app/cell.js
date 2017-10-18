@@ -160,30 +160,6 @@ class Cell {
     }
   }
 
-  //  setShadow_(element, layer, content) {
-  //    const shadowLayer = layer.getShadowLayer();
-  //    if (!shadowLayer) return;
-  //    let shadowElement = this.elements_.get(shadowLayer);
-  //    if (!element && !shadowElement) {
-  //      return;
-  //    }
-  //    if (!element && shadowElement) {
-  //      this.removeElement(shadowLayer);
-  //      return;
-  //    };
-  //    if (element && !shadowElement) {
-  //      this.getOrCreateLayerElement(shadowLayer, content);
-  //      return;
-  //    }
-  //    
-  //    
-  //    const shadowElement = element.cloneNode(true);
-  //    this.elements_[shadowLayer].set(shadowElement);
-  //    document.getElementById(shadowLayer.name + 'Layer')
-  //        .appendChild(shadowElement);
-  //    this.elements_[shadowLayer].set(shadowElement);
-  //  }
-
   setText_(element, text) {
     if (!element || !text) return;
     const offsetWidth = element.offsetWidth;
