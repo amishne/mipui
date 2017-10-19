@@ -3,6 +3,16 @@ const isTouchDevice =
         '(any-hover: none) and (orientation: portrait)').matches;
 const cached = {};
 let mapContainer;
+const mapResizeButtons = [
+  {name: 'add-column-right', pos: 'right', place: 0},
+  {name: 'remove-column-right', pos: 'right', place: 1},
+  {name: 'add-row-bottom', pos: 'bottom', place: 0},
+  {name: 'remove-row-bottom', pos: 'bottom', place: 1},
+  {name: 'add-column-left', pos: 'left', place: 0},
+  {name: 'remove-column-left', pos: 'left', place: 1},
+  {name: 'add-row-top', pos: 'top', place: 0},
+  {name: 'remove-row-top', pos: 'top', place: 1},
+];
 
 function getCached(obj, fieldName) {
   const cachedObj = cached[obj] || {};
@@ -17,6 +27,7 @@ function getCached(obj, fieldName) {
 
 function setAndCache(obj, fieldName, value) {
   obj[fieldName] = value;
+  if (!cached[obj]) cached[obj] = {};
   cached[obj][fieldName] = value;
 }
 
@@ -397,41 +408,47 @@ function resetGrid() {
   state.opCenter.recordOperationComplete();
 }
 
+let refreshMapResizeButtonLocationsTimeout = null;
 function refreshMapResizeButtonLocations() {
-  const theMap = document.getElementById('theMap');
-  const nav = state.navigation;
-  const left = theMap.offsetLeft;
-  const right = left + (theMap.offsetWidth * nav.scale);
-  const top = theMap.offsetTop;
-  const bottom = top + (theMap.offsetHeight * nav.scale);
-  const rect = {left, right, top, bottom};
-  [
-    {name: 'add-column-right', pos: 'right', place: 0},
-    {name: 'remove-column-right', pos: 'right', place: 1},
-    {name: 'add-row-bottom', pos: 'bottom', place: 0},
-    {name: 'remove-row-bottom', pos: 'bottom', place: 1},
-    {name: 'add-column-left', pos: 'left', place: 0},
-    {name: 'remove-column-left', pos: 'left', place: 1},
-    {name: 'add-row-top', pos: 'top', place: 0},
-    {name: 'remove-row-top', pos: 'top', place: 1},
-  ].forEach(button => {
-    const element =
-        document.getElementsByClassName('map-resize-button-' + button.name)[0];
-    let x = clamp(rect.left + 70, getCached(mapContainer, 'scrollLeft') +
-        getCached(mapContainer, 'offsetWidth') / 2, rect.right - 70);
-    let y = clamp(rect.top + 70, getCached(mapContainer, 'scrollTop') +
-        getCached(mapContainer, 'offsetHeight') / 2, rect.bottom - 70);
-    let offsetX = button.place == 0 ? -70 : 40;
-    let offsetY = offsetX;
-    switch (button.pos) {
-      case 'right': x = rect.right; offsetX = 50; break;
-      case 'bottom': y = rect.bottom; offsetY = 50; break;
-      case 'left': x = rect.left; offsetX = -70; break;
-      case 'top': y = rect.top; offsetY = -70; break;
-    }
-    element.style.left = x + offsetX;
-    element.style.top = y + offsetY;
-  });
+  if (refreshMapResizeButtonLocationsTimeout) {
+    clearTimeout(refreshMapResizeButtonLocationsTimeout);
+  } else {
+    mapResizeButtons.forEach(button => {
+      if (!button.element) {
+        button.element =
+            document
+                .getElementsByClassName('map-resize-button-' + button.name)[0];
+      }
+      button.element.style.visibility = 'hidden';
+    });
+  }
+  refreshMapResizeButtonLocationsTimeout = setTimeout(() => {
+    const theMap = document.getElementById('theMap');
+    const nav = state.navigation;
+    const left = theMap.offsetLeft;
+    const right = left + (theMap.offsetWidth * nav.scale);
+    const top = theMap.offsetTop;
+    const bottom = top + (theMap.offsetHeight * nav.scale);
+    const rect = {left, right, top, bottom};
+    mapResizeButtons.forEach(button => {
+      let x = clamp(rect.left + 70, getCached(mapContainer, 'scrollLeft') +
+          getCached(mapContainer, 'offsetWidth') / 2, rect.right - 70);
+      let y = clamp(rect.top + 70, getCached(mapContainer, 'scrollTop') +
+          getCached(mapContainer, 'offsetHeight') / 2, rect.bottom - 70);
+      let offsetX = button.place == 0 ? -70 : 40;
+      let offsetY = offsetX;
+      switch (button.pos) {
+        case 'right': x = rect.right; offsetX = 50; break;
+        case 'bottom': y = rect.bottom; offsetY = 50; break;
+        case 'left': x = rect.left; offsetX = -70; break;
+        case 'top': y = rect.top; offsetY = -70; break;
+      }
+      button.element.style.left = x + offsetX;
+      button.element.style.top = y + offsetY;
+      button.element.style.visibility = '';
+      refreshMapResizeButtonLocationsTimeout = null;
+    });
+  }, 1000);
 }
 
 let isActionClicked = false;
