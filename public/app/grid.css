@@ -632,12 +632,12 @@
 }
 
 .white-square, .white-circle {
-  filter: grayscale(100%) brightness(4) contrast(4);
+  filter: grayscale(100%) brightness(2.8) contrast(4);
 }
 
 .white-square-adding, .white-circle-adding, .white-square-removing,
 .white-circle-removing {
-  filter: grayscale(100%) brightness(4.3) contrast(4);
+  filter: grayscale(100%) brightness(3) contrast(4);
 }
 
 .stairs-cell-horizontal {
