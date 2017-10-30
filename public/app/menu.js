@@ -23,6 +23,7 @@ class Menu {
     this.tokenSelectedCategory_ = '<all>';
     this.tokenSelectedText_ = '';
     this.menuItems_ = this.setupMenuItems_();
+    this.shortcuts_ = new Map();
   }
 
   createMenu() {
@@ -102,8 +103,16 @@ class Menu {
     if (item.name) {
       const elementLabel =
           createAndAppendDivWithClass(container, 'menu-item-label');
-      elementLabel.innerText = item.name;
-      element.title = item.name;
+      const regex = /&(\w)/;
+      elementLabel.innerHTML =
+          item.name.replace(regex, '<span class="menu-shortcut">$1</span>');
+      const ampIndexMatch = regex.exec(item.name);
+      if (ampIndexMatch) {
+        const ampIndex = ampIndexMatch.index;
+        this.shortcuts_.set(item.name[ampIndex + 1].toLowerCase(), item);
+        element.title =
+            item.name.slice(0, ampIndex) + item.name.slice(ampIndex + 1);
+      }
     }
     if (item.id) element.id = item.id;
     element.onclick = callback;
@@ -112,6 +121,38 @@ class Menu {
       item.group.items.push(item);
     }
     this.updateItem_(item);
+  }
+
+  keydown(key) {
+    const menuItem = this.shortcuts_.get(key);
+    if (menuItem) {
+      // It's a shortcut! Shortcut behavior is as follows:
+      // 1. If the current menu is not the active one, switch to it. If the
+      //    current menu is hidden, also make the target menu hidden.
+      // 2. If the current menu is the active one, go to the next available
+      //    _tool_ in that menu. Leave the menu hidden status as-is.
+      let display = '';
+      if (menuItem.isSelected) {
+        // If the current menu is shapes or tokens, and it's already selected,
+        // do nothing.
+        if (menuItem.name == 'S&hapes' || menuItem.name == 'To&kens') return;
+        display = menuItem.submenu.element.style.display;
+        const tools =
+            menuItem.submenu.items.filter(item => item.type == 'tool');
+        if (tools.length == 0) return;
+        const selected = tools.findIndex(item => item.isSelected);
+        this.selectSubmenuItem_(tools[(selected + 1) % tools.length]);
+      } else {
+        const hasTools =
+            menuItem.submenu.items.findIndex(item => item.type == 'tool') >= 0;
+        // If the target menu has no tools, 
+        display = hasTools ?
+          this.menuItems_.find(item => item.isSelected)
+              .submenu.element.style.display : 'block';
+        this.selectMenuItem_(menuItem);
+      }
+      menuItem.submenu.element.style.display = display;
+    }
   }
 
   createSeparator_() {
@@ -788,7 +829,7 @@ class Menu {
     // ]
     return [
       {
-        name: 'File',
+        name: '&File',
         presentation: 'icon',
         materialIcon: 'insert_drive_file',
         id: 'statusIconParent',
@@ -924,7 +965,7 @@ class Menu {
         },
       },
       {
-        name: 'Info',
+        name: '&Info',
         presentation: 'icon',
         materialIcon: 'error_outline',
         enabledInReadonlyMode: true,
@@ -968,7 +1009,7 @@ class Menu {
         },
       },
       {
-        name: 'Select',
+        name: '&Select',
         presentation: 'icon',
         materialIcon: 'select_all',
         enabledInReadonlyMode: true,
@@ -1123,7 +1164,7 @@ class Menu {
         },
       },
       {
-        name: 'Map',
+        name: '&Map',
         presentation: 'icon',
         materialIcon: 'grid_on',
         enabledInReadonlyMode: true,
@@ -1216,7 +1257,7 @@ class Menu {
         },
       },
       {
-        name: 'Walls',
+        name: '&Walls',
         presentation: 'selected child',
         tip: 'Add a wall by clicking a divider cell between two floor cells.',
         isSelected: true,
@@ -1335,7 +1376,7 @@ class Menu {
         },
       },
       {
-        name: 'Separators',
+        name: 'Se&parators',
         presentation: 'selected child',
         tip: 'Drag when placing to create a multi-cell separator.',
         classNames: ['menu-separators'],
@@ -1359,7 +1400,7 @@ class Menu {
         },
       },
       {
-        name: 'Text',
+        name: '&Text',
         presentation: 'selected child',
         tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
@@ -1370,7 +1411,7 @@ class Menu {
         },
       },
       {
-        name: 'Tokens',
+        name: 'To&kens',
         presentation: 'selected child',
         tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
@@ -1386,7 +1427,7 @@ class Menu {
         },
       },
       {
-        name: 'Shapes',
+        name: 'S&hapes',
         presentation: 'selected child',
         submenu: {
           items: [
@@ -1402,7 +1443,7 @@ class Menu {
         },
       },
       {
-        name: 'Stairs',
+        name: 'Stai&rs',
         presentation: 'selected child',
         tip: 'Drag when placing to stretch across multiple cells.',
         classNames: ['menu-stairs'],
@@ -1447,7 +1488,7 @@ class Menu {
         },
       },
       {
-        name: 'GM Tools',
+        name: '&GM Tools',
         presentation: 'icon',
         materialIcon: 'local_library',
         enabledInReadonlyMode: false,
@@ -1576,7 +1617,7 @@ class Menu {
         },
       },
       {
-        name: 'Help',
+        name: 'He&lp',
         presentation: 'icon',
         materialIcon: 'help',
         tip: '',

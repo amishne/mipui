@@ -78,6 +78,10 @@ function handleKeyDownEvent(keyDownEvent) {
           state.gesture.deleteSelection();
         }
         break;
+      default:
+        // Delegate this to the menu.
+        state.menu.keydown(keyDownEvent.key);
+        break;
     }
   }
 }
