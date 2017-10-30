@@ -61,3 +61,16 @@
 .window-cell-vertical {
   margin: 3px 1px 3px 1px;
 }
+
+.image-blue {
+  fill: #4592be;
+}
+
+.blue-square, .blue-circle {
+  filter: hue-rotate(190deg) brightness(1.1);
+}
+
+.blue-square-adding, .blue-circle-adding, .blue-square-removing,
+.blue-circle-removing {
+  filter: hue-rotate(190deg) brightness(1.5);
+}
