@@ -1,0 +1,63 @@
+#wallsLayer {
+  filter: initial;
+}
+
+.floor-cell {
+  border-color: white;
+  image-rendering: pixelated;
+}
+
+.floor-cell-primary {
+  background: white;
+}
+
+.floor-cell-vertical {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAYCAYAAADZEIyjAAAAIElEQVQoU2NkQAKuk/b9353nxAgSAhMwMCoxGiSkJQYAXaVgGb3d82UAAAAASUVORK5CYII=") white;
+}
+
+.floor-cell-horizontal {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAGCAYAAADZq14TAAAAIklEQVQoU2NkoDFgpLH5DLS3wHXSvv+09AXtfUBL14PMBgDw9gKb12UDQgAAAABJRU5ErkJggg==") white;
+}
+
+.floor-cell-corner {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAI0lEQVQYV2NkQAKuk/b9353nxAgSAhMwQJwESBWyLhibdKMAhkoWm9xUiqQAAAAASUVORK5CYII=") white;
+}
+
+.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
+  background-color: #4592be;
+  background-image: none;
+  border-color: #4592be;
+  box-shadow: 0 0 0 0.1px #4592be;
+}
+
+.square-wall-cell-adding, oval-wall-cell-adding, oval-wall-cell-editing {
+  background-color: #639bbc;
+}
+
+.square-wall-cell-removing, .oval-wall-cell-removing {
+  background-color: #82a7bc;
+}
+
+.door-cell {
+  background-color: rgb(255, 255, 255);
+}
+
+.door-cell-horizontal {
+  margin: -2px 3px -2px 3px;
+}
+
+.door-cell-vertical {
+  margin: 3px -2px 3px -2px;
+}
+
+.window-cell {
+  background-color: rgb(255, 255, 255);
+}
+
+.window-cell-horizontal {
+  margin: 1px 3px 1px 3px;
+}
+
+.window-cell-vertical {
+  margin: 3px 1px 3px 1px;
+}

@@ -29,4 +29,10 @@ const themes = [
       'themes/graph_paper_single/style.css',
     ],
   },
+  {
+    name: 'Old School',
+    files: [
+      'themes/old_school/style.css',
+    ],
+  },
 ];
