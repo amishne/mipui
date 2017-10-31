@@ -224,6 +224,8 @@ class Menu {
       case 'textarea':
         const textarea = document.createElement(
             item.presentation == 'input' ? 'input' : 'textarea');
+        // To prevent keydowns here from acting as shortcuts:
+        textarea.onkeydown = e => e.stopPropagation();
         if (item.presentation == 'textarea') {
           textarea.rows = item.rows;
         }
@@ -236,23 +238,19 @@ class Menu {
         }
         item.element.appendChild(textarea);
         item.oldText = '';
-
-        textarea.onchange = e => {
-          e.stopPropagation();
-          if (item.onChange) {
+        if (item.onChange) {
+          textarea.onchange = () => {
+            e.stopPropagation();
             item.onChange(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          }
-        };
-
-        textarea.oninput = e => {
-          e.stopPropagation();
-          if (item.onInput) {
+          };
+        }
+        if (item.onInput) {
+          textarea.oninput = () => {
             item.onInput(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          }
-        };
-
+          };
+        }
         break;
       case 'dropdown':
         const select = document.createElement('select');
