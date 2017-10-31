@@ -500,11 +500,13 @@ class BoxGesture extends Gesture {
     this.inputElement_.select();
     this.startCell_.gridElement.appendChild(this.inputElement_);
     this.inputElement_.onkeydown = e => {
+      e.stopPropagation();
       if (this.isInputFinishingEvent_(e)) {
         this.finishEditing_(e);
       }
     };
     this.inputElement_.onkeyup = e => {
+      e.stopPropagation();
       if (this.isInputFinishingEvent_(e)) {
         return;
       }
