@@ -240,7 +240,6 @@ class Menu {
         item.oldText = '';
         if (item.onChange) {
           textarea.onchange = () => {
-            e.stopPropagation();
             item.onChange(item.oldText, textarea.value);
             item.oldText = textarea.value;
           };
