@@ -236,18 +236,23 @@ class Menu {
         }
         item.element.appendChild(textarea);
         item.oldText = '';
-        if (item.onChange) {
-          textarea.onchange = () => {
+
+        textarea.onchange = e => {
+          e.stopPropagation();
+          if (item.onChange) {
             item.onChange(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          };
-        }
-        if (item.onInput) {
-          textarea.oninput = () => {
+          }
+        };
+
+        textarea.oninput = e => {
+          e.stopPropagation();
+          if (item.onInput) {
             item.onInput(item.oldText, textarea.value);
             item.oldText = textarea.value;
-          };
-        }
+          }
+        };
+
         break;
       case 'dropdown':
         const select = document.createElement('select');
