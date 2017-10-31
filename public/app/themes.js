@@ -35,4 +35,10 @@ const themes = [
       'themes/old_school/style.css',
     ],
   },
+  {
+    name: 'Dark',
+    files: [
+      'themes/dark/style.css',
+    ],
+  },
 ];
