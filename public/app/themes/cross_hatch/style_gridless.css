@@ -13,7 +13,7 @@
   background-image: url("HatchPattern-final.png");
   border: initial;
   background-attachment: fixed;
-  background-size: 20%;
+  background-size: 150px;
 }
 
 .square-wall-cell-adding, oval-wall-cell-adding, oval-wall-cell-editing {
