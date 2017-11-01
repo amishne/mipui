@@ -459,7 +459,9 @@
 
 .door-cell {
   background-color: rgb(255, 250, 240);
-  border: 1px solid rgb(100, 100, 100);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(100, 100, 100);
   border-radius: 2px;
 }
 
@@ -480,13 +482,15 @@
 }
 
 .secret-door-cell {
-  border: 1px dashed rgb(100, 100, 100);
+  border-style: dashed;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='10'>S</text></svg>") rgb(255, 250, 240) no-repeat;
 }
 
 .window-cell {
   background-color: rgb(255, 250, 240);
-  border: 1px solid rgb(100, 100, 100);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(100, 100, 100);
 }
 
 .door-cell-adding, .window-cell-adding {

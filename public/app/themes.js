@@ -41,4 +41,17 @@ const themes = [
       'themes/dark/style.css',
     ],
   },
+  {
+    name: 'Cross Hatch (with grid)',
+    files: [
+      'themes/cross_hatch/style_gridless.css',
+      'themes/cross_hatch/grid.css',
+    ],
+  },
+  {
+    name: 'Cross Hatch (gridless)',
+    files: [
+      'themes/cross_hatch/style_gridless.css',
+    ],
+  },
 ];
