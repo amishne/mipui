@@ -79,7 +79,6 @@
   z-index: 2;
   filter: drop-shadow(2px 2px 3px #919191);
   border-color: bisque;
-  box-shadow: 2px 2px 6px 0px #919191;
 }
 
 #floorsLayer {

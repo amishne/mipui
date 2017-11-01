@@ -112,7 +112,7 @@ class Cell {
 
   populateElementFromContent_(element, layer, content) {
     this.modifyElementClasses_(layer, content, element, 'add');
-    this.setElementGeometryToGridElementGeometry_(element, content);
+    this.setElementGeometryToGridElementGeometry_(element, layer, content);
     this.setText_(element, content[ck.text]);
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
@@ -359,13 +359,17 @@ class Cell {
     this.gridElement.onmouseup = e => this.onMouseUp(e);
   }
 
-  setElementGeometryToGridElementGeometry_(element, content) {
+  setElementGeometryToGridElementGeometry_(element, layer, content) {
     const endCellKey = content[ck.endCell];
     const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
     element.style.top = this.offsetTop;
     element.style.right = endCell.offsetRight;
     element.style.bottom = endCell.offsetBottom;
     element.style.left = this.offsetLeft;
+    if (layer == ct.walls) {
+      element.style.backgroundPosition =
+          `-${this.offsetLeft}px -${this.offsetTop}px`;
+    }
   }
 
   addNeighborKey(direction, dividerKey, cellKeys) {

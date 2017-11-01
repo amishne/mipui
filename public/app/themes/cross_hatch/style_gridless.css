@@ -12,7 +12,6 @@
 .square-wall-cell, .oval-wall-cell, .angled-wall-cell {
   background-image: url("HatchPattern-final.png");
   border: initial;
-  background-attachment: fixed;
   background-size: 150px;
 }
 
