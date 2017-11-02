@@ -102,8 +102,12 @@
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='7'><path d='M 0 1 C 3 1 3 5 8 5 S 11 1 16 1' stroke='rgb(100, 100, 100)' stroke-width='3' fill='transparent'/></svg>") repeat-x;
 }
 
-.square-cell-primary, .square-cell-vertical, .square-cell-horizontal, .circle-cell-primary, .circle-cell-vertical, .circle-cell-horizontal {
-  margin: -1px -0px 1px -1px;
+.square-cell-vertical, .square-cell-horizontal, .circle-cell-vertical, .circle-cell-horizontal {
+  margin: -1px -1px -1px -1px;
+}
+
+.white-square, .white-circle {
+  filter: grayscale(100%) brightness(2.5) contrast(4);
 }
 
 .square-cell-0 {
