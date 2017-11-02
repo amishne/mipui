@@ -71,7 +71,7 @@ class Cell {
   createElementFromContent(layer, content) {
     if (!this.contentShouldHaveElement_(content)) return null;
     const element = createAndAppendDivWithClass(
-        document.getElementById(layer.name + 'Layer'));
+        document.querySelector(`#theMap .${layer.name}-layer`));
     this.populateElementFromContent_(element, layer, content);
     this.elements_.set(layer, element);
     return element;

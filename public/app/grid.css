@@ -31,56 +31,56 @@
   pointer-events: none;
 }
 
-#widgetLayer {
+.widget-layer {
   z-index: 10;
 }
 
-#gridLayer {
+.grid-layer {
   display: inline-block;
   z-index: 10;
   pointer-events: auto;
 }
 
-#maskLayer {
+.mask-layer {
   z-index: 9;
 }
 
-#gmOverlayLayer {
+.gm-overlay-layer {
   z-index: 8;
   display: none;
 }
 
-.editor-view #gmOverlayLayer {
+.editor-view .gm-overlay-layer {
   display: inherit;
 }
 
-#textLayer {
+.text-layer {
   z-index: 7;
 }
 
-#separatorsLayer {
+.separators-layer {
   z-index: 6;
 }
 
-#imagesLayer {
+.images-layer {
   z-index: 5;
 }
 
-#shapesLayer {
+.shapes-layer {
   z-index: 4;
 }
 
-#stairsLayer {
+.stairs-layer {
   z-index: 3;
 }
 
-#wallsLayer {
+.walls-layer {
   z-index: 2;
   filter: drop-shadow(2px 2px 3px #919191);
   border-color: bisque;
 }
 
-#floorsLayer {
+.floors-layer {
   z-index: 1;
   border-color: bisque;
 }

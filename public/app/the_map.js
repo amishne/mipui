@@ -51,7 +51,7 @@ class TheMap {
     this.clearMap_();
     this.currX = 0;
     this.currY = 0;
-    const gridLayer = document.getElementById('gridLayer');
+    const gridLayer = document.querySelector('#theMap .grid-layer');
     for (let i = minY; i < maxY; i++) {
       this.createDividerRow_(gridLayer, minX, maxX, i - 1, i);
       this.currX = 0;
@@ -70,7 +70,7 @@ class TheMap {
     const layerElements = document.getElementsByClassName('layer');
     for (let i = 0; i < layerElements.length; i++) {
       const layerElement = layerElements[i];
-      if (layerElement.id == 'gridLayer') continue;
+      if (layerElement.classList.contains('grid-layer')) continue;
       layerElement.style.width = width;
       layerElement.style.height = height;
     }

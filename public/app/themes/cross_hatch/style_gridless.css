@@ -1,4 +1,4 @@
-#wallsLayer {
+.walls-layer {
   filter: drop-shadow(3px 0px 0px #444444) drop-shadow(-3px 0px 0px #444444)
       drop-shadow(0px 3px 0px #444444) drop-shadow(0px -3px 0px #444444);
 }

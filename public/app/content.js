@@ -180,7 +180,7 @@ const ct = {
     },
     spiral: { generic: {classNames: ['stairs-cell-spiral']} },
   },
-  gmOverlay: {
+  gmoverlay: {
     shape: {
       square: {
         classNames: [

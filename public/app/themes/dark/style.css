@@ -7,7 +7,7 @@
   border-color: #5c6782;
 }
 
-#wallsLayer {
+.walls-layer {
   filter: drop-shadow(2px 2px 0px #919191) drop-shadow(-1px -1px 0px #919191);
   border-color: #5c6782;
 }
