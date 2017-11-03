@@ -47,11 +47,11 @@ class CellMap {
     });
   }
 
-  create(minX, minY, maxX, maxY) {
+  create(container, minX, minY, maxX, maxY) {
     this.clearMap_();
     this.currX = 0;
     this.currY = 0;
-    const gridLayer = document.querySelector('#theMap .grid-layer');
+    const gridLayer = container.getElementsByClassName('grid-layer')[0];
     for (let i = minY; i < maxY; i++) {
       this.createDividerRow_(gridLayer, minX, maxX, i - 1, i);
       this.currX = 0;
@@ -62,12 +62,12 @@ class CellMap {
     }
     this.createDividerRow_(gridLayer, minX, maxX, maxY - 1, maxY);
     this.currY += this.dividerHeight;
-    this.setMapSize_(this.currX + 1, this.currY + 1);
+    this.setMapSize_(container, this.currX + 1, this.currY + 1);
   }
 
-  setMapSize_(width, height) {
+  setMapSize_(container, width, height) {
     // Set layer sizes.
-    const layerElements = document.getElementsByClassName('layer');
+    const layerElements = container.getElementsByClassName('layer');
     for (let i = 0; i < layerElements.length; i++) {
       const layerElement = layerElements[i];
       if (layerElement.classList.contains('grid-layer')) continue;
@@ -78,9 +78,8 @@ class CellMap {
       cell.offsetRight = (width - 1) - (cell.offsetLeft + cell.width);
       cell.offsetBottom = (height - 1) - (cell.offsetTop + cell.height);
     });
-    const theMapElement = document.getElementById('theMap');
-    theMapElement.style.width = width;
-    theMapElement.style.height = height;
+    container.style.width = width;
+    container.style.height = height;
     this.mapWidth = width;
     this.mapHeight = height;
   }

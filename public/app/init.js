@@ -9,6 +9,7 @@ function getUrlParams() {
 
 function createTheMapAndUpdateElements() {
   state.theMap.create(
+      document.getElementById('theMap'),
       state.getProperty(pk.firstColumn),
       state.getProperty(pk.firstRow),
       state.getProperty(pk.lastColumn),
