@@ -12,7 +12,7 @@ class State {
 
     this.metadata = {};
 
-    this.theMap = new TheMap();
+    this.theMap = new CellMap();
 
     this.mid_ = null;
 

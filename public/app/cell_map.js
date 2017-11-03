@@ -1,4 +1,4 @@
-class TheMap {
+class CellMap {
   constructor() {
     this.cells = new Map();
 
@@ -32,7 +32,7 @@ class TheMap {
   }
 
   getCell(row, column) {
-    return this.cells.get(TheMap.cellKey(row, column));
+    return this.cells.get(CellMap.cellKey(row, column));
   }
 
   resetToDefault() {
@@ -122,7 +122,7 @@ class TheMap {
   }
 
   createCornerCell_(parent, previousRow, previousColumn, nextRow, nextColumn) {
-    const key = TheMap.dividerCellKey(
+    const key = CellMap.dividerCellKey(
         previousRow, previousColumn, nextRow, nextColumn);
     const cell = this.createCell_(parent, 'corner', key);
     this.setCornerCellNeighborKeys_(
@@ -140,7 +140,7 @@ class TheMap {
   }
 
   createHorizontalCell_(parent, previousRow, nextRow, column) {
-    const key = TheMap.dividerCellKey(previousRow, column, nextRow, column);
+    const key = CellMap.dividerCellKey(previousRow, column, nextRow, column);
     const cell = this.createCell_(parent, 'horizontal', key);
     this.setHorizontalCellNeighborKeys_(cell, previousRow, nextRow, column);
     if (!this.cellWidth) {
@@ -153,7 +153,7 @@ class TheMap {
   }
 
   createVerticalCell_(parent, row, previousColumn, nextColumn) {
-    const key = TheMap.dividerCellKey(row, previousColumn, row, nextColumn);
+    const key = CellMap.dividerCellKey(row, previousColumn, row, nextColumn);
     const cell = this.createCell_(parent, 'vertical', key);
     this.setVerticalCellNeighborKeys_(cell, row, previousColumn, nextColumn);
     if (!this.cellHeight) {
@@ -166,7 +166,7 @@ class TheMap {
   }
 
   createPrimaryCell_(parent, row, column) {
-    const key = TheMap.primaryCellKey(row, column);
+    const key = CellMap.primaryCellKey(row, column);
     const cell = this.createCell_(parent, 'primary', key);
     this.setPrimaryCellNeighborKeys_(cell, row, column);
     cell.height = this.cellHeight;
@@ -187,152 +187,152 @@ class TheMap {
 
   setPrimaryCellNeighborKeys_(cell, row, column) {
     cell.addNeighborKey('top',
-        TheMap.dividerCellKey(row - 1, column, row, column), [
-          TheMap.primaryCellKey(row - 1, column),
+        CellMap.dividerCellKey(row - 1, column, row, column), [
+          CellMap.primaryCellKey(row - 1, column),
         ]);
     cell.addNeighborKey('right',
-        TheMap.dividerCellKey(row, column, row, column + 1), [
-          TheMap.primaryCellKey(row, column + 1),
+        CellMap.dividerCellKey(row, column, row, column + 1), [
+          CellMap.primaryCellKey(row, column + 1),
         ]);
     cell.addNeighborKey('bottom',
-        TheMap.dividerCellKey(row, column, row + 1, column), [
-          TheMap.primaryCellKey(row + 1, column),
+        CellMap.dividerCellKey(row, column, row + 1, column), [
+          CellMap.primaryCellKey(row + 1, column),
         ]);
     cell.addNeighborKey('left',
-        TheMap.dividerCellKey(row, column - 1, row, column), [
-          TheMap.primaryCellKey(row, column - 1),
+        CellMap.dividerCellKey(row, column - 1, row, column), [
+          CellMap.primaryCellKey(row, column - 1),
         ]);
     cell.addNeighborKey('top-right',
-        TheMap.dividerCellKey(row - 1, column, row, column + 1), [
-          TheMap.primaryCellKey(row - 1, column),
-          TheMap.primaryCellKey(row, column + 1),
-          TheMap.primaryCellKey(row - 1, column + 1),
-          TheMap.dividerCellKey(row - 1, column, row - 1, column + 1),
-          TheMap.dividerCellKey(row - 1, column + 1, row, column + 1),
+        CellMap.dividerCellKey(row - 1, column, row, column + 1), [
+          CellMap.primaryCellKey(row - 1, column),
+          CellMap.primaryCellKey(row, column + 1),
+          CellMap.primaryCellKey(row - 1, column + 1),
+          CellMap.dividerCellKey(row - 1, column, row - 1, column + 1),
+          CellMap.dividerCellKey(row - 1, column + 1, row, column + 1),
         ]);
     cell.addNeighborKey('bottom-right',
-        TheMap.dividerCellKey(row, column, row + 1, column + 1), [
-          TheMap.primaryCellKey(row + 1, column),
-          TheMap.primaryCellKey(row, column + 1),
-          TheMap.primaryCellKey(row + 1, column + 1),
-          TheMap.dividerCellKey(row, column + 1, row + 1, column + 1),
-          TheMap.dividerCellKey(row + 1, column, row + 1, column + 1),
+        CellMap.dividerCellKey(row, column, row + 1, column + 1), [
+          CellMap.primaryCellKey(row + 1, column),
+          CellMap.primaryCellKey(row, column + 1),
+          CellMap.primaryCellKey(row + 1, column + 1),
+          CellMap.dividerCellKey(row, column + 1, row + 1, column + 1),
+          CellMap.dividerCellKey(row + 1, column, row + 1, column + 1),
         ]);
     cell.addNeighborKey('bottom-left',
-        TheMap.dividerCellKey(row, column - 1, row + 1, column), [
-          TheMap.primaryCellKey(row + 1, column),
-          TheMap.primaryCellKey(row, column - 1),
-          TheMap.primaryCellKey(row + 1, column - 1),
-          TheMap.dividerCellKey(row, column - 1, row + 1, column - 1),
-          TheMap.dividerCellKey(row + 1, column - 1, row + 1, column),
+        CellMap.dividerCellKey(row, column - 1, row + 1, column), [
+          CellMap.primaryCellKey(row + 1, column),
+          CellMap.primaryCellKey(row, column - 1),
+          CellMap.primaryCellKey(row + 1, column - 1),
+          CellMap.dividerCellKey(row, column - 1, row + 1, column - 1),
+          CellMap.dividerCellKey(row + 1, column - 1, row + 1, column),
         ]);
     cell.addNeighborKey('top-left',
-        TheMap.dividerCellKey(row - 1, column - 1, row, column), [
-          TheMap.primaryCellKey(row - 1, column),
-          TheMap.primaryCellKey(row, column - 1),
-          TheMap.primaryCellKey(row - 1, column - 1),
-          TheMap.dividerCellKey(row - 1, column - 1, row - 1, column),
-          TheMap.dividerCellKey(row - 1, column - 1, row, column - 1),
+        CellMap.dividerCellKey(row - 1, column - 1, row, column), [
+          CellMap.primaryCellKey(row - 1, column),
+          CellMap.primaryCellKey(row, column - 1),
+          CellMap.primaryCellKey(row - 1, column - 1),
+          CellMap.dividerCellKey(row - 1, column - 1, row - 1, column),
+          CellMap.dividerCellKey(row - 1, column - 1, row, column - 1),
         ]);
     cell.addNeighborKey('all-similar', null, [
-      TheMap.primaryCellKey(row - 1, column - 1),
-      TheMap.primaryCellKey(row - 1, column),
-      TheMap.primaryCellKey(row - 1, column + 1),
-      TheMap.primaryCellKey(row, column - 1),
-      TheMap.primaryCellKey(row, column + 1),
-      TheMap.primaryCellKey(row + 1, column - 1),
-      TheMap.primaryCellKey(row + 1, column),
-      TheMap.primaryCellKey(row + 1, column + 1),
+      CellMap.primaryCellKey(row - 1, column - 1),
+      CellMap.primaryCellKey(row - 1, column),
+      CellMap.primaryCellKey(row - 1, column + 1),
+      CellMap.primaryCellKey(row, column - 1),
+      CellMap.primaryCellKey(row, column + 1),
+      CellMap.primaryCellKey(row + 1, column - 1),
+      CellMap.primaryCellKey(row + 1, column),
+      CellMap.primaryCellKey(row + 1, column + 1),
     ]);
   }
 
   setHorizontalCellNeighborKeys_(cell, fromRow, toRow, column) {
     cell.addNeighborKey('right',
-        TheMap.dividerCellKey(fromRow, column, toRow, column + 1), [
-          TheMap.dividerCellKey(fromRow, column, toRow - 1, column + 1),
-          TheMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
-          TheMap.dividerCellKey(fromRow + 1, column, toRow, column + 1),
+        CellMap.dividerCellKey(fromRow, column, toRow, column + 1), [
+          CellMap.dividerCellKey(fromRow, column, toRow - 1, column + 1),
+          CellMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
+          CellMap.dividerCellKey(fromRow + 1, column, toRow, column + 1),
         ]);
     cell.addNeighborKey('left',
-        TheMap.dividerCellKey(fromRow, column - 1, toRow, column), [
-          TheMap.dividerCellKey(fromRow, column - 1, toRow - 1, column),
-          TheMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
-          TheMap.dividerCellKey(fromRow + 1, column - 1, toRow, column),
+        CellMap.dividerCellKey(fromRow, column - 1, toRow, column), [
+          CellMap.dividerCellKey(fromRow, column - 1, toRow - 1, column),
+          CellMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
+          CellMap.dividerCellKey(fromRow + 1, column - 1, toRow, column),
         ]);
     cell.addNeighborKey('top', null, [
-      TheMap.primaryCellKey(fromRow, column),
+      CellMap.primaryCellKey(fromRow, column),
     ]);
     cell.addNeighborKey('bottom', null, [
-      TheMap.primaryCellKey(toRow, column),
+      CellMap.primaryCellKey(toRow, column),
     ]);
     cell.addNeighborKey('right-same', null, [
-      TheMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
+      CellMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
     ]);
     cell.addNeighborKey('left-same', null, [
-      TheMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
+      CellMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
     ]);
     cell.addNeighborKey('all-similar', null, [
-      TheMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
-      TheMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
+      CellMap.dividerCellKey(fromRow, column + 1, toRow, column + 1),
+      CellMap.dividerCellKey(fromRow, column - 1, toRow, column - 1),
     ]);
   }
 
   setVerticalCellNeighborKeys_(cell, row, fromColumn, toColumn) {
     cell.addNeighborKey('top',
-        TheMap.dividerCellKey(row - 1, fromColumn, row, toColumn), [
-          TheMap.dividerCellKey(row - 1, fromColumn, row, toColumn - 1),
-          TheMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
-          TheMap.dividerCellKey(row - 1, fromColumn + 1, row, toColumn),
+        CellMap.dividerCellKey(row - 1, fromColumn, row, toColumn), [
+          CellMap.dividerCellKey(row - 1, fromColumn, row, toColumn - 1),
+          CellMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
+          CellMap.dividerCellKey(row - 1, fromColumn + 1, row, toColumn),
         ]);
     cell.addNeighborKey('bottom',
-        TheMap.dividerCellKey(row, fromColumn, row + 1, toColumn), [
-          TheMap.dividerCellKey(row, fromColumn, row + 1, toColumn - 1),
-          TheMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
-          TheMap.dividerCellKey(row, fromColumn + 1, row + 1, toColumn),
+        CellMap.dividerCellKey(row, fromColumn, row + 1, toColumn), [
+          CellMap.dividerCellKey(row, fromColumn, row + 1, toColumn - 1),
+          CellMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
+          CellMap.dividerCellKey(row, fromColumn + 1, row + 1, toColumn),
         ]);
     cell.addNeighborKey('right', null, [
-      TheMap.primaryCellKey(row, toColumn),
+      CellMap.primaryCellKey(row, toColumn),
     ]);
     cell.addNeighborKey('left', null, [
-      TheMap.primaryCellKey(row, fromColumn),
+      CellMap.primaryCellKey(row, fromColumn),
     ]);
     cell.addNeighborKey('top-same', null, [
-      TheMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
+      CellMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
     ]);
     cell.addNeighborKey('bottom-same', null, [
-      TheMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
+      CellMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
     ]);
     cell.addNeighborKey('all-similar', null, [
-      TheMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
-      TheMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
+      CellMap.dividerCellKey(row - 1, fromColumn, row - 1, toColumn),
+      CellMap.dividerCellKey(row + 1, fromColumn, row + 1, toColumn),
     ]);
   }
 
   setCornerCellNeighborKeys_(
       cell, previousRow, previousColumn, nextRow, nextColumn) {
     cell.addNeighborKey('top',
-        TheMap.dividerCellKey(
+        CellMap.dividerCellKey(
             previousRow, previousColumn, previousRow, nextColumn), []);
     cell.addNeighborKey('right',
-        TheMap.dividerCellKey(
+        CellMap.dividerCellKey(
             previousRow, nextColumn, nextRow, nextColumn), []);
     cell.addNeighborKey('bottom',
-        TheMap.dividerCellKey(
+        CellMap.dividerCellKey(
             nextRow, previousColumn, nextRow, nextColumn), []);
     cell.addNeighborKey('left',
-        TheMap.dividerCellKey(
+        CellMap.dividerCellKey(
             previousRow, previousColumn, nextRow, previousColumn), []);
     cell.addNeighborKey('top-right', null, [
-      TheMap.primaryCellKey(previousRow, nextColumn),
+      CellMap.primaryCellKey(previousRow, nextColumn),
     ]);
     cell.addNeighborKey('bottom-right', null, [
-      TheMap.primaryCellKey(nextRow, nextColumn),
+      CellMap.primaryCellKey(nextRow, nextColumn),
     ]);
     cell.addNeighborKey('bottom-left', null, [
-      TheMap.primaryCellKey(nextRow, previousColumn),
+      CellMap.primaryCellKey(nextRow, previousColumn),
     ]);
     cell.addNeighborKey('top-left', null, [
-      TheMap.primaryCellKey(previousRow, previousColumn),
+      CellMap.primaryCellKey(previousRow, previousColumn),
     ]);
   }
 }

@@ -83,10 +83,10 @@ class Cell {
     if (!cell || !this.role == 'primary' || !cell.role == 'primary') return [];
 
     const startCellKey =
-        TheMap.primaryCellKey(
+        CellMap.primaryCellKey(
             Math.min(this.row, cell.row), Math.min(this.column, cell.column));
     const endCellKey =
-        TheMap.primaryCellKey(
+        CellMap.primaryCellKey(
             Math.max(this.row, cell.row), Math.max(this.column, cell.column));
     const startCell = state.theMap.cells.get(startCellKey);
     if (!startCell) return [];

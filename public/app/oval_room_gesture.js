@@ -46,8 +46,8 @@ class OvalRoomGesture extends RoomGesture {
     const [centerX, centerY] =
         [minX + (maxX - minX) / 2, minY + (maxY - minY) / 2];
 
-    const topLeftCell = state.theMap.cells.get(TheMap.cellKey(minY, minX));
-    const bottomRightCell = state.theMap.cells.get(TheMap.cellKey(maxY, maxX));
+    const topLeftCell = state.theMap.cells.get(CellMap.cellKey(minY, minX));
+    const bottomRightCell = state.theMap.cells.get(CellMap.cellKey(maxY, maxX));
     const topLeftPoint = {
       x: topLeftCell.offsetLeft,
       y: topLeftCell.offsetTop,

@@ -208,11 +208,11 @@ class PasteGesture extends Gesture {
     const column = anchor.column + location.column;
     switch (cellRole) {
       case 'primary':
-        return TheMap.primaryCellKey(row, column);
+        return CellMap.primaryCellKey(row, column);
       case 'vertical':
       case 'horizontal':
       case 'corner':
-        return TheMap.dividerCellKey(
+        return CellMap.dividerCellKey(
             Math.floor(row), Math.floor(column),
             Math.ceil(row), Math.ceil(column));
     }

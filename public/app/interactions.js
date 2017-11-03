@@ -356,8 +356,8 @@ function getCellKey(x, y) {
   const fromCol = (x % cellAndBorderSize) / borderSize > 1 ? toCol : toCol - 1;
 
   const key = fromRow != toRow || fromCol != toCol ?
-    TheMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
-    TheMap.primaryCellKey(fromRow, fromCol);
+    CellMap.dividerCellKey(fromRow, fromCol, toRow, toCol) :
+    CellMap.primaryCellKey(fromRow, fromCol);
   return key;
 }
 

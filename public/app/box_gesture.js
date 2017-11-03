@@ -266,7 +266,7 @@ class BoxGesture extends Gesture {
           const newRow = this.targetCell_.row;
           const newColumn = this.targetCell_.column;
           const endCell = state.theMap.cells.get(
-              TheMap.primaryCellKey(newRow + height, newColumn + width));
+              CellMap.primaryCellKey(newRow + height, newColumn + width));
           this.calculateBoxExtentBetween_(
               this.targetCell_, endCell, predicate);
         }
