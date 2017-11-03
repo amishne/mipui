@@ -1,8 +1,9 @@
 class Cell {
-  constructor(key, role, gridElement) {
+  constructor(key, role, gridElement, mapElement) {
     this.key = key;
     this.role = role;
     this.gridElement = gridElement;
+    this.mapElement = mapElement;
     this.offsetLeft = null;
     this.offsetTop = null;
     this.width = null;
@@ -71,7 +72,7 @@ class Cell {
   createElementFromContent(layer, content) {
     if (!this.contentShouldHaveElement_(content)) return null;
     const element = createAndAppendDivWithClass(
-        document.querySelector(`#theMap .${layer.name}-layer`));
+        this.mapElement.getElementsByClassName(`${layer.name}-layer`)[0]);
     this.populateElementFromContent_(element, layer, content);
     this.elements_.set(layer, element);
     return element;
