@@ -3,9 +3,7 @@ class State {
     this.pstate_ = {
       ver: '1.0',
       props: {},
-      // Map cell key to a map which maps layer IDs to the content of that
-      // layer.
-      // "Content" is a mapping of content key (ck) to content type (ct) IDs.
+      // cell key -> (layer id -> (content key -> content value))
       content: {},
       lastOpNum: 0,
     };
