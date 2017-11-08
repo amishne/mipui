@@ -32,7 +32,7 @@
 }
 
 .angled-wall-cell {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAlklEQVRYR+3YsQmAMBBGYTOFOpCtE9gLjuGy6hSKfcgDk0KOZ5kfUT7ujiRpmre7yzz9OHTXceaiZmv0jTdP/mDBW8HaYowhuKx7totrdVq9bxeXJGPUoIPaQd1qXnzYkLhZIHzHDAlRriAJUa4gCVGuIAlRriAJUa4gCVGuIAlRHkPQg7uHJqr0ijxGk3izEL5J/j4HHy1lONhsxsVLAAAAAElFTkSuQmCC");
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAVElEQVRYR2N09cv6z4AFiEtKMLx8/gKbFNXEQHYwjjpgNAQGPARi0puw5gKqJXUCBo3mgtEQGA2B0RAYDYHREBgNgdEQGA2B0RAYDYHREGAc6I4JAD5OoqE5rVGbAAAAAElFTkSuQmCC");
 }
 
 .text-cell {

@@ -368,8 +368,14 @@ class Cell {
     element.style.bottom = endCell.offsetBottom;
     element.style.left = this.offsetLeft;
     if (layer == ct.walls) {
+      let backgroundOffsetLeft = -this.offsetLeft;
+      let backgroundOffsetTop = -this.offsetTop;
+      if (content[ck.variation] == ct.walls.smooth.angled.id) {
+        backgroundOffsetLeft += 7;
+        backgroundOffsetTop += 7;
+      }
       element.style.backgroundPosition =
-          `-${this.offsetLeft}px -${this.offsetTop}px`;
+          `${backgroundOffsetLeft}px ${backgroundOffsetTop}px`;
     }
   }
 
