@@ -69,6 +69,7 @@
   cursor: pointer;
   display: inline-block;
   position: relative;
+  background-repeat: no-repeat;
 }
 
 .menu-item-container {

@@ -155,6 +155,14 @@ class State {
       head.appendChild(css);
       this.appliedTheme_.elements.push(css);
     });
+    this.appliedTheme_.menuIconFile = newTheme.menuIconFile;
+  }
+
+  getMenuIconFile() {
+    if (!this.appliesTheme_ || !this.appliesTheme_.menuIconFile) {
+      return 'themes/beige_land/menu_icons.png';
+    }
+    return this.appliedTheme_.menuIconFile;
   }
 
   setMid(mid) {

@@ -197,7 +197,7 @@ class Menu {
         deferredSvg = selectedChild.deferredSvg;
         item.element.className = 'menu-item';
         if (item.isSelected) item.element.classList.add('selected-menu-item');
-        item.element.classList.add(...selectedChild.classNames);
+        item.element.classList.add(...(selectedChild.classNames || []));
         // Intentional fallthrough.
       case 'cells':
         item.element.innerHTML = '';
@@ -264,6 +264,16 @@ class Menu {
         if (item.onChange) {
           select.onchange = event => item.onChange(event.target.selectedIndex);
         }
+        break;
+      case 'icon_map':
+        item.element.classList.add('menu-icon');
+        const {x, y, size} = item.iconMapRect;
+        const scale = 30 / size;
+        item.element.style.backgroundImage =
+            `url("${state.getMenuIconFile()}")`;
+        item.element.style.backgroundPosition =
+            `-${x * scale}px -${y * scale}px`;
+        item.element.style.backgroundSize = `${716 * scale}px ${376 * scale}px`;
         break;
     }
   }
@@ -1265,6 +1275,18 @@ class Menu {
         isSelected: true,
         submenu: {
           items: [
+            {
+              name: 'Wall (auto)',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 32,
+                y: 32,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new WallGesture(1, false); },
+            },
             this.createWallTool_(
                 'Wall (auto)',
                 true,
