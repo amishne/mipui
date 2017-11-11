@@ -156,14 +156,12 @@ class State {
       this.appliedTheme_.elements.push(css);
     });
     this.appliedTheme_.menuIconFile = newTheme.menuIconFile;
-    if (newTheme.menuIconFile) {
-      const menuIconsFromMap =
-          Array.from(document.getElementsByClassName('menu-icon-from-map'));
-      menuIconsFromMap.forEach(menuIconFromMap => {
-        menuIconFromMap.style.backgroundImage =
-            `url("${newTheme.menuIconFile}")`;
-      });
-    }
+    const menuIconsFromMap =
+        Array.from(document.getElementsByClassName('menu-icon-from-map'));
+    menuIconsFromMap.forEach(menuIconFromMap => {
+      menuIconFromMap.style.backgroundImage =
+          `url("${this.getMenuIconFile()}")`;
+    });
   }
 
   getMenuIconFile() {

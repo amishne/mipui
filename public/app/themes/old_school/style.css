@@ -7,6 +7,10 @@
   image-rendering: pixelated;
 }
 
+.menu-item .floor-cell {
+  background-color: white;
+}
+
 .floor-cell-primary {
   background: white;
 }
