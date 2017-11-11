@@ -1327,20 +1327,106 @@ class Menu {
         classNames: ['menu-separators'],
         submenu: {
           items: [
-            this.createSeparatorTool_('Single door', ct.separators.door,
-                ct.separators.door.single, true, true),
-            this.createSeparatorTool_('Double door', ct.separators.door,
-                ct.separators.door.double, true, false),
-            this.createSeparatorTool_('Secret door', ct.separators.door,
-                ct.separators.door.secret, true, false),
-            this.createSeparatorTool_('Window', ct.separators.window,
-                ct.separators.window.generic, true, false),
-            this.createSeparatorTool_('Bars', ct.separators.bars,
-                ct.separators.bars.generic, false, false),
-            this.createSeparatorTool_('Fence', ct.separators.fence,
-                ct.separators.fence.generic, false, false),
-            this.createSeparatorTool_('Curtain', ct.separators.curtain,
-                ct.separators.curtain.generic, false, false),
+            {
+              name: 'Single door',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 20,
+                y: 132,
+                size: 30,
+              },
+              isSelected: true,
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.door, ct.separators.door.single, true);
+              },
+            },
+            {
+              name: 'Double door',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 52,
+                y: 132,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.door, ct.separators.door.double, true);
+              },
+            },
+            {
+              name: 'Secret door',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 84,
+                y: 132,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.door, ct.separators.door.secret, true);
+              },
+            },
+            {
+              name: 'Window',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 116,
+                y: 132,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.window, ct.separators.window.generic, true);
+              },
+            },
+            {
+              name: 'Bars',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 148,
+                y: 132,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.bars, ct.separators.bars.generic, false);
+              },
+            },
+            {
+              name: 'Fence',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 180,
+                y: 132,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.fence, ct.separators.fence.generic, false);
+              },
+            },
+            {
+              name: 'Curtain',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 212,
+                y: 132,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.curtain, ct.separators.curtain.generic,
+                    false);
+              },
+            },
           ],
         },
       },

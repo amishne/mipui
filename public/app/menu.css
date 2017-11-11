@@ -99,6 +99,7 @@
 
 .menu-icon {
   color: aliceblue;
+  image-rendering: pixelated;
 }
 
 .menu-icon img {
