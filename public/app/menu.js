@@ -275,6 +275,7 @@ class Menu {
         break;
       case 'icon_map':
         item.element.classList.add('menu-icon');
+        item.element.classList.add('menu-icon-from-map');
         const {x, y, size} = item.iconMapRect;
         const scale = 30 / size;
         item.element.style.backgroundImage =
