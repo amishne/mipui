@@ -201,32 +201,18 @@ class Menu {
         }
         const selectedChild =
             item.submenu.allItems.find(item => item.isSelected);
-        cells = selectedChild.cells;
-        deferredSvg = selectedChild.deferredSvg;
         item.element.className = 'menu-item';
         if (item.isSelected) item.element.classList.add('selected-menu-item');
         item.element.classList.add(...(selectedChild.classNames || []));
+        if (selectedChild.presentation == 'cell') {
+          this.updateCellsItem_(
+              item, selectedChild.cells, selectedChild.deferredSvg);
+        } else if (selectedChild.presentation == 'icon_map') {
+          this.updateIconMapItem_(item, selectedChild.iconMapRect);
+        }
         break;
       case 'cells':
-        item.element.innerHTML = '';
-        this.createCellsForItem_(item.element, cells || item.cells);
-        deferredSvg = deferredSvg || item.deferredSvg;
-        if (deferredSvg) {
-          const xhr = new XMLHttpRequest();
-          xhr.open('get', deferredSvg.path, true);
-          xhr.onreadystatechange = () => {
-            if (xhr.readyState != 4) return;
-            const svgElement = xhr.responseXML.documentElement;
-            svgElement.classList.add('image');
-            svgElement.classList.add(...deferredSvg.classNames);
-            Array.from(svgElement.children)
-                .forEach(svgChild => svgChild.removeAttribute('fill'));
-            const element = item.element.children[deferredSvg.childNum];
-            element.innerHTML = '';
-            element.appendChild(svgElement);
-          };
-          xhr.send();
-        }
+        this.updateCellsItem_(item, item.cells, item.deferredSvg);
         break;
       case 'input':
       case 'textarea':
@@ -274,16 +260,41 @@ class Menu {
         }
         break;
       case 'icon_map':
-        item.element.classList.add('menu-icon');
-        item.element.classList.add('menu-icon-from-map');
-        const {x, y, size} = item.iconMapRect;
-        const scale = 30 / size;
-        item.element.style.backgroundImage =
-            `url("${state.getMenuIconFile()}")`;
-        item.element.style.backgroundPosition =
-            `-${x * scale}px -${y * scale}px`;
-        item.element.style.backgroundSize = `${716 * scale}px ${376 * scale}px`;
+        this.updateIconMapItem_(item, item.iconMapRect);
         break;
+    }
+  }
+
+  updateIconMapItem_(item, iconMapRect) {
+    item.element.classList.add('menu-icon');
+    item.element.classList.add('menu-icon-from-map');
+    const {x, y, size} = iconMapRect;
+    const scale = 30 / size;
+    item.element.style.backgroundImage =
+        `url("${state.getMenuIconFile()}")`;
+    item.element.style.backgroundPosition =
+        `-${x * scale}px -${y * scale}px`;
+    item.element.style.backgroundSize = `${716 * scale}px ${376 * scale}px`;
+  }
+
+  updateCellsItem_(item, cells, deferredSvg) {
+    item.element.innerHTML = '';
+    this.createCellsForItem_(item.element, cells);
+    if (deferredSvg) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('get', deferredSvg.path, true);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState != 4) return;
+        const svgElement = xhr.responseXML.documentElement;
+        svgElement.classList.add('image');
+        svgElement.classList.add(...deferredSvg.classNames);
+        Array.from(svgElement.children)
+            .forEach(svgChild => svgChild.removeAttribute('fill'));
+        const element = item.element.children[deferredSvg.childNum];
+        element.innerHTML = '';
+        element.appendChild(svgElement);
+      };
+      xhr.send();
     }
   }
 

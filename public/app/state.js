@@ -167,7 +167,7 @@ class State {
   }
 
   getMenuIconFile() {
-    if (!this.appliesTheme_ || !this.appliesTheme_.menuIconFile) {
+    if (!this.appliedTheme_ || !this.appliedTheme_.menuIconFile) {
       return 'themes/beige_land/menu_icons.png';
     }
     return this.appliedTheme_.menuIconFile;
