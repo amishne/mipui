@@ -53,6 +53,9 @@ function initializeFirebase(callback) {
     document.getElementById('warning').style.display = 'inline-block';
     debug = s => console.log(s);
   }
+  if (!isProd) {
+    state.menu.addDebugMenu();
+  }
   firebase.initializeApp(config);
   firebase.database.enableLogging(false);
   firebase.auth().signInAnonymously()

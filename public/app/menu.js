@@ -23,6 +23,7 @@ class Menu {
     this.tokenSelectedCategory_ = '<all>';
     this.tokenSelectedText_ = '';
     this.menuItems_ = this.setupMenuItems_();
+    this.debugMenuItem_ = this.setupDebugMenuItem_();
     this.shortcuts_ = new Map();
   }
 
@@ -62,6 +63,13 @@ class Menu {
         state.getProperty(pk.longDescription);
     document.querySelector('#mapTheme select').selectedIndex =
         state.getProperty(pk.theme);
+  }
+
+  addDebugMenu() {
+    this.menuItems_.push(this.debugMenuItem_);
+    this.createMenuItem_(this.debugMenuItem_,
+        document.getElementsByClassName('menu-top')[0],
+        document.getElementsByClassName('menu-bottom')[0]);
   }
 
   createMenuItems_(topElement, bottomElement) {
@@ -198,7 +206,7 @@ class Menu {
         item.element.className = 'menu-item';
         if (item.isSelected) item.element.classList.add('selected-menu-item');
         item.element.classList.add(...(selectedChild.classNames || []));
-        // Intentional fallthrough.
+        break;
       case 'cells':
         item.element.innerHTML = '';
         this.createCellsForItem_(item.element, cells || item.cells);
@@ -751,58 +759,6 @@ class Menu {
     return item;
   }
 
-  createWallTool_(name, isSelected, callback, cellClasses, extraCells) {
-    const createDividerRow = () => ({
-      classNames: ['menu-wall-tool-cell-row'],
-      children: [
-        {classNames: ['corner-cell']},
-        {classNames: ['horizontal-cell']},
-        {classNames: ['corner-cell']},
-        {classNames: ['horizontal-cell']},
-        {classNames: ['corner-cell']},
-      ],
-    });
-    const createPrimaryRow = () => ({
-      classNames: ['menu-wall-tool-cell-row'],
-      children: [
-        {classNames: ['vertical-cell']},
-        {classNames: ['primary-cell']},
-        {classNames: ['vertical-cell']},
-        {classNames: ['primary-cell']},
-        {classNames: ['vertical-cell']},
-      ],
-    });
-    const cells = [
-      createDividerRow(),
-      createPrimaryRow(),
-      createDividerRow(),
-      createPrimaryRow(),
-      createDividerRow(),
-    ];
-    cells.forEach(cell => {
-      cell.children.forEach(child => child.classNames.push('grid-cell'));
-    });
-    cellClasses.forEach((cellClass, index) => {
-      cells[Math.floor(index / 5)]
-          .children[index % 5].classNames.push(cellClass);
-    });
-    (extraCells || []).forEach(extraCell => {
-      const index = extraCell.index;
-      const parentCell = cells[Math.floor(index / 5)].children[index % 5];
-      if (!parentCell.children) parentCell.children = [];
-      parentCell.children.push({classNames: extraCell.classNames});
-    });
-    return {
-      name,
-      type: 'tool',
-      presentation: 'cells',
-      classNames: ['menu-wall-tool'],
-      isSelected,
-      callback,
-      cells,
-    };
-  }
-
   setupMenuItems_() {
     // Format is:
     // [
@@ -1279,6 +1235,7 @@ class Menu {
               name: 'Wall (auto)',
               type: 'tool',
               presentation: 'icon_map',
+              isSelected: true,
               iconMapRect: {
                 x: 32,
                 y: 32,
@@ -1287,115 +1244,79 @@ class Menu {
               enabledInReadonlyMode: false,
               callback: () => { state.gesture = new WallGesture(1, false); },
             },
-            this.createWallTool_(
-                'Wall (auto)',
-                true,
-                () => { state.gesture = new WallGesture(1, false); },
-                new Array(3).fill('square-wall-cell')
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(5).fill('square-wall-cell'))
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))),
-            this.createWallTool_(
-                'Wall (manual)',
-                false,
-                () => { state.gesture = new WallGesture(1, true); },
-                new Array(6).fill('floor-cell')
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(5).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(['floor-cell'])),
-            this.createWallTool_(
-                'Angled wall',
-                false,
-                () => { state.gesture = new AngledWallGesture(
-                    ct.walls, ct.walls.smooth, ct.walls.smooth.angled); },
-                new Array(2).fill('floor-cell')
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(4).fill('floor-cell'))
-                    .concat(['square-wall-cell'])
-                    .concat(new Array(2).fill('floor-cell'))
-                    .concat(new Array(3).fill('square-wall-cell'))
-                    .concat(new Array(11).fill('floor-cell'))
-                    .concat(['square-wall-cell']),
-                [{
-                  index: 6,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-118'],
-                }, {
-                  index: 8,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-200'],
-                }, {
-                  index: 16,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-145'],
-                }, {
-                  index: 18,
-                  classNames: ['angled-wall-cell', 'angled-wall-cell-160'],
-                }]),
-            this.createWallTool_(
-                'Rectangle',
-                false,
-                () => { state.gesture = new SquareRoomGesture(false); },
-                new Array(25).fill('square-wall-cell')),
-            this.createWallTool_(
-                'Ellipse',
-                false,
-                () => { state.gesture = new OvalRoomGesture(false); },
-                new Array(25).fill('floor-cell'),
-                new Array(25).fill(null).map((_, i) => {
-                  // The corners are empty.
-                  if (i == 0 || i == 4 || i == 20 || i == 24) return null;
-                  const classNames = ['square-wall-cell'];
-                  if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
-                    // Do nothing; these are filled.
-                  } else {
-                    classNames.push('ellipse-cell-' + i);
-                  }
-                  return {
-                    index: i,
-                    classNames,
-                  };
-                }).filter(x => x != null)),
-            this.createWallTool_(
-                'Rectangular Room',
-                false,
-                () => { state.gesture = new SquareRoomGesture(true); },
-                new Array(6).fill('square-wall-cell')
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(new Array(2).fill('square-wall-cell'))
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(new Array(2).fill('square-wall-cell'))
-                    .concat(new Array(3).fill('floor-cell'))
-                    .concat(new Array(6).fill('square-wall-cell'))),
-            this.createWallTool_(
-                'Elliptical Room',
-                false,
-                () => { state.gesture = new OvalRoomGesture(true); },
-                new Array(25).fill('floor-cell'),
-                new Array(25).fill(null).map((_, i) => {
-                  // The corners are empty.
-                  if (i == 0 || i == 4 || i == 20 || i == 24) return null;
-                  const classNames = [];
-                  if (i == 7 || i == 11 || i == 12 || i == 13 || i == 17) {
-                    // Do nothing; these are empty.
-                  } else {
-                    classNames.push('square-wall-cell');
-                    classNames.push('ellipse-hollow-cell-' + i);
-                  }
-                  return {
-                    index: i,
-                    classNames,
-                  };
-                }).filter(x => x != null)),
+            {
+              name: 'Wall (manual)',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 128,
+                y: 32,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new WallGesture(1, true); },
+            },
+            {
+              name: 'Angled wall',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 224,
+                y: 32,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new AngledWallGesture(
+                  ct.walls, ct.walls.smooth, ct.walls.smooth.angled); },
+            },
+            {
+              name: 'Rectangle',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 320,
+                y: 32,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new SquareRoomGesture(false); },
+            },
+            {
+              name: 'Ellipse',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 416,
+                y: 32,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new OvalRoomGesture(false); },
+            },
+            {
+              name: 'Rectangular Room',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 512,
+                y: 32,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new SquareRoomGesture(true); },
+            },
+            {
+              name: 'Elliptical Room',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 608,
+                y: 32,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new OvalRoomGesture(true); },
+            },
           ],
         },
       },
@@ -1703,5 +1624,66 @@ class Menu {
         },
       },
     ];
+  }
+
+  setupDebugMenuItem_() {
+    return {
+      name: 'Debug',
+      presentation: 'icon',
+      materialIcon: 'insert_drive_file',
+      enabledInReadonlyMode: true,
+      submenu: {
+        items: [
+          {
+            name: 'New in-place',
+            type: 'button',
+            presentation: 'icon',
+            materialIcon: 'create_new_folder',
+            enabledInReadonlyMode: true,
+            callback: () => { window.open('.', '_self'); },
+          },
+          {
+            name: 'Download PNG at scale 1',
+            type: 'button',
+            presentation: 'label',
+            text: 'PNG',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              const overlay =
+                  createAndAppendDivWithClass(document.body, 'modal-overlay');
+              overlay.textContent = 'Constructing PNG...';
+              setTimeout(() => {
+                const scale = 1;
+                const numColumns = (state.getProperty(pk.lastColumn) -
+                    state.getProperty(pk.firstColumn)) - 1;
+                const numRows = (state.getProperty(pk.lastRow) -
+                    state.getProperty(pk.firstRow)) - 1;
+                const width = scale * (2 + numColumns *
+                    (state.theMap.cellWidth + 1 +
+                    state.theMap.dividerWidth + 1));
+                const height = scale * (2 + numRows *
+                    (state.theMap.cellHeight + 1 +
+                    state.theMap.dividerHeight + 1));
+                const theMapElement = document.getElementById('theMap');
+                domtoimage.toBlob(theMapElement, {
+                  style: {
+                    transform: `scale(${scale})`,
+                    left: 0,
+                    top: 0,
+                  },
+                  width,
+                  height,
+                }).then(blob => {
+                  saveAs(blob, 'mipui.png');
+                  overlay.parentElement.removeChild(overlay);
+                }).catch(() => {
+                  overlay.parentElement.removeChild(overlay);
+                });
+              }, 10);
+            },
+          },
+        ],
+      },
+    };
   }
 }
