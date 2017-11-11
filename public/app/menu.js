@@ -204,7 +204,7 @@ class Menu {
         item.element.className = 'menu-item';
         if (item.isSelected) item.element.classList.add('selected-menu-item');
         item.element.classList.add(...(selectedChild.classNames || []));
-        if (selectedChild.presentation == 'cell') {
+        if (selectedChild.presentation == 'cells') {
           this.updateCellsItem_(
               item, selectedChild.cells, selectedChild.deferredSvg);
         } else if (selectedChild.presentation == 'icon_map') {
