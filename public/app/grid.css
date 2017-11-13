@@ -45,12 +45,12 @@
   z-index: 9;
 }
 
-.gm-overlay-layer {
+.gmoverlay-layer {
   z-index: 8;
   display: none;
 }
 
-.editor-view .gm-overlay-layer {
+.editor-view .gmoverlay-layer {
   display: inherit;
 }
 
@@ -703,16 +703,16 @@
   display: inherit;
 }
 
-.gm-overlay-square {
+.gmoverlay-square {
   position: absolute;
   background-color: mediumvioletred;
   opacity: 0.4;
 }
 
-.gm-overlay-square-adding {
+.gmoverlay-square-adding {
   opacity: 0.2;
 }
 
-.gm-overlay-square-removing {
+.gmoverlay-square-removing {
   opacity: 0.1;
 }

@@ -184,8 +184,8 @@ const ct = {
     shape: {
       square: {
         classNames: [
-          'gm-overlay-square',
-          'gm-overlay-square-_ADDING-REMOVING_',
+          'gmoverlay-square',
+          'gmoverlay-square-_ADDING-REMOVING_',
         ],
       },
     },

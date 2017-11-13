@@ -1597,16 +1597,16 @@ class Menu {
               enabledInReadonlyMode: false,
               callback: () => {
                 state.gesture = new OverlayGesture(
-                    ct.gmOverlay,
-                    ct.gmOverlay.shape,
-                    ct.gmOverlay.shape.square);
+                    ct.gmoverlay,
+                    ct.gmoverlay.shape,
+                    ct.gmoverlay.shape.square);
               },
               cells: [{
                 classNames: [
                   'grid-cell',
                   'primary-cell',
                   'floor-cell',
-                  'gm-overlay-square',
+                  'gmoverlay-square',
                 ],
               }],
             },

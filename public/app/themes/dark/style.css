@@ -123,14 +123,14 @@
   color: magenta;
 }
 
-.gm-overlay-square {
+.gmoverlay-square {
   background-color: magenta;
 }
 
-.gm-overlay-square-adding {
+.gmoverlay-square-adding {
   opacity: 0.3;
 }
 
-.gm-overlay-square-removing {
+.gmoverlay-square-removing {
   opacity: 0.2;
 }
