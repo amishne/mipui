@@ -429,6 +429,7 @@
   border-right: 1px solid;
   border-bottom: 1px solid;
   border-color: bisque;
+  box-shadow: 0 0 0 0.3px bisque;
 }
 
 /* hsl(60, 23.8, 79.4) */

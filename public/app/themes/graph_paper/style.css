@@ -12,6 +12,7 @@
 .square-wall-cell, .oval-wall-cell, .angled-wall-cell {
   background-color: rgb(210, 210, 210);
   border-color: rgb(183, 195, 199);
+  box-shadow: 0 0 0 0.3px rgb(183, 195, 199);
 }
 
 .angled-wall-cell {

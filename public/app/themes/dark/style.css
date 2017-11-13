@@ -17,6 +17,7 @@
   border-right: 1px solid;
   border-bottom: 1px solid;
   border-color: #5c6782;
+  box-shadow: 0 0 0 0.3px #5c6782;
 }
 
 .square-wall-cell-adding, .square-wall-cell-editing,
