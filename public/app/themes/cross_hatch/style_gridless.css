@@ -14,6 +14,7 @@
   border: initial;
   background-size: 150px;
   image-rendering: auto;
+  box-shadow: unset;
 }
 
 .square-wall-cell-adding, oval-wall-cell-adding, oval-wall-cell-editing {
