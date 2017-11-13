@@ -1728,7 +1728,7 @@ class Menu {
     return {
       name: 'Debug',
       presentation: 'icon',
-      materialIcon: 'insert_drive_file',
+      materialIcon: 'build',
       enabledInReadonlyMode: true,
       submenu: {
         items: [
