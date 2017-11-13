@@ -423,12 +423,12 @@ function refreshMapResizeButtonLocations() {
             document
                 .getElementsByClassName('map-resize-button-' + button.name)[0];
       }
-      document.getElementById('theMap').classList.add('transforming-map');
+      document.getElementById('app').classList.add('transforming-map');
     });
   }
   refreshMapResizeButtonLocationsTimeout = setTimeout(() => {
     const theMap = document.getElementById('theMap');
-    theMap.classList.remove('transforming-map');
+    document.getElementById('app').classList.remove('transforming-map');
     const nav = state.navigation;
     const left = theMap.offsetLeft;
     const right = left + (theMap.offsetWidth * nav.scale);
