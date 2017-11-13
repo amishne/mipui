@@ -677,6 +677,7 @@
 .hidden-cell {
   position: absolute;
   background-color: rgb(50, 50, 50);
+  box-shadow: 0 0 0 0.3px rgb(50, 50, 50);
 }
 
 .editor-view .hidden-cell {
