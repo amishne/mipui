@@ -202,21 +202,29 @@ class Cell {
       // Asynchronously replace <img> with <svg>, which then supports
       // 1. Styling
       // 2. Exporting to PNG / SVG
-      const xhr = new XMLHttpRequest();
-      xhr.open('get', imageUrl, true);
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState != 4) return;
-        const svgElement = xhr.responseXML.documentElement;
-        svgElement.classList.add('image');
-        svgElement.classList.add(...classNames);
-        svgElement.style.width = width;
-        svgElement.style.height = height;
-        Array.from(svgElement.children)
-            .forEach(svgChild => svgChild.removeAttribute('fill'));
+      if (state.lastUsedSvg && state.lastUsedSvg.imageUrl == imageUrl &&
+          state.lastUsedSvg.variation == variation) {
+        // The element is cached!
         element.innerHTML = '';
-        element.appendChild(svgElement);
-      };
-      xhr.send();
+        element.appendChild(state.lastUsedSvg.svgElement.cloneNode(true));
+      } else {
+        const xhr = new XMLHttpRequest();
+        xhr.open('get', imageUrl, true);
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState != 4) return;
+          const svgElement = xhr.responseXML.documentElement;
+          svgElement.classList.add('image');
+          svgElement.classList.add(...classNames);
+          svgElement.style.width = width;
+          svgElement.style.height = height;
+          Array.from(svgElement.children)
+              .forEach(svgChild => svgChild.removeAttribute('fill'));
+          element.innerHTML = '';
+          element.appendChild(svgElement);
+          state.lastUsedSvg = {imageUrl, variation, svgElement};
+        };
+        xhr.send();
+      }
     }
   }
 
