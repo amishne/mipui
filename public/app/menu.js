@@ -631,25 +631,9 @@ class Menu {
       submenu: {},
     };
     selector.onInput = (oldText, newText) => {
-      this.tokenSelectedText_ = newText;
+      this.tokenSelectedText_ = newText.toLowerCase();
       this.updateTokenSelectorSubmenu_();
     };
-    // Completions. Disable until a more intuitive solution is in place, for
-    // example having both a category drop-down AND a free-text filter.
-    //    const completions = new Set();
-    //    this.gameIcons_.forEach(icon => {
-    //      // Disabling this for now, it leads to too many items:
-    //      //completions.add(icon.name);
-    //      icon.tags.forEach(tag => completions.add(tag));
-    //    });
-    //    const datalist = document.createElement('datalist');
-    //    datalist.id = selector.datalistId;
-    //    completions.forEach(completion => {
-    //      const option = document.createElement('option');
-    //      option.value = completion;
-    //      datalist.appendChild(option);
-    //    });
-    //    document.getElementById('app').appendChild(datalist);
     this.tokenSelector_ = selector;
     return selector;
   }
