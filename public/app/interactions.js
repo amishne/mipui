@@ -423,11 +423,12 @@ function refreshMapResizeButtonLocations() {
             document
                 .getElementsByClassName('map-resize-button-' + button.name)[0];
       }
-      button.element.style.visibility = 'hidden';
+      document.getElementById('theMap').classList.add('transforming-map');
     });
   }
   refreshMapResizeButtonLocationsTimeout = setTimeout(() => {
     const theMap = document.getElementById('theMap');
+    theMap.classList.remove('transforming-map');
     const nav = state.navigation;
     const left = theMap.offsetLeft;
     const right = left + (theMap.offsetWidth * nav.scale);
@@ -449,9 +450,10 @@ function refreshMapResizeButtonLocations() {
       }
       button.element.style.left = x + offsetX;
       button.element.style.top = y + offsetY;
-      button.element.style.visibility = '';
       refreshMapResizeButtonLocationsTimeout = null;
     });
+    theMap.classList.add('resized-map');
+    setTimeout(() => { theMap.classList.remove('resized-map'); }, 100);
   }, 1000);
 }
 

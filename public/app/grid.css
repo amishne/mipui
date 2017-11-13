@@ -29,6 +29,11 @@
   border-color: rgba(0, 0, 0, 0);
   background-clip: padding-box;
   pointer-events: none;
+  will-change: transform;
+}
+
+.resized-map .layer {
+  will-change: unset;
 }
 
 .widget-layer {

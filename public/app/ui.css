@@ -93,14 +93,10 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 }
-/*
 
-@media screen and (any-hover: none) {
-  .map-resize-button {
-    position: fixed;
-  }
+.transforming-map .map-resize-button {
+  visibility: hidden;
 }
-*/
 
 .map-resize-button-add-column-right {
   background-image: url("assets/ic_keyboard_capslock_white_24px.svg");
