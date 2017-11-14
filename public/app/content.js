@@ -63,8 +63,11 @@ const ct = {
       ],
       single: {},
       double: {classNames: ['double-door-cell-_ROLE_']},
-      secret: {classNames: ['secret-door-cell']},
-      hiddenSecret: {classNames: ['hidden-secret-door-cell']},
+      secret: {classNames: ['secret-door-cell', 'secret-door-cell-_ROLE_']},
+      hiddenSecret: {classNames: [
+        'hidden-secret-door-cell',
+        'hidden-secret-door-cell-_ROLE_',
+      ]},
     },
     window: {
       classNames: [
