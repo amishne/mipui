@@ -369,81 +369,6 @@ class Menu {
     }
   }
 
-  createSeparatorTool_(name, kind, variation, requiredWall, isSelected) {
-    const separatorClassNames = [];
-    switch (kind.id) {
-      case ct.separators.door.id:
-        separatorClassNames.push('door-cell');
-        break;
-      case ct.separators.window.id:
-        separatorClassNames.push('window-cell');
-        separatorClassNames.push('window-cell-vertical');
-        break;
-      case ct.separators.bars.id:
-        separatorClassNames.push('bars-cell-vertical');
-        break;
-      case ct.separators.fence.id:
-        separatorClassNames.push('fence-cell-vertical');
-        break;
-      case ct.separators.curtain.id:
-        separatorClassNames.push('curtain-cell-vertical');
-        break;
-    }
-    switch (variation.id) {
-      case ct.separators.door.double.id:
-        separatorClassNames.push('double-door-cell-vertical');
-        break;
-      case ct.separators.door.secret.id:
-        separatorClassNames.push('secret-door-cell');
-        break;
-      case ct.separators.door.hiddenSecret.id:
-        separatorClassNames.push('hidden-secret-door-cell');
-        break;
-    }
-    return {
-      name,
-      type: 'tool',
-      presentation: 'cells',
-      classNames: ['menu-separators'],
-      isSelected,
-      callback: () => {
-        state.gesture = new SeparatorGesture(kind, variation, requiredWall);
-      },
-      cells: [
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-        {
-          classNames: [
-            'grid-cell',
-            'vertical-cell',
-            requiredWall ? 'wall-cell' : 'floor-cell',
-            requiredWall ? 'square-wall-cell' : '',
-          ],
-        },
-        {
-          innerHTML:
-              variation.imagePath ? `<img src=${variation.imagePath} >` : '',
-          classNames: [
-            'vertical-cell',
-            'separator-cell',
-          ].concat(separatorClassNames),
-        },
-        {
-          classNames: [
-            'grid-cell',
-            'primary-cell',
-            'floor-cell',
-          ],
-        },
-      ],
-    };
-  }
-
   createTextTool_(kind, variation, name, text) {
     const layer = ct.text;
     const classNames =
@@ -1537,8 +1462,12 @@ class Menu {
             {
               name: 'Hide / reveal single cell',
               type: 'tool',
-              presentation: 'icon',
-              materialIcon: 'filter_tilt_shift',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 37,
+                y: 325,
+                size: 30,
+              },
               enabledInReadonlyMode: false,
               callback: () => {
                 state.gesture =
@@ -1584,16 +1513,29 @@ class Menu {
             },
             this.createTextTool_(
                 ct.text.gmNote, ct.text.gmNote.standard, 'DM Note', 'Note'),
-            this.createSeparatorTool_(
-                'Hidden Secret Door',
-                ct.separators.door,
-                ct.separators.door.hiddenSecret,
-                true,
-                false),
+            {
+              name: 'Hidden Secret door',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 148,
+                y: 325,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.door, ct.separators.door.hiddenSecret, true);
+              },
+            },
             {
               name: 'Region',
               type: 'tool',
-              presentation: 'cells',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 197,
+                y: 325,
+                size: 30,
+              },
               enabledInReadonlyMode: false,
               callback: () => {
                 state.gesture = new OverlayGesture(
@@ -1601,14 +1543,6 @@ class Menu {
                     ct.gmoverlay.shape,
                     ct.gmoverlay.shape.square);
               },
-              cells: [{
-                classNames: [
-                  'grid-cell',
-                  'primary-cell',
-                  'floor-cell',
-                  'gmoverlay-square',
-                ],
-              }],
             },
             {
               name: 'Hide text & secret doors',
