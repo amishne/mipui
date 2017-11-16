@@ -206,7 +206,10 @@ class Cell {
           state.lastUsedSvg.variation == variation) {
         // The element is cached!
         element.innerHTML = '';
-        element.appendChild(state.lastUsedSvg.svgElement.cloneNode(true));
+        const svgElement = state.lastUsedSvg.svgElement.cloneNode(true);
+        svgElement.style.width = width;
+        svgElement.style.height = height;
+        element.appendChild(svgElement);
       } else {
         const xhr = new XMLHttpRequest();
         xhr.open('get', imageUrl, true);
