@@ -12,7 +12,7 @@
 .square-wall-cell, .oval-wall-cell, .angled-wall-cell {
   background-image: url("hatching.png");
   border: initial;
-  background-size: 150px;
+  background-size: 120px;
   image-rendering: auto;
   box-shadow: unset;
 }
