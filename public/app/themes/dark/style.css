@@ -38,6 +38,7 @@
 
 .text-cell {
   color: beige;
+  text-shadow: -1px -1px 0 #2c354f, 1px -1px 0 #2c354f, -1px 1px 0 #2c354f, 1px 1px 0 #2c354f;
 }
 
 .fence-cell-horizontal {

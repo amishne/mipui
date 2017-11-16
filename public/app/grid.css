@@ -555,6 +555,7 @@
 
 .text-cell {
   color: rgb(50, 50, 50);
+  text-shadow: -1px -1px 0 rgb(245, 245, 220), 1px -1px 0 rgb(245, 245, 220), -1px 1px 0 rgb(245, 245, 220), 1px 1px 0 rgb(245, 245, 220);
 }
 
 .gm-note {

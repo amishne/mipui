@@ -61,3 +61,7 @@
 .window-cell-vertical {
   margin: 3px 1px 3px 1px;
 }
+
+.text-cell {
+  text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+}
