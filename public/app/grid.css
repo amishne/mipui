@@ -82,12 +82,10 @@
 .walls-layer {
   z-index: 2;
   filter: drop-shadow(2px 2px 3px #919191);
-  border-color: bisque;
 }
 
 .floors-layer {
   z-index: 1;
-  border-color: bisque;
 }
 
 .row-container {
