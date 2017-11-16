@@ -13,6 +13,7 @@ const mapResizeButtons = [
   {name: 'add-row-top', pos: 'top', place: 0},
   {name: 'remove-row-top', pos: 'top', place: 1},
 ];
+let refreshMapResizeButtonLocationsTimeout = null;
 
 function getCached(obj, fieldName) {
   const cachedObj = cached[obj] || {};
@@ -379,6 +380,12 @@ function resizeGridBy(
   });
   // Update transform so that elements on the viewport won't move around.
   if (firstColumnDiff != 0 || firstRowDiff != 0) {
+    // The below will trigger a scroll event, though. To prevent that event from
+    // starting a resize button refresh flow, we set the button refresh timer id
+    // here to be some invalid number, if it's not defined.
+    if (refreshMapResizeButtonLocationsTimeout == null) {
+      refreshMapResizeButtonLocationsTimeout = -1;
+    }
     const nav = state.navigation;
     incrementAndCache(mapContainer, 'scrollLeft',
         -firstColumnDiff * nav.scale *
@@ -412,7 +419,6 @@ function resetGrid() {
   state.opCenter.recordOperationComplete();
 }
 
-let refreshMapResizeButtonLocationsTimeout = null;
 function refreshMapResizeButtonLocations() {
   if (refreshMapResizeButtonLocationsTimeout) {
     clearTimeout(refreshMapResizeButtonLocationsTimeout);
