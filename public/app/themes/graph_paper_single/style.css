@@ -4,8 +4,9 @@
 }
 
 .floor-cell {
-  border-color: white;
+  border-color: transparent;
   image-rendering: pixelated;
+  background-clip: border-box;
 }
 
 .menu-item .floor-cell {

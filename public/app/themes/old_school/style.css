@@ -3,8 +3,9 @@
 }
 
 .floor-cell {
-  border-color: white;
+  border-color: transparent;
   image-rendering: pixelated;
+  background-clip: border-box;
 }
 
 .menu-item .floor-cell {
@@ -87,30 +88,28 @@
   margin: 3px -1px 4px -1px;
   border-color: white;
   border-radius: unset;
-  image-rendering: pixelated;
 }
 
 .secret-door-cell-vertical {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='16' fill='#4592be'>S</text></svg>") no-repeat, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAYCAYAAADZEIyjAAAAIElEQVQoU2NkQAKuk/b9353nxAgSAhMwMCoxGiSkJQYAXaVgGb3d82UAAAAASUVORK5CYII=") white 1px 0 repeat-y;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='50%' y1='0%' x2='50%' y2='100%' stroke-width='1' stroke='#4592be' /><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='16' fill='#4592be'>S</text></svg>") white;
 }
 
 .hidden-secret-door-cell-vertical {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='16' fill='mediumvioletred'>S</text></svg>") no-repeat, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAYCAYAAADZEIyjAAAAIElEQVQoU2NkQAKuk/b9353nxAgSAhMwMCoxGiSkJQYAXaVgGb3d82UAAAAASUVORK5CYII=") white 1px 0 repeat-y;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='50%' y1='0%' x2='50%' y2='100%' stroke-width='1' stroke='#4592be' /><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='16' fill='mediumvioletred'>S</text></svg>") white;
 }
 
 .secret-door-cell-horizontal, .hidden-secret-door-cell-horizontal {
   margin: -2px 4px -2px 3px;
   border-color: white;
   border-radius: unset;
-  image-rendering: pixelated;
 }
 
 .secret-door-cell-horizontal {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='15' fill='#4592be'>S</text></svg>") no-repeat, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAGCAYAAADZq14TAAAAIklEQVQoU2NkoDFgpLH5DLS3wHXSvv+09AXtfUBL14PMBgDw9gKb12UDQgAAAABJRU5ErkJggg==") white 0 3px repeat-x;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='0%' y1='50%' x2='100%' y2='50%' stroke-width='1' stroke='#4592be' /><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='15' fill='#4592be'>S</text></svg>") white;
 }
 
 .hidden-secret-door-cell-horizontal {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='15' fill='mediumvioletred'>S</text></svg>") no-repeat, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAGCAYAAADZq14TAAAAIklEQVQoU2NkoDFgpLH5DLS3wHXSvv+09AXtfUBL14PMBgDw9gKb12UDQgAAAABJRU5ErkJggg==") white 0 3px repeat-x;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='0%' y1='50%' x2='100%' y2='50%' stroke-width='1' stroke='#4592be' /><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='15' fill='mediumvioletred'>S</text></svg>") white;
 }
 
 .door-cell-adding, .window-cell-adding {
