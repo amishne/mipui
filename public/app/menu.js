@@ -79,16 +79,22 @@ class Menu {
   }
 
   createMenuItem_(menuItem, topElement, bottomElement) {
-    const submenuElement =
-        createAndAppendDivWithClass(bottomElement, 'submenu');
-    menuItem.submenu.element = submenuElement;
-    this.createItem_(topElement, menuItem, () => {
-      this.selectMenuItem_(menuItem);
-    });
-    this.populateMenuItem_(menuItem);
-    const tipElement =
-        createAndAppendDivWithClass(submenuElement, 'menu-tip');
-    tipElement.innerHTML = menuItem.tip || '';
+    if (menuItem.submenu) {
+      const submenuElement =
+          createAndAppendDivWithClass(bottomElement, 'submenu');
+      menuItem.submenu.element = submenuElement;
+      this.createItem_(topElement, menuItem, () => {
+        this.selectMenuItem_(menuItem);
+      });
+      this.populateMenuItem_(menuItem);
+      const tipElement =
+          createAndAppendDivWithClass(submenuElement, 'menu-tip');
+      tipElement.innerHTML = menuItem.tip || '';
+    } else if (menuItem.callback) {
+      this.createItem_(topElement, menuItem, () => {
+        menuItem.callback();
+      });
+    }
   }
 
   populateMenuItem_(menuItem) {
@@ -319,6 +325,7 @@ class Menu {
       return;
     }
     this.menuItems_.forEach(otherMenuItem => {
+      if (!otherMenuItem.submenu) return;
       const isThisItem = menuItem == otherMenuItem;
       otherMenuItem.isSelected = isThisItem;
       otherMenuItem.element
@@ -1637,6 +1644,16 @@ class Menu {
               },
             },
           ],
+        },
+      },
+      {
+        name: 'Survey',
+        type: 'button',
+        presentation: 'icon',
+        materialIcon: 'list',
+        enabledInReadonlyMode: true,
+        callback: () => {
+          window.open('https://goo.gl/forms/MMJBHazJNHfJEafn2', '_blank');
         },
       },
     ];
