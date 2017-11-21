@@ -797,16 +797,16 @@ class Menu {
                 overlay.textContent = 'Constructing PNG...';
                 setTimeout(() => {
                   const scale = 2.1875;
-                  const numColumns = (state.getProperty(pk.lastColumn) -
-                      state.getProperty(pk.firstColumn)) - 1;
-                  const numRows = (state.getProperty(pk.lastRow) -
-                      state.getProperty(pk.firstRow)) - 1;
-                  const width = scale * (2 + numColumns *
-                      (state.theMap.cellWidth + 1 +
-                      state.theMap.dividerWidth + 1));
-                  const height = scale * (2 + numRows *
-                      (state.theMap.cellHeight + 1 +
-                      state.theMap.dividerHeight + 1));
+                  const numColumns = state.getProperty(pk.lastColumn) -
+                      state.getProperty(pk.firstColumn);
+                  const numRows = state.getProperty(pk.lastRow) -
+                      state.getProperty(pk.firstRow);
+                  const width = scale * (1 + state.theMap.dividerWidth +
+                      numColumns * (state.theMap.cellWidth +
+                      state.theMap.dividerWidth));
+                  const height = scale * (1 + state.theMap.dividerHeight +
+                      numRows * (state.theMap.cellHeight +
+                      state.theMap.dividerHeight));
                   const theMapElement = document.getElementById('theMap');
                   domtoimage.toBlob(theMapElement, {
                     style: {
@@ -1687,16 +1687,16 @@ class Menu {
               overlay.textContent = 'Constructing PNG...';
               setTimeout(() => {
                 const scale = 1;
-                const numColumns = (state.getProperty(pk.lastColumn) -
-                    state.getProperty(pk.firstColumn)) - 1;
-                const numRows = (state.getProperty(pk.lastRow) -
-                    state.getProperty(pk.firstRow)) - 1;
-                const width = scale * (2 + numColumns *
-                    (state.theMap.cellWidth + 1 +
-                    state.theMap.dividerWidth + 1));
-                const height = scale * (2 + numRows *
-                    (state.theMap.cellHeight + 1 +
-                    state.theMap.dividerHeight + 1));
+                const numColumns = state.getProperty(pk.lastColumn) -
+                    state.getProperty(pk.firstColumn);
+                const numRows = state.getProperty(pk.lastRow) -
+                    state.getProperty(pk.firstRow);
+                const width = scale * (1 + state.theMap.dividerWidth +
+                    numColumns * (state.theMap.cellWidth +
+                    state.theMap.dividerWidth));
+                const height = scale * (1 + state.theMap.dividerHeight +
+                    numRows * (state.theMap.cellHeight +
+                    state.theMap.dividerHeight));
                 const theMapElement = document.getElementById('theMap');
                 domtoimage.toBlob(theMapElement, {
                   style: {
