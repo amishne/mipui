@@ -4,12 +4,8 @@
   <title>Mipui</title>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <style>
-    .warning {
-      font-weight: bold;
-      color: darkred;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.min.css" type="text/css">
+
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -22,68 +18,69 @@
   </script>
 </head>
 <body>
-  <h1>Mipui</h1>
-  <p>
-    <em>Mipui</em> is a free and open-source collaborative web application for creating, editing and viewing grid-based maps for tabletop or role-playing games.
-  </p>
-  <a href="app/" class="start">Start creating a map now!</a>
-  <p>
-    No registration is neccessary, and there's nothing to download or install.
-  </p>
-  <h2>Features</h2>
-  <h3>Simple</h3>
-  <p>
-    <em>Mipui</em> employs a limited but expressive set of tools, avoiding the bloat that exists in some other map editors while still remaining rich enough for most everyday gaming needs. In particular, no textures are used, instead opting for a symbolic approach.
-  </p>
-  <h3>Real-time collaboration</h3>
-  <p>
-    <em>Mipui</em> has real-time collaboration between multiple authors.
-    Just share the link with someone else and watch their edits live.
-    No registration necessary.
-  </p>
-  <p>
-    It's also possible to share a read-only view of the map, so that maps you create can easily be shared with any number of total strangers - aka the Internet. It's easy to remix existing maps with the "fork" option.
-  </p>
-  <h3>Friendly</h3>
-  <p>
-    <em>Mipui</em> contains a lot of small features that help with worry-free editing, including undo/redo support, the ability to resize the grid without deleting existing content, zoom and pan tools, copy and paste, etc.
-  </p>
-  <h3>Cloud storage</h3>
-  <p>
-    Every <em>Mipui</em> map is automatically saved to the cloud every few seconds, and will remain there forever.
-  </p>
-  <h2>Developer information</h2>
-  <a href="docs/developer_guide.html">Visit the developer's guide</a>.
-  <h2>Credits</h2>
-  <p>
-    <em>Mipui</em> is developed and maintained by Alon Mishne.
-    Contact me at <a href="mailto:contact@mipui.net">contact@mipui.net</a>.
-  </p>
-  <p>
-    <em>Mipui</em>'s implementation uses the following resources:
-    <ul>
-      <li><a href="http://firebase.google.com">Firebase by Google</a></li>
-      <li><a href="https://github.com/tsayen/dom-to-image">DOM to Image by Anatolii Saienko</a></li>
-      <li><a href="https://github.com/eligrey/FileSaver.js">FireSaver.js by Eli Grey</a></li>
-      <li><a href="http://game-icons.net">Game icons by various artists, available on game-icons.net</a>. Also see a <a href="http://game-icons.net/about.html#authors">detailed artist breakdown</a>.</li>
-      <li><a href="https://material.io/icons/">Material icons by Google</a></li>
-      <li><a href="https://blogs.msdn.microsoft.com/ericlippert/tag/shadowcasting/">Shadowcasting Tutorial by Eric Lippert</a></li>
-      <li><a href="https://www.patreon.com/posts/15297542">Cross-hatching texture by Syrkres</a></li>
-    </ul>
-  </p>
-  <p>
-    <em>Mipui</em> was inspired by many things, but first and foremost is <a href="http://deepnight.net/tools/tabletop-rpg-map-editor/">ANAmap by Sébastien Bénard</a>.
-    In fact, <em>Mipui</em> started from me using his app and thinking "oh this is cool, but I wish it had just a few more features... I wonder if I can do that myself."
-  </p>
-  <p>Special thanks to my D&amp;D group, <em>Ornak's Freedom</em>, for the initial motivation!</p>
-  <h2>Contact</h2>
-  <p>
-    Bug reports and feature requests can be posted to the <a href="https://feedback.userreport.com/7e918812-4e93-4a8f-9541-9af34d0f4231/">UserReport feedback forum</a> or as <a href="https://github.com/amishne/mipui/issues">issues on the Github project</a>. For anything else feel free to email me at <a href="mailto:contact@mipui.net">contact@mipui.net</a>.
-  </p>
+  <article>
+    <h1>Mipui</h1>
+    <p>
+      <em>Mipui</em> is a free and open-source collaborative web application for creating, editing and viewing grid-based maps for tabletop or role-playing games.
+    </p>
+    <a href="app/" class="start">Start creating a map now!</a>
+    <p>
+      No registration is neccessary, and there's nothing to download or install.
+    </p>
+    <h2>Features</h2>
+    <h3>Simple</h3>
+    <p>
+      <em>Mipui</em> employs a limited but expressive set of tools, avoiding the bloat that exists in some other map editors while still remaining rich enough for most everyday gaming needs. In particular, no textures are used, instead opting for a symbolic approach.
+    </p>
+    <h3>Real-time collaboration</h3>
+    <p>
+      <em>Mipui</em> has real-time collaboration between multiple authors.
+      Just share the link with someone else and watch their edits live.
+      No registration necessary.
+    </p>
+    <p>
+      It's also possible to share a read-only view of the map, so that maps you create can easily be shared with any number of total strangers - aka the Internet. It's easy to remix existing maps with the "fork" option.
+    </p>
+    <h3>Friendly</h3>
+    <p>
+      <em>Mipui</em> contains a lot of small features that help with worry-free editing, including undo/redo support, the ability to resize the grid without deleting existing content, zoom and pan tools, copy and paste, etc.
+    </p>
+    <h3>Cloud storage</h3>
+    <p>
+      Every <em>Mipui</em> map is automatically saved to the cloud every few seconds, and will remain there forever.
+    </p>
+    <h2>Developer information</h2>
+    <a href="docs/developer_guide.html">Visit the developer's guide</a>.
+    <h2>Credits</h2>
+    <p>
+      <em>Mipui</em> is developed and maintained by Alon Mishne.
+      Contact me at <a href="mailto:contact@mipui.net">contact@mipui.net</a>.
+    </p>
+    <p>
+      <em>Mipui</em>'s implementation uses the following resources:
+      <ul>
+        <li><a href="http://firebase.google.com">Firebase by Google</a></li>
+        <li><a href="https://github.com/tsayen/dom-to-image">DOM to Image by Anatolii Saienko</a></li>
+        <li><a href="https://github.com/eligrey/FileSaver.js">FireSaver.js by Eli Grey</a></li>
+        <li><a href="http://game-icons.net">Game icons by various artists, available on game-icons.net</a>. Also see a <a href="http://game-icons.net/about.html#authors">detailed artist breakdown</a>.</li>
+        <li><a href="https://material.io/icons/">Material icons by Google</a></li>
+        <li><a href="https://blogs.msdn.microsoft.com/ericlippert/tag/shadowcasting/">Shadowcasting Tutorial by Eric Lippert</a></li>
+        <li><a href="https://www.patreon.com/posts/15297542">Cross-hatching texture by Syrkres</a></li>
+      </ul>
+    </p>
+    <p>
+      <em>Mipui</em> was inspired by many things, but first and foremost is <a href="http://deepnight.net/tools/tabletop-rpg-map-editor/">ANAmap by Sébastien Bénard</a>.
+      In fact, <em>Mipui</em> started from me using his app and thinking "oh this is cool, but I wish it had just a few more features... I wonder if I can do that myself."
+    </p>
+    <p>Special thanks to my D&amp;D group, <em>Ornak's Freedom</em>, for the initial motivation!</p>
+    <h2>Contact</h2>
+    <p>
+      Bug reports and feature requests can be posted to the <a href="https://feedback.userreport.com/7e918812-4e93-4a8f-9541-9af34d0f4231/">UserReport feedback forum</a> or as <a href="https://github.com/amishne/mipui/issues">issues on the Github project</a>. For anything else feel free to email me at <a href="mailto:contact@mipui.net">contact@mipui.net</a>.
+    </p>
 
-  <h2>Other resources</h2>
+    <h2>Other resources</h2>
 
-  <a href="docs/privacy_policy.html">Privacy policy</a><br />
-
+    <a href="docs/privacy_policy.html">Privacy policy</a><br />
+  </article>
 </body>
 </html>
