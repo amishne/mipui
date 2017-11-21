@@ -688,7 +688,7 @@
 }
 
 .editor-view .hidden-cell {
-  background-image: repeating-linear-gradient(45deg, RGB(102, 51, 153), RGB(102, 51, 153) 3px, rgb(100, 100, 100) 3px, rgb(100, 100, 100) 6px);
+  background-image: repeating-linear-gradient(45deg, rgb(102, 51, 153), rgb(102, 51, 153) 3px, rgb(100, 100, 100) 3px, rgb(100, 100, 100) 6px);
   opacity: 0.4;
 }
 
