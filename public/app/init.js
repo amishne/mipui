@@ -97,6 +97,14 @@ function start() {
   state.menu.descChanged();
   setStatus(Status.INITIALIZING);
   createTheMapAndUpdateElements();
+  if (navigator.userAgent.includes('Chrome')) {
+    // On Chrome we force caching of all layers by setting
+    // "will-change: transform" on them. This produces significant performance
+    // boost.
+    // It's conditional on Chrome because the same change on Firefox actually
+    // slows things down, and other browsers are untested.
+    mapContainer.classList.add('force-layer-caching');
+  }
   createMapResizeButtons();
   initializeFirebase(() => {
     const mid = params.mid ? decodeURIComponent(params.mid) : null;
