@@ -207,6 +207,8 @@ class State {
     this.pstate_ = pstate;
     createTheMapAndUpdateElements();
     refreshMapResizeButtonLocations();
+    this.menu.descChanged();
+    this.reloadTheme();
   }
 
   setupNewMid(callback) {
