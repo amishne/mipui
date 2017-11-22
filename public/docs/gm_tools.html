@@ -4,12 +4,7 @@
   <title>Mipui Game Master Tools</title>
   <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
   <link rel="icon" href="../favicon.ico" type="image/x-icon">
-  <style>
-    .warning {
-      font-weight: bold;
-      color: darkred;
-    }
-  </style>
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -22,37 +17,39 @@
   </script>
 </head>
 <body>
-  <h1>Mipui Game Master Tools</h1>
-  <p>
-    When a user loads a Mipui map, that can either be in read/write mode (in
-    which case the address looks like
-    /index.html?mid=something&amp;secret=something) or read-only mode (in which
-    case the address lacks the &amp;secret=something part). GM tools appear
-    differently in the two modes.
-  </p>
-  <p>
-    <em>The hide / reveal tools</em> will overlay the cell with solid black in
-    read-only mode, and translucent overlay in read/write mode. The basic tool
-    will just show/hide a single cell, but there are buttons to show/hide the
-    entire map, and a tool which reveals all cells in line of sight from the
-    selected cell.
-  </p>
-  <p>
-    <em>The GM note tool</em> will create text which is invisible in read-only
-    mode.
-  </p>
-  <p>
-    <em>The hidden secret door tool</em> will create a secret door which is
-    invisible in read-only mode.
-  </p>
-  <p>
-    <em>The region tool</em> will create a translucent overlay on the cell which
-    is invisible in read-only mode.
-  </p>
-  <p>
-    <strong>GM tools are not cheat-proof.</strong> The data is sent from the
-    server, it's just not displayed to the user - so it's still possible to
-    access it. Don't rely on it if you can't trust your viewers to not cheat.
-  </p>
+  <article>
+    <h1>Mipui Game Master Tools</h1>
+    <p>
+      When a user loads a Mipui map, that can either be in read/write mode (in
+      which case the address looks like
+      /index.html?mid=something&amp;secret=something) or read-only mode (in which
+      case the address lacks the &amp;secret=something part). GM tools appear
+      differently in the two modes.
+    </p>
+    <p>
+      <em>The hide / reveal tools</em> will overlay the cell with solid black in
+      read-only mode, and translucent overlay in read/write mode. The basic tool
+      will just show/hide a single cell, but there are buttons to show/hide the
+      entire map, and a tool which reveals all cells in line of sight from the
+      selected cell.
+    </p>
+    <p>
+      <em>The GM note tool</em> will create text which is invisible in read-only
+      mode.
+    </p>
+    <p>
+      <em>The hidden secret door tool</em> will create a secret door which is
+      invisible in read-only mode.
+    </p>
+    <p>
+      <em>The region tool</em> will create a translucent overlay on the cell which
+      is invisible in read-only mode.
+    </p>
+    <p>
+      <strong>GM tools are not cheat-proof.</strong> The data is sent from the
+      server, it's just not displayed to the user - so it's still possible to
+      access it. Don't rely on it if you can't trust your viewers to not cheat.
+    </p>
+  </article>
 </body>
 </html>
