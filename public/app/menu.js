@@ -781,8 +781,22 @@ class Menu {
               materialIcon: 'call_split',
               enabledInReadonlyMode: true,
               callback: () => {
-                state.opCenter.fork();
-                alert('Forked!');
+                let message = 'This will create a copy of this map and load ' +
+                    'it in the current window. Confirm?';
+                if (state.isReadOnly()) {
+                  const mapHasHiddenStuff =
+                      Array.from(state.theMap.cells.entries())
+                          .some(([key, cell]) => cell.hasHiddenContent());
+                  if (mapHasHiddenStuff) {
+                    message =
+                        'THIS IS CHEATING! Hidden content will be revealed!' +
+                        '\n\n' + message;
+                  }
+                }
+                if (confirm(message)) {
+                  state.opCenter.fork();
+                  alert('Forked!');
+                }
               },
             },
             {

@@ -64,6 +64,16 @@ class Cell {
     return true;
   }
 
+  hasHiddenContent() {
+    return this.hasLayerContent(ct.gmoverlay) ||
+        this.isVariation(
+            ct.separators,
+            ct.separators.door,
+            ct.separators.door.hiddenSecret) ||
+        this.isKind(ct.text, ct.text.gmNote) ||
+        this.isKind(ct.mask, ct.mask.hidden);
+  }
+
   getVal(layer, contentKey) {
     const content = this.getLayerContent(layer);
     return content ? content[contentKey] : null;
