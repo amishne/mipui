@@ -99,6 +99,9 @@
 
 .menu-icon {
   color: aliceblue;
+}
+
+.menu-icon-from-map {
   image-rendering: pixelated;
 }
 
