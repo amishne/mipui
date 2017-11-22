@@ -27,6 +27,10 @@
   background-color: rgb(243, 242, 242);
 }
 
+.oval-wall-cell {
+  margin: -0.5px;
+}
+
 .door-cell {
   background-color: rgb(255, 255, 255);
 }
