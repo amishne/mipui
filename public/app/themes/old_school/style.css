@@ -6,6 +6,7 @@
   border-color: transparent;
   image-rendering: pixelated;
   background-clip: border-box;
+  margin: -1px;
 }
 
 .menu-item .floor-cell {
@@ -17,15 +18,15 @@
 }
 
 .floor-cell-vertical {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAYCAYAAADZEIyjAAAAIElEQVQoU2NkQAKuk/b9353nxAgSAhMwMCoxGiSkJQYAXaVgGb3d82UAAAAASUVORK5CYII=") white;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAYCAYAAADZEIyjAAAAIElEQVQoU2NkQAKuk/b9353nxAgSAhMwMCoxGiSkJQYAXaVgGb3d82UAAAAASUVORK5CYII=") 1px 1px white;
 }
 
 .floor-cell-horizontal {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAGCAYAAADZq14TAAAAIklEQVQoU2NkoDFgpLH5DLS3wHXSvv+09AXtfUBL14PMBgDw9gKb12UDQgAAAABJRU5ErkJggg==") white;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAGCAYAAADZq14TAAAAIklEQVQoU2NkoDFgpLH5DLS3wHXSvv+09AXtfUBL14PMBgDw9gKb12UDQgAAAABJRU5ErkJggg==") 1px 1px white;
 }
 
 .floor-cell-corner {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAI0lEQVQYV2NkQAKuk/b9353nxAgSAhMwQJwESBWyLhibdKMAhkoWm9xUiqQAAAAASUVORK5CYII=") white;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAI0lEQVQYV2NkQAKuk/b9353nxAgSAhMwQJwESBWyLhibdKMAhkoWm9xUiqQAAAAASUVORK5CYII=") 1px 1px white;
 }
 
 .square-wall-cell, .oval-wall-cell, .angled-wall-cell {
