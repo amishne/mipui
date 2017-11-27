@@ -632,6 +632,38 @@ class Menu {
     return item;
   }
 
+  downloadPng_(scale, startOffset, endOffset) {
+    const overlay = createAndAppendDivWithClass(document.body, 'modal-overlay');
+    overlay.textContent = 'Constructing PNG...';
+    setTimeout(() => {
+      const numColumns = state.getProperty(pk.lastColumn) -
+          state.getProperty(pk.firstColumn);
+      const numRows = state.getProperty(pk.lastRow) -
+          state.getProperty(pk.firstRow);
+      const width = scale * (1 + state.theMap.dividerWidth +
+          numColumns * (state.theMap.cellWidth +
+          state.theMap.dividerWidth));
+      const height = scale * (1 + state.theMap.dividerHeight +
+          numRows * (state.theMap.cellHeight +
+          state.theMap.dividerHeight));
+      const theMapElement = document.getElementById('theMap');
+      domtoimage.toBlob(theMapElement, {
+        style: {
+          transform: `scale(${scale})`,
+          left: -(startOffset * scale),
+          top: -(startOffset * scale),
+        },
+        width: width - (startOffset + endOffset) * scale,
+        height: height - (startOffset + endOffset) * scale,
+      }).then(blob => {
+        saveAs(blob, 'mipui.png');
+        overlay.parentElement.removeChild(overlay);
+      }).catch(() => {
+        overlay.parentElement.removeChild(overlay);
+      });
+    }, 10);
+  }
+
   updateTokenSelectorSubmenu_() {
     const selector = this.tokenSelector_;
     const text = this.tokenSelectedText_;
@@ -800,47 +832,39 @@ class Menu {
               },
             },
             {
-              name: 'Download PNG',
+              name: 'PNG, 32px/square',
               type: 'button',
               presentation: 'label',
-              text: 'PNG',
+              text: 'PNG (1:1)',
               enabledInReadonlyMode: true,
               callback: () => {
-                const overlay =
-                    createAndAppendDivWithClass(document.body, 'modal-overlay');
-                overlay.textContent = 'Constructing PNG...';
-                setTimeout(() => {
-                  const scale = 2.1875;
-                  const numColumns = state.getProperty(pk.lastColumn) -
-                      state.getProperty(pk.firstColumn);
-                  const numRows = state.getProperty(pk.lastRow) -
-                      state.getProperty(pk.firstRow);
-                  const width = scale * (1 + state.theMap.dividerWidth +
-                      numColumns * (state.theMap.cellWidth +
-                      state.theMap.dividerWidth));
-                  const height = scale * (1 + state.theMap.dividerHeight +
-                      numRows * (state.theMap.cellHeight +
-                      state.theMap.dividerHeight));
-                  const theMapElement = document.getElementById('theMap');
-                  domtoimage.toBlob(theMapElement, {
-                    style: {
-                      transform: `scale(${scale})`,
-                      left: 0,
-                      top: 0,
-                    },
-                    width,
-                    height,
-                  }).then(blob => {
-                    saveAs(blob, 'mipui.png');
-                    overlay.parentElement.removeChild(overlay);
-                  }).catch(() => {
-                    overlay.parentElement.removeChild(overlay);
-                  });
-                }, 10);
+                this.downloadPng_(1, 0, 0);
               },
             },
             {
-              name: 'Download PNG of viewport',
+              name: 'PNG, 70px/square, edge-cropped',
+              type: 'button',
+              presentation: 'label',
+              text: 'PNG (VTT)',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                // VTTs like 70px per square.
+                this.downloadPng_(70 / 32, 3, 4);
+              },
+            },
+            {
+              name: 'PNG, 300px/square',
+              type: 'button',
+              presentation: 'label',
+              text: 'PNG (print)',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                // Standard battlemat size is 1 inch per square.
+                this.downloadPng_(300 / 32, 0, 0);
+              },
+            },
+            {
+              name: "PNG of what's currently shown",
               type: 'button',
               presentation: 'label',
               text: 'PNG (view)',
@@ -1688,46 +1712,6 @@ class Menu {
             materialIcon: 'create_new_folder',
             enabledInReadonlyMode: true,
             callback: () => { window.open('.', '_self'); },
-          },
-          {
-            name: 'Download PNG at scale 1',
-            type: 'button',
-            presentation: 'label',
-            text: 'PNG',
-            enabledInReadonlyMode: true,
-            callback: () => {
-              const overlay =
-                  createAndAppendDivWithClass(document.body, 'modal-overlay');
-              overlay.textContent = 'Constructing PNG...';
-              setTimeout(() => {
-                const scale = 1;
-                const numColumns = state.getProperty(pk.lastColumn) -
-                    state.getProperty(pk.firstColumn);
-                const numRows = state.getProperty(pk.lastRow) -
-                    state.getProperty(pk.firstRow);
-                const width = scale * (1 + state.theMap.dividerWidth +
-                    numColumns * (state.theMap.cellWidth +
-                    state.theMap.dividerWidth));
-                const height = scale * (1 + state.theMap.dividerHeight +
-                    numRows * (state.theMap.cellHeight +
-                    state.theMap.dividerHeight));
-                const theMapElement = document.getElementById('theMap');
-                domtoimage.toBlob(theMapElement, {
-                  style: {
-                    transform: `scale(${scale})`,
-                    left: 0,
-                    top: 0,
-                  },
-                  width,
-                  height,
-                }).then(blob => {
-                  saveAs(blob, 'mipui.png');
-                  overlay.parentElement.removeChild(overlay);
-                }).catch(() => {
-                  overlay.parentElement.removeChild(overlay);
-                });
-              }, 10);
-            },
           },
           {
             name: 'Save map locally',
