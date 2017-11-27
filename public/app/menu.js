@@ -180,8 +180,6 @@ class Menu {
     if (!item.enabledInReadonlyMode) {
       item.element.classList.add('disabled-in-read-only-mode');
     }
-    let cells = null;
-    let deferredSvg = null;
     switch (item.presentation) {
       case 'icon':
         const image = document.createElement('img');
@@ -1722,7 +1720,7 @@ class Menu {
             callback: () => {
               const blob =
                   new Blob([JSON.stringify(state.pstate_)],
-                    {type: "application/json"})
+                    {type: 'application/json'});
               saveAs(blob, `mipui_${state.getMid() || 'unnamed'}.json`);
             },
           },
