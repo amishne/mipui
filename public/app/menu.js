@@ -632,7 +632,8 @@ class Menu {
 
   downloadPng_(scale, startOffset, endOffset) {
     const overlay = createAndAppendDivWithClass(document.body, 'modal-overlay');
-    overlay.textContent = 'Constructing PNG...';
+    const message = createAndAppendDivWithClass(overlay, 'modal-message');
+    message.textContent = 'Constructing PNG...';
     setTimeout(() => {
       const numColumns = state.getProperty(pk.lastColumn) -
           state.getProperty(pk.firstColumn);
@@ -1116,6 +1117,16 @@ class Menu {
                 state.setProperty(pk.theme, newChoiceNum, true);
                 state.reloadTheme();
                 state.opCenter.recordOperationComplete();
+              },
+            },
+            {
+              name: 'Resize map',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'photo_size_select_large',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                showResizeDialog();
               },
             },
             {

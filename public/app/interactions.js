@@ -503,3 +503,145 @@ function switchToMobileMode() {
   actionPane.onmousemove = e => e.stopPropagation();
   actionPane.onmouseup = e => e.stopPropagation();
 }
+
+function showResizeDialog() {
+  const overlay = createAndAppendDivWithClass(document.body, 'modal-overlay');
+  const closeOverlay = () => {
+    overlay.parentElement.removeChild(overlay);
+  };
+
+  const dialog = createAndAppendDivWithClass(overlay, 'modal-dialog');
+
+  const currentSize = createAndAppendDivWithClass(dialog, 'modal-dialog-line');
+  const currentWidth =
+      state.getProperty(pk.lastColumn) - state.getProperty(pk.firstColumn);
+  const currentHeight =
+      state.getProperty(pk.lastRow) - state.getProperty(pk.firstRow);
+  currentSize.textContent =
+      `Current size is ${currentWidth} x ${currentHeight}.`;
+
+  const newSizeLine = createAndAppendDivWithClass(dialog, 'modal-dialog-line');
+  const newSizePrefix = createAndAppendDivWithClass(newSizeLine);
+  newSizePrefix.textContent = 'New size is ';
+  const newSizeWidth = document.createElement('input');
+  newSizeLine.appendChild(newSizeWidth);
+  newSizeWidth.value = currentWidth;
+  newSizeWidth.type = 'number';
+  newSizeWidth.min = 1;
+  newSizeWidth.max = 1000;
+  const newSizeInfix = createAndAppendDivWithClass(newSizeLine);
+  newSizeInfix.textContent = 'x';
+  const newSizeHeight = document.createElement('input');
+  newSizeLine.appendChild(newSizeHeight);
+  newSizeHeight.value = currentHeight;
+  newSizeHeight.type = 'number';
+  newSizeHeight.min = 1;
+  newSizeHeight.max = 1000;
+
+  const anchorButtons = [];
+  let selectedAnchor = {x: 0, y: 0};
+  const selectAnchor = (x, y) => {
+    selectedAnchor = {x, y};
+    anchorButtons.forEach((button, index) => {
+      const currX = index % 3;
+      const currY = Math.floor(index / 3);
+      button.classList.remove('anchor-button-selected');
+      if (currX == x && currY == y) {
+        button.classList.add('anchor-button-selected');
+        button.textContent = '⚓';
+      } else if (currX == x + 1 && currY == y) {
+        button.textContent = '→';
+      } else if (currX == x + 1 && currY == y + 1) {
+        button.textContent = '↘';
+      } else if (currX == x && currY == y + 1) {
+        button.textContent = '↓';
+      } else if (currX == x - 1 && currY == y + 1) {
+        button.textContent = '↙';
+      } else if (currX == x - 1 && currY == y) {
+        button.textContent = '←';
+      } else if (currX == x - 1 && currY == y - 1) {
+        button.textContent = '↖';
+      } else if (currX == x && currY == y - 1) {
+        button.textContent = '↑';
+      } else if (currX == x + 1 && currY == y - 1) {
+        button.textContent = '↗';
+      } else {
+        button.textContent = 'o';
+      }
+    });
+  };
+  const anchorBox =
+      createAndAppendDivWithClass(dialog, 'modal-dialog-anchorbox');
+  for (let y = 0; y < 3; y++) {
+    const anchorBoxLine =
+        createAndAppendDivWithClass(anchorBox, 'modal-dialog-anchorbox-line');
+    for (let x = 0; x < 3; x++) {
+      const anchorButton = document.createElement('button');
+      anchorBoxLine.appendChild(anchorButton);
+      anchorButton.className = 'anchor-button';
+      anchorButtons.push(anchorButton);
+      anchorButton.onclick = () => { selectAnchor(x, y); };
+    }
+  }
+  selectAnchor(selectedAnchor.x, selectedAnchor.y);
+
+  const warningLine = createAndAppendDivWithClass(
+      dialog, 'modal-dialog-line modal-dialog-warning');
+  warningLine.textContent = 'Warning: Depending on your device, expect ' +
+      'significant slowdowns on maps where width times height is over ~3000.';
+
+  const dialogButtons =
+      createAndAppendDivWithClass(dialog, 'modal-dialog-line');
+  const cancel = document.createElement('button');
+  dialogButtons.appendChild(cancel);
+  cancel.className = 'modal-dialog-button modal-dialog-cancel-button';
+  cancel.textContent = 'Cancel';
+  cancel.onclick = closeOverlay;
+  const accept = document.createElement('button');
+  accept.className = 'modal-dialog-button modal-dialog-accept-button';
+  dialogButtons.appendChild(accept);
+  accept.textContent = 'Resize';
+  accept.onclick = () => {
+    const newWidth = newSizeWidth.value;
+    const newHeight = newSizeHeight.value;
+    if (newWidth < 1 || newWidth > 1000 || newHeight < 1 || newHeight > 1000) {
+      return;
+    }
+    const widthDiff = newWidth - currentWidth;
+    const heightDiff = newHeight - currentHeight;
+    let firstColumnDiff = null;
+    let lastColumnDiff = null;
+    switch (selectedAnchor.x) {
+      case 0:
+        firstColumnDiff = 0;
+        lastColumnDiff = widthDiff;
+        break;
+      case 1:
+        firstColumnDiff = Math.floor(widthDiff / 2);
+        lastColumnDiff = widthDiff - firstColumnDiff;
+        break;
+      case 2:
+        firstColumnDiff = widthDiff;
+        lastColumnDiff = 0;
+        break;
+    }
+    let firstRowDiff = null;
+    let lastRowDiff = null;
+    switch (selectedAnchor.y) {
+      case 0:
+        firstRowDiff = 0;
+        lastRowDiff = heightDiff;
+        break;
+      case 1:
+        firstRowDiff = Math.floor(heightDiff / 2);
+        lastRowDiff = heightDiff - firstRowDiff;
+        break;
+      case 2:
+        firstRowDiff = heightDiff;
+        lastRowDiff = 0;
+        break;
+    }
+    resizeGridBy(-firstColumnDiff, lastColumnDiff, -firstRowDiff, lastRowDiff);
+    closeOverlay();
+  };
+}
