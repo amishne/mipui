@@ -182,16 +182,7 @@ class Menu {
     }
     switch (item.presentation) {
       case 'icon':
-        const image = document.createElement('img');
-        item.element.classList.add('menu-icon');
-        if (item.materialIcon) {
-          image.src = `assets/ic_${item.materialIcon}_white_24px.svg`;
-        } else if (item.icon) {
-          image.src = item.icon;
-          image.style.height = '24px';
-          image.style.width = '24px';
-        }
-        item.element.appendChild(image);
+        this.updateIconItem_(item, item.materialIcon, item.icon);
         break;
       case 'label':
         item.element.classList.add('menu-label');
@@ -213,6 +204,9 @@ class Menu {
               item, selectedChild.cells, selectedChild.deferredSvg);
         } else if (selectedChild.presentation == 'icon_map') {
           this.updateIconMapItem_(item, selectedChild.iconMapRect);
+        } else if (selectedChild.presentation == 'icon') {
+          this.updateIconItem_(
+              item, selectedChild.materialIcon, selectedChild.icon);
         }
         break;
       case 'cells':
@@ -300,6 +294,20 @@ class Menu {
       };
       xhr.send();
     }
+  }
+  
+  updateIconItem_(item, materialIcon, icon) {
+    item.element.innerHTML = '';
+    const image = document.createElement('img');
+    item.element.classList.add('menu-icon');
+    if (materialIcon) {
+      image.src = `assets/ic_${materialIcon}_white_24px.svg`;
+    } else if (icon) {
+      image.src = icon;
+      image.style.height = '24px';
+      image.style.width = '24px';
+    }
+    item.element.appendChild(image);
   }
 
   createCellsForItem_(parent, cells) {
@@ -943,8 +951,7 @@ class Menu {
       },
       {
         name: '&Select',
-        presentation: 'icon',
-        materialIcon: 'select_all',
+        presentation: 'selected child',
         enabledInReadonlyMode: true,
         submenu: {
           items: [
