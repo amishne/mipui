@@ -22,15 +22,15 @@
     <h1>Mipui Developer Guide</h1>
     <p>
       <em>Mipui</em> is a free web app for creating and editing maps for tabletop and role-playing games.
-      This is the developer's guide; see <a href="www.mipui.net">the main site</a> or just <a href="www.mipui.net/app">jump right into the editor</a>.
+      This is the developer's guide; for a proper "about" page see <a href="www.mipui.net">the main site</a>, or just <a href="www.mipui.net/app">jump right into the editor</a>.
     </p>
     <h2>Implementation</h2>
     <p>
-      <em>Mipui</em> is a hobby project implemented by just one developer with no background in web development; please don't judge the code quality :-) in particular while some areas underwent extensive planning (like operation_center) others were completely hacked together in an hurry (like the menu).
+      <em>Mipui</em> is a hobby project implemented by just one developer with little background in web development; please don't judge the code quality :-) in particular while some areas underwent extensive planning (like operation_center.js) others were completely hacked together in an hurry (like menu.js).
     </p>
     <p>
       It's a client-side web application, written entirely in Javascript.
-      The server-side component is done using [Firebase](firebase.google.com).
+      The server-side database is handled using <a href="firebase.google.com">Firebase</a>.
       With the exception of Firebase and a couple of Javascript libraries used for exporting to image, no external code libraries are used.
     </p>
     <h3>Some Implementation Pointers</h3>
@@ -39,17 +39,27 @@
       This is why cells contain the "setImage", "setText" etc. methods, instead of those being a part of the image or text gestures.</li>
       <li>Map synchronization is guaranteed by serializing the operations, so all clients agree on the order of all operations. Never break that invariant.</li>
       <li>Two important global variables are content (from content.js) and state (from state.js). Go over these if you plan on doing any changes to content saved on the map.</li>
-      <li>Methods and fields which are intended to only be used inside the declaring class are marked with trailing underscore_.</li>
-      <li>theme.css is intended to be tweaked for styling, while the other style sheets are more functional and care is needed when changing them.</li>
+      <li>Methods and fields which are intended to only be used inside the declaring class are marked with trailing underscore_ (but I occasionally break this convention myself).</li>
     </ol>
     <h3>Firebase Servers</h3>
     <p>There are three live firebase database repositories: mipui-prod, mipui-dev and mipui-test.</p>
 
     <ul>
       <li>mipui-prod is the repository serving the live version at mipui.net. <strong>Never use that repository</strong>.</li>
-      <li>mipui-dev is the repository used for development. Feel free to use that repository when testing any changes. This is the default repository used in the code. Information in this repository might get wiped from time to time, though, so don't rely on it for long-term storage.</li>
+      <li>mipui-dev is the repository used for development. Feel free to use that repository when testing any changes. This is the default repository used when developing the app locally. Information in this repository might get wiped from time to time, though, so don't rely on it for long-term storage.</li>
       <li>mipui-test is used for running unit tests. Please immediately clean any information you create there.</li>
     </ul>
+
+    <h3>Local Storage</h3>
+    <p>
+      Currently, downloading and uploading the map file is intentionally not formally supported, primarily because it means I can no longer do non-backward-compatible changes. However there is a way to download and upload files, so if you want to experiment with running scripts / random generation / anything else, you can.
+    </p>
+    <p>
+      These options are exposed via the debug menu, which is automatically visible when developing locally, and can be made visible in the production version by entering "state.menu.addDebugMenu()" in the console.
+    </p>
+    <p>
+      Be warned, though: the server is not hardened against malformed files, so playing with a map can make it invalid and bring it to a state in which it could no longer be succesfully loaded. Don't do that on maps you care about (unless you fork first).
+    </p>
 
     <h2>License</h2>
     This software is published under an MIT license.
