@@ -1032,6 +1032,20 @@ class Menu {
               },
             },
             {
+              name: 'Crop to Selection',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'crop',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                if (state.gesture instanceof SelectGesture) {
+                  state.gesture.cropMapToThisSelection();
+                } else {
+                  alert('Only valid when something is selected.');
+                }
+              },
+            },
+            {
               name: 'Delete Selection',
               type: 'button',
               presentation: 'icon',

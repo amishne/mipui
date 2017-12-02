@@ -132,4 +132,28 @@ class SelectGesture extends Gesture {
     this.selectedCells_.add(cell);
     cell.gridElement.classList.add('selected-cell');
   }
+
+  cropMapToThisSelection() {
+    let minColumn = null;
+    let maxColumn = null;
+    let minRow = null;
+    let maxRow = null;
+    this.selectedCells_.forEach(cell => {
+      minColumn =
+          minColumn == null ? cell.column : Math.min(minColumn, cell.column);
+      maxColumn =
+          maxColumn == null ? cell.column : Math.max(maxColumn, cell.column);
+      minRow = minRow == null ? cell.row : Math.min(minRow, cell.row);
+      maxRow = maxRow == null ? cell.row : Math.max(maxRow, cell.row);
+    });
+    minColumn = Math.floor(minColumn - 0.5) + 1;
+    minRow = Math.floor(minRow - 0.5) + 1;
+    maxColumn = Math.ceil(maxColumn + 0.5);
+    maxRow = Math.ceil(maxRow + 0.5);
+    resizeGridBy(
+        minColumn - state.getProperty(pk.firstColumn),
+        maxColumn - state.getProperty(pk.lastColumn),
+        minRow - state.getProperty(pk.firstRow),
+        maxRow - state.getProperty(pk.lastRow));
+  }
 }
