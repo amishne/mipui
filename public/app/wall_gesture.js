@@ -53,6 +53,10 @@ class WallGesture extends Gesture {
 
   startHoverAfterInitialFieldsAreSet(targetedCell) {
     this.calculateRootCellsAndCellsToSet_(targetedCell);
+    this.startHoverAfterAllFieldsAreSet_();
+  }
+
+  startHoverAfterAllFieldsAreSet_() {
     this.removeDoorGestures = new Map();
     this.cellsToSet.forEach(cell => {
       this.showHighlight_(cell);

@@ -2,14 +2,23 @@ class MagicWandSelectGesture extends SelectGesture {
   constructor() {
     super();
     this.predicate_ = null;
+    this.partialCellsConsideredFloor = false;
   }
 
   startGesture() {
     super.startGesture();
     if (!this.anchorCell_) return;
     const anchorIsWall = this.anchorCell_.isKind(ct.walls, ct.walls.smooth);
-    this.predicate_ =
-        cell => cell.isKind(ct.walls, ct.walls.smooth) == anchorIsWall;
+    this.predicate_ = cell => {
+      const isWall = cell.isKind(ct.walls, ct.walls.smooth);
+      if (isWall && anchorIsWall) return true;
+      if (!isWall && !anchorIsWall) return true;
+      if (anchorIsWall || !this.partialCellsConsideredFloor) return false;
+      const isPartialWall =
+          cell.isVariation(ct.walls, ct.walls.smooth, ct.walls.smooth.angled) ||
+          cell.isVariation(ct.walls, ct.walls.smooth, ct.walls.smooth.oval);
+      return anchorIsWall != isPartialWall;
+    };
     this.addCellsLinkedTo_(this.anchorCell_);
   }
 

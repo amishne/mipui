@@ -264,6 +264,7 @@ class Menu {
   }
 
   updateIconMapItem_(item, iconMapRect) {
+    item.element.innerHTML = '';
     item.element.classList.add('menu-icon');
     item.element.classList.add('menu-icon-from-map');
     const {x, y, size} = iconMapRect;
@@ -295,9 +296,12 @@ class Menu {
       xhr.send();
     }
   }
-  
+
   updateIconItem_(item, materialIcon, icon) {
     item.element.innerHTML = '';
+    item.element.classList.remove('menu-icon');
+    item.element.classList.remove('menu-icon-from-map');
+    item.element.style = '';
     const image = document.createElement('img');
     item.element.classList.add('menu-icon');
     if (materialIcon) {
@@ -1298,6 +1302,14 @@ class Menu {
               },
               enabledInReadonlyMode: false,
               callback: () => { state.gesture = new OvalRoomGesture(true); },
+            },
+            {
+              name: 'Paint Bucket',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'format_color_fill',
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new PaintBucketGesture(); },
             },
           ],
         },
