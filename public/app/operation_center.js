@@ -57,8 +57,13 @@ class OperationCenter {
   // op.
   // This is used for constructing the current operation, and this starts an
   // operation-completed timer.
-  recordCellChange(key, layer, oldContent, newContent) {
-    this.currentOperation_.addCellChange(key, layer, oldContent, newContent);
+  recordCellChange(key, layerId, oldContent, newContent) {
+    if (!key || layerId == null) {
+      console.log('Could not record cell change.');
+      this.setStatus_(Status.SAVE_ERROR);
+      return;
+    }
+    this.currentOperation_.addCellChange(key, layerId, oldContent, newContent);
     this.recordChange_();
   }
 

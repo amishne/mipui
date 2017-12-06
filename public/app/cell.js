@@ -38,7 +38,7 @@ class Cell {
     if (!sameContent(oldContent, newContent)) {
       if (recordChange) {
         state.opCenter
-            .recordCellChange(this.key, layer, oldContent, newContent);
+            .recordCellChange(this.key, layer.id, oldContent, newContent);
       }
       this.updateElement_(layer, oldContent, newContent);
       if (layer.getShadowLayer) {

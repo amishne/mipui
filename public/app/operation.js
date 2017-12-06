@@ -13,18 +13,18 @@ class Operation {
     this.alwaysRewrite = false;
   }
 
-  addCellChange(key, layer, oldValue, newValue) {
+  addCellChange(key, layerId, oldValue, newValue) {
     let singleCellChanges = this.data.c[key];
     if (!singleCellChanges) {
       singleCellChanges = {};
       this.data.c[key] = singleCellChanges;
     }
-    if (singleCellChanges[layer.id]) {
+    if (singleCellChanges[layerId]) {
       // This overrides content that were already recorded as changed. In that
       // case, skip the intermediate content.
-      oldValue = singleCellChanges[layer.id].oldValue || null;
+      oldValue = singleCellChanges[layerId].oldValue || null;
     }
-    singleCellChanges[layer.id] = {o: oldValue, n: newValue};
+    singleCellChanges[layerId] = {o: oldValue, n: newValue};
   }
 
   addPropertyChange(property, oldValue, newValue) {
