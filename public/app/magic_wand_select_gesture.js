@@ -1,7 +1,8 @@
 class MagicWandSelectGesture extends SelectGesture {
   constructor() {
     super();
-    this.predicate_ = null;
+    this.includePredicate_ = null;
+    this.advancePredicate_ = null;
     this.partialCellsConsideredFloor = false;
   }
 
@@ -9,7 +10,7 @@ class MagicWandSelectGesture extends SelectGesture {
     super.startGesture();
     if (!this.anchorCell_) return;
     const anchorIsWall = this.anchorCell_.isKind(ct.walls, ct.walls.smooth);
-    this.predicate_ = cell => {
+    this.includePredicate_ = cell => {
       const isWall = cell.isKind(ct.walls, ct.walls.smooth);
       if (isWall && anchorIsWall) return true;
       if (!isWall && !anchorIsWall) return true;
@@ -19,6 +20,8 @@ class MagicWandSelectGesture extends SelectGesture {
           cell.isVariation(ct.walls, ct.walls.smooth, ct.walls.smooth.oval);
       return anchorIsWall != isPartialWall;
     };
+    this.advancePredicate_ =
+        cell => anchorIsWall == cell.isKind(ct.walls, ct.walls.smooth);
     this.addCellsLinkedTo_(this.anchorCell_);
   }
 
@@ -32,17 +35,21 @@ class MagicWandSelectGesture extends SelectGesture {
     this.addSelectedCell_(cell);
     while (front.size > 0) {
       const newFront = new Set();
+      const newCells = new Set();
       for (const cell of front.values()) {
         this.getImmediateNeighborCells(cell).forEach(neighborCell => {
           if (neighborCell &&
-              this.predicate_(neighborCell) &&
+              this.includePredicate_(neighborCell) &&
               !this.selectedCells_.has(neighborCell) &&
               !front.has(neighborCell)) {
-            newFront.add(neighborCell);
+            newCells.add(neighborCell);
+            if (this.advancePredicate_(neighborCell)) {
+              newFront.add(neighborCell);
+            }
           }
         });
       }
-      newFront.forEach(cell => this.addSelectedCell_(cell));
+      newCells.forEach(cell => this.addSelectedCell_(cell));
       front = newFront;
     }
   }
