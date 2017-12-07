@@ -32,19 +32,21 @@ class Operation {
   }
 
   undo() {
-    this.undoOrRedo_('o');
+    this.undoOrRedoProperties_('o');
+    this.refreshMapSizeIfRequired(false);
+    this.undoOrRedoCells_('o');
     this.markComplete();
   }
 
   redo() {
-    this.undoOrRedo_('n');
+    this.undoOrRedoCells_('n');
+    this.undoOrRedoProperties_('n');
+    this.refreshMapSizeIfRequired(false);
     this.markComplete();
   }
 
-  markComplete(directlyCalled) {
+  refreshMapSizeIfRequired(directlyCalled) {
     let mapNeedsUpdate = false;
-    let descNeedsUpdate = false;
-    let reloadTheme = false;
     if (this.data && this.data.p) {
       Object.keys(this.data.p).forEach(property => {
         switch (property) {
@@ -54,6 +56,21 @@ class Operation {
           case pk.lastColumn:
             mapNeedsUpdate = true;
             break;
+        }
+      });
+    }
+    if (mapNeedsUpdate) {
+      createTheMapAndUpdateElements();
+      if (!directlyCalled) refreshMapResizeButtonLocations();
+    }
+  }
+
+  markComplete() {
+    let descNeedsUpdate = false;
+    let reloadTheme = false;
+    if (this.data && this.data.p) {
+      Object.keys(this.data.p).forEach(property => {
+        switch (property) {
           case pk.title:
           case pk.longDescription:
             descNeedsUpdate = true;
@@ -65,10 +82,6 @@ class Operation {
         }
       });
     }
-    if (mapNeedsUpdate) {
-      createTheMapAndUpdateElements();
-      if (!directlyCalled) refreshMapResizeButtonLocations();
-    }
     if (descNeedsUpdate) {
       state.menu.descChanged();
     }
@@ -77,7 +90,7 @@ class Operation {
     }
   }
 
-  undoOrRedo_(contentToUse) {
+  undoOrRedoCells_(contentToUse) {
     if (!this.data) return;
     if (this.data.c) {
       Object.keys(this.data.c).forEach(key => {
@@ -90,6 +103,10 @@ class Operation {
         });
       });
     }
+  }
+
+  undoOrRedoProperties_(contentToUse) {
+    if (!this.data) return;
     if (this.data.p) {
       Object.keys(this.data.p).forEach(property => {
         const newValue = this.data.p[property][contentToUse];
