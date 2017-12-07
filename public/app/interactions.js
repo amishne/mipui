@@ -367,6 +367,8 @@ function resizeGridBy(
   if (state.isReadOnly()) return;
   // First, complete pending ops.
   state.opCenter.recordOperationComplete();
+  deleteContentThatWillBeOutsideTheMap(
+      firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff);
   // Update the state's grid data.
   [
     {diff: firstColumnDiff, prop: pk.firstColumn},
@@ -394,9 +396,68 @@ function resizeGridBy(
         -firstRowDiff * nav.scale *
         (state.theMap.cellHeight + state.theMap.dividerHeight));
   }
-  state.deleteContentNotInTheMap();
   updateMapTransform(false);
   state.opCenter.recordOperationComplete();
+}
+
+function cellIsOutsideBoundaries(
+    cell, firstColumn, lastColumn, firstRow, lastRow) {
+  return cell.column < firstColumn - 0.5 ||
+      cell.column >= lastColumn ||
+      cell.row < firstRow - 0.5 ||
+      cell.row >= lastRow;
+}
+
+function deleteContentThatWillBeOutsideTheMap(
+    firstColumnDiff, lastColumnDiff, firstRowDiff, lastRowDiff) {
+  const newFirstColumn = state.getProperty(pk.firstColumn) + firstColumnDiff;
+  const newLastColumn = state.getProperty(pk.lastColumn) + lastColumnDiff;
+  const newFirstRow = state.getProperty(pk.firstRow) + firstRowDiff;
+  const newLastRow = state.getProperty(pk.lastRow) + lastRowDiff;
+  const cellsToDelete = new Set();
+  const cellLayersToDelete = new Map();
+  ct.children.forEach(layer => cellLayersToDelete.set(layer, new Set()));
+  state.theMap.cells.forEach(cell => {
+    // If the cell is outside the map, delete it.
+    if (cellIsOutsideBoundaries(
+        cell, newFirstColumn, newLastColumn, newFirstRow, newLastRow)) {
+      cellsToDelete.add(cell);
+    }
+    // If the cell has an endcell which is outside the map for a given layer,
+    // delete the content for that layer.
+    ct.children.forEach(layer => {
+      const content = cell.getLayerContent(layer);
+      if (!content) return;
+      const endCellKey = content[ck.endCell];
+      if (!endCellKey) return;
+      const endCell = state.theMap.cells.get(endCellKey);
+      if (cellIsOutsideBoundaries(
+          endCell, newFirstColumn, newLastColumn, newFirstRow, newLastRow)) {
+        cellLayersToDelete.get(layer).add(cell);
+      }
+    });
+  });
+  state.theMap.cells.forEach(cell => {
+    ct.children.forEach(layer => {
+      // Delete if it was deleted or its endcell was deleted.
+      let deleteLayerContent =
+          cellsToDelete.has(cell) || cellLayersToDelete.get(layer).has(cell);
+      // Delete if its startcell was deleted.
+      if (!deleteLayerContent) {
+        const content = cell.getLayerContent(layer);
+        if (content && content[ck.startCell]) {
+          const startCell = state.theMap.cells.get(content[ck.startCell]);
+          if (cellsToDelete.has(startCell) ||
+              cellLayersToDelete.get(layer).has(startCell)) {
+            deleteLayerContent = true;
+          }
+        }
+      }
+      if (deleteLayerContent) {
+        cell.setLayerContent(layer, null, true);
+      }
+    });
+  });
 }
 
 function resetView() {
