@@ -64,6 +64,10 @@ class MagicWandSelectGesture extends SelectGesture {
         result.push(cell.getNeighbor('right', true));
         result.push(cell.getNeighbor('bottom', true));
         result.push(cell.getNeighbor('left', true));
+        result.push(cell.getNeighbor('top-right', cell.role == 'primary'));
+        result.push(cell.getNeighbor('bottom-right', cell.role == 'primary'));
+        result.push(cell.getNeighbor('bottom-left', cell.role == 'primary'));
+        result.push(cell.getNeighbor('top-left', cell.role == 'primary'));
         break;
       case 'horizontal':
         result.push(cell.getNeighbor('top', false));
