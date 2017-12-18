@@ -22,7 +22,7 @@ class Operation {
     if (singleCellChanges[layerId]) {
       // This overrides content that were already recorded as changed. In that
       // case, skip the intermediate content.
-      oldValue = singleCellChanges[layerId].oldValue || null;
+      oldValue = singleCellChanges[layerId].o || null;
     }
     singleCellChanges[layerId] = {o: oldValue, n: newValue};
   }
@@ -99,7 +99,9 @@ class Operation {
         Object.keys(cellChange).forEach(layerId => {
           const cellLayerChange = cellChange[layerId];
           const layer = ct.children[layerId];
-          cell.setLayerContent(layer, cellLayerChange[contentToUse], false);
+          let content = cellLayerChange[contentToUse];
+          if (content === undefined) content = null;
+          cell.setLayerContent(layer, content, false);
         });
       });
     }
@@ -196,7 +198,9 @@ class Operation {
       return Object.keys(cellChange).every(layerId => {
         const cellLayerChange = cellChange[layerId];
         const layer = ct.children[layerId];
-        return sameContent(cellLayerChange.o, cell.getLayerContent(layer));
+        let oldContent = cellLayerChange.o;
+        if (oldContent === undefined) oldContent = null;
+        return sameContent(oldContent, cell.getLayerContent(layer));
       });
     });
   }
@@ -207,7 +211,9 @@ class Operation {
       const opChange = this.data.p[property];
       if (!opChange) return true;
       const thisChange = this.data.p[property];
-      return thisChange.o == state.getProperty(property);
+      let oldValue = thisChange.o;
+      if (oldValue === undefined) oldValue = null;
+      return oldValue == state.getProperty(property);
     });
   }
 }

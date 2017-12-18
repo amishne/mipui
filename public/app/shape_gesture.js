@@ -24,8 +24,11 @@ class ShapeGesture extends Gesture {
   }
 
   continueGesture(cell) {
-    this.hoveredCell_ = cell;
-    this.populateCellMasks_(this.hoveredCell_);
+    if (this.mode_ == 'removing' && !cell.hasLayerContent(this.layer_)) {
+      // This is an attempt to remove content from a cell without content.
+      return;
+    }
+    this.populateCellMasks_(cell);
     this.apply_();
   }
 
