@@ -1723,6 +1723,16 @@ class Menu {
                 window.open('https://reddit.com/r/Mipui/', '_blank');
               },
             },
+            {
+              name: 'Twitter',
+              type: 'button',
+              presentation: 'icon',
+              icon: 'assets/twitter.png',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('https://twitter.com/alon_mishne', '_blank');
+              },
+            },
           ],
         },
       },
