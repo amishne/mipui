@@ -1736,16 +1736,16 @@ class Menu {
           ],
         },
       },
-//      {
-//        name: 'Survey',
-//        type: 'button',
-//        presentation: 'icon',
-//        materialIcon: 'list',
-//        enabledInReadonlyMode: true,
-//        callback: () => {
-//          window.open('https://goo.gl/forms/MMJBHazJNHfJEafn2', '_blank');
-//        },
-//      },
+      // {
+      //   name: 'Survey',
+      //   type: 'button',
+      //   presentation: 'icon',
+      //   materialIcon: 'list',
+      //   enabledInReadonlyMode: true,
+      //   callback: () => {
+      //     window.open('https://goo.gl/forms/MMJBHazJNHfJEafn2', '_blank');
+      //   },
+      // },
     ];
   }
 
