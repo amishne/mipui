@@ -527,8 +527,9 @@ class Menu {
       return;
     }
     const loc = window.location;
+    const port = loc.port != 443 ? ':' + loc.port : '';
     const pageUrl =
-        `${loc.protocol}//${loc.hostname}:${loc.port}${loc.pathname}`;
+        `${loc.protocol}//${loc.hostname}${port}${loc.pathname}`;
     let url = `${pageUrl}?mid=${encodeURIComponent(mid)}`;
     let message = 'URL to a read-only view of this map.';
     if (secret) {
