@@ -163,8 +163,9 @@ class OperationCenter {
       // Replace the current map with the incoming one.
       state.load(fullMap);
       this.lastFullMapNum_ = fullMap.lastOpNum;
-      // Update the status (TODO is that correct? Shouldn't we wait for the
-      // local ops to be re-applied?)
+      // This is a bit problematic since if there are additional remote ops, the
+      // status will be set to 'ready' here and will remain so until those ops
+      // are detected. But there's nothing much to do.
       this.setStatus_(Status.READY);
     });
   }
