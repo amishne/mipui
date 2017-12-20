@@ -23,4 +23,5 @@ function setStatus(status) {
   });
   statusIcon.title = status.text;
   statusIcon.innerHTML = `<img src="assets/ic_${status.icon}_white_24px.svg">`;
+  state.hasUnsavedChanges = status.type != 'good';
 }

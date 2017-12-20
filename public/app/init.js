@@ -148,3 +148,9 @@ window.onload = () => {
     document.getElementsByTagName('head')[0].appendChild(script);
   }, 50);
 };
+
+window.onbeforeunload = () => {
+  if (state.hasUnsavedChanges) {
+    return 'There are unsaved changes. Leave anyway?';
+  }
+};

@@ -56,6 +56,8 @@ class State {
     this.appliedTheme_ = 0;
 
     this.lastUsedSvg = null;
+
+    this.hasUnsavedChanges = false;
   }
 
   isReadOnly() {
