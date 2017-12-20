@@ -1,9 +1,9 @@
 class Cell {
-  constructor(key, role, gridElement, mapElement) {
+  constructor(key, role, gridElement, tile) {
     this.key = key;
     this.role = role;
     this.gridElement = gridElement;
-    this.mapElement = mapElement;
+    this.tile = tile;
     this.offsetLeft = null;
     this.offsetTop = null;
     this.width = null;
@@ -82,7 +82,7 @@ class Cell {
   createElementFromContent(layer, content) {
     if (!this.contentShouldHaveElement_(content)) return null;
     const element = createAndAppendDivWithClass(
-        this.mapElement.getElementsByClassName(`${layer.name}-layer`)[0]);
+        this.tile.layerElements.get(layer));
     this.populateElementFromContent_(element, layer, content);
     this.elements_.set(layer, element);
     return element;
@@ -287,9 +287,6 @@ class Cell {
     const element = this.getOrCreateLayerElement(layer, newContent);
     this.modifyElementClasses_(layer, oldContent, element, 'remove');
     this.populateElementFromContent_(element, layer, newContent);
-    //    if (layer.getShadowLayer) {
-    //      this.updateElement_(layer.getShadowLayer(), oldContent, newContent);
-    //    }
     return element;
   }
 
@@ -316,29 +313,13 @@ class Cell {
 
   resetToDefault() {
     ct.children.forEach(layer => {
-      const hasShadowingLayer = !!layer.getShadowingLayer;
-      this.setLayerContent(layer, null, !hasShadowingLayer);
+      this.setLayerContent(layer, null, true);
     });
   }
 
-  //  setShadowElement_(shadowLayer, element) {
-  //    if (!element) {
-  //      this.removeElement(shadowLayer);
-  //      return;
-  //    }
-  //    let shadowElement = this.elements_.get(shadowLayer);
-  //    if (!shadowElement) {
-  //      shadowElement = createAndAppendDivWithClass()
-  //    }
-  //    if (!element && shadowElement) {
-  //      this.elements_[];
-  //      element.parentElement.removeChild(element);
-  //      XXX
-  //    }
-  //  }
-
   onMouseEnter(e) {
     if (!state.gesture) return;
+    this.tile.tileEntered();
     if (e.buttons == 0) {
       state.gesture.startHover(this);
     } else if (e.buttons == 1) {
@@ -349,6 +330,7 @@ class Cell {
 
   onMouseLeave(e) {
     if (!state.gesture) return;
+    this.tile.tileLeft();
     if (e.buttons == 0) {
       state.gesture.stopHover();
     }
@@ -384,10 +366,10 @@ class Cell {
   setElementGeometryToGridElementGeometry_(element, layer, content) {
     const endCellKey = content[ck.endCell];
     const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
-    element.style.top = this.offsetTop;
-    element.style.right = endCell.offsetRight;
-    element.style.bottom = endCell.offsetBottom;
-    element.style.left = this.offsetLeft;
+    element.style.top = this.offsetTop - this.tile.top;
+    element.style.right = endCell.offsetRight - this.tile.right;
+    element.style.bottom = endCell.offsetBottom - this.tile.bottom;
+    element.style.left = this.offsetLeft - this.tile.left;
     if (layer == ct.walls) {
       let backgroundOffsetLeft = -this.offsetLeft;
       let backgroundOffsetTop = -this.offsetTop;

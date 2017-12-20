@@ -1,6 +1,9 @@
+const tileSize = 5;
+
 class CellMap {
   constructor() {
     this.cells = new Map();
+    this.tiles = new Map();
 
     // Used during construction.
     this.cellHeight = null;
@@ -51,29 +54,31 @@ class CellMap {
     this.clearMap_();
     this.currX = 0;
     this.currY = 0;
-    const gridLayer = mapElement.getElementsByClassName('grid-layer')[0];
     for (let i = minY; i < maxY; i++) {
-      this.createDividerRow_(mapElement, gridLayer, minX, maxX, i - 1, i);
+      this.createDividerRow_(mapElement, minX, maxX, i - 1, i);
       this.currX = 0;
       this.currY += this.dividerHeight;
-      this.createCellRow_(mapElement, gridLayer, minX, maxX, i);
+      this.createCellRow_(mapElement, minX, maxX, i);
       this.currX = 0;
       this.currY += this.cellHeight;
     }
-    this.createDividerRow_(mapElement, gridLayer, minX, maxX, maxY - 1, maxY);
+    this.createDividerRow_(mapElement, minX, maxX, maxY - 1, maxY);
     this.currY += this.dividerHeight;
     this.setMapSize_(mapElement, this.currX + 1, this.currY + 1);
+    for (const [tileKey, tile] of this.tiles) {
+      tile.key = tileKey;
+      tile.right = tile.lastCell.offsetRight;
+      tile.bottom = tile.lastCell.offsetBottom;
+      tile.width =
+          1 + tile.lastCell.offsetLeft + tile.lastCell.width - tile.left;
+      tile.height =
+          1 + tile.lastCell.offsetTop + tile.lastCell.height - tile.top;
+      tile.element.style.width = tile.width;
+      tile.element.style.height = tile.height;
+    }
   }
 
   setMapSize_(container, width, height) {
-    // Set layer sizes.
-    const layerElements = container.getElementsByClassName('layer');
-    for (let i = 0; i < layerElements.length; i++) {
-      const layerElement = layerElements[i];
-      if (layerElement.classList.contains('grid-layer')) continue;
-      layerElement.style.width = width;
-      layerElement.style.height = height;
-    }
     this.cells.forEach(cell => {
       cell.offsetRight = (width - 1) - (cell.offsetLeft + cell.width);
       cell.offsetBottom = (height - 1) - (cell.offsetTop + cell.height);
@@ -92,42 +97,36 @@ class CellMap {
     }
   }
 
-  createDividerRow_(mapElement, parent, minX, maxX, previousRow, nextRow) {
-    const rowContainer = this.createRowContainer_(parent);
+  createDividerRow_(parent, minX, maxX, previousRow, nextRow) {
     for (let i = minX; i < maxX; i++) {
-      this.createCornerCell_(
-          mapElement, rowContainer, previousRow, i - 1, nextRow, i);
+      this.createCornerCell_(parent, previousRow, i - 1, nextRow, i);
       this.currX += this.dividerWidth;
-      this.createHorizontalCell_(
-          mapElement, rowContainer, previousRow, nextRow, i);
+      this.createHorizontalCell_(parent, previousRow, nextRow, i);
       this.currX += this.cellWidth;
     }
-    this.createCornerCell_(
-        mapElement, rowContainer, previousRow, maxX - 1, nextRow, maxX);
+    this.createCornerCell_(parent, previousRow, maxX - 1, nextRow, maxX);
     this.currX += this.dividerWidth;
   }
 
-  createRowContainer_(parent) {
-    return createAndAppendDivWithClass(parent, 'row-container');
-  }
-
-  createCellRow_(mapElement, parent, minX, maxX, row) {
-    const rowContainer = this.createRowContainer_(parent);
+  createCellRow_(parent, minX, maxX, row) {
     for (let i = minX; i < maxX; i++) {
-      this.createVerticalCell_(mapElement, rowContainer, row, i - 1, i);
+      this.createVerticalCell_(parent, row, i - 1, i);
       this.currX += this.dividerWidth;
-      this.createPrimaryCell_(mapElement, rowContainer, row, i);
+      this.createPrimaryCell_(parent, row, i);
       this.currX += this.cellWidth;
     }
-    this.createVerticalCell_(mapElement, rowContainer, row, maxX - 1, maxX);
+    this.createVerticalCell_(parent, row, maxX - 1, maxX);
     this.currX += this.dividerWidth;
   }
 
   createCornerCell_(
-      mapElement, parent, previousRow, previousColumn, nextRow, nextColumn) {
+      parent, previousRow, previousColumn, nextRow, nextColumn) {
+    const row = previousRow + 0.5;
+    const column = previousColumn + 0.5;
     const key = CellMap.dividerCellKey(
         previousRow, previousColumn, nextRow, nextColumn);
-    const cell = this.createCell_(mapElement, parent, 'corner', key);
+    const cell =
+        this.createCell_(parent, 'corner', key, row, column);
     this.setCornerCellNeighborKeys_(
         cell, previousRow, previousColumn, nextRow, nextColumn);
     if (!this.dividerHeight) {
@@ -138,26 +137,30 @@ class CellMap {
     }
     cell.height = this.dividerHeight;
     cell.width = this.dividerWidth;
-    cell.row = previousRow + 0.5;
-    cell.column = previousColumn + 0.5;
+    cell.row = row;
+    cell.column = column;
   }
 
-  createHorizontalCell_(mapElement, parent, previousRow, nextRow, column) {
+  createHorizontalCell_(parent, previousRow, nextRow, column) {
+    const row = previousRow + 0.5;
     const key = CellMap.dividerCellKey(previousRow, column, nextRow, column);
-    const cell = this.createCell_(mapElement, parent, 'horizontal', key);
+    const cell =
+        this.createCell_(parent, 'horizontal', key, row, column);
     this.setHorizontalCellNeighborKeys_(cell, previousRow, nextRow, column);
     if (!this.cellWidth) {
       this.cellWidth = cell.gridElement.offsetWidth;
     }
     cell.height = this.dividerHeight;
     cell.width = this.cellWidth;
-    cell.row = previousRow + 0.5;
+    cell.row = row;
     cell.column = column;
   }
 
-  createVerticalCell_(mapElement, parent, row, previousColumn, nextColumn) {
+  createVerticalCell_(parent, row, previousColumn, nextColumn) {
+    const column = previousColumn + 0.5;
     const key = CellMap.dividerCellKey(row, previousColumn, row, nextColumn);
-    const cell = this.createCell_(mapElement, parent, 'vertical', key);
+    const cell =
+        this.createCell_(parent, 'vertical', key, row, column);
     this.setVerticalCellNeighborKeys_(cell, row, previousColumn, nextColumn);
     if (!this.cellHeight) {
       this.cellHeight = cell.gridElement.offsetHeight;
@@ -165,12 +168,12 @@ class CellMap {
     cell.height = this.cellHeight;
     cell.width = this.dividerWidth;
     cell.row = row;
-    cell.column = previousColumn + 0.5;
+    cell.column = column;
   }
 
-  createPrimaryCell_(mapElement, parent, row, column) {
+  createPrimaryCell_(parent, row, column) {
     const key = CellMap.primaryCellKey(row, column);
-    const cell = this.createCell_(mapElement, parent, 'primary', key);
+    const cell = this.createCell_(parent, 'primary', key, row, column);
     this.setPrimaryCellNeighborKeys_(cell, row, column);
     cell.height = this.cellHeight;
     cell.width = this.cellWidth;
@@ -178,13 +181,17 @@ class CellMap {
     cell.column = column;
   }
 
-  createCell_(mapElement, parent, role, key) {
+  createCell_(parent, role, key, row, column) {
+    const tile = this.getOrCreateTile(parent, row, column);
     const element =
-        createAndAppendDivWithClass(parent, `grid-cell ${role}-cell`);
-    const cell = new Cell(key, role, element, mapElement);
+        createAndAppendDivWithClass(tile.gridLayer, `grid-cell ${role}-cell`);
+    const cell = new Cell(key, role, element, tile);
     cell.offsetLeft = this.currX;
     cell.offsetTop = this.currY;
     this.cells.set(key, cell);
+    element.style.left = cell.offsetLeft - tile.left;
+    element.style.top = cell.offsetTop - tile.top;
+    tile.lastCell = cell;
     return cell;
   }
 
@@ -337,5 +344,39 @@ class CellMap {
     cell.addNeighborKey('top-left', null, [
       CellMap.primaryCellKey(previousRow, previousColumn),
     ]);
+  }
+
+  getOrCreateTile(parent, cellRow, cellColumn) {
+    const tileKey =
+        Math.floor((cellRow + 1) / tileSize) + ',' +
+        Math.floor((cellColumn + 1) / tileSize);
+    let tile = this.tiles.get(tileKey);
+    if (!tile) {
+      tile = this.createTile(parent);
+      this.tiles.set(tileKey, tile);
+    }
+    return tile;
+  }
+
+  createTile(parent) {
+    const tile = {
+      element: createAndAppendDivWithClass(parent, 'tile'),
+      left: this.currX,
+      top: this.currY,
+      layerElements: new Map(),
+      lastCell: null,
+      tileEntered: () => {},
+      tileLeft: () => {},
+    };
+    tile.element.style.left = this.currX;
+    tile.element.style.top = this.currY;
+    ct.children.forEach(layer => {
+      const layerElement =
+          createAndAppendDivWithClass(
+              tile.element, 'layer ' + layer.name + '-layer');
+      tile.layerElements.set(layer, layerElement);
+    });
+    tile.gridLayer = createAndAppendDivWithClass(tile.element, 'grid-layer');
+    return tile;
   }
 }

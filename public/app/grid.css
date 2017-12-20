@@ -20,6 +20,10 @@
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAYUlEQVRIS+1WQQ4AIAiS/z/aRs2tW9KhdcCzijJkIoTIzKx0AOiWthPZkCDsTSyDHCk2XVbXh3eyW8VRwxHcYF68EijtK0VK7rSgJ5uIU9kg+4TZIG2QHxpkX8DrJbr5uwYYoKkOM2ZJzgAAAABJRU5ErkJggg==");
 }
 
+.tile {
+  position: absolute;
+}
+
 .layer {
   position: absolute;
   width: 100%;
@@ -29,14 +33,6 @@
   border-color: rgba(0, 0, 0, 0);
   background-clip: padding-box;
   pointer-events: none;
-}
-
-.force-layer-caching .layer {
-  will-change: transform;
-}
-
-.resized-map .layer {
-  will-change: unset;
 }
 
 .widget-layer {
@@ -91,13 +87,8 @@
   z-index: 1;
 }
 
-.row-container {
-  display: block;
-  white-space: nowrap;
-}
-
 .grid-cell {
-  position: relative;
+  position: absolute;
   display: inline-block;
   border-right: 1px solid rgba(0, 0, 0, 0);
   border-bottom: 1px solid rgba(0, 0, 0, 0);
