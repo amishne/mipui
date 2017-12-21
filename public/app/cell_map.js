@@ -361,15 +361,15 @@ class CellMap {
   createTile(parent) {
     const tile = {
       element: createAndAppendDivWithClass(parent, 'tile'),
-      left: this.currX,
-      top: this.currY,
+      left: this.currX + 1,
+      top: this.currY + 1,
       layerElements: new Map(),
       lastCell: null,
       tileEntered: () => {},
       tileLeft: () => {},
     };
-    tile.element.style.left = this.currX;
-    tile.element.style.top = this.currY;
+    tile.element.style.left = tile.left;
+    tile.element.style.top = tile.top;
     ct.children.forEach(layer => {
       const layerElement =
           createAndAppendDivWithClass(

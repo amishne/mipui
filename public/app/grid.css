@@ -81,6 +81,8 @@
 .walls-layer {
   z-index: 2;
   filter: drop-shadow(2px 2px 3px #919191);
+  /* Clip to tile, including the drop-shadow effect. */
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 }
 
 .floors-layer {
