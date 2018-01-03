@@ -12,9 +12,13 @@ class Cell {
     this.offsetBottom = null;
     this.row = null;
     this.column = null;
+    this.replicas_ = [];
 
-    // Elements owned by this cell, keyed by layer.
+    // Elements owned by this cell.
+    // Elements in the owning tile, keyed by layer (layer -> element):
     this.elements_ = new Map();
+    // Replicated element in neighboring tiles (layer -> (tile -> element)):
+    this.replicatedElements_ = new Map();
 
     // Exposed to be used by text gestures.
     this.textHeight = null;
@@ -22,6 +26,14 @@ class Cell {
     // Initialization.
     this.neighborKeys_ = new Map();
     this.wireInteractions_();
+  }
+
+  addReplica(tile, leftRightDir, topBottomDir) {
+    this.replicas_.push({tile, leftRightDir, topBottomDir});
+  }
+
+  isReplicated(layer) {
+    return layer == ct.walls;
   }
 
   getLayerContent(layer) {
@@ -40,10 +52,7 @@ class Cell {
         state.opCenter
             .recordCellChange(this.key, layer.id, oldContent, newContent);
       }
-      this.updateElement_(layer, oldContent, newContent);
-      if (layer.getShadowLayer) {
-        this.updateElement_(layer.getShadowLayer(), oldContent, newContent);
-      }
+      this.updateElements_(layer, oldContent, newContent);
     }
   }
 
@@ -79,13 +88,42 @@ class Cell {
     return content ? content[contentKey] : null;
   }
 
-  createElementFromContent(layer, content) {
+  createElementsFromContent(layer, content) {
     if (!this.contentShouldHaveElement_(content)) return null;
+    const elements = [];
+    // Create the base element.
     const element = createAndAppendDivWithClass(
         this.tile.layerElements.get(layer));
+    const offsetLeft = this.offsetLeft - this.tile.left;
+    const offsetRight = this.offsetRight - this.tile.right;
+    const offsetTop = this.offsetTop - this.tile.top;
+    const offsetBottom = this.offsetBottom - this.tile.bottom;
+    element.style.left = offsetLeft;
+    element.style.right = offsetRight;
+    element.style.top = offsetTop;
+    element.style.bottom = offsetBottom;
+
     this.populateElementFromContent_(element, layer, content);
     this.elements_.set(layer, element);
-    return element;
+    elements.push(element);
+    if (this.isReplicated(layer)) {
+      this.replicatedElements_.set(layer, new Map());
+      this.replicas_.forEach(replica => {
+        const clone = element.cloneNode(true);
+        clone.style.left = offsetLeft -
+            replica.leftRightDir * (replica.tile.width - 1);
+        clone.style.right = offsetRight +
+            replica.leftRightDir * (replica.tile.width - 1);
+        clone.style.top = offsetTop -
+            replica.topBottomDir * (replica.tile.height - 1);
+        clone.style.bottom = offsetBottom +
+            replica.topBottomDir * (replica.tile.height - 1);
+        replica.tile.layerElements.get(layer).appendChild(clone);
+        this.replicatedElements_.get(layer).set(replica.tile, clone);
+        elements.push(clone);
+      });
+    }
+    return elements;
   }
 
   // Returns all the cells in a square between this cell and 'cell', in row
@@ -258,19 +296,31 @@ class Cell {
     this.setImage_(element, variation.imagePath, variation);
   }
 
-  getOrCreateLayerElement(layer, initialContent) {
-    let element = this.elements_.get(layer);
+  getOrCreateLayerElements(layer, initialContent) {
+    const element = this.elements_.get(layer);
     if (!element) {
-      element = this.createElementFromContent(layer, initialContent);
+      return this.createElementsFromContent(layer, initialContent);
     }
-    return element;
+    return [element].concat(
+        Array.from(this.replicatedElements_.get(layer).values()));
   }
 
-  removeElement(layer) {
+  getLayerElements_(layer) {
+    return [this.elements_.get(layer)].concat(
+        Array.from(this.replicatedElements_.get(layer).values()));
+  }
+
+  removeElements(layer) {
     const element = this.elements_.get(layer);
     if (!element) return;
     element.parentElement.removeChild(element);
     this.elements_.delete(layer);
+    if (this.isReplicated(layer)) {
+      this.replicatedElements_.get(layer).forEach(replicatedElement => {
+        replicatedElement.parentElement.removeChild(replicatedElement);
+      });
+      this.replicatedElements_.delete(layer);
+    }
   }
 
   contentShouldHaveElement_(content) {
@@ -279,35 +329,39 @@ class Cell {
     return content && !content[ck.startCell];
   }
 
-  updateElement_(layer, oldContent, newContent) {
+  updateElements_(layer, oldContent, newContent) {
     if (!this.contentShouldHaveElement_(newContent)) {
-      this.removeElement(layer);
-      return null;
+      this.removeElements(layer);
+      return [];
     }
-    const element = this.getOrCreateLayerElement(layer, newContent);
-    this.modifyElementClasses_(layer, oldContent, element, 'remove');
-    this.populateElementFromContent_(element, layer, newContent);
-    return element;
+    const elements = this.getOrCreateLayerElements(layer, newContent);
+    elements.forEach(element => {
+      this.modifyElementClasses_(layer, oldContent, element, 'remove');
+      this.populateElementFromContent_(element, layer, newContent);
+    });
+    return elements;
   }
 
-  updateLayerElementToCurrentContent_(layer) {
-    const element = this.elements_.get(layer);
+  updateLayerElementsToCurrentContent_(layer) {
     const content = this.getLayerContent(layer);
+    const element = this.elements_.get(layer);
     if (!element) {
-      this.createElementFromContent(layer, content);
+      this.createElementsFromContent(layer, content);
     } else {
       if (this.contentShouldHaveElement_(content)) {
-        element.className = '';
-        this.populateElementFromContent_(element, layer, content);
+        this.getLayerElements_(layer).forEach(element => {
+          element.className = '';
+          this.populateElementFromContent_(element, layer, content);
+        });
       } else {
-        this.removeElement(layer);
+        this.removeElements(layer);
       }
     }
   }
 
   updateAllElementsToCurrentContent() {
     ct.children.forEach(layer => {
-      this.updateLayerElementToCurrentContent_(layer);
+      this.updateLayerElementsToCurrentContent_(layer);
     });
   }
 
@@ -366,10 +420,10 @@ class Cell {
   setElementGeometryToGridElementGeometry_(element, layer, content) {
     const endCellKey = content[ck.endCell];
     const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
-    element.style.top = this.offsetTop - this.tile.top;
-    element.style.right = endCell.offsetRight - this.tile.right;
-    element.style.bottom = endCell.offsetBottom - this.tile.bottom;
-    element.style.left = this.offsetLeft - this.tile.left;
+    element.style.right = Number.parseInt(element.style.right) -
+        (this.offsetRight - endCell.offsetRight);
+    element.style.bottom = Number.parseInt(element.style.bottom) -
+        (this.offsetBottom - endCell.offsetBottom);
     if (layer == ct.walls) {
       let backgroundOffsetLeft = -this.offsetLeft;
       let backgroundOffsetTop = -this.offsetTop;
@@ -445,24 +499,26 @@ class Cell {
     const existingContent = this.getLayerContent(layer);
     const action = existingContent && content ? 'editing' :
       (existingContent ? 'removing' : 'adding');
-    const element = content ?
-      this.updateElement_(layer, this.getLayerContent(layer), content) :
-      this.elements_.get(layer);
-    if (!element) return;
-    if (action == 'adding') {
-      element.className = element.className
-          .replace(/_ADDING-REMOVING_/g, 'adding')
-          .replace(/_ADDING_/g, 'adding');
-    } else if (action == 'removing') {
-      element.className = element.className
-          .replace(/_ADDING-REMOVING_/g, 'removing')
-          .replace(/_REMOVING_/g, 'removing');
-    } else if (action == 'editing') {
-      element.className = element.className.replace(/_EDITING_/g, 'editing');
-    }
+    const elements = content ?
+      this.updateElements_(layer, this.getLayerContent(layer), content) :
+      this.getLayerElements_(layer);
+    if (elements.length == 0) return;
+    elements.forEach(element => {
+      if (action == 'adding') {
+        element.className = element.className
+            .replace(/_ADDING-REMOVING_/g, 'adding')
+            .replace(/_ADDING_/g, 'adding');
+      } else if (action == 'removing') {
+        element.className = element.className
+            .replace(/_ADDING-REMOVING_/g, 'removing')
+            .replace(/_REMOVING_/g, 'removing');
+      } else if (action == 'editing') {
+        element.className = element.className.replace(/_EDITING_/g, 'editing');
+      }
+    });
   }
 
   hideHighlight(layer) {
-    this.updateLayerElementToCurrentContent_(layer);
+    this.updateLayerElementsToCurrentContent_(layer);
   }
 }

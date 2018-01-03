@@ -67,14 +67,16 @@ class CellMap {
     this.setMapSize_(mapElement, this.currX + 1, this.currY + 1);
     for (const [tileKey, tile] of this.tiles) {
       tile.key = tileKey;
-      tile.right = tile.lastCell.offsetRight;
-      tile.bottom = tile.lastCell.offsetBottom;
-      tile.width =
-          1 + tile.lastCell.offsetLeft + tile.lastCell.width - tile.left;
-      tile.height =
-          1 + tile.lastCell.offsetTop + tile.lastCell.height - tile.top;
-      tile.element.style.width = tile.width;
-      tile.element.style.height = tile.height;
+      if (tile.lastCell) {
+        tile.right = tile.lastCell.offsetRight;
+        tile.bottom = tile.lastCell.offsetBottom;
+        tile.width =
+            1 + tile.lastCell.offsetLeft + tile.lastCell.width - tile.left;
+        tile.height =
+            1 + tile.lastCell.offsetTop + tile.lastCell.height - tile.top;
+        tile.element.style.width = tile.width;
+        tile.element.style.height = tile.height;
+      }
     }
   }
 
@@ -182,7 +184,8 @@ class CellMap {
   }
 
   createCell_(parent, role, key, row, column) {
-    const tile = this.getOrCreateTile(parent, row, column);
+    const tile = this.getOrCreateTile(parent, column, row);
+    this.initializeTileDimensions(tile);
     const element =
         createAndAppendDivWithClass(tile.gridLayer, `grid-cell ${role}-cell`);
     const cell = new Cell(key, role, element, tile);
@@ -191,6 +194,20 @@ class CellMap {
     this.cells.set(key, cell);
     element.style.left = cell.offsetLeft - tile.left;
     element.style.top = cell.offsetTop - tile.top;
+    const replicaTiles = new Set();
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i == 0 && j == 0) continue;
+        const neighborTile =
+            this.getOrCreateTile(parent, column + i / 2, row + j / 2);
+        if (tile == neighborTile || replicaTiles.has(neighborTile)) continue;
+        replicaTiles.add(neighborTile);
+        // We're on a boundary cell, so it needs to be replicated to the
+        // neighboring tile.
+        cell.addReplica(
+            neighborTile, neighborTile.x - tile.x, neighborTile.y - tile.y);
+      }
+    }
     tile.lastCell = cell;
     return cell;
   }
@@ -346,13 +363,16 @@ class CellMap {
     ]);
   }
 
-  getOrCreateTile(parent, cellRow, cellColumn) {
-    const tileKey =
-        Math.floor((cellRow + 1) / tileSize) + ',' +
-        Math.floor((cellColumn + 1) / tileSize);
+  getOrCreateTile(parent, cellColumn, cellRow) {
+    const tileX = Math.floor((cellColumn + 1) / tileSize);
+    const tileY = Math.floor((cellRow + 1) / tileSize);
+    const tileKey = tileX + ',' + tileY;
     let tile = this.tiles.get(tileKey);
     if (!tile) {
       tile = this.createTile(parent);
+      tile.key = tileKey;
+      tile.x = tileX;
+      tile.y = tileY;
       this.tiles.set(tileKey, tile);
     }
     return tile;
@@ -361,15 +381,12 @@ class CellMap {
   createTile(parent) {
     const tile = {
       element: createAndAppendDivWithClass(parent, 'tile'),
-      left: this.currX + 1,
-      top: this.currY + 1,
+      initialized: false,
       layerElements: new Map(),
       lastCell: null,
       tileEntered: () => {},
       tileLeft: () => {},
     };
-    tile.element.style.left = tile.left;
-    tile.element.style.top = tile.top;
     ct.children.forEach(layer => {
       const layerElement =
           createAndAppendDivWithClass(
@@ -378,5 +395,14 @@ class CellMap {
     });
     tile.gridLayer = createAndAppendDivWithClass(tile.element, 'grid-layer');
     return tile;
+  }
+
+  initializeTileDimensions(tile) {
+    if (tile.initialized) return;
+    tile.initialized = true;
+    tile.left = this.currX;
+    tile.top = this.currY;
+    tile.element.style.left = tile.left;
+    tile.element.style.top = tile.top;
   }
 }

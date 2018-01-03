@@ -344,11 +344,11 @@ class BoxGesture extends Gesture {
         this.startCell_.offsetLeft - this.startCell_.offsetLeft;
     this.hoverWidget_.style.top =
         this.startCell_.offsetTop - this.startCell_.offsetTop;
-    const layerElement =
-        this.startCell_.getOrCreateLayerElement(
+    const layerElements =
+        this.startCell_.getOrCreateLayerElements(
             this.getLayer_(), this.createStartCellContent_());
-    this.hoverWidget_.style.width = layerElement.scrollWidth;
-    this.hoverWidget_.style.height = layerElement.scrollHeight;
+    this.hoverWidget_.style.width = layerElements[0].scrollWidth;
+    this.hoverWidget_.style.height = layerElements[0].scrollHeight;
     this.hoverWidget_.onmousedown = e => {
       if (e.button == 0) {
         this.startEditing_();
@@ -371,10 +371,10 @@ class BoxGesture extends Gesture {
     if (this.deleteWidget_) return;
     this.deleteWidget_ = createAndAppendDivWithClass(
         this.startCell_.gridElement, this.getDeleteWidgetCssClassName_());
-    const layerElement =
-        this.startCell_.getOrCreateLayerElement(
+    const layerElements =
+        this.startCell_.getOrCreateLayerElements(
             this.getLayer_(), this.createStartCellContent_());
-    this.deleteWidget_.style.left = layerElement.scrollWidth;
+    this.deleteWidget_.style.left = layerElements[0].scrollWidth;
     const deleteGesture = this.createNewGesture_();
     deleteGesture.mode_ = 'removing';
     deleteGesture.startCell_ = this.startCell_;
@@ -415,11 +415,11 @@ class BoxGesture extends Gesture {
     if (this.resizeWidget_) return;
     this.resizeWidget_ = createAndAppendDivWithClass(
         this.startCell_.gridElement, this.getResizeWidgetCssClassName_());
-    const layerElement =
-        this.startCell_.getOrCreateLayerElement(
+    const layerElements =
+        this.startCell_.getOrCreateLayerElements(
             this.getLayer_(), this.createStartCellContent_());
-    this.resizeWidget_.style.left = layerElement.scrollWidth;
-    this.resizeWidget_.style.top = layerElement.scrollHeight;
+    this.resizeWidget_.style.left = layerElements[0].scrollWidth;
+    this.resizeWidget_.style.top = layerElements[0].scrollHeight;
     this.resizeWidget_.onmousedown = e => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();
@@ -446,7 +446,7 @@ class BoxGesture extends Gesture {
     if (this.moveWidget_) return;
     this.moveWidget_ = createAndAppendDivWithClass(
         this.startCell_.gridElement, this.getMoveWidgetCssClassName_());
-    this.startCell_.getOrCreateLayerElement(
+    this.startCell_.getOrCreateLayerElements(
         this.getLayer_(), this.createStartCellContent_());
     this.moveWidget_.onmousedown = e => {
       this.removeHoverWidget_();
@@ -487,12 +487,12 @@ class BoxGesture extends Gesture {
     this.createDeleteWidget_();
     this.originalValue_ =
         this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
-    const layerElement =
-        this.startCell_.getOrCreateLayerElement(
+    const layerElements =
+        this.startCell_.getOrCreateLayerElements(
             this.getLayer_(), this.createStartCellContent_());
     this.inputElement_ = this.createInputElement_();
-    this.inputElement_.style.width = layerElement.offsetWidth + 2;
-    this.inputElement_.style.height = layerElement.offsetHeight + 2;
+    this.inputElement_.style.width = layerElements[0].offsetWidth + 2;
+    this.inputElement_.style.height = layerElements[0].offsetHeight + 2;
     this.inputElement_.value =
         this.startCell_.hasLayerContent(this.getLayer_()) ?
           this.startCell_.getVal(this.getLayer_(), this.getValueKey_()) :
