@@ -301,12 +301,16 @@ class Cell {
     if (!element) {
       return this.createElementsFromContent(layer, initialContent);
     }
+    if (!this.isReplicated(layer)) return [element];
     return [element].concat(
         Array.from(this.replicatedElements_.get(layer).values()));
   }
 
   getLayerElements_(layer) {
-    return [this.elements_.get(layer)].concat(
+    const element = this.elements_.get(layer);
+    if (!element) return [];
+    if (!this.isReplicated(layer)) return [element];
+    return [element].concat(
         Array.from(this.replicatedElements_.get(layer).values()));
   }
 
@@ -420,11 +424,25 @@ class Cell {
   setElementGeometryToGridElementGeometry_(element, layer, content) {
     const endCellKey = content[ck.endCell];
     const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
-    element.style.right = Number.parseInt(element.style.right) -
-        (this.offsetRight - endCell.offsetRight);
-    element.style.bottom = Number.parseInt(element.style.bottom) -
-        (this.offsetBottom - endCell.offsetBottom);
+    let baseOffsetRight = this.offsetRight - this.tile.right;
+    let baseOffsetBottom = this.offsetBottom - this.tile.bottom;
+    if (this.isReplicated(layer)) {
+      this.replicas_.forEach(replica => {
+        if (this.replicatedElements_.has(layer) &&
+            this.replicatedElements_.get(layer).has(replica.tile) &&
+            element == this.replicatedElements_.get(layer).get(replica.tile)) {
+          // This element is a replica.
+          baseOffsetRight += replica.leftRightDir * (replica.tile.width - 1);
+          baseOffsetBottom += replica.topBottomDir * (replica.tile.height - 1);
+        }
+      });
+    }
+    element.style.right =
+        baseOffsetRight - (this.offsetRight - endCell.offsetRight);
+    element.style.bottom =
+        baseOffsetBottom - (this.offsetBottom - endCell.offsetBottom);
     if (layer == ct.walls) {
+      // Set background offset.
       let backgroundOffsetLeft = -this.offsetLeft;
       let backgroundOffsetTop = -this.offsetTop;
       if (content[ck.variation] == ct.walls.smooth.angled.id) {
