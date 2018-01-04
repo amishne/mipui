@@ -44,6 +44,7 @@ class Cell {
   }
 
   setLayerContent(layer, content, recordChange) {
+    this.tile.activate();
     const oldContent = this.getLayerContent(layer);
     state.setLayerContent(this.key, layer, content);
     const newContent = this.getLayerContent(layer);
@@ -377,7 +378,7 @@ class Cell {
 
   onMouseEnter(e) {
     if (!state.gesture) return;
-    this.tile.tileEntered();
+    this.tile.mouseEntered();
     if (e.buttons == 0) {
       state.gesture.startHover(this);
     } else if (e.buttons == 1) {
@@ -388,7 +389,7 @@ class Cell {
 
   onMouseLeave(e) {
     if (!state.gesture) return;
-    this.tile.tileLeft();
+    this.tile.mouseExited();
     if (e.buttons == 0) {
       state.gesture.stopHover();
     }
@@ -514,6 +515,7 @@ class Cell {
   }
 
   showHighlight(layer, content) {
+    this.tile.activate();
     const existingContent = this.getLayerContent(layer);
     const action = existingContent && content ? 'editing' :
       (existingContent ? 'removing' : 'adding');

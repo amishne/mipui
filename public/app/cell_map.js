@@ -65,19 +65,7 @@ class CellMap {
     this.createDividerRow_(mapElement, minX, maxX, maxY - 1, maxY);
     this.currY += this.dividerHeight;
     this.setMapSize_(mapElement, this.currX + 1, this.currY + 1);
-    for (const [tileKey, tile] of this.tiles) {
-      tile.key = tileKey;
-      if (tile.lastCell) {
-        tile.right = tile.lastCell.offsetRight;
-        tile.bottom = tile.lastCell.offsetBottom;
-        tile.width =
-            1 + tile.lastCell.offsetLeft + tile.lastCell.width - tile.left;
-        tile.height =
-            1 + tile.lastCell.offsetTop + tile.lastCell.height - tile.top;
-        tile.element.style.width = tile.width;
-        tile.element.style.height = tile.height;
-      }
-    }
+    this.tiles.forEach(tile => { tile.finalizeDimensions(); });
   }
 
   setMapSize_(container, width, height) {
@@ -185,7 +173,7 @@ class CellMap {
 
   createCell_(parent, role, key, row, column) {
     const tile = this.getOrCreateTile(parent, column, row);
-    this.initializeTileDimensions(tile);
+    tile.initializeDimensions(this.currX, this.currY);
     const element =
         createAndAppendDivWithClass(tile.gridLayer, `grid-cell ${role}-cell`);
     const cell = new Cell(key, role, element, tile);
@@ -369,40 +357,20 @@ class CellMap {
     const tileKey = tileX + ',' + tileY;
     let tile = this.tiles.get(tileKey);
     if (!tile) {
-      tile = this.createTile(parent);
-      tile.key = tileKey;
-      tile.x = tileX;
-      tile.y = tileY;
+      tile = this.createTile(parent, tileKey, tileX, tileY);
       this.tiles.set(tileKey, tile);
     }
     return tile;
   }
 
-  createTile(parent) {
-    const tile = {
-      element: createAndAppendDivWithClass(parent, 'tile'),
-      initialized: false,
-      layerElements: new Map(),
-      lastCell: null,
-      tileEntered: () => {},
-      tileLeft: () => {},
-    };
+  createTile(parent, key, x, y) {
+    const tile = new Tile(parent, key, x, y);
     ct.children.forEach(layer => {
       const layerElement =
           createAndAppendDivWithClass(
               tile.element, 'layer ' + layer.name + '-layer');
       tile.layerElements.set(layer, layerElement);
     });
-    tile.gridLayer = createAndAppendDivWithClass(tile.element, 'grid-layer');
     return tile;
-  }
-
-  initializeTileDimensions(tile) {
-    if (tile.initialized) return;
-    tile.initialized = true;
-    tile.left = this.currX;
-    tile.top = this.currY;
-    tile.element.style.left = tile.left;
-    tile.element.style.top = tile.top;
   }
 }
