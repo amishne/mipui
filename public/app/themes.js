@@ -3,10 +3,14 @@ const themes = [
   // keyed by their index in the array).
   {
     name: 'Beige Land',
+    propertyIndex: 0,
+    displayIndex: 0,
     files: [],
   },
   {
     name: 'Graph Paper (double)',
+    propertyIndex: 1,
+    displayIndex: 2,
     files: [
       'themes/graph_paper/style.css',
     ],
@@ -14,6 +18,8 @@ const themes = [
   },
   {
     name: 'Gridless Flat',
+    propertyIndex: 2,
+    displayIndex: 3,
     files: [
       'themes/gridless_flat/style.css',
     ],
@@ -21,6 +27,8 @@ const themes = [
   },
   {
     name: 'Cutout',
+    propertyIndex: 3,
+    displayIndex: 4,
     files: [
       'themes/cutout/style.css',
     ],
@@ -28,6 +36,8 @@ const themes = [
   },
   {
     name: 'Graph Paper (single)',
+    propertyIndex: 4,
+    displayIndex: 1,
     files: [
       'themes/graph_paper_single/style.css',
     ],
@@ -35,6 +45,8 @@ const themes = [
   },
   {
     name: 'Old School',
+    propertyIndex: 5,
+    displayIndex: 6,
     files: [
       'themes/old_school/style.css',
     ],
@@ -42,6 +54,8 @@ const themes = [
   },
   {
     name: 'Dark',
+    propertyIndex: 6,
+    displayIndex: 5,
     files: [
       'themes/dark/style.css',
     ],
@@ -49,6 +63,8 @@ const themes = [
   },
   {
     name: 'Cross Hatch (with grid)',
+    propertyIndex: 7,
+    displayIndex: 7,
     files: [
       'themes/cross_hatch/style_gridless.css',
       'themes/cross_hatch/grid.css',
@@ -57,9 +73,11 @@ const themes = [
   },
   {
     name: 'Cross Hatch (gridless)',
+    propertyIndex: 8,
+    displayIndex: 8,
     files: [
       'themes/cross_hatch/style_gridless.css',
     ],
     menuIconFile: 'themes/cross_hatch/menu_icons_gridless.png',
   },
-];
+].sort((a, b) => a.displayIndex - b.displayIndex);

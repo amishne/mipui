@@ -62,7 +62,8 @@ class Menu {
     document.querySelector('#mapLongDesc textarea').value =
         state.getProperty(pk.longDescription);
     document.querySelector('#mapTheme select').selectedIndex =
-        state.getProperty(pk.theme);
+        themes.find(theme => theme.propertyIndex == state.getProperty(pk.theme))
+            .displayIndex;
   }
 
   addDebugMenu() {
@@ -1140,7 +1141,9 @@ class Menu {
               dropdownValues: themes.map(theme => theme.name),
               enabledInReadonlyMode: false,
               onChange: newChoiceNum => {
-                state.setProperty(pk.theme, newChoiceNum, true);
+                const themeNum = themes.find(
+                    theme => theme.displayIndex == newChoiceNum).propertyIndex;
+                state.setProperty(pk.theme, themeNum, true);
                 state.reloadTheme();
                 state.opCenter.recordOperationComplete();
               },

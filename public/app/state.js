@@ -143,7 +143,7 @@ class State {
     const newNum = this.getProperty(pk.theme);
     if (this.appliedTheme_ == null && newNum == 0) return;
     if (this.appliedTheme_ && this.appliedTheme_.num == newNum) return;
-    const newTheme = themes[newNum];
+    const newTheme = themes.find(theme => theme.propertyIndex == newNum);
     if (this.appliedTheme_) {
       this.appliedTheme_.elements.forEach(element => {
         element.parentNode.removeChild(element);
