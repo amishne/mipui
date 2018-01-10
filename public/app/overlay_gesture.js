@@ -21,6 +21,7 @@ class OverlayGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     if (!this.hoveredCell_) return;
     this.hoveredCell_.hideHighlight(this.layer_);
     this.hoveredCell_.setLayerContent(this.layer_, this.createContent_(), true);
@@ -32,6 +33,7 @@ class OverlayGesture extends Gesture {
   }
 
   stopGesture() {
+    super.stopGesture();
     state.opCenter.recordOperationComplete();
     if (this.hoveredCell_) this.startHover(this.hoveredCell_);
   }

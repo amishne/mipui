@@ -11,6 +11,7 @@ class SelectGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     this.clearSelection();
     if (this.anchorCell_) {
       // Clicking anywhere when there's an active selection just cancels it.
@@ -27,7 +28,10 @@ class SelectGesture extends Gesture {
   }
 
   stopHover() {}
-  stopGesture() {}
+
+  stopGesture() {
+    super.stopGesture();
+  }
 
   copy() {
     if (!this.anchorCell_) return;

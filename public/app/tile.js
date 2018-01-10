@@ -44,12 +44,10 @@ class Tile {
   }
 
   mouseEntered() {
-    this.hovered = true;
     this.activate();
   }
 
   mouseExited() {
-    this.hovered = false;
     this.markForDeactivation();
   }
 
@@ -66,8 +64,7 @@ class Tile {
   }
 
   markForDeactivation() {
-    this.locked = false;
-    if (this.deactivationTimer) return;
+    if (this.deactivationTimer || this.locked) return;
     this.deactivationTimer = setTimeout(() => {
       window.requestAnimationFrame(() => {
         this.deactivate();
@@ -77,7 +74,7 @@ class Tile {
   }
 
   deactivate() {
-    if (!this.active || this.hovered) return;
+    if (!this.active || this.locked) return;
     this.active = false;
     console.log(`Tile ${this.key} deactivated.`);
 
@@ -90,7 +87,7 @@ class Tile {
         height: this.containerElement.clientHeight,
         filter: node => !node.classList.contains('grid-layer'),
       }).then(dataUrl => {
-        if (this.active) return;
+        if (this.active || this.locked) return;
         this.imageElement.src = dataUrl;
         this.isImageReady = true;
         this.deactivationComplete(start);
@@ -104,6 +101,12 @@ class Tile {
     this.containerElement.classList.add('inactive-tile');
   }
 
-  lock() {}
-  unlock() {}
+  lock() {
+    this.locked = true;
+  }
+
+  unlock() {
+    this.locked = false;
+    this.markForDeactivation();
+  }
 }

@@ -28,6 +28,7 @@ class PasteGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     this.forEachRelocatedAndGroupCell_((targetCell, layer, content) => {
       targetCell.setLayerContent(layer, content, true);
     }, (objectCell, layer) => {
@@ -41,6 +42,7 @@ class PasteGesture extends Gesture {
   continueGesture(/* cell */) {}
 
   stopGesture() {
+    super.stopGesture();
     state.opCenter.recordOperationComplete();
   }
   /*

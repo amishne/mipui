@@ -19,6 +19,7 @@ class ShapeGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     this.hideHighlight_();
     this.apply_();
   }
@@ -33,6 +34,7 @@ class ShapeGesture extends Gesture {
   }
 
   stopGesture() {
+    super.stopGesture();
     state.opCenter.recordOperationComplete();
   }
 

@@ -1,10 +1,15 @@
 class Gesture {
   startHover(cell) {}
   stopHover() {}
-  startGesture() {}
+  startGesture() {
+    state.theMap.lockTiles();
+  }
   continueGesture(cell) {}
-  stopGesture() {}
+  stopGesture() {
+    state.theMap.unlockTiles();
+  }
   onUnselect() {
+    state.theMap.unlockTiles();
     this.stopHover();
   }
 }

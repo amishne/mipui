@@ -47,6 +47,7 @@ class SightGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden) {
       state.theMap.cells.forEach((existingCell, key) => {
         existingCell.hideHighlight(ct.mask);
@@ -78,6 +79,7 @@ class SightGesture extends Gesture {
   }
 
   stopGesture() {
+    super.stopGesture();
     state.opCenter.recordOperationComplete();
   }
 

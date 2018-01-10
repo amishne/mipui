@@ -85,6 +85,7 @@ class BoxGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     const editWasInProgress = this.finishEditing_();
 
     if (!this.startCell_) {
@@ -145,6 +146,7 @@ class BoxGesture extends Gesture {
   }
 
   stopGesture() {
+    super.stopGesture();
     if ((this.mode_ == 'adding' || this.mode_ == 'resizing' ||
          this.mode_ == 'moving') && this.startCell_) {
       this.stopHover();

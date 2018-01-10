@@ -101,6 +101,7 @@ class SeparatorGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     if (!this.isCellEligible_(this.hoveredCell_)) return;
     this.stopHover();
     this.apply_();
@@ -161,6 +162,7 @@ class SeparatorGesture extends Gesture {
   }
 
   stopGesture() {
+    super.stopGesture();
     if (this.shouldPaintWall_()) {
       this.makeWallGesture.stopGesture();
     }

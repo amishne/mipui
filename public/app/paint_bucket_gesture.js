@@ -25,6 +25,7 @@ class PaintBucketGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     this.wallGesture_.startGesture();
     this.wallGesture_.stopGesture();
     state.opCenter.recordOperationComplete(false);
@@ -32,7 +33,9 @@ class PaintBucketGesture extends Gesture {
 
   continueGesture(cell) {}
 
-  stopGesture() {}
+  stopGesture() {
+    super.stopGesture();
+  }
 }
 
 class NoopMagicWandSelectGesture extends MagicWandSelectGesture {

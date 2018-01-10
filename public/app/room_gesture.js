@@ -19,6 +19,7 @@ class RoomGesture extends Gesture {
   }
 
   startGesture() {
+    super.startGesture();
     if (!this.anchorCell_) return;
     this.addCell_(this.anchorCell_);
     this.process_();
@@ -38,6 +39,7 @@ class RoomGesture extends Gesture {
   }
 
   stopGesture() {
+    super.stopGesture();
     this.apply_(false);
     this.clearCells_();
   }
