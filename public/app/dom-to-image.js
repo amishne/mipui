@@ -167,10 +167,10 @@
         // drastically slows down The whole process, but makes the rest of the
         // site responsive during the image generation.
         return new Promise((resolve, reject) => {
-                if (!options.interruptable) {
+                if (!options.responsive) {
                   resolve(node);
                 } else {
-                  if (options.isInterrupted()) {
+                  if (options.isInterrupted && options.isInterrupted()) {
                     reject('interrupted');
                   } else {
                     setTimeout(() => resolve(node), 0);

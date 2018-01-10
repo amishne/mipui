@@ -59,6 +59,7 @@ class Tile {
     if (this.active) return;
     this.active = true;
     this.containerElement.classList.remove('inactive-tile');
+    clearTimeout(this.deactivationTimer);
     debug(`Tile ${this.key} activated.`);
     this.markForDeactivation();
   }
@@ -87,7 +88,7 @@ class Tile {
         height: this.containerElement.clientHeight,
         filter: node => !node.classList.contains('grid-layer'),
         scale: 6, // Maximum zoom level
-        interruptable: true,
+        responsive: true,
         isInterrupted: () => this.active,
       }).then(dataUrl => {
         if (this.active || this.locked) return;
