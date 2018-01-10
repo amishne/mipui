@@ -43,7 +43,8 @@
         options = options || {};
         return Promise.resolve(node)
             .then(function (node) {
-                return cloneNode(node, options.filter, true);
+                // Mipui change: pass all the options.
+                return cloneNode(node, options, true);
             })
             .then(embedFonts)
             .then(inlineImages)
@@ -157,15 +158,28 @@
         }
     }
 
-    function cloneNode(node, filter, root) {
-        if (!root && filter && !filter(node)) return Promise.resolve();
+    function cloneNode(node, options, root) {
+        // Mipui change: entire options passed.
+        if (!root && options.filter && !options.filter(node)) {
+          return Promise.resolve();
+        }
         // Mipui change: Yield execution before every new clone. This
         // drastically slows down The whole process, but makes the rest of the
         // site responsive during the image generation.
-        return new Promise(resolve => setTimeout(() => resolve(node)), 0)
+        return new Promise((resolve, reject) => {
+                if (!options.interruptable) {
+                  resolve(node);
+                } else {
+                  if (options.isInterrupted()) {
+                    reject('interrupted');
+                  } else {
+                    setTimeout(() => resolve(node), 0);
+                  }
+                }
+            })
             .then(makeNodeCopy)
             .then(function (clone) {
-                return cloneChildren(node, clone, filter);
+                return cloneChildren(node, clone, options);
             })
             .then(function (clone) {
                 return processClone(node, clone);
@@ -176,21 +190,21 @@
             return node.cloneNode(false);
         }
 
-        function cloneChildren(original, clone, filter) {
+        function cloneChildren(original, clone, options) {
             var children = original.childNodes;
             if (children.length === 0) return Promise.resolve(clone);
 
-            return cloneChildrenInOrder(clone, util.asArray(children), filter)
+            return cloneChildrenInOrder(clone, util.asArray(children), options)
                 .then(function () {
                     return clone;
                 });
 
-            function cloneChildrenInOrder(parent, children, filter) {
+            function cloneChildrenInOrder(parent, children, options) {
                 var done = Promise.resolve();
                 children.forEach(function (child) {
                     done = done
                         .then(function () {
-                            return cloneNode(child, filter);
+                            return cloneNode(child, options);
                         })
                         .then(function (childClone) {
                             if (childClone) parent.appendChild(childClone);

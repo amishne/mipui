@@ -59,7 +59,7 @@ class Tile {
     if (this.active) return;
     this.active = true;
     this.containerElement.classList.remove('inactive-tile');
-    console.log(`Tile ${this.key} activated.`);
+    debug(`Tile ${this.key} activated.`);
     this.markForDeactivation();
   }
 
@@ -76,7 +76,7 @@ class Tile {
   deactivate() {
     if (!this.active || this.locked) return;
     this.active = false;
-    console.log(`Tile ${this.key} deactivated.`);
+    debug(`Tile ${this.key} deactivated.`);
 
     const start = performance.now();
     if (this.isImageReady) {
@@ -87,11 +87,15 @@ class Tile {
         height: this.containerElement.clientHeight,
         filter: node => !node.classList.contains('grid-layer'),
         scale: 6, // Maximum zoom level
+        interruptable: true,
+        isInterrupted: () => this.active,
       }).then(dataUrl => {
         if (this.active || this.locked) return;
         this.imageElement.src = dataUrl;
         this.isImageReady = true;
         this.deactivationComplete(start);
+      }).catch(reason => {
+        debug(`Tile ${this.key} caching failed: ${reason}.`);
       });
     }
   }
