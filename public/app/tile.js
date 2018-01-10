@@ -86,7 +86,8 @@ class Tile {
       domtoimage.toPng(this.mapElement, {
         width: this.containerElement.clientWidth,
         height: this.containerElement.clientHeight,
-        filter: node => !node.classList.contains('grid-layer'),
+        filter: node => node.style.visibility != 'hidden' &&
+            !node.classList.contains('grid-layer'),
         scale: 6, // Maximum zoom level
         responsive: true,
         isInterrupted: () => this.active,
