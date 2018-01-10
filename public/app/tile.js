@@ -86,6 +86,7 @@ class Tile {
         width: this.containerElement.clientWidth,
         height: this.containerElement.clientHeight,
         filter: node => !node.classList.contains('grid-layer'),
+        scale: 6, // Maximum zoom level
       }).then(dataUrl => {
         if (this.active || this.locked) return;
         this.imageElement.src = dataUrl;

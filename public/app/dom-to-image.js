@@ -128,17 +128,27 @@
             .then(util.delay(100))
             .then(function (image) {
                 var canvas = newCanvas(domNode);
-                canvas.getContext('2d').drawImage(image, 0, 0);
+                var ctx = canvas.getContext('2d');
+                // Mipui change: disable anti-aliasing. We want the canvas to
+                // be identical to the image and we will change quality by
+                // controlling the canvas's scaling factor.
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(image, 0, 0);
                 return canvas;
             });
 
         function newCanvas(domNode) {
+            // Mipui change: modify the canvas resolution.
+            const scale = options.scale;
             var canvas = document.createElement('canvas');
-            canvas.width = options.width || util.width(domNode);
-            canvas.height = options.height || util.height(domNode);
+            canvas.style.width = options.width || util.width(domNode);
+            canvas.style.height = options.height || util.height(domNode);
+            canvas.width = scale * Number.parseInt(canvas.style.width);
+            canvas.height = scale * Number.parseInt(canvas.style.height);
+            var ctx = canvas.getContext('2d');
+            ctx.scale(scale, scale);
 
             if (options.bgcolor) {
-                var ctx = canvas.getContext('2d');
                 ctx.fillStyle = options.bgcolor;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
@@ -149,9 +159,9 @@
 
     function cloneNode(node, filter, root) {
         if (!root && filter && !filter(node)) return Promise.resolve();
-        // Yield execution before every new clone. This drastically slows down
-        // The whole process, but makes the rest of the site responsive during
-        // the image generation.
+        // Mipui change: Yield execution before every new clone. This
+        // drastically slows down The whole process, but makes the rest of the
+        // site responsive during the image generation.
         return new Promise(resolve => setTimeout(() => resolve(node)), 0)
             .then(makeNodeCopy)
             .then(function (clone) {
