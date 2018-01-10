@@ -6,6 +6,7 @@ const themes = [
     propertyIndex: 0,
     displayIndex: 0,
     files: [],
+    emptyTile5Src: 'themes/beige_land/empty_tile5.png',
   },
   {
     name: 'Graph Paper (double)',

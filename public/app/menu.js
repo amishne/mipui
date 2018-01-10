@@ -1805,6 +1805,17 @@ class Menu {
               inputElement.click();
             },
           },
+          {
+            name: 'Image for tile (1,1)',
+            type: 'button',
+            presentation: 'label',
+            text: '(1,1) tile img',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              const dataUrl = state.theMap.tiles.get('1,1').imageElement.src;
+              window.open().document.write('<img src="' + dataUrl + '"/>');
+            },
+          },
         ],
       },
     };

@@ -41,6 +41,14 @@ class Tile {
     this.height = 1 + this.lastCell.offsetTop + this.lastCell.height - this.top;
     this.containerElement.style.width = this.width;
     this.containerElement.style.height = this.height;
+
+    const emptyTile5Src = themes[state.appliedTheme_].emptyTile5Src;
+    if (emptyTile5Src) {
+      this.imageElement.src = emptyTile5Src;
+      this.isImageReady = true;
+    }
+    this.active = true;
+    this.deactivate();
   }
 
   mouseEntered() {
