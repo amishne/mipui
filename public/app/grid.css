@@ -24,6 +24,28 @@
   position: absolute;
 }
 
+.tile-map {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.tile-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  image-rendering: pixelated;
+}
+
+.inactive-tile .tile-map {
+  visibility: hidden;
+}
+
+.inactive-tile .tile-image {
+  visibility: visible;
+}
+
 .layer {
   position: absolute;
   width: 100%;

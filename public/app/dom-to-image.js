@@ -149,8 +149,10 @@
 
     function cloneNode(node, filter, root) {
         if (!root && filter && !filter(node)) return Promise.resolve();
-
-        return Promise.resolve(node)
+        // Yield execution before every new clone. This drastically slows down
+        // The whole process, but makes the rest of the site responsive during
+        // the image generation.
+        return new Promise(resolve => setTimeout(() => resolve(node)), 0)
             .then(makeNodeCopy)
             .then(function (clone) {
                 return cloneChildren(node, clone, filter);

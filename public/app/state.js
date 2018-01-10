@@ -166,6 +166,7 @@ class State {
       menuIconFromMap.style.backgroundImage =
           `url("${this.getMenuIconFile()}")`;
     });
+    this.theMap.invalidateTiles();
   }
 
   getMenuIconFile() {

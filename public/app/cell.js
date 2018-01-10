@@ -44,7 +44,7 @@ class Cell {
   }
 
   setLayerContent(layer, content, recordChange) {
-    this.tile.activate();
+    this.tile.activate(false);
     const oldContent = this.getLayerContent(layer);
     state.setLayerContent(this.key, layer, content);
     const newContent = this.getLayerContent(layer);
@@ -54,6 +54,7 @@ class Cell {
             .recordCellChange(this.key, layer.id, oldContent, newContent);
       }
       this.updateElements_(layer, oldContent, newContent);
+      this.tile.invalidateImage();
     }
   }
 
@@ -515,7 +516,7 @@ class Cell {
   }
 
   showHighlight(layer, content) {
-    this.tile.activate();
+    this.tile.activate(true);
     const existingContent = this.getLayerContent(layer);
     const action = existingContent && content ? 'editing' :
       (existingContent ? 'removing' : 'adding');
@@ -539,6 +540,7 @@ class Cell {
   }
 
   hideHighlight(layer) {
+    this.tile.markForDeactivation();
     this.updateLayerElementsToCurrentContent_(layer);
   }
 }

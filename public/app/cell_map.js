@@ -368,9 +368,21 @@ class CellMap {
     ct.children.forEach(layer => {
       const layerElement =
           createAndAppendDivWithClass(
-              tile.element, 'layer ' + layer.name + '-layer');
+              tile.mapElement, 'layer ' + layer.name + '-layer');
       tile.layerElements.set(layer, layerElement);
     });
     return tile;
+  }
+
+  invalidateTiles() {
+    this.tiles.forEach(tile => { tile.activate(); tile.invalidateImage(); });
+  }
+
+  lockTiles() {
+    this.tiles.forEach(tile => { tile.lock(); });
+  }
+
+  unlockTiles() {
+    this.tiles.forEach(tile => { tile.unlock(); });
   }
 }
