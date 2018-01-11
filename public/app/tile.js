@@ -93,7 +93,6 @@ class Tile {
     const imageFromTheme = this.getImageFromTheme();
     if (imageFromTheme) {
       this.imageElement.src = imageFromTheme;
-      this.isImageReady = true;
       this.deactivationComplete(start);
       return;
     }
@@ -109,7 +108,6 @@ class Tile {
     }).then(dataUrl => {
       if (this.active || this.locked) return;
       this.imageElement.src = dataUrl;
-      this.isImageReady = true;
       this.deactivationComplete(start);
     }).catch(reason => {
       debug(`Tile ${this.key} caching failed: ${reason}.`);
@@ -120,6 +118,7 @@ class Tile {
     const duration = Math.ceil(performance.now() - deactivationStartTime);
     debug(`Deactivated tile ${this.key} in ${duration}ms.`);
     this.containerElement.removeChild(this.mapElement);
+    this.isImageReady = true;
     this.imageElement.style.visibility = 'visible';
   }
 

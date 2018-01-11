@@ -81,6 +81,7 @@ class CellMap {
 
   clearMap_() {
     this.cells = new Map();
+    this.tiles = new Map();
     const elements = document.getElementsByClassName('layer');
     for (let i = 0; i < elements.length; i++) {
       elements[i].innerHTML = '';
