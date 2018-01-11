@@ -66,7 +66,8 @@ class Tile {
   activate() {
     if (this.active) return;
     this.active = true;
-    this.containerElement.classList.remove('inactive-tile');
+    this.containerElement.appendChild(this.mapElement);
+    this.imageElement.style.visibility = 'hidden';
     clearTimeout(this.deactivationTimer);
     debug(`Tile ${this.key} activated.`);
     this.markForDeactivation();
@@ -114,7 +115,8 @@ class Tile {
   deactivationComplete(deactivationStartTime) {
     const duration = Math.ceil(performance.now() - deactivationStartTime);
     debug(`Deactivated tile ${this.key} in ${duration}ms.`);
-    this.containerElement.classList.add('inactive-tile');
+    this.containerElement.removeChild(this.mapElement);
+    this.imageElement.style.visibility = 'visible';
   }
 
   lock() {

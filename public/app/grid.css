@@ -39,14 +39,6 @@
   image-rendering: crisp-edges;
 }
 
-.inactive-tile .tile-map {
-  visibility: hidden;
-}
-
-.inactive-tile .tile-image {
-  visibility: visible;
-}
-
 .layer {
   position: absolute;
   width: 100%;
