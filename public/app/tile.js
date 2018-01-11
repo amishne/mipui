@@ -132,10 +132,6 @@ class Tile {
   }
 
   getImageFromTheme() {
-    if (this.lastCell.column - this.firstCell.column != 4.5 ||
-        this.lastCell.row - this.firstCell.row != 4.5) {
-      return null;
-    }
     const emptyTile5Src = themes[state.getProperty(pk.theme)].emptyTile5Src;
     if (emptyTile5Src) {
       const emptyTile = this.cells.every(

@@ -32,8 +32,10 @@
 
 .tile-image {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 161px;
+  height: 161px;
+  bottom: 0;
+  right: 0;
   visibility: hidden;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
