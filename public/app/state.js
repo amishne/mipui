@@ -53,7 +53,7 @@ class State {
 
     this.clipboard = null;
 
-    this.appliedTheme_ = 0;
+    this.appliedTheme_ = null;
 
     this.lastUsedSvg = null;
 

@@ -42,7 +42,7 @@ class Tile {
     this.containerElement.style.width = this.width;
     this.containerElement.style.height = this.height;
 
-    const emptyTile5Src = themes[state.appliedTheme_].emptyTile5Src;
+    const emptyTile5Src = themes[state.getProperty(pk.theme)].emptyTile5Src;
     if (emptyTile5Src) {
       this.imageElement.src = emptyTile5Src;
       this.isImageReady = true;
@@ -99,6 +99,7 @@ class Tile {
         scale: 6, // Maximum zoom level
         responsive: true,
         isInterrupted: () => this.active,
+        disableSmoothing: true,
       }).then(dataUrl => {
         if (this.active || this.locked) return;
         this.imageElement.src = dataUrl;
@@ -111,7 +112,7 @@ class Tile {
   }
 
   deactivationComplete(deactivationStartTime) {
-    const duration = performance.now() - deactivationStartTime;
+    const duration = Math.ceil(performance.now() - deactivationStartTime);
     debug(`Deactivated tile ${this.key} in ${duration}ms.`);
     this.containerElement.classList.add('inactive-tile');
   }

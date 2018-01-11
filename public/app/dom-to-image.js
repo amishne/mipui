@@ -133,7 +133,9 @@
                 // Mipui change: disable anti-aliasing. We want the canvas to
                 // be identical to the image and we will change quality by
                 // controlling the canvas's scaling factor.
-                ctx.imageSmoothingEnabled = false;
+                if (options.disableSmoothing) {
+                  ctx.imageSmoothingEnabled = false;
+                }
                 ctx.drawImage(image, 0, 0);
                 return canvas;
             });
