@@ -177,6 +177,7 @@ class CellMap {
     const element =
         createAndAppendDivWithClass(tile.gridLayer, `grid-cell ${role}-cell`);
     const cell = new Cell(key, role, element, tile);
+    tile.cells.push(cell);
     cell.offsetLeft = this.currX;
     cell.offsetTop = this.currY;
     this.cells.set(key, cell);
@@ -196,8 +197,21 @@ class CellMap {
             neighborTile, neighborTile.x - tile.x, neighborTile.y - tile.y);
       }
     }
-    tile.lastCell = cell;
+    this.updateTileFirstAndLastCells_(tile, cell);
     return cell;
+  }
+
+  updateTileFirstAndLastCells_(tile, cell) {
+    if (!tile.firstCell ||
+        tile.firstCell.offsetLeft > cell.offsetLeft ||
+        tile.firstCell.offsetTop > cell.offsetTop) {
+      tile.firstCell = cell;
+    }
+    if (!tile.lastCell ||
+        tile.lastCell.offsetLeft < cell.offsetLeft ||
+        tile.lastCell.offsetTop < cell.offsetTop) {
+      tile.lastCell = cell;
+    }
   }
 
   setPrimaryCellNeighborKeys_(cell, row, column) {
