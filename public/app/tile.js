@@ -65,6 +65,7 @@ class Tile {
     this.active = true;
     this.containerElement.appendChild(this.mapElement);
     this.imageElement.style.visibility = 'hidden';
+    this.containerElement.style.filter = '';
     clearTimeout(this.deactivationTimer);
     debug(`Tile ${this.key} activated.`);
     this.markForDeactivation();
@@ -116,10 +117,11 @@ class Tile {
 
   deactivationComplete(deactivationStartTime) {
     const duration = Math.ceil(performance.now() - deactivationStartTime);
-    debug(`Deactivated tile ${this.key} in ${duration}ms.`);
+    console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
     this.containerElement.removeChild(this.mapElement);
     this.isImageReady = true;
     this.imageElement.style.visibility = 'visible';
+    this.containerElement.style.filter = 'grayscale(1)';
   }
 
   lock() {
@@ -139,7 +141,7 @@ class Tile {
               layer => layer == ct.floors ||
               this.layerElements.get(layer).childElementCount == 0));
       if (emptyTile) {
-        debug(`Matched tile ${this.key} with the empty tile image.`);
+        console.log(`Matched tile ${this.key} with the empty tile image.`);
         return emptyTile5Src;
       }
     }
