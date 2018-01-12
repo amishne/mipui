@@ -12,13 +12,14 @@ class Cell {
     this.offsetBottom = null;
     this.row = null;
     this.column = null;
-    this.replicas_ = [];
 
     // Elements owned by this cell.
     // Elements in the owning tile, keyed by layer (layer -> element):
     this.elements_ = new Map();
-    // Replicated element in neighboring tiles (layer -> (tile -> element)):
+    // Replicated element in other tiles (layer -> (tile -> element)):
     this.replicatedElements_ = new Map();
+    ct.children.forEach(
+        layer => this.replicatedElements_.set(layer, new Map()));
 
     // Exposed to be used by text gestures.
     this.textHeight = null;
@@ -26,14 +27,6 @@ class Cell {
     // Initialization.
     this.neighborKeys_ = new Map();
     this.wireInteractions_();
-  }
-
-  addReplica(tile, leftRightDir, topBottomDir) {
-    this.replicas_.push({tile, leftRightDir, topBottomDir});
-  }
-
-  isReplicated(layer) {
-    return layer == ct.walls;
   }
 
   getLayerContent(layer) {
@@ -108,24 +101,68 @@ class Cell {
     this.populateElementFromContent_(element, layer, content);
     this.elements_.set(layer, element);
     elements.push(element);
-    if (this.isReplicated(layer)) {
-      this.replicatedElements_.set(layer, new Map());
-      this.replicas_.forEach(replica => {
-        const clone = element.cloneNode(true);
-        clone.style.left = offsetLeft -
-            replica.leftRightDir * (replica.tile.width - 1);
-        clone.style.right = offsetRight +
-            replica.leftRightDir * (replica.tile.width - 1);
-        clone.style.top = offsetTop -
-            replica.topBottomDir * (replica.tile.height - 1);
-        clone.style.bottom = offsetBottom +
-            replica.topBottomDir * (replica.tile.height - 1);
-        replica.tile.layerElements.get(layer).appendChild(clone);
-        this.replicatedElements_.get(layer).set(replica.tile, clone);
-        elements.push(clone);
+    this.getReplicas_(layer, content).forEach(replica => {
+      const clone = element.cloneNode(true);
+      clone.style.left = offsetLeft -
+          replica.horizontalTileDistance * (replica.tile.width - 1);
+      clone.style.right = offsetRight +
+          replica.horizontalTileDistance * (replica.tile.width - 1);
+      clone.style.top = offsetTop -
+          replica.verticalTileDistance * (replica.tile.height - 1);
+      clone.style.bottom = offsetBottom +
+          replica.verticalTileDistance * (replica.tile.height - 1);
+      replica.tile.activate();
+      replica.tile.invalidateImage();
+      replica.tile.layerElements.get(layer).appendChild(clone);
+
+      this.replicatedElements_.get(layer).set(replica.tile, clone);
+      elements.push(clone);
+    });
+    return elements;
+  }
+
+  getReplicas_(layer, content) {
+    const replicas = [];
+    const endCellKey = content[ck.endCell];
+    if (endCellKey) {
+      // This is a multi-cell content. Add all tiles between this cell and the
+      // end cell (excluding the current tile) as replicas.
+      const endCell = state.theMap.cells.get(endCellKey);
+      for (let x = this.tile.x; x < endCell.tile.x; x++) {
+        for (let y = this.tile.y; y < endCell.tile.y; y++) {
+          if (x != this.tile.x || y != this.tile.y) {
+            replicas.push({
+              tile: state.theMap.tiles.get(x + ',' + y),
+              horizontalTileDistance: x - this.tile.x,
+              verticalTileDistance: y - this.tile.y,
+            });
+          }
+        }
+      }
+    }
+    if (layer == ct.walls) {
+      // Because walls cast shadows, any wall on the tile edge gets the
+      // neighboring tiles as replicas.
+      [
+        {name: 'left', edge: 'offsetLeft', x: -1, y: 0},
+        {name: 'right', edge: 'offsetRight', x: 1, y: 0},
+        {name: 'top', edge: 'offsetTop', x: 0, y: -1},
+        {name: 'bottom', edge: 'offsetBottom', x: 0, y: 1},
+      ].forEach(dir => {
+        if (this[dir.edge] != this.tile[dir.name]) return;
+        // This cell is on the tile edge.
+        const neighborCell = this.getNeighbor(dir.name, this.role == 'primary');
+        if (!neighborCell) return;
+        // If a cell exists to the direction, and the current cell is on the
+        // edge, it must belong to a different tile.
+        replicas.push({
+          tile: neighborCell.tile,
+          horizontalTileDistance: dir.x,
+          verticalTileDistance: dir.y,
+        });
       });
     }
-    return elements;
+    return replicas;
   }
 
   // Returns all the cells in a square between this cell and 'cell', in row
@@ -311,7 +348,6 @@ class Cell {
   getLayerElements_(layer) {
     const element = this.elements_.get(layer);
     if (!element) return [];
-    if (!this.isReplicated(layer)) return [element];
     return [element].concat(
         Array.from(this.replicatedElements_.get(layer).values()));
   }
@@ -321,12 +357,12 @@ class Cell {
     if (!element) return;
     element.parentElement.removeChild(element);
     this.elements_.delete(layer);
-    if (this.isReplicated(layer)) {
-      this.replicatedElements_.get(layer).forEach(replicatedElement => {
-        replicatedElement.parentElement.removeChild(replicatedElement);
-      });
-      this.replicatedElements_.delete(layer);
-    }
+    this.replicatedElements_.get(layer).forEach((replicatedElement, tile) => {
+      tile.invalidateImage();
+      tile.activate();
+      replicatedElement.parentElement.removeChild(replicatedElement);
+    });
+    this.replicatedElements_.get(layer).clear();
   }
 
   contentShouldHaveElement_(content) {
@@ -428,17 +464,19 @@ class Cell {
     const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
     let baseOffsetRight = this.offsetRight - this.tile.right;
     let baseOffsetBottom = this.offsetBottom - this.tile.bottom;
-    if (this.isReplicated(layer)) {
-      this.replicas_.forEach(replica => {
-        if (this.replicatedElements_.has(layer) &&
-            this.replicatedElements_.get(layer).has(replica.tile) &&
-            element == this.replicatedElements_.get(layer).get(replica.tile)) {
-          // This element is a replica.
-          baseOffsetRight += replica.leftRightDir * (replica.tile.width - 1);
-          baseOffsetBottom += replica.topBottomDir * (replica.tile.height - 1);
-        }
-      });
-    }
+    this.getReplicas_(layer, content).forEach(replica => {
+      if (this.replicatedElements_.has(layer) &&
+          this.replicatedElements_.get(layer).has(replica.tile) &&
+          element == this.replicatedElements_.get(layer).get(replica.tile)) {
+        // This element is a replica.
+        baseOffsetRight +=
+            replica.horizontalTileDistance * (replica.tile.width - 1);
+        baseOffsetBottom +=
+            replica.verticalTileDistance * (replica.tile.height - 1);
+        replica.tile.invalidateImage();
+        replica.tile.activate();
+      }
+    });
     element.style.right =
         baseOffsetRight - (this.offsetRight - endCell.offsetRight);
     element.style.bottom =
