@@ -16,6 +16,7 @@ const themes = [
       'themes/graph_paper/style.css',
     ],
     menuIconFile: 'themes/graph_paper/menu_icons.png',
+    emptyTile5Src: 'themes/graph_paper/empty_tile5.png',
   },
   {
     name: 'Gridless Flat',
