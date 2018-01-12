@@ -67,6 +67,7 @@ class Tile {
     this.imageElement.style.visibility = 'hidden';
     this.containerElement.style.filter = '';
     clearTimeout(this.deactivationTimer);
+    this.deactivationTimer = null;
     debug(`Tile ${this.key} activated.`);
     this.markForDeactivation();
   }

@@ -22,6 +22,7 @@
 
 .tile {
   position: absolute;
+  overflow: hidden;
 }
 
 .tile-map {
