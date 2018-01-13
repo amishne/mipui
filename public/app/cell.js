@@ -151,7 +151,10 @@ class Cell {
       ].forEach(dir => {
         if (this[dir.edge] != this.tile[dir.name]) return;
         // This cell is on the tile edge.
-        const neighborCell = this.getNeighbor(dir.name, this.role == 'primary');
+        const getPrimary =
+            (this.role == 'vertical' && dir.x != 0) ||
+            (this.role == 'horizontal' && dir.y != 0);
+        const neighborCell = this.getNeighbor(dir.name, !getPrimary);
         if (!neighborCell) return;
         // If a cell exists to the direction, and the current cell is on the
         // edge, it must belong to a different tile.
@@ -340,7 +343,6 @@ class Cell {
     if (!element) {
       return this.createElementsFromContent(layer, initialContent);
     }
-    if (!this.isReplicated(layer)) return [element];
     return [element].concat(
         Array.from(this.replicatedElements_.get(layer).values()));
   }
