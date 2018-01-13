@@ -1,3 +1,15 @@
+// Tile Actions
+//   enter()
+//     Called when the cursor enters the tile
+//   exit()
+//     Called when the cursor leaves the tile
+//   invalidate()
+//     Called when an element that this tile contains (directly or as a replica)
+//     has changed.
+//   lock()
+//     Called when we want to prevent this tile from being cached.
+//   unlock()
+//     Called when we no longer want to prevent caching of this tile.
 class Tile {
   constructor(parent, key, x, y) {
     this.containerElement = createAndAppendDivWithClass(parent, 'tile');

@@ -184,20 +184,6 @@ class CellMap {
     this.cells.set(key, cell);
     element.style.left = cell.offsetLeft - tile.left;
     element.style.top = cell.offsetTop - tile.top;
-    const replicaTiles = new Set();
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        if (i == 0 && j == 0) continue;
-        const neighborTile =
-            this.getOrCreateTile(parent, column + i / 2, row + j / 2);
-        if (tile == neighborTile || replicaTiles.has(neighborTile)) continue;
-        replicaTiles.add(neighborTile);
-        // We're on a boundary cell, so it needs to be replicated to the
-        // neighboring tile.
-        cell.addReplica(
-            neighborTile, neighborTile.x - tile.x, neighborTile.y - tile.y);
-      }
-    }
     this.updateTileFirstAndLastCells_(tile, cell);
     return cell;
   }
