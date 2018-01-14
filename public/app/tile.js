@@ -10,6 +10,25 @@
 //     Called when we want to prevent this tile from being cached.
 //   unlock()
 //     Called when we no longer want to prevent caching of this tile.
+// Action active? locked? Result
+// enter  f       a       show dom
+//                        active = true
+//                        locked = true
+// enter  t       a       locked = true
+// exit   f       a       assert!
+// exit   t       f       start timer
+// exit   t       t       nop
+// invldt f       a       active = true
+//                        start timer
+// invldt t       f       restart timer
+// invldt t       t       local lock: nop, global lock: listen
+// timer  t       f       show image
+//                        active = false
+// timer  f       a       assert!
+// timer  t       t       assert!
+// lock   a       a       locked = true
+// unlock f       a       nop
+// unlock t       f       if invalid, start timer
 class Tile {
   constructor(parent, key, x, y) {
     this.containerElement = createAndAppendDivWithClass(parent, 'tile');
@@ -159,5 +178,48 @@ class Tile {
       }
     }
     return null;
+  }
+
+  xenter() {
+    this.lock('cursor');
+    this.activate_();
+  }
+
+  xexit() {
+    this.unlock('cursor');
+  }
+
+  xinvalidate() {
+    this.interruptCaching_();
+    this.activate_();
+  }
+
+  xlock(id) {
+    this.locks_.add(id);
+    this.interruptCaching_();
+    this.stopTimer_();
+  }
+
+  xunlock(id) {
+    this.locks_.remove(id);
+    if (this.isActive_ && this.isUnlocked_()) {
+      this.restartTimer_();
+    }
+  }
+
+  xactivate_() {
+    if (!this.isActive_) {
+      this.switchToDom_();
+      this.isActive_ = true;
+    }
+    if (this.isUnlocked_()) {
+      this.restartTimer_();
+    }
+  }
+
+  xrestartTimer_() {
+  }
+
+  xisUnlocked_() {
   }
 }
