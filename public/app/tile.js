@@ -190,21 +190,20 @@ class Tile {
   }
 
   xinvalidate() {
-    this.interruptCaching_();
+    this.interrupted_ = true;
+    this.invalid_ = true;
     this.activate_();
   }
 
   xlock(id) {
     this.locks_.add(id);
-    this.interruptCaching_();
+    this.interrupted_ = true;
     this.stopTimer_();
   }
 
   xunlock(id) {
     this.locks_.remove(id);
-    if (this.isActive_ && this.isUnlocked_()) {
-      this.restartTimer_();
-    }
+    this.restartTimer_();
   }
 
   xactivate_() {
@@ -217,9 +216,30 @@ class Tile {
     }
   }
 
+  xdeactivate_() {
+    this.switchToImage_();
+    this.active_ = false;
+  }
+
   xrestartTimer_() {
+    if (!this.isActive_) return;
+    if (this.locks_.size > 0) return;
+    if (state.theMap.areTilesLocked()) {
+      state.theMap.listenForTileRelease(this.restartTimer_);
+    }
+    if (this.timer_) clearTimeout(this.timer_);
+    this.timer = setTimeout(this.deactivate_, this.getTimerLength_());
   }
 
   xisUnlocked_() {
+    return this.locks_.size == 0 && state.theMap.areTilesLocked();
+  }
+
+  xisInterrupted() {
+    if (this.isInterrupted_) {
+      this.isInterrupted_ = false;
+      return true;
+    }
+    return this.isLocked_();
   }
 }
