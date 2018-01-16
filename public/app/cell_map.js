@@ -16,10 +16,10 @@ class CellMap {
     // For later use.
     this.mapWidth = null;
     this.mapHeight = null;
-    
+
     // Tile state
     this.globalTileLock_ = false;
-    this.tileLockListeners_ = new Set();
+    this.tileLockListeners_ = new Map();
   }
 
   static dividerCellKey(previousRow, previousColumn, nextRow, nextColumn) {
@@ -396,11 +396,11 @@ class CellMap {
     return this.globalTileLock_;
   }
 
-  addTileUnlockListener(listener) {
-    this.tileLockListeners_.add(listener);
+  addTileUnlockListener(id, listener) {
+    this.tileLockListeners_.set(id, listener);
   }
 
-  removeTileUnlockListener(listener) {
-    this.tileLockListeners_.delete(listener);
+  removeTileUnlockListener(id) {
+    this.tileLockListeners_.delete(id);
   }
 }

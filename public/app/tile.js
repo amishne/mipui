@@ -71,7 +71,7 @@ class Tile {
   // has changed.
   invalidate() {
     this.interrupted_ = true;
-    this.imageIsValid_ = true;
+    this.imageIsValid_ = false;
     this.activate_();
   }
 
@@ -111,6 +111,11 @@ class Tile {
   }
 
   cacheImage_() {
+    if (state.theMap.areTilesLocked()) {
+      this.restartTimer_();
+      return;
+    }
+    this.interrupted_ = false;
     const start = performance.now();
     if (this.imageIsValid_) {
       this.deactivate_(start);
@@ -146,7 +151,8 @@ class Tile {
     if (!this.active_) return;
     if (this.locks_.size > 0) return;
     if (state.theMap.areTilesLocked()) {
-      state.theMap.addTileUnlockListener(this.restartTimer_);
+      state.theMap.addTileUnlockListener(this, () => this.restartTimer_());
+      return;
     }
     this.stopTimer_();
     this.timer_ = setTimeout(() => this.cacheImage_(), this.getTimerLength_());
@@ -155,7 +161,7 @@ class Tile {
   stopTimer_() {
     if (this.timer_) {
       clearTimeout(this.timer_);
-      state.theMap.removeTileUnlockListener(this.restartTimer_);
+      state.theMap.removeTileUnlockListener(this);
     }
     this.timer_ = null;
   }
