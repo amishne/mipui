@@ -16,6 +16,10 @@ class CellMap {
     // For later use.
     this.mapWidth = null;
     this.mapHeight = null;
+    
+    // Tile state
+    this.globalTileLock_ = false;
+    this.tileLockListeners_ = new Set();
   }
 
   static dividerCellKey(previousRow, previousColumn, nextRow, nextColumn) {
@@ -376,14 +380,27 @@ class CellMap {
   }
 
   invalidateTiles() {
-    this.tiles.forEach(tile => { tile.activate(); tile.invalidateImage(); });
+    this.tiles.forEach(tile => { tile.invalidate(); });
   }
 
   lockTiles() {
-    this.tiles.forEach(tile => { tile.lock(); });
+    this.globalTileLock_ = true;
   }
 
   unlockTiles() {
-    this.tiles.forEach(tile => { tile.unlock(); });
+    this.globalTileLock_ = false;
+    this.tileLockListeners_.forEach(listener => { listener(); });
+  }
+
+  areTilesLocked() {
+    return this.globalTileLock_;
+  }
+
+  addTileUnlockListener(listener) {
+    this.tileLockListeners_.add(listener);
+  }
+
+  removeTileUnlockListener(listener) {
+    this.tileLockListeners_.delete(listener);
   }
 }

@@ -37,7 +37,6 @@ class Cell {
   }
 
   setLayerContent(layer, content, recordChange) {
-    this.tile.activate();
     const oldContent = this.getLayerContent(layer);
     state.setLayerContent(this.key, layer, content);
     const newContent = this.getLayerContent(layer);
@@ -47,7 +46,7 @@ class Cell {
             .recordCellChange(this.key, layer.id, oldContent, newContent);
       }
       this.updateElements_(layer, oldContent, newContent);
-      this.tile.invalidateImage();
+      this.tile.invalidate();
     }
   }
 
@@ -111,8 +110,7 @@ class Cell {
           replica.verticalTileDistance * (replica.tile.height - 1);
       clone.style.bottom = offsetBottom +
           replica.verticalTileDistance * (replica.tile.height - 1);
-      replica.tile.activate();
-      replica.tile.invalidateImage();
+      replica.tile.invalidate();
       replica.tile.layerElements.get(layer).appendChild(clone);
 
       this.replicatedElements_.get(layer).set(replica.tile, clone);
@@ -360,8 +358,7 @@ class Cell {
     element.parentElement.removeChild(element);
     this.elements_.delete(layer);
     this.replicatedElements_.get(layer).forEach((replicatedElement, tile) => {
-      tile.invalidateImage();
-      tile.activate();
+      tile.invalidate();
       replicatedElement.parentElement.removeChild(replicatedElement);
     });
     this.replicatedElements_.get(layer).clear();
@@ -417,7 +414,7 @@ class Cell {
 
   onMouseEnter(e) {
     if (!state.gesture) return;
-    this.tile.mouseEntered();
+    this.tile.enter();
     if (e.buttons == 0) {
       state.gesture.startHover(this);
     } else if (e.buttons == 1) {
@@ -428,7 +425,7 @@ class Cell {
 
   onMouseLeave(e) {
     if (!state.gesture) return;
-    this.tile.mouseExited();
+    this.tile.exit();
     if (e.buttons == 0) {
       state.gesture.stopHover();
     }
@@ -475,8 +472,7 @@ class Cell {
             replica.horizontalTileDistance * (replica.tile.width - 1);
         baseOffsetBottom +=
             replica.verticalTileDistance * (replica.tile.height - 1);
-        replica.tile.invalidateImage();
-        replica.tile.activate();
+        replica.tile.invalidate();
       }
     });
     element.style.right =
@@ -556,8 +552,7 @@ class Cell {
   }
 
   showHighlight(layer, content) {
-    this.tile.activate();
-    this.tile.lock();
+    this.tile.lock('highlight');
     const existingContent = this.getLayerContent(layer);
     const action = existingContent && content ? 'editing' :
       (existingContent ? 'removing' : 'adding');
@@ -581,7 +576,7 @@ class Cell {
   }
 
   hideHighlight(layer) {
-    this.tile.unlock();
+    this.tile.unlock('highlight');
     this.updateLayerElementsToCurrentContent_(layer);
   }
 }

@@ -1,69 +1,46 @@
-// Tile Actions
-//   enter()
-//     Called when the cursor enters the tile
-//   exit()
-//     Called when the cursor leaves the tile
-//   invalidate()
-//     Called when an element that this tile contains (directly or as a replica)
-//     has changed.
-//   lock()
-//     Called when we want to prevent this tile from being cached.
-//   unlock()
-//     Called when we no longer want to prevent caching of this tile.
-// Action active? locked? Result
-// enter  f       a       show dom
-//                        active = true
-//                        locked = true
-// enter  t       a       locked = true
-// exit   f       a       assert!
-// exit   t       f       start timer
-// exit   t       t       nop
-// invldt f       a       active = true
-//                        start timer
-// invldt t       f       restart timer
-// invldt t       t       local lock: nop, global lock: listen
-// timer  t       f       show image
-//                        active = false
-// timer  f       a       assert!
-// timer  t       t       assert!
-// lock   a       a       locked = true
-// unlock f       a       nop
-// unlock t       f       if invalid, start timer
 class Tile {
   constructor(parent, key, x, y) {
-    this.containerElement = createAndAppendDivWithClass(parent, 'tile');
+    // Elements
+    this.containerElement_ = createAndAppendDivWithClass(parent, 'tile');
     this.mapElement =
-        createAndAppendDivWithClass(this.containerElement, 'tile-map');
-    this.imageElement = document.createElement('img');
-    this.imageElement.className = 'tile-image';
-    this.imageElement.addEventListener('mouseenter', () => this.mouseEntered());
-    this.containerElement.appendChild(this.imageElement);
+        createAndAppendDivWithClass(this.containerElement_, 'tile-map');
+    this.imageElement_ = document.createElement('img');
+    this.imageElement_.className = 'tile-image';
+    this.imageElement_.addEventListener('mouseenter', () => this.enter());
+    this.containerElement_.appendChild(this.imageElement_);
     this.gridLayer = createAndAppendDivWithClass(this.mapElement, 'grid-layer');
-    this.cells = [];
+
+    // Identity and content
     this.key = key;
-    this.x = x;
-    this.y = y;
-    this.dimensionsInitialized = false;
+    this.cells = [];
     this.layerElements = new Map();
     this.firstCell = null;
     this.lastCell = null;
+
+    // Geometry
+    this.x = x;
+    this.y = y;
+    this.dimensionsInitialized_ = false;
     this.left = null;
     this.right = null;
     this.top = null;
     this.bottom = null;
-    this.active = false;
-    this.deactivationTimer = null;
-    this.isImageReady = false;
-    this.locked = false;
+
+    // Status
+    this.active_ = false;
+    this.interrupted_ = false;
+    this.imageIsValid_ = false;
+    this.timer_ = null;
+    this.locks_ = new Set();
   }
 
   initializeDimensions(left, top) {
-    if (this.dimensionsInitialized) return;
-    this.dimensionsInitialized = true;
+    if (this.dimensionsInitialized_) return;
+    this.dimensionsInitialized_ = true;
     this.left = left;
     this.top = top;
-    this.containerElement.style.left = left;
-    this.containerElement.style.top = top;
+    this.containerElement_.style.left = left;
+    this.containerElement_.style.top = top;
   }
 
   finalizeDimensions() {
@@ -72,100 +49,132 @@ class Tile {
     this.bottom = this.lastCell.offsetBottom;
     this.width = 1 + this.lastCell.offsetLeft + this.lastCell.width - this.left;
     this.height = 1 + this.lastCell.offsetTop + this.lastCell.height - this.top;
-    this.containerElement.style.width = this.width;
-    this.containerElement.style.height = this.height;
+    this.containerElement_.style.width = this.width;
+    this.containerElement_.style.height = this.height;
 
-    this.active = true;
-    this.deactivate();
+    this.active_ = true;
+    this.cacheImage_();
   }
 
-  mouseEntered() {
-    this.activate();
+  // Called when the cursor enters the tile
+  enter() {
+    this.lock('cursor');
+    this.activate_();
   }
 
-  mouseExited() {
-    this.markForDeactivation();
+  // Called when the cursor leaves the tile
+  exit() {
+    this.unlock('cursor');
   }
 
-  invalidateImage() {
-    this.isImageReady = false;
+  // Called when an element that this tile contains (directly or as a replica)
+  // has changed.
+  invalidate() {
+    this.interrupted_ = true;
+    this.imageIsValid_ = true;
+    this.activate_();
   }
 
-  activate() {
-    if (this.active) return;
-    this.active = true;
-    this.containerElement.appendChild(this.mapElement);
-    this.imageElement.style.visibility = 'hidden';
-    this.containerElement.style.filter = '';
-    clearTimeout(this.deactivationTimer);
-    this.deactivationTimer = null;
-    debug(`Tile ${this.key} activated.`);
-    this.markForDeactivation();
+  // Called when we want to prevent this tile from being cached.
+  lock(id) {
+    this.locks_.add(id);
+    this.interrupted_ = true;
+    this.stopTimer_();
   }
 
-  markForDeactivation() {
-    if (this.deactivationTimer || this.locked) return;
-    this.deactivationTimer = setTimeout(() => {
-      window.requestAnimationFrame(() => {
-        this.deactivate();
-        this.deactivationTimer = null;
-      });
-    }, 4000 + Math.random() * 2000);
+  // Called when we no longer want to prevent caching of this tile.
+  unlock(id) {
+    this.locks_.delete(id);
+    this.restartTimer_();
   }
 
-  deactivate() {
-    if (!this.active || this.locked) return;
-    this.active = false;
-    debug(`Tile ${this.key} deactivated.`);
+  activate_() {
+    if (!this.active_) {
+      this.containerElement_.appendChild(this.mapElement);
+      this.imageElement_.style.visibility = 'hidden';
+      // Debug only:
+      this.containerElement_.style.filter = '';
+      debug(`Tile ${this.key} activated.`);
+      this.active_ = true;
+    }
+    this.restartTimer_();
+  }
 
+  deactivate_(start) {
+    this.containerElement_.removeChild(this.mapElement);
+    this.imageElement_.style.visibility = 'visible';
+    this.containerElement_.style.filter = 'grayscale(1)';
+    this.imageIsValid_ = true;
+    this.active_ = false;
+    const duration = Math.ceil(performance.now() - start);
+    console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
+  }
+
+  cacheImage_() {
     const start = performance.now();
-    if (this.isImageReady) {
-      this.deactivationComplete(start);
+    if (this.imageIsValid_) {
+      this.deactivate_(start);
       return;
     }
-    const imageFromTheme = this.getImageFromTheme();
+    const imageFromTheme = this.getImageFromTheme_();
     if (imageFromTheme) {
-      this.imageElement.src = imageFromTheme;
-      this.deactivationComplete(start);
+      this.imageElement_.src = imageFromTheme;
+      this.deactivate_(start);
       return;
     }
     domtoimage.toPng(this.mapElement, {
-      width: this.containerElement.clientWidth,
-      height: this.containerElement.clientHeight,
+      width: this.containerElement_.clientWidth,
+      height: this.containerElement_.clientHeight,
       filter: node => node.style.visibility != 'hidden' &&
           !node.classList.contains('grid-layer'),
       scale: 6, // Maximum zoom level
       responsive: true,
-      isInterrupted: () => this.active,
+      isInterrupted: () => this.isInterrupted_(),
       disableSmoothing: true,
     }).then(dataUrl => {
-      if (this.active || this.locked) return;
-      this.imageElement.src = dataUrl;
-      this.deactivationComplete(start);
+      // Local locks already interrupt, so it's only global locks we have to
+      // worry about.
+      if (state.theMap.areTilesLocked()) return;
+      this.imageElement_.src = dataUrl;
+      this.deactivate_(start);
     }).catch(reason => {
       debug(`Tile ${this.key} caching failed: ${reason}.`);
     });
   }
 
-  deactivationComplete(deactivationStartTime) {
-    const duration = Math.ceil(performance.now() - deactivationStartTime);
-    console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
-    this.containerElement.removeChild(this.mapElement);
-    this.isImageReady = true;
-    this.imageElement.style.visibility = 'visible';
-    this.containerElement.style.filter = 'grayscale(1)';
+  restartTimer_() {
+    if (!this.active_) return;
+    if (this.locks_.size > 0) return;
+    if (state.theMap.areTilesLocked()) {
+      state.theMap.addTileUnlockListener(this.restartTimer_);
+    }
+    this.stopTimer_();
+    this.timer_ = setTimeout(() => this.cacheImage_(), this.getTimerLength_());
   }
 
-  lock() {
-    this.locked = true;
+  stopTimer_() {
+    if (this.timer_) {
+      clearTimeout(this.timer_);
+      state.theMap.removeTileUnlockListener(this.restartTimer_);
+    }
+    this.timer_ = null;
   }
 
-  unlock() {
-    this.locked = false;
-    this.markForDeactivation();
+  isInterrupted_() {
+    if (this.interrupted_) {
+      this.interrupted_ = false;
+      return true;
+    }
+    // Local locks already interrupt, so it's only global locks we have to
+    // worry about.
+    return state.theMap.areTilesLocked();
   }
 
-  getImageFromTheme() {
+  getTimerLength_() {
+    return 4000 + Math.random() * 2000;
+  }
+
+  getImageFromTheme_() {
     const emptyTile5Src = themes[state.getProperty(pk.theme)].emptyTile5Src;
     if (emptyTile5Src) {
       const emptyTile = this.cells.every(
@@ -178,68 +187,5 @@ class Tile {
       }
     }
     return null;
-  }
-
-  xenter() {
-    this.lock('cursor');
-    this.activate_();
-  }
-
-  xexit() {
-    this.unlock('cursor');
-  }
-
-  xinvalidate() {
-    this.interrupted_ = true;
-    this.invalid_ = true;
-    this.activate_();
-  }
-
-  xlock(id) {
-    this.locks_.add(id);
-    this.interrupted_ = true;
-    this.stopTimer_();
-  }
-
-  xunlock(id) {
-    this.locks_.remove(id);
-    this.restartTimer_();
-  }
-
-  xactivate_() {
-    if (!this.isActive_) {
-      this.switchToDom_();
-      this.isActive_ = true;
-    }
-    if (this.isUnlocked_()) {
-      this.restartTimer_();
-    }
-  }
-
-  xdeactivate_() {
-    this.switchToImage_();
-    this.active_ = false;
-  }
-
-  xrestartTimer_() {
-    if (!this.isActive_) return;
-    if (this.locks_.size > 0) return;
-    if (state.theMap.areTilesLocked()) {
-      state.theMap.listenForTileRelease(this.restartTimer_);
-    }
-    if (this.timer_) clearTimeout(this.timer_);
-    this.timer = setTimeout(this.deactivate_, this.getTimerLength_());
-  }
-
-  xisUnlocked_() {
-    return this.locks_.size == 0 && state.theMap.areTilesLocked();
-  }
-
-  xisInterrupted() {
-    if (this.isInterrupted_) {
-      this.isInterrupted_ = false;
-      return true;
-    }
-    return this.isLocked_();
   }
 }
