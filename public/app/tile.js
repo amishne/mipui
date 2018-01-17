@@ -12,19 +12,21 @@ class Tile {
 
     // Identity and content
     this.key = key;
+    this.x = x;
+    this.y = y;
     this.cells = [];
     this.layerElements = new Map();
     this.firstCell = null;
     this.lastCell = null;
 
     // Geometry
-    this.x = x;
-    this.y = y;
     this.dimensionsInitialized_ = false;
     this.left = null;
     this.right = null;
     this.top = null;
     this.bottom = null;
+    this.width = null;
+    this.height = null;
 
     // Status
     this.active_ = false;
@@ -92,8 +94,7 @@ class Tile {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
       this.imageElement_.style.visibility = 'hidden';
-      // Debug only:
-      this.containerElement_.style.filter = '';
+      // this.containerElement_.style.filter = '';
       debug(`Tile ${this.key} activated.`);
       this.active_ = true;
     }
@@ -103,7 +104,7 @@ class Tile {
   deactivate_(start) {
     this.containerElement_.removeChild(this.mapElement);
     this.imageElement_.style.visibility = 'visible';
-    this.containerElement_.style.filter = 'grayscale(1)';
+    // this.containerElement_.style.filter = 'grayscale(1)';
     this.imageIsValid_ = true;
     this.active_ = false;
     const duration = Math.ceil(performance.now() - start);
@@ -124,12 +125,14 @@ class Tile {
     const imageFromTheme = this.getImageFromTheme_();
     if (imageFromTheme) {
       this.imageElement_.src = imageFromTheme;
+      this.imageElement_.width = 161;
+      this.imageElement_.height = 161;
       this.deactivate_(start);
       return;
     }
     domtoimage.toPng(this.mapElement, {
-      width: this.containerElement_.clientWidth,
-      height: this.containerElement_.clientHeight,
+      width: this.width,
+      height: this.height,
       filter: node => node.style.visibility != 'hidden' &&
           !node.classList.contains('grid-layer'),
       scale: 6, // Maximum zoom level
@@ -141,6 +144,8 @@ class Tile {
       // worry about.
       if (state.theMap.areTilesLocked()) return;
       this.imageElement_.src = dataUrl;
+      this.imageElement_.style.width = this.width;
+      this.imageElement_.style.height = this.height;
       this.deactivate_(start);
     }).catch(reason => {
       debug(`Tile ${this.key} caching failed: ${reason}.`);

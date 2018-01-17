@@ -32,8 +32,6 @@
 
 .tile-image {
   position: absolute;
-  width: 161px;
-  height: 161px;
   bottom: 0;
   right: 0;
   visibility: hidden;
