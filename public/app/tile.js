@@ -148,13 +148,13 @@ class Tile {
   }
 
   restartTimer_() {
+    this.stopTimer_();
     if (!this.active_) return;
     if (this.locks_.size > 0) return;
     if (state.theMap.areTilesLocked()) {
       state.theMap.addTileUnlockListener(this, () => this.restartTimer_());
       return;
     }
-    this.stopTimer_();
     this.timer_ = setTimeout(() => this.cacheImage_(), this.getTimerLength_());
   }
 
