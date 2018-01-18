@@ -1,3 +1,7 @@
+.the-map {
+  background-color: white;
+}
+
 .walls-layer {
   filter: initial;
 }
