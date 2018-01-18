@@ -67,6 +67,7 @@ const themes = [
       'themes/dark/style.css',
     ],
     menuIconFile: 'themes/dark/menu_icons.png',
+    emptyTile5Src: 'themes/dark/empty_tile5.png',
   },
   {
     name: 'Cross Hatch (with grid)',
