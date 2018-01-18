@@ -102,14 +102,11 @@ class Cell {
     elements.push(element);
     this.getReplicas_(layer, content).forEach(replica => {
       const clone = element.cloneNode(true);
-      clone.style.left = offsetLeft -
-          replica.horizontalTileDistance * replica.tile.width;
-      clone.style.right = offsetRight +
-          replica.horizontalTileDistance * replica.tile.width;
-      clone.style.top = offsetTop -
-          replica.verticalTileDistance * replica.tile.height;
-      clone.style.bottom = offsetBottom +
-          replica.verticalTileDistance * replica.tile.height;
+      clone.style.left = offsetLeft + replica.offsetLeft;
+      clone.style.right = offsetRight + replica.offsetRight;
+      clone.style.top = offsetTop + replica.offsetTop;
+      clone.style.bottom = offsetBottom + replica.offsetBottom;
+
       replica.tile.invalidate();
       replica.tile.layerElements.get(layer).appendChild(clone);
 
@@ -121,6 +118,7 @@ class Cell {
 
   getReplicas_(layer, content) {
     const replicas = [];
+    if (!content) return replicas;
     const endCellKey = content[ck.endCell];
     if (endCellKey) {
       // This is a multi-cell content. Add all tiles between this cell and the
@@ -138,6 +136,7 @@ class Cell {
         }
       }
     }
+
     if (layer == ct.walls) {
       // Because walls cast shadows, any wall on the tile edge gets the
       // neighboring tiles as replicas.
@@ -172,6 +171,49 @@ class Cell {
         });
       });
     }
+
+    if (layer == ct.shapes && this.role == 'corner') {
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          if (x == 0 && y == 0) continue;
+          const tile = state.theMap.tiles.get(x + ',' + y);
+          if (!tile) continue;
+          replicas.push({
+            tile,
+            horizontalTileDistance: this.tile.x + x,
+            verticalTileDistance: this.tile.y + y,
+          });
+        }
+      }
+    }
+
+    // Set offsets on replicas.
+    replicas.forEach(replica => {
+      replica.offsetLeft = 0;
+      replica.offsetRight = 0;
+      replica.offsetTop = 0;
+      replica.offsetBottom = 0;
+      for (let x = this.tile.x; x < replica.tile.x; x++) {
+        const tile = state.theMap.tiles.get(x + ',0');
+        replica.offsetLeft -= tile.width;
+        replica.offsetRight += tile.width;
+      }
+      for (let x = replica.tile.x; x < this.tile.x; x++) {
+        const tile = state.theMap.tiles.get(x + ',0');
+        replica.offsetLeft += tile.width;
+        replica.offsetRight -= tile.width;
+      }
+      for (let y = this.tile.y; y < replica.tile.y; y++) {
+        const tile = state.theMap.tiles.get('0,' + y);
+        replica.offsetTop -= tile.height;
+        replica.offsetBottom += tile.height;
+      }
+      for (let y = replica.tile.y; y < this.tile.y; y++) {
+        const tile = state.theMap.tiles.get('0,' + y);
+        replica.offsetTop += tile.height;
+        replica.offsetBottom -= tile.height;
+      }
+    });
     return replicas;
   }
 
