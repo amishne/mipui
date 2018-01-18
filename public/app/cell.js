@@ -126,8 +126,8 @@ class Cell {
       // This is a multi-cell content. Add all tiles between this cell and the
       // end cell (excluding the current tile) as replicas.
       const endCell = state.theMap.cells.get(endCellKey);
-      for (let x = this.tile.x; x < endCell.tile.x; x++) {
-        for (let y = this.tile.y; y < endCell.tile.y; y++) {
+      for (let x = this.tile.x; x <= endCell.tile.x; x++) {
+        for (let y = this.tile.y; y <= endCell.tile.y; y++) {
           if (x != this.tile.x || y != this.tile.y) {
             replicas.push({
               tile: state.theMap.tiles.get(x + ',' + y),
