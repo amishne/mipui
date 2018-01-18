@@ -271,7 +271,7 @@ class Menu {
     const {x, y, size} = iconMapRect;
     const scale = 30 / size;
     item.element.style.backgroundImage =
-        `url("${state.getMenuIconFile()}")`;
+        `url("${state.currentTheme.menuIconFile}")`;
     item.element.style.backgroundPosition =
         `-${x * scale}px -${y * scale}px`;
     item.element.style.backgroundSize = `${716 * scale}px ${376 * scale}px`;

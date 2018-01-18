@@ -53,7 +53,9 @@ class State {
 
     this.clipboard = null;
 
-    this.appliedTheme_ = null;
+    this.currentTheme = themes[0];
+
+    this.appliedThemeElements_ = [];
 
     this.lastUsedSvg = null;
 
@@ -140,40 +142,31 @@ class State {
   }
 
   reloadTheme() {
-    const newNum = this.getProperty(pk.theme);
-    if (this.appliedTheme_ == null && newNum == 0) return;
-    if (this.appliedTheme_ && this.appliedTheme_.num == newNum) return;
-    const newTheme = themes.find(theme => theme.propertyIndex == newNum);
-    if (this.appliedTheme_) {
-      this.appliedTheme_.elements.forEach(element => {
-        element.parentNode.removeChild(element);
-      });
-    }
-    this.appliedTheme_ = {elements: [], num: newNum};
+    const newPropertyIndex = this.getProperty(pk.theme);
+    if (this.currentTheme.propertyIndex == newPropertyIndex) return;
+    this.currentTheme =
+        themes.find(theme => theme.propertyIndex == newPropertyIndex);
+
+    this.appliedThemeElements_.forEach(element => {
+      element.parentNode.removeChild(element);
+    });
+    this.appliedThemeElements_ = [];
     const head = document.getElementsByTagName('head')[0];
-    newTheme.files.forEach(file => {
+    this.currentTheme.files.forEach(file => {
       const css = document.createElement('link');
       css.type = 'text/css';
       css.rel = 'stylesheet';
       css.href = file;
       head.appendChild(css);
-      this.appliedTheme_.elements.push(css);
+      this.appliedThemeElements_.push(css);
     });
-    this.appliedTheme_.menuIconFile = newTheme.menuIconFile;
     const menuIconsFromMap =
         Array.from(document.getElementsByClassName('menu-icon-from-map'));
     menuIconsFromMap.forEach(menuIconFromMap => {
       menuIconFromMap.style.backgroundImage =
-          `url("${this.getMenuIconFile()}")`;
+          `url("${this.currentTheme.menuIconFile}")`;
     });
     this.theMap.invalidateTiles();
-  }
-
-  getMenuIconFile() {
-    if (!this.appliedTheme_ || !this.appliedTheme_.menuIconFile) {
-      return 'themes/beige_land/menu_icons.png';
-    }
-    return this.appliedTheme_.menuIconFile;
   }
 
   setMid(mid) {

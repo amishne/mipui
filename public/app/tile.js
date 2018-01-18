@@ -187,7 +187,7 @@ class Tile {
   }
 
   getImageFromTheme_() {
-    const emptyTile5Src = themes[state.getProperty(pk.theme)].emptyTile5Src;
+    const emptyTile5Src = state.currentTheme.emptyTile5Src;
     if (emptyTile5Src) {
       const emptyTile = this.cells.every(
           cell => ct.children.every(
