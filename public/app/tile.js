@@ -49,8 +49,8 @@ class Tile {
     if (!this.lastCell) return;
     this.right = this.lastCell.offsetRight;
     this.bottom = this.lastCell.offsetBottom;
-    this.width = 1 + this.lastCell.offsetLeft + this.lastCell.width - this.left;
-    this.height = 1 + this.lastCell.offsetTop + this.lastCell.height - this.top;
+    this.width = this.lastCell.offsetLeft + this.lastCell.width - this.left;
+    this.height = this.lastCell.offsetTop + this.lastCell.height - this.top;
     this.containerElement_.style.width = this.width;
     this.containerElement_.style.height = this.height;
 
@@ -183,7 +183,7 @@ class Tile {
   }
 
   getTimerLength_() {
-    return 4000 + Math.random() * 2000;
+    return 40000000 + Math.random() * 2000;
   }
 
   getImageFromTheme_() {

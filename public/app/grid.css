@@ -44,9 +44,6 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  border-left: 1px solid;
-  border-top: 1px solid;
-  border-color: rgba(0, 0, 0, 0);
   background-clip: padding-box;
   pointer-events: none;
   /* Clip to tile, including the drop-shadow effect. */
@@ -445,7 +442,6 @@
   border-right: 1px solid;
   border-bottom: 1px solid;
   border-color: bisque;
-  box-shadow: 0 0 0 0.3px bisque;
 }
 
 /* hsl(60, 23.8, 79.4) */

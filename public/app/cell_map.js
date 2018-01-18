@@ -178,7 +178,7 @@ class CellMap {
 
   createCell_(parent, role, key, row, column) {
     const tile = this.getOrCreateTile(parent, column, row);
-    tile.initializeDimensions(this.currX + 1, this.currY + 1);
+    tile.initializeDimensions(this.currX, this.currY);
     const element =
         createAndAppendDivWithClass(tile.gridLayer, `grid-cell ${role}-cell`);
     const cell = new Cell(key, role, element, tile);

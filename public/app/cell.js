@@ -103,13 +103,13 @@ class Cell {
     this.getReplicas_(layer, content).forEach(replica => {
       const clone = element.cloneNode(true);
       clone.style.left = offsetLeft -
-          replica.horizontalTileDistance * (replica.tile.width - 1);
+          replica.horizontalTileDistance * replica.tile.width;
       clone.style.right = offsetRight +
-          replica.horizontalTileDistance * (replica.tile.width - 1);
+          replica.horizontalTileDistance * replica.tile.width;
       clone.style.top = offsetTop -
-          replica.verticalTileDistance * (replica.tile.height - 1);
+          replica.verticalTileDistance * replica.tile.height;
       clone.style.bottom = offsetBottom +
-          replica.verticalTileDistance * (replica.tile.height - 1);
+          replica.verticalTileDistance * replica.tile.height;
       replica.tile.invalidate();
       replica.tile.layerElements.get(layer).appendChild(clone);
 
@@ -142,16 +142,25 @@ class Cell {
       // Because walls cast shadows, any wall on the tile edge gets the
       // neighboring tiles as replicas.
       [
-        {name: 'left', edge: 'offsetLeft', x: -1, y: 0},
-        {name: 'right', edge: 'offsetRight', x: 1, y: 0},
-        {name: 'top', edge: 'offsetTop', x: 0, y: -1},
-        {name: 'bottom', edge: 'offsetBottom', x: 0, y: 1},
+        {name: 'left', edges: ['offsetLeft'], x: -1, y: 0},
+        {name: 'right', edges: ['offsetRight'], x: 1, y: 0},
+        {name: 'top', edges: ['offsetTop'], x: 0, y: -1},
+        {name: 'bottom', edges: ['offsetBottom'], x: 0, y: 1},
+        {name: 'top-left', edges: ['offsetTop', 'offsetLeft'], x: -1, y: -1},
+        {name: 'top-right', edges: ['offsetTop', 'offsetRight'], x: 1, y: -1},
+        {name: 'bottom-left', edges: ['offsetBottom', 'offsetLeft'],
+          x: -1, y: 1},
+        {name: 'bottom-right', edges: ['offsetBottom', 'offsetRight'],
+          x: 1, y: 1},
       ].forEach(dir => {
-        if (this[dir.edge] != this.tile[dir.name]) return;
+        for (let i = 0; i < dir.edges.length; i++) {
+          if (this[dir.edges[i]] != this.tile[dir.name.split('-')[i]]) return;
+        }
         // This cell is on the tile edge.
         const getPrimary =
             (this.role == 'vertical' && dir.x != 0) ||
-            (this.role == 'horizontal' && dir.y != 0);
+            (this.role == 'horizontal' && dir.y != 0) ||
+            (this.role == 'corner' && dir.x != 0 && dir.y != 0);
         const neighborCell = this.getNeighbor(dir.name, !getPrimary);
         if (!neighborCell) return;
         // If a cell exists to the direction, and the current cell is on the
