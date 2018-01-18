@@ -176,12 +176,13 @@ class Cell {
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
           if (x == 0 && y == 0) continue;
-          const tile = state.theMap.tiles.get(x + ',' + y);
+          const tile = state.theMap.tiles.get(
+              (this.tile.x + x) + ',' + (this.tile.y + y));
           if (!tile) continue;
           replicas.push({
             tile,
-            horizontalTileDistance: this.tile.x + x,
-            verticalTileDistance: this.tile.y + y,
+            horizontalTileDistance: x,
+            verticalTileDistance: y,
           });
         }
       }
