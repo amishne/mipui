@@ -469,9 +469,9 @@ class Cell {
           element == this.replicatedElements_.get(layer).get(replica.tile)) {
         // This element is a replica.
         baseOffsetRight +=
-            replica.horizontalTileDistance * (replica.tile.width - 1);
+            replica.horizontalTileDistance * replica.tile.width;
         baseOffsetBottom +=
-            replica.verticalTileDistance * (replica.tile.height - 1);
+            replica.verticalTileDistance * replica.tile.height;
         replica.tile.invalidate();
       }
     });

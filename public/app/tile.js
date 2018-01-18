@@ -102,6 +102,7 @@ class Tile {
   }
 
   deactivate_(start) {
+    if (!this.active_) return;
     this.containerElement_.removeChild(this.mapElement);
     this.imageElement_.style.visibility = 'visible';
     // this.containerElement_.style.filter = 'grayscale(1)';
@@ -125,8 +126,8 @@ class Tile {
     const imageFromTheme = this.getImageFromTheme_();
     if (imageFromTheme) {
       this.imageElement_.src = imageFromTheme;
-      this.imageElement_.width = 161;
-      this.imageElement_.height = 161;
+      this.imageElement_.width = 160;
+      this.imageElement_.height = 160;
       this.deactivate_(start);
       return;
     }

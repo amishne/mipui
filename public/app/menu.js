@@ -1812,7 +1812,7 @@ class Menu {
             text: '(1,1) tile img',
             enabledInReadonlyMode: true,
             callback: () => {
-              const dataUrl = state.theMap.tiles.get('1,1').imageElement.src;
+              const dataUrl = state.theMap.tiles.get('1,1').imageElement_.src;
               window.open().document.write('<img src="' + dataUrl + '"/>');
             },
           },
