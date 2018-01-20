@@ -102,9 +102,11 @@ class Cell {
     elements.push(element);
     this.getReplicas_(layer, content).forEach(replica => {
       const clone = element.cloneNode(true);
-      clone.style.left = offsetLeft + replica.offsetLeft;
+      const tileWidthDiff = replica.tile.width - this.tile.width;
+      const tileHeightDiff = replica.tile.height - this.tile.height;
+      clone.style.left = offsetLeft + replica.offsetLeft + tileWidthDiff;
       clone.style.right = offsetRight + replica.offsetRight;
-      clone.style.top = offsetTop + replica.offsetTop;
+      clone.style.top = offsetTop + replica.offsetTop + tileHeightDiff;
       clone.style.bottom = offsetBottom + replica.offsetBottom;
 
       replica.tile.invalidate();
@@ -127,11 +129,7 @@ class Cell {
       for (let x = this.tile.x; x <= endCell.tile.x; x++) {
         for (let y = this.tile.y; y <= endCell.tile.y; y++) {
           if (x != this.tile.x || y != this.tile.y) {
-            replicas.push({
-              tile: state.theMap.tiles.get(x + ',' + y),
-              horizontalTileDistance: x - this.tile.x,
-              verticalTileDistance: y - this.tile.y,
-            });
+            replicas.push({tile: state.theMap.tiles.get(x + ',' + y)});
           }
         }
       }
@@ -166,11 +164,7 @@ class Cell {
             CellMap.cellKey(this.row + dir.y, this.column + dir.x));
         if (!neighborCell) return;
         if (neighborCell.tile == this.tile) return;
-        replicas.push({
-          tile: neighborCell.tile,
-          horizontalTileDistance: dir.x,
-          verticalTileDistance: dir.y,
-        });
+        replicas.push({tile: neighborCell.tile});
       });
     }
 
@@ -181,11 +175,7 @@ class Cell {
           const tile = state.theMap.tiles.get(
               (this.tile.x + x) + ',' + (this.tile.y + y));
           if (!tile) continue;
-          replicas.push({
-            tile,
-            horizontalTileDistance: x,
-            verticalTileDistance: y,
-          });
+          replicas.push({tile});
         }
       }
     }
@@ -522,10 +512,8 @@ class Cell {
           this.replicatedElements_.get(layer).has(replica.tile) &&
           element == this.replicatedElements_.get(layer).get(replica.tile)) {
         // This element is a replica.
-        baseOffsetRight +=
-            replica.horizontalTileDistance * replica.tile.width;
-        baseOffsetBottom +=
-            replica.verticalTileDistance * replica.tile.height;
+        baseOffsetRight += replica.offsetRight;
+        baseOffsetBottom += replica.offsetBottom;
         replica.tile.invalidate();
       }
     });
