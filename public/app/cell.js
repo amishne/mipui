@@ -163,7 +163,7 @@ class Cell {
         }
         // This cell is on the tile edge.
         const neighborCell = state.theMap.cells.get(
-            CellMap.cellKey(this.column + dir.x, this.row + dir.y));
+            CellMap.cellKey(this.row + dir.y, this.column + dir.x));
         if (!neighborCell) return;
         if (neighborCell.tile == this.tile) return;
         replicas.push({

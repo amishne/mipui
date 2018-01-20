@@ -183,7 +183,7 @@ class Tile {
   }
 
   getTimerLength_() {
-    return 40000000 + Math.random() * 2000;
+    return 4000 + Math.random() * 2000;
   }
 
   getImageFromTheme_() {
