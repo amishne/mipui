@@ -140,6 +140,10 @@ class Cell {
     if (layer == ct.walls) {
       // Because walls cast shadows, any wall on the tile edge gets the
       // neighboring tiles as replicas.
+      // This applies to walls not immediately on the tile edge if those are
+      // angled walls, since they overflow.
+      const maxDistanceFromEdgeForReplication =
+          content[ck.variation] == ct.walls.smooth.angled.id ? 7 : 0;
       [
         {name: 'left', edges: ['offsetLeft'], x: -1, y: 0},
         {name: 'right', edges: ['offsetRight'], x: 1, y: 0},
@@ -153,17 +157,15 @@ class Cell {
           x: 1, y: 1},
       ].forEach(dir => {
         for (let i = 0; i < dir.edges.length; i++) {
-          if (this[dir.edges[i]] != this.tile[dir.name.split('-')[i]]) return;
+          const distanceFromEdge =
+              Math.abs(this[dir.edges[i]] - this.tile[dir.name.split('-')[i]]);
+          if (distanceFromEdge > maxDistanceFromEdgeForReplication) return;
         }
         // This cell is on the tile edge.
-        const getPrimary =
-            (this.role == 'vertical' && dir.x != 0) ||
-            (this.role == 'horizontal' && dir.y != 0) ||
-            (this.role == 'corner' && dir.x != 0 && dir.y != 0);
-        const neighborCell = this.getNeighbor(dir.name, !getPrimary);
+        const neighborCell = state.theMap.cells.get(
+            CellMap.cellKey(this.column + dir.x, this.row + dir.y));
         if (!neighborCell) return;
-        // If a cell exists to the direction, and the current cell is on the
-        // edge, it must belong to a different tile.
+        if (neighborCell.tile == this.tile) return;
         replicas.push({
           tile: neighborCell.tile,
           horizontalTileDistance: dir.x,
@@ -194,7 +196,7 @@ class Cell {
       replica.offsetRight = 0;
       replica.offsetTop = 0;
       replica.offsetBottom = 0;
-      for (let x = this.tile.x; x < replica.tile.x; x++) {
+      for (let x = this.tile.x + 1; x <= replica.tile.x; x++) {
         const tile = state.theMap.tiles.get(x + ',0');
         replica.offsetLeft -= tile.width;
         replica.offsetRight += tile.width;
@@ -204,7 +206,7 @@ class Cell {
         replica.offsetLeft += tile.width;
         replica.offsetRight -= tile.width;
       }
-      for (let y = this.tile.y; y < replica.tile.y; y++) {
+      for (let y = this.tile.y + 1; y <= replica.tile.y; y++) {
         const tile = state.theMap.tiles.get('0,' + y);
         replica.offsetTop -= tile.height;
         replica.offsetBottom += tile.height;
