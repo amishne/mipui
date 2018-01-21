@@ -60,8 +60,8 @@ class TextGesture extends BoxGesture {
   }
 
   setInputGeometry_(inputElement, startCell, initialContent) {
-    const startCellElements =
-        startCell.getOrCreateLayerElements(this.getLayer_(), initialContent);
+    const startCellElements = startCell.getOrCreateLayerElements(
+        this.getLayer_(), initialContent, false);
     if (startCellElements.length == 0) return;
     const startCellElement = startCellElements[0];
     inputElement.style.fontSize = startCellElement.style.fontSize;

@@ -348,7 +348,7 @@ class BoxGesture extends Gesture {
         this.startCell_.offsetTop - this.startCell_.offsetTop;
     const layerElements =
         this.startCell_.getOrCreateLayerElements(
-            this.getLayer_(), this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_(), true);
     this.hoverWidget_.style.width = layerElements[0].scrollWidth;
     this.hoverWidget_.style.height = layerElements[0].scrollHeight;
     this.hoverWidget_.onmousedown = e => {
@@ -375,7 +375,7 @@ class BoxGesture extends Gesture {
         this.startCell_.gridElement, this.getDeleteWidgetCssClassName_());
     const layerElements =
         this.startCell_.getOrCreateLayerElements(
-            this.getLayer_(), this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_(), true);
     this.deleteWidget_.style.left = layerElements[0].scrollWidth;
     const deleteGesture = this.createNewGesture_();
     deleteGesture.mode_ = 'removing';
@@ -419,7 +419,7 @@ class BoxGesture extends Gesture {
         this.startCell_.gridElement, this.getResizeWidgetCssClassName_());
     const layerElements =
         this.startCell_.getOrCreateLayerElements(
-            this.getLayer_(), this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_(), true);
     this.resizeWidget_.style.left = layerElements[0].scrollWidth;
     this.resizeWidget_.style.top = layerElements[0].scrollHeight;
     this.resizeWidget_.onmousedown = e => {
@@ -449,7 +449,7 @@ class BoxGesture extends Gesture {
     this.moveWidget_ = createAndAppendDivWithClass(
         this.startCell_.gridElement, this.getMoveWidgetCssClassName_());
     this.startCell_.getOrCreateLayerElements(
-        this.getLayer_(), this.createStartCellContent_());
+        this.getLayer_(), this.createStartCellContent_(), true);
     this.moveWidget_.onmousedown = e => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();
@@ -491,7 +491,7 @@ class BoxGesture extends Gesture {
         this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
     const layerElements =
         this.startCell_.getOrCreateLayerElements(
-            this.getLayer_(), this.createStartCellContent_());
+            this.getLayer_(), this.createStartCellContent_(), true);
     this.inputElement_ = this.createInputElement_();
     this.inputElement_.style.width = layerElements[0].offsetWidth + 2;
     this.inputElement_.style.height = layerElements[0].offsetHeight + 2;

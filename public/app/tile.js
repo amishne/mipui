@@ -120,6 +120,7 @@ class Tile {
     this.interrupted_ = false;
     const start = performance.now();
     if (this.imageIsValid_) {
+      console.log(`Matched tile ${this.key} with the cached image.`);
       this.deactivate_(start);
       return;
     }

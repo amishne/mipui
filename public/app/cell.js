@@ -45,7 +45,7 @@ class Cell {
         state.opCenter
             .recordCellChange(this.key, layer.id, oldContent, newContent);
       }
-      this.updateElements_(layer, oldContent, newContent);
+      this.updateElements_(layer, oldContent, newContent, !recordChange);
       this.tile.invalidate();
     }
   }
@@ -82,7 +82,7 @@ class Cell {
     return content ? content[contentKey] : null;
   }
 
-  createElementsFromContent(layer, content) {
+  createElementsFromContent_(layer, content, isTempContent) {
     if (!this.contentShouldHaveElement_(content)) return null;
     const elements = [];
     // Create the base element.
@@ -109,7 +109,7 @@ class Cell {
       clone.style.top = offsetTop + replica.offsetTop + tileHeightDiff;
       clone.style.bottom = offsetBottom + replica.offsetBottom;
 
-      replica.tile.invalidate();
+      if (!isTempContent) replica.tile.invalidate();
       replica.tile.layerElements.get(layer).appendChild(clone);
 
       this.replicatedElements_.get(layer).set(replica.tile, clone);
@@ -380,10 +380,11 @@ class Cell {
     this.setImage_(element, variation.imagePath, variation);
   }
 
-  getOrCreateLayerElements(layer, initialContent) {
+  getOrCreateLayerElements(layer, initialContent, isTempContent) {
     const element = this.elements_.get(layer);
     if (!element) {
-      return this.createElementsFromContent(layer, initialContent);
+      return this.createElementsFromContent_(
+          layer, initialContent, isTempContent);
     }
     return [element].concat(
         Array.from(this.replicatedElements_.get(layer).values()));
@@ -414,12 +415,13 @@ class Cell {
     return content && !content[ck.startCell];
   }
 
-  updateElements_(layer, oldContent, newContent) {
+  updateElements_(layer, oldContent, newContent, isTempContent) {
     if (!this.contentShouldHaveElement_(newContent)) {
       this.removeElements(layer);
       return [];
     }
-    const elements = this.getOrCreateLayerElements(layer, newContent);
+    const elements =
+        this.getOrCreateLayerElements(layer, newContent, isTempContent);
     elements.forEach(element => {
       this.modifyElementClasses_(layer, oldContent, element, 'remove');
       this.populateElementFromContent_(element, layer, newContent);
@@ -427,11 +429,11 @@ class Cell {
     return elements;
   }
 
-  updateLayerElementsToCurrentContent_(layer) {
+  updateLayerElementsToCurrentContent_(layer, isTempContent) {
     const content = this.getLayerContent(layer);
     const element = this.elements_.get(layer);
     if (!element) {
-      this.createElementsFromContent(layer, content);
+      this.createElementsFromContent_(layer, content, isTempContent);
     } else {
       if (this.contentShouldHaveElement_(content)) {
         this.getLayerElements_(layer).forEach(element => {
@@ -446,7 +448,7 @@ class Cell {
 
   updateAllElementsToCurrentContent() {
     ct.children.forEach(layer => {
-      this.updateLayerElementsToCurrentContent_(layer);
+      this.updateLayerElementsToCurrentContent_(layer, false);
     });
   }
 
@@ -599,7 +601,7 @@ class Cell {
     const action = existingContent && content ? 'editing' :
       (existingContent ? 'removing' : 'adding');
     const elements = content ?
-      this.updateElements_(layer, this.getLayerContent(layer), content) :
+      this.updateElements_(layer, this.getLayerContent(layer), content, true) :
       this.getLayerElements_(layer);
     if (elements.length == 0) return;
     elements.forEach(element => {
@@ -619,6 +621,6 @@ class Cell {
 
   hideHighlight(layer) {
     this.tile.unlock('highlight');
-    this.updateLayerElementsToCurrentContent_(layer);
+    this.updateLayerElementsToCurrentContent_(layer, true);
   }
 }
