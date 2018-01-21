@@ -61,7 +61,7 @@ class Tile {
   // Called when the cursor enters the tile
   enter() {
     this.lock('cursor');
-    this.activate_();
+    this.activate();
   }
 
   // Called when the cursor leaves the tile
@@ -74,7 +74,7 @@ class Tile {
   invalidate() {
     this.interrupted_ = true;
     this.imageIsValid_ = false;
-    this.activate_();
+    this.activate();
   }
 
   // Called when we want to prevent this tile from being cached.
@@ -90,7 +90,7 @@ class Tile {
     this.restartTimer_();
   }
 
-  activate_() {
+  activate() {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
       this.imageElement_.style.visibility = 'hidden';
@@ -127,8 +127,8 @@ class Tile {
     const imageFromTheme = this.getImageFromTheme_();
     if (imageFromTheme) {
       this.imageElement_.src = imageFromTheme;
-      this.imageElement_.width = 160;
-      this.imageElement_.height = 160;
+      this.imageElement_.style.width = 160;
+      this.imageElement_.style.height = 160;
       this.deactivate_(start);
       return;
     }

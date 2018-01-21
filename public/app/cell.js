@@ -97,7 +97,7 @@ class Cell {
     element.style.top = offsetTop;
     element.style.bottom = offsetBottom;
 
-    this.populateElementFromContent_(element, layer, content);
+    this.populateElementFromContent_(element, layer, content, isTempContent);
     this.elements_.set(layer, element);
     elements.push(element);
     this.getReplicas_(layer, content).forEach(replica => {
@@ -243,9 +243,10 @@ class Cell {
     return result;
   }
 
-  populateElementFromContent_(element, layer, content) {
+  populateElementFromContent_(element, layer, content, isTempContent) {
     this.modifyElementClasses_(layer, content, element, 'add');
-    this.setElementGeometryToGridElementGeometry_(element, layer, content);
+    this.setElementGeometryToGridElementGeometry_(
+        element, layer, content, isTempContent);
     this.setText_(element, content[ck.text]);
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
@@ -397,13 +398,13 @@ class Cell {
         Array.from(this.replicatedElements_.get(layer).values()));
   }
 
-  removeElements(layer) {
+  removeElements(layer, isTempContent) {
     const element = this.elements_.get(layer);
     if (!element) return;
     element.parentElement.removeChild(element);
     this.elements_.delete(layer);
     this.replicatedElements_.get(layer).forEach((replicatedElement, tile) => {
-      tile.invalidate();
+      if (!isTempContent) tile.invalidate();
       replicatedElement.parentElement.removeChild(replicatedElement);
     });
     this.replicatedElements_.get(layer).clear();
@@ -417,14 +418,15 @@ class Cell {
 
   updateElements_(layer, oldContent, newContent, isTempContent) {
     if (!this.contentShouldHaveElement_(newContent)) {
-      this.removeElements(layer);
+      this.removeElements(layer, isTempContent);
       return [];
     }
     const elements =
         this.getOrCreateLayerElements(layer, newContent, isTempContent);
     elements.forEach(element => {
       this.modifyElementClasses_(layer, oldContent, element, 'remove');
-      this.populateElementFromContent_(element, layer, newContent);
+      this.populateElementFromContent_(
+          element, layer, newContent, isTempContent);
     });
     return elements;
   }
@@ -438,10 +440,11 @@ class Cell {
       if (this.contentShouldHaveElement_(content)) {
         this.getLayerElements_(layer).forEach(element => {
           element.className = '';
-          this.populateElementFromContent_(element, layer, content);
+          this.populateElementFromContent_(
+              element, layer, content, isTempContent);
         });
       } else {
-        this.removeElements(layer);
+        this.removeElements(layer, isTempContent);
       }
     }
   }
@@ -504,7 +507,8 @@ class Cell {
     this.gridElement.onmouseup = e => this.onMouseUp(e);
   }
 
-  setElementGeometryToGridElementGeometry_(element, layer, content) {
+  setElementGeometryToGridElementGeometry_(
+      element, layer, content, isTempContent) {
     const endCellKey = content[ck.endCell];
     const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
     let baseOffsetRight = this.offsetRight - this.tile.right;
@@ -516,7 +520,7 @@ class Cell {
         // This element is a replica.
         baseOffsetRight += replica.offsetRight;
         baseOffsetBottom += replica.offsetBottom;
-        replica.tile.invalidate();
+        if (!isTempContent) replica.tile.invalidate();
       }
     });
     element.style.right =
@@ -597,6 +601,7 @@ class Cell {
 
   showHighlight(layer, content) {
     this.tile.lock('highlight');
+    this.tile.activate();
     const existingContent = this.getLayerContent(layer);
     const action = existingContent && content ? 'editing' :
       (existingContent ? 'removing' : 'adding');
