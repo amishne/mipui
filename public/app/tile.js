@@ -60,13 +60,22 @@ class Tile {
 
   // Called when the cursor enters the tile
   enter() {
-    this.lock('cursor');
-    this.activate();
+    this.lock_('cursor');
+    this.activate_();
   }
 
   // Called when the cursor leaves the tile
   exit() {
-    this.unlock('cursor');
+    this.unlock_('cursor');
+  }
+
+  showHighlight() {
+    this.lock_('highlight');
+    this.activate_();
+  }
+
+  hideHighlight() {
+    this.unlock_('highlight');
   }
 
   // Called when an element that this tile contains (directly or as a replica)
@@ -74,23 +83,24 @@ class Tile {
   invalidate() {
     this.interrupted_ = true;
     this.imageIsValid_ = false;
-    this.activate();
+    this.locks_.delete('highlight');
+    this.activate_();
   }
 
   // Called when we want to prevent this tile from being cached.
-  lock(id) {
+  lock_(id) {
     this.locks_.add(id);
     this.interrupted_ = true;
     this.stopTimer_();
   }
 
   // Called when we no longer want to prevent caching of this tile.
-  unlock(id) {
+  unlock_(id) {
     this.locks_.delete(id);
     this.restartTimer_();
   }
 
-  activate() {
+  activate_() {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
       this.imageElement_.style.visibility = 'hidden';
