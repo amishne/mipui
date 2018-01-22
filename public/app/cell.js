@@ -184,29 +184,37 @@ class Cell {
 
     // Set offsets on replicas.
     replicas.forEach(replica => {
-      replica.offsetLeft = replica.tile.width - this.tile.width;
+      replica.offsetLeft = 0;
       replica.offsetRight = 0;
-      replica.offsetTop = replica.tile.height - this.tile.height;
+      replica.offsetTop = 0;
       replica.offsetBottom = 0;
-      for (let x = this.tile.x + 1; x <= replica.tile.x; x++) {
-        const tile = state.theMap.tiles.get(x + ',0');
-        replica.offsetLeft -= tile.width;
-        replica.offsetRight += tile.width;
+      if (this.tile.x < replica.tile.x) {
+        replica.offsetLeft += replica.tile.width - this.tile.width;
+        for (let x = this.tile.x + 1; x <= replica.tile.x; x++) {
+          const tile = state.theMap.tiles.get(x + ',0');
+          replica.offsetLeft -= tile.width;
+          replica.offsetRight += tile.width;
+        }
+      } else if (replica.tile.x < this.tile.x) {
+        for (let x = replica.tile.x; x < this.tile.x; x++) {
+          const tile = state.theMap.tiles.get(x + ',0');
+          replica.offsetLeft += tile.width;
+          replica.offsetRight -= tile.width;
+        }
       }
-      for (let x = replica.tile.x; x < this.tile.x; x++) {
-        const tile = state.theMap.tiles.get(x + ',0');
-        replica.offsetLeft += tile.width;
-        replica.offsetRight -= tile.width;
-      }
-      for (let y = this.tile.y + 1; y <= replica.tile.y; y++) {
-        const tile = state.theMap.tiles.get('0,' + y);
-        replica.offsetTop -= tile.height;
-        replica.offsetBottom += tile.height;
-      }
-      for (let y = replica.tile.y; y < this.tile.y; y++) {
-        const tile = state.theMap.tiles.get('0,' + y);
-        replica.offsetTop += tile.height;
-        replica.offsetBottom -= tile.height;
+      if (this.tile.y < replica.tile.y) {
+        replica.offsetTop += replica.tile.height - this.tile.height;
+        for (let y = this.tile.y + 1; y <= replica.tile.y; y++) {
+          const tile = state.theMap.tiles.get('0,' + y);
+          replica.offsetTop -= tile.height;
+          replica.offsetBottom += tile.height;
+        }
+      } else if (replica.tile.y < this.tile.y) {
+        for (let y = replica.tile.y; y < this.tile.y; y++) {
+          const tile = state.theMap.tiles.get('0,' + y);
+          replica.offsetTop += tile.height;
+          replica.offsetBottom -= tile.height;
+        }
       }
     });
     return replicas;
