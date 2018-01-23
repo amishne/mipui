@@ -86,10 +86,7 @@ class CellMap {
   clearMap_() {
     this.cells = new Map();
     this.tiles = new Map();
-    const elements = document.getElementsByClassName('layer');
-    for (let i = 0; i < elements.length; i++) {
-      elements[i].innerHTML = '';
-    }
+    document.getElementById('theMap').innerHTML = '';
   }
 
   createDividerRow_(parent, minX, maxX, previousRow, nextRow) {
