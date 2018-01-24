@@ -100,7 +100,6 @@
 
 .floors-layer {
   z-index: 1;
-  clip-path: none;
 }
 
 .grid-cell {
