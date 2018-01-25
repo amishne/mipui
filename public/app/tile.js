@@ -1,3 +1,5 @@
+const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 3;
+
 class Tile {
   constructor(parent, key, x, y) {
     // Elements
@@ -61,12 +63,26 @@ class Tile {
   // Called when the cursor enters the tile
   enter() {
     this.lock_('cursor');
+    // Sometimes the exit event isn't called because the browser doesn't
+    // guarantee mouseexit. To prevent that from becoming an issue in the long
+    // run, we occasionally exit() all other tiles upon tile entry.
+    if (performance.now() % 10 == 0) {
+      let count = 0;
+      state.theMap.tiles.forEach(tile => {
+        if (tile != this) {
+          count += tile.exit() ? 1 : 0;
+        }
+      });
+      if (count > 0) {
+        debug(`Deactivating ${count} tiles stuch on 'cursor' lock.`);
+      }
+    }
     this.activate_();
   }
 
   // Called when the cursor leaves the tile
   exit() {
-    this.unlock_('cursor');
+    return this.unlock_('cursor');
   }
 
   showHighlight() {
@@ -75,7 +91,7 @@ class Tile {
   }
 
   hideHighlight() {
-    this.unlock_('highlight');
+    return this.unlock_('highlight');
   }
 
   // Called when an element that this tile contains (directly or as a replica)
@@ -89,6 +105,7 @@ class Tile {
 
   // Called when we want to prevent this tile from being cached.
   lock_(id) {
+    if (this.locks_.has(id)) return;
     this.locks_.add(id);
     this.interrupted_ = true;
     this.stopTimer_();
@@ -96,15 +113,16 @@ class Tile {
 
   // Called when we no longer want to prevent caching of this tile.
   unlock_(id) {
-    this.locks_.delete(id);
-    this.restartTimer_();
+    const wasRemoved = this.locks_.delete(id);
+    if (wasRemoved) this.restartTimer_();
+    return wasRemoved;
   }
 
   activate_() {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
       this.imageElement_.style.visibility = 'hidden';
-      // this.containerElement_.style.filter = '';
+      this.containerElement_.style.filter = '';
       debug(`Tile ${this.key} activated.`);
       this.active_ = true;
     }
@@ -115,7 +133,7 @@ class Tile {
     if (!this.active_) return;
     this.containerElement_.removeChild(this.mapElement);
     this.imageElement_.style.visibility = 'visible';
-    // this.containerElement_.style.filter = 'grayscale(1)';
+    this.containerElement_.style.filter = 'grayscale(1)';
     this.imageIsValid_ = true;
     this.active_ = false;
     const duration = Math.ceil(performance.now() - start);
@@ -142,6 +160,12 @@ class Tile {
       this.deactivate_(start);
       return;
     }
+    if (state.theMap.concurrentTileCachingOperations >
+        CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT) {
+      this.restartTimer_();
+      return;
+    }
+    state.theMap.concurrentTileCachingOperations++;
     domtoimage.toPng(this.mapElement, {
       width: this.width,
       height: this.height,
@@ -152,6 +176,7 @@ class Tile {
       isInterrupted: () => this.isInterrupted_(),
       disableSmoothing: true,
     }).then(dataUrl => {
+      state.theMap.concurrentTileCachingOperations--;
       // Local locks already interrupt, so it's only global locks we have to
       // worry about.
       if (state.theMap.areTilesLocked()) return;
@@ -160,6 +185,7 @@ class Tile {
       this.imageElement_.style.height = this.height;
       this.deactivate_(start);
     }).catch(reason => {
+      state.theMap.concurrentTileCachingOperations--;
       debug(`Tile ${this.key} caching failed: ${reason}.`);
     });
   }

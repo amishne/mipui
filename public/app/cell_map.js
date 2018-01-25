@@ -20,6 +20,7 @@ class CellMap {
     // Tile state
     this.globalTileLock_ = false;
     this.tileLockListeners_ = new Map();
+    this.concurrentTileCachingOperations = 0;
   }
 
   static dividerCellKey(previousRow, previousColumn, nextRow, nextColumn) {
@@ -86,6 +87,8 @@ class CellMap {
   clearMap_() {
     this.cells = new Map();
     this.tiles = new Map();
+    this.globalTileLock_ = false;
+    this.tileLockListeners_ = new Map();
     document.getElementById('theMap').innerHTML = '';
   }
 
@@ -387,6 +390,7 @@ class CellMap {
   unlockTiles() {
     this.globalTileLock_ = false;
     this.tileLockListeners_.forEach(listener => { listener(); });
+    this.tileLockListeners_ = new Map();
   }
 
   areTilesLocked() {
