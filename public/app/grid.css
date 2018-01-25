@@ -23,6 +23,8 @@
 
 .tile {
   position: absolute;
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
 }
 
 .tile-map {
@@ -46,8 +48,6 @@
   height: 100%;
   background-clip: padding-box;
   pointer-events: none;
-  /* Clip to tile, including the drop-shadow effect. */
-  clip-path: inset(0 0);
 }
 
 .widget-layer {
