@@ -137,8 +137,8 @@ class Tile {
     const imageFromTheme = this.getImageFromTheme_();
     if (imageFromTheme) {
       this.imageElement_.src = imageFromTheme;
-      this.imageElement_.style.width = 160;
-      this.imageElement_.style.height = 160;
+      this.imageElement_.style.width = tileSize * 32;
+      this.imageElement_.style.height = tileSize * 32;
       this.deactivate_(start);
       return;
     }
@@ -198,15 +198,15 @@ class Tile {
   }
 
   getImageFromTheme_() {
-    const emptyTile5Src = state.currentTheme.emptyTile5Src;
-    if (emptyTile5Src) {
+    const emptyTileImage = state.currentTheme[`emptyTile${tileSize}Src`];
+    if (emptyTileImage) {
       const emptyTile = this.cells.every(
           cell => ct.children.every(
               layer => layer == ct.floors ||
               this.layerElements.get(layer).childElementCount == 0));
       if (emptyTile) {
         console.log(`Matched tile ${this.key} with the empty tile image.`);
-        return emptyTile5Src;
+        return emptyTileImage;
       }
     }
     return null;
