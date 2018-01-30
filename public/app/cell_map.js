@@ -1,4 +1,4 @@
-const tileSize = 5;
+const tileSize = 10;
 
 class CellMap {
   constructor() {

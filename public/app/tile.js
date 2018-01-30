@@ -1,4 +1,6 @@
-const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 3;
+const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 1;
+let firstTileCacheStart = null;
+let tilesCached = 0;
 
 class Tile {
   constructor(parent, key, x, y) {
@@ -122,7 +124,7 @@ class Tile {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
       this.imageElement_.style.visibility = 'hidden';
-      this.containerElement_.style.filter = '';
+      // this.containerElement_.style.filter = '';
       debug(`Tile ${this.key} activated.`);
       this.active_ = true;
     }
@@ -133,11 +135,11 @@ class Tile {
     if (!this.active_) return;
     this.containerElement_.removeChild(this.mapElement);
     this.imageElement_.style.visibility = 'visible';
-    this.containerElement_.style.filter = 'grayscale(1)';
+    // this.containerElement_.style.filter = 'grayscale(1)';
     this.imageIsValid_ = true;
     this.active_ = false;
-    const duration = Math.ceil(performance.now() - start);
-    console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
+    //const duration = Math.ceil(performance.now() - start);
+    //console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
   }
 
   cacheImage_() {
@@ -147,6 +149,7 @@ class Tile {
     }
     this.interrupted_ = false;
     const start = performance.now();
+    if (!firstTileCacheStart) firstTileCacheStart = performance.now();
     if (this.imageIsValid_) {
       console.log(`Matched tile ${this.key} with the cached image.`);
       this.deactivate_(start);
@@ -184,6 +187,12 @@ class Tile {
       this.imageElement_.style.width = this.width;
       this.imageElement_.style.height = this.height;
       this.deactivate_(start);
+      tilesCached++;
+      if (tilesCached % 10 == 0) {
+        const duration =
+            Math.ceil((performance.now() - firstTileCacheStart) / 1000);
+        debug(`Cached ${tilesCached} tiles in ${duration}s`);
+      }
     }).catch(reason => {
       state.theMap.concurrentTileCachingOperations--;
       debug(`Tile ${this.key} caching failed: ${reason}.`);

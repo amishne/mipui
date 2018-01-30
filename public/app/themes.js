@@ -8,6 +8,7 @@ const themes = [
     files: [],
     menuIconFile: 'themes/beige_land/menu_icons.png',
     emptyTile5Src: 'themes/beige_land/empty_tile5.png',
+    emptyTile10Src: 'themes/beige_land/empty_tile10.png',
   },
   {
     name: 'Graph Paper (double)',
@@ -18,6 +19,7 @@ const themes = [
     ],
     menuIconFile: 'themes/graph_paper/menu_icons.png',
     emptyTile5Src: 'themes/graph_paper/empty_tile5.png',
+    emptyTile10Src: 'themes/graph_paper/empty_tile10.png',
   },
   {
     name: 'Gridless Flat',
@@ -27,7 +29,8 @@ const themes = [
       'themes/gridless_flat/style.css',
     ],
     menuIconFile: 'themes/gridless_flat/menu_icons.png',
-    emptyTile5Src: 'themes/gridless_flat/empty_tile5.png',
+    emptyTile5Src: 'themes/white_tile5.png',
+    emptyTile10Src: 'themes/white_tile10.png',
   },
   {
     name: 'Cutout',
@@ -38,6 +41,7 @@ const themes = [
     ],
     menuIconFile: 'themes/cutout/menu_icons.png',
     emptyTile5Src: 'themes/cutout/empty_tile5.png',
+    emptyTile10Src: 'themes/cutout/empty_tile10.png',
   },
   {
     name: 'Graph Paper (single)',
@@ -48,6 +52,7 @@ const themes = [
     ],
     menuIconFile: 'themes/graph_paper_single/menu_icons.png',
     emptyTile5Src: 'themes/graph_paper_single/empty_tile5.png',
+    emptyTile10Src: 'themes/graph_paper_single/empty_tile10.png',
   },
   {
     name: 'Old School',
@@ -58,6 +63,7 @@ const themes = [
     ],
     menuIconFile: 'themes/old_school/menu_icons.png',
     emptyTile5Src: 'themes/old_school/empty_tile5.png',
+    emptyTile10Src: 'themes/old_school/empty_tile10.png',
   },
   {
     name: 'Dark',
@@ -68,6 +74,7 @@ const themes = [
     ],
     menuIconFile: 'themes/dark/menu_icons.png',
     emptyTile5Src: 'themes/dark/empty_tile5.png',
+    emptyTile10Src: 'themes/dark/empty_tile10.png',
   },
   {
     name: 'Cross Hatch (with grid)',
@@ -79,6 +86,7 @@ const themes = [
     ],
     menuIconFile: 'themes/cross_hatch/menu_icons_grid.png',
     emptyTile5Src: 'themes/cross_hatch/empty_tile5_grid.png',
+    emptyTile10Src: 'themes/cross_hatch/empty_tile10_grid.png',
   },
   {
     name: 'Cross Hatch (gridless)',
@@ -88,6 +96,7 @@ const themes = [
       'themes/cross_hatch/style_gridless.css',
     ],
     menuIconFile: 'themes/cross_hatch/menu_icons_gridless.png',
-    emptyTile5Src: 'themes/cross_hatch/empty_tile5_gridless.png',
+    emptyTile5Src: 'themes/white_tile5.png',
+    emptyTile10Src: 'themes/white_tile10.png',
   },
 ].sort((a, b) => a.displayIndex - b.displayIndex);
