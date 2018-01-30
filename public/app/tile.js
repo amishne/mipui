@@ -139,7 +139,7 @@ class Tile {
     this.imageIsValid_ = true;
     this.active_ = false;
     const duration = Math.ceil(performance.now() - start);
-    console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
+    debug(`Deactivated tile ${this.key} in ${duration}ms.`);
   }
 
   cacheImage_() {
@@ -151,7 +151,7 @@ class Tile {
     const start = performance.now();
     if (!firstTileCacheStart) firstTileCacheStart = performance.now();
     if (this.imageIsValid_) {
-      console.log(`Matched tile ${this.key} with the cached image.`);
+      debug(`Matched tile ${this.key} with the cached image.`);
       this.deactivate_(start);
       return;
     }
@@ -240,7 +240,7 @@ class Tile {
               layer => layer == ct.floors ||
               this.layerElements.get(layer).childElementCount == 0));
       if (emptyTile) {
-        console.log(`Matched tile ${this.key} with the empty tile image.`);
+        debug(`Matched tile ${this.key} with the empty tile image.`);
         return emptyTileImage;
       }
     }
