@@ -138,8 +138,8 @@ class Tile {
     // this.containerElement_.style.filter = 'grayscale(1)';
     this.imageIsValid_ = true;
     this.active_ = false;
-    //const duration = Math.ceil(performance.now() - start);
-    //console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
+    const duration = Math.ceil(performance.now() - start);
+    console.log(`Deactivated tile ${this.key} in ${duration}ms.`);
   }
 
   cacheImage_() {

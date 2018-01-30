@@ -110,7 +110,11 @@ class Cell {
       if (!isHighlight) {
         replica.tile.invalidate();
       } else {
-        replica.tile.showHighlight();
+        if (isHighlight == 'showHighlight') {
+          replica.tile.showHighlight();
+        } else {
+          replica.tile.hideHighlight();
+        }
       }
       replica.tile.layerElements.get(layer).appendChild(clone);
 
@@ -421,7 +425,11 @@ class Cell {
       if (!isHighlight) {
         tile.invalidate();
       } else {
-        tile.showHighlight();
+        if (isHighlight == 'showHighlight') {
+          tile.showHighlight();
+        } else {
+          tile.hideHighlight();
+        }
       }
       replicatedElement.parentElement.removeChild(replicatedElement);
     });
@@ -540,7 +548,11 @@ class Cell {
         if (!isHighlight) {
           replica.tile.invalidate();
         } else {
-          replica.tile.showHighlight();
+          if (isHighlight == 'showHighlight') {
+            replica.tile.showHighlight();
+          } else {
+            replica.tile.hideHighlight();
+          }
         }
       }
     });
@@ -626,7 +638,8 @@ class Cell {
     const action = existingContent && content ? 'editing' :
       (existingContent ? 'removing' : 'adding');
     const elements = content ?
-      this.updateElements_(layer, this.getLayerContent(layer), content, true) :
+      this.updateElements_(
+          layer, this.getLayerContent(layer), content, 'showHighlight') :
       this.getLayerElements_(layer);
     if (elements.length == 0) return;
     elements.forEach(element => {
@@ -646,6 +659,6 @@ class Cell {
 
   hideHighlight(layer) {
     this.tile.hideHighlight();
-    this.updateLayerElementsToCurrentContent_(layer, true);
+    this.updateLayerElementsToCurrentContent_(layer, 'hideHighlight');
   }
 }
