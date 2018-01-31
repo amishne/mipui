@@ -21,6 +21,7 @@ const themes = [
     menuIconFile: 'themes/graph_paper/menu_icons.png',
     emptyTile5Src: 'themes/graph_paper/empty_tile5.png',
     emptyTile10Src: 'themes/graph_paper/empty_tile10.png',
+    fullTile10Src: 'themes/graph_paper/full_tile10.png',
   },
   {
     name: 'Gridless Flat',
@@ -32,6 +33,7 @@ const themes = [
     menuIconFile: 'themes/gridless_flat/menu_icons.png',
     emptyTile5Src: 'themes/white_tile5.png',
     emptyTile10Src: 'themes/white_tile10.png',
+    fullTile10Src: 'themes/gridless_flat/full_tile10.png',
   },
   {
     name: 'Cutout',
@@ -43,6 +45,7 @@ const themes = [
     menuIconFile: 'themes/cutout/menu_icons.png',
     emptyTile5Src: 'themes/cutout/empty_tile5.png',
     emptyTile10Src: 'themes/cutout/empty_tile10.png',
+    fullTile10Src: 'themes/cutout/full_tile10.png',
   },
   {
     name: 'Graph Paper (single)',
@@ -54,6 +57,7 @@ const themes = [
     menuIconFile: 'themes/graph_paper_single/menu_icons.png',
     emptyTile5Src: 'themes/graph_paper_single/empty_tile5.png',
     emptyTile10Src: 'themes/graph_paper_single/empty_tile10.png',
+    fullTile10Src: 'themes/graph_paper_single/full_tile10.png',
   },
   {
     name: 'Old School',
@@ -65,6 +69,7 @@ const themes = [
     menuIconFile: 'themes/old_school/menu_icons.png',
     emptyTile5Src: 'themes/old_school/empty_tile5.png',
     emptyTile10Src: 'themes/old_school/empty_tile10.png',
+    fullTile10Src: 'themes/old_school/full_tile10.png',
   },
   {
     name: 'Dark',
@@ -76,6 +81,7 @@ const themes = [
     menuIconFile: 'themes/dark/menu_icons.png',
     emptyTile5Src: 'themes/dark/empty_tile5.png',
     emptyTile10Src: 'themes/dark/empty_tile10.png',
+    fullTile10Src: 'themes/dark/full_tile10.png',
   },
   {
     name: 'Cross Hatch (with grid)',
