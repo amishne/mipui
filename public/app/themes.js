@@ -9,6 +9,7 @@ const themes = [
     menuIconFile: 'themes/beige_land/menu_icons.png',
     emptyTile5Src: 'themes/beige_land/empty_tile5.png',
     emptyTile10Src: 'themes/beige_land/empty_tile10.png',
+    fullTile10Src: 'themes/beige_land/full_tile10.png',
   },
   {
     name: 'Graph Paper (double)',

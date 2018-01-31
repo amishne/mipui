@@ -1,6 +1,10 @@
 const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 1;
 let firstTileCacheStart = null;
 let tilesCached = 0;
+const SQUARE_CELL = {
+  [ck.kind]: ct.walls.smooth.id,
+  [ck.variation]: ct.walls.smooth.square.id,
+};
 
 class Tile {
   constructor(parent, key, x, y) {
@@ -19,6 +23,7 @@ class Tile {
     this.x = x;
     this.y = y;
     this.cells = [];
+    // layer -> element
     this.layerElements = new Map();
     this.firstCell = null;
     this.lastCell = null;
@@ -235,13 +240,34 @@ class Tile {
   getImageFromTheme_() {
     const emptyTileImage = state.currentTheme[`emptyTile${tileSize}Src`];
     if (emptyTileImage) {
-      const emptyTile = this.cells.every(
-          cell => ct.children.every(
-              layer => layer == ct.floors ||
-              this.layerElements.get(layer).childElementCount == 0));
-      if (emptyTile) {
+      const tileOnlyHasFloors = ct.children.every(layer =>
+        layer == ct.floors ||
+        this.layerElements.get(layer).childElementCount == 0
+      );
+      if (tileOnlyHasFloors) {
         debug(`Matched tile ${this.key} with the empty tile image.`);
         return emptyTileImage;
+      }
+    }
+    const fullTileImage = state.currentTheme[`fullTile${tileSize}Src`];
+    if (fullTileImage) {
+      const tileOnlyHasFloorsAndWalls = ct.children.every(layer =>
+        layer == ct.floors ||
+        layer == ct.walls ||
+        this.layerElements.get(layer).childElementCount == 0
+      );
+      // For early termination, we require the wall layer to have at least the
+      // number of elements as the number of grid cells.
+      if (this.layerElements.get(ct.walls).childElementCount <
+          this.gridLayer.childElementCount) {
+        return null;
+      }
+      const allOwnedCellsAreSquareWalls =
+          this.cells.every(
+              cell => sameContent(cell.getLayerContent(ct.walls), SQUARE_CELL));
+      if (tileOnlyHasFloorsAndWalls && allOwnedCellsAreSquareWalls) {
+        debug(`Matched tile ${this.key} with the full tile image.`);
+        return fullTileImage;
       }
     }
     return null;
