@@ -1,4 +1,4 @@
-const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 1;
+const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 100;
 let firstTileCacheStart = null;
 let tilesCached = 0;
 const SQUARE_CELL = {
@@ -180,7 +180,7 @@ class Tile {
       filter: node => (!node.style || node.style.visibility != 'hidden') &&
           (!node.classList || !node.classList.contains('grid-layer')),
       scale: 6, // Maximum zoom level
-      responsive: true,
+      isResponsive: () => performance.now() % 100 == 0,
       isInterrupted: () => this.isInterrupted_(),
       disableSmoothing: true,
     }).then(dataUrl => {
