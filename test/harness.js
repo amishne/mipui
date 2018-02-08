@@ -54,10 +54,17 @@ function runNextTest_() {
   setTimeout(() => {
     const test = suiteTests_[currentTestIndex_];
     if (!test) return;
-    if (typeof beforeTest !== 'undefined') beforeTest();
-    test.passed = true;
-    test.element = createTestElement_(document.body, test.name);
-    test.fn();
+    if (typeof beforeTest !== 'undefined') {
+      beforeTest(() => {
+        test.passed = true;
+        test.element = createTestElement_(document.body, test.name);
+        test.fn();
+      });
+    } else {
+      test.passed = true;
+      test.element = createTestElement_(document.body, test.name);
+      test.fn();
+    }
   }, 0);
 }
 

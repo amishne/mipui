@@ -23,12 +23,13 @@
       mock(getOpMockPath(3) + '.off("$all")', {});
     };
 
-    beforeTest = () => {
+    beforeTest = (complete) => {
       status = null;
       lastOpNum = 0;
       mock('state.getLastOpNum', () => lastOpNum);
       mock('state.setLastOpNum', num => lastOpNum = num);
       opc = new OperationCenter();
+      complete();
     };
 
     function createIdentity(n, f) {
