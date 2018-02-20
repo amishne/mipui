@@ -149,10 +149,9 @@ class GridImager {
     if (backgroundImage.includes('svg+xml')) {
       const width = 200;//node.clientWidth;
       const height = 20;//node.clientHeight;
-      const pngDataUrl = backgroundImage.replace(
-          /^url\(['"](data:image\/svg\+xml;utf8,<svg.+)['"]\)/g,
-          (match, svgDataUrl) =>
-            this.svgDataUrl2pngDataUrl_(svgDataUrl, width, height));
+      const svgDataUrl = backgroundImage.substr(5, backgroundImage.length - 7);
+      const pngDataUrl =
+          await this.svgDataUrl2pngDataUrl_(svgDataUrl, width, height);
       node.style.backgroundImage = `url("${pngDataUrl}")`;
     }
     for (let i = 0; i < node.childElementCount; i++) {

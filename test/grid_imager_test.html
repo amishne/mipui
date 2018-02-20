@@ -100,7 +100,7 @@
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
-      const expectedDataUrl = 'x';
+      const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABnElEQVRoQ+2b4U3DMBSErxPAJsAEsAGwAWzABsAEHaFsACPABMAkwARFh4KEqiby67s+V+X8p3+e75wvPtVOnNkSWMKtG4EnAO8AngG8DaM4BnAGgL/n3UZmYxKYOSB9JgLDcP0nFGOjYEgWQ1j6jPR/uzogHe7/HYD7oC/73Ab7uDxPwAHJMwwpbBKOX4M5gJuQm4uzBByQLMFAfy6rTgL160pfvdxKEox1d0BivFLV3E9wQ55p1GBI3GoIOCA1nMGnVZcir0cAFyIty0wTcECKZkhm77E6RG7Wqee2fQIOyPYZ/zjwvcaLyOt0eG8ikrPMBAEHpGh6HAL4EnlR60OkZRkvsXZiDigDcgDgcyeuav8H4X+QonvsJVYRaLGNAyIGOibnTXoRaLGNAyIGOibnx7xFoMU2DogY6JSc4kXhUcMBx8JL2nsrB6TwFvuoSSFskZUDIgLZKpPZi/iwYitlXZ0DomPZrLRJSByOZrzSQgdEirNdjMutq4bDi9xzPPgEbztYcaUDIgYalePTLYZl7JNbH0qMEtXWfwORV1XtUZE44AAAAABJRU5ErkJggg==';
       assert(pngDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');
