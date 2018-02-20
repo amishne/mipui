@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "ecmaVersion": 6
+    "ecmaVersion": 2017
   },
   "rules": {
     "max-len": ["error", 80],
