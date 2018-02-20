@@ -109,20 +109,20 @@
       testCompleted();
     });
 
-    addTest('Can save dom with external background to png dataurl',
-        async () => {
-      const input = createDomWithExternalSvgBackgroundImage();
-
-      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
-
-      const expectedDataUrl = 'x';
-      assert(pngDataUrl == expectedDataUrl);
-
-      const img = document.createElement('img');
-      img.src = pngDataUrl;
-      document.body.appendChild(img);
-      testCompleted();
-    });
+//    addTest('Can save dom with external background to png dataurl',
+//        async () => {
+//      const input = createDomWithExternalSvgBackgroundImage();
+//
+//      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+//
+//      const expectedDataUrl = 'x';
+//      assert(pngDataUrl == expectedDataUrl);
+//
+//      const img = document.createElement('img');
+//      img.src = pngDataUrl;
+//      document.body.appendChild(img);
+//      testCompleted();
+//    });
   </script>
 </head>
   <body>

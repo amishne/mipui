@@ -146,13 +146,20 @@ class GridImager {
   async processNode_(node) {
     const backgroundImage =
         getComputedStyle(node).backgroundImage.replace(/\\"/g, "'");
-    if (backgroundImage.includes('svg+xml')) {
-      const width = 200;//node.clientWidth;
-      const height = 20;//node.clientHeight;
-      const svgDataUrl = backgroundImage.substr(5, backgroundImage.length - 7);
-      const pngDataUrl =
-          await this.svgDataUrl2pngDataUrl_(svgDataUrl, width, height);
-      node.style.backgroundImage = `url("${pngDataUrl}")`;
+    if (backgroundImage.startsWith('url')) {
+      const dataUrl = backgroundImage.substr(5, backgroundImage.length - 7);
+      if (backgroundImage.includes('data:image/svg+xml;')) {
+        const width = 200;//node.clientWidth;
+        const height = 20;//node.clientHeight;
+        const pngDataUrl =
+            await this.svgDataUrl2pngDataUrl_(dataUrl, width, height);
+        node.style.backgroundImage = `url("${pngDataUrl}")`;
+      } else if (backgroundImage.includes('data:image/png;')) {
+        // If it's already png, do nothing.
+      } else {
+        // If it's a URL but not svg or png, it must be an external reference.
+        debug('Unsupported external image reference when caching.');
+      }
     }
     for (let i = 0; i < node.childElementCount; i++) {
       await this.processNode_(node.children[i]);
