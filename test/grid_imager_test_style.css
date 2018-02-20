@@ -1,12 +1,24 @@
 .square {
-  width: 100px;
-  height: 100px;
-  background-color: green;
+  width: 200px;
+  height: 20px;
+  background-color: red;
 }
 
 .circle {
   background-color: blue;
   border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 20px;
+}
+
+.inline-svg-background {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><circle r="10" cx="100" cy="10"/></svg>');
+  width: 200px;
+  height: 20px;
+}
+
+.external-svg-background {
+  background-image: url("../public/app/assets/wyvern.svg");
+  width: 200px;
+  height: 20px;
 }

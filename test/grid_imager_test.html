@@ -4,17 +4,18 @@
   <script src="harness.js" type="text/javascript"></script>
   <script type="text/javascript">
     debug = x => { console.log(x); };
+    const cssFilePath = 'grid_imager_test_style.css';
 
-    beforeTest = complete => {
-      const cssFilePath = 'grid_imager_test_style.css';
-      // Add css to document
+    beforeSuite = () => {
       const css = document.createElement('link');
       css.type = 'text/css';
       css.rel = 'stylesheet';
       css.href = cssFilePath;
       const head = document.getElementsByTagName('head')[0];
       head.appendChild(css);
+    }
 
+    beforeTest = complete => {
       gi = new GridImager();
       gi.addCssFile(cssFilePath, () => {
         gi.recalculateStyleString();
@@ -32,13 +33,34 @@
       return square;
     }
 
-    addTest('Can save simple dom to svg dataurl', () => {
+    function createDomWithInlineSvgBackgroundImage() {
+      const square = document.createElement('div');
+      square.classList.add('square');
+      const divWithInlineSvgBackgroundImage = document.createElement('div');
+      divWithInlineSvgBackgroundImage.classList.add('inline-svg-background');
+      square.appendChild(divWithInlineSvgBackgroundImage);
+      document.body.appendChild(square);
+      return square;
+    }
+
+    function createDomWithExternalSvgBackgroundImage() {
+      const square = document.createElement('div');
+      square.classList.add('square');
+      const divWithExternalSvgBackgroundImage = document.createElement('div');
+      divWithExternalSvgBackgroundImage.classList.add(
+          'external-svg-background');
+      square.appendChild(divWithExternalSvgBackgroundImage);
+      document.body.appendChild(square);
+      return square;
+    }
+
+    addTest('Can save simple dom to svg dataurl', async () => {
       const input = createSimpleDom();
 
-      const svgDataUrl = gi.node2svgDataUrl(input, 100, 100);
+      const svgDataUrl = await gi.node2svgDataUrl(input, 200, 20);
 
-      const expectedDataUrl = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">%3CforeignObject%20style%3D%22width%3A100%25%3Bheight%3A100%25%22%3E%3Cstyle%3E%3C!--%20grid_imager_test_style.css%20--%3E%0A.square%20%7B%0A%20%20width%3A%20100px%3B%0A%20%20height%3A%20100px%3B%0A%20%20background-color%3A%20green%3B%0A%7D%0A%0A.circle%20%7B%0A%20%20background-color%3A%20blue%3B%0A%20%20border-radius%3A%2050%25%3B%0A%20%20width%3A%20100px%3B%0A%20%20height%3A%20100px%3B%0A%7D%0A%3C%2Fstyle%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20class%3D%22square%22%3E%3Cdiv%20class%3D%22circle%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E</svg>';
-      assert(svgDataUrl == expectedDataUrl);
+      assert(svgDataUrl.includes('%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20class%3D%22square%22%3E%3Cdiv%20class%3D%22circle%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E</svg>'));
+      assert(svgDataUrl.startsWith('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">%3CforeignObject%20style%3D%22width%3A100%25%3Bheight%3A100%25%22%3E%3Cstyle%3E%3C!--%20grid_imager_test_style.css%20--%3E'));
 
       const img = document.createElement('img');
       img.src = svgDataUrl;
@@ -46,10 +68,10 @@
       testCompleted();
     });
 
-    addTest('Can save simple dom to svg element', () => {
+    addTest('Can save simple dom to svg element', async () => {
       const input = createSimpleDom();
 
-      const svgElement = gi.node2svgElement(input);
+      const svgElement = await gi.node2svgElement(input);
 
       const expectedInnerHtml = '<foreignobject style="width:100%;height:100%"><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></foreignobject>';
       assert(svgElement.innerHTML == expectedInnerHtml);
@@ -58,12 +80,42 @@
       testCompleted();
     })
 
-    addTest('Can save simple dom to png dataurl', () => {
+    addTest('Can save simple dom to png dataurl', async () => {
       const input = createSimpleDom();
 
-      const pngDataUrl = gi.node2pngDataUrl(input, 100, 100);
+      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
-      const expectedDataUrl = 'data:image/png;base64,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';
+      const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAADWUlEQVRoQ+2b20ocQRCGvyVqjGISFfEYDxByFbxQCMYDvkCCwVfwJpA8TgK58RUkkjxAxEMkoBeSKxE8RyWoUdF4Chuqd3vsjGvGdXddZrYaiu7e6a7p+qdqZrbnr1gc4hRA2aGKfe57ckQZJ9w1ckqJ17a/ubX/uNuX9jlF/OGOkava/mNuX9aSqpRxZLQWcZ7UnjiL2w86VsJp0soT3LZYLv1yDo3OBBKXxc6RtVygt08VOwXgNRALQ4DsUskvHhrZ48E/belbscelb4NB2lc5YEFc4RwaKUEj6EvguLVcqYursmeunPTdWtqV7OZwddlRnbcAWaKVHzQYWafRqzepY5tqLwjE6bVEF4HEbS8h1WxTz4bxikbWk96RaLewnBcQchIg4vQSAGs0scojVmg2tZUtavNirJ403AjUsmW8qJkVx5tWaWKNNhZNcGW73DhA5nmClQUes2iW2MYyLRxTmu11qj5FIBCBUo5pZcl4otSPWXC8dD5wfqoB1wqQGToZp49Jepij3QSGFkUgbAjILb2dOXqZoI9xOpgNNOFSgMjd/yvPTUCISPuQ8kBFOkARCBsCsrnQzVTS08d5xjezk+cWL0DkyfCRV4wywCwdYbNV16sIZIyAPFEGGGWQEZ7y3eiLrdEQf80HPvMy4xOoAkUgKgi84BPDDBHr50t8jP6o2KV2KAJZQ6CfMQ2QrKGpiiKHgAmQLWriQwzrK1bkLq8alAkC3iuWpZpM0Ms73jLCIGcUZ6Jb5yoCoUSgmDPzB/0N783OlvmT7udiHVBhtnanzAZYN9N0Ib9pUQSihoDQW7qYTnr6lNnmreAg9Tbv/4yXbV/5JiJPGf1QGDU3KRx77IfCHibNE6KTmUDjr/UlPZUWP9VEuFdCNZFaqSaBuOuAHCAgVBMhNSZIT4u3RzVJ15YN6s0S/SRFS1z8SU26KnW8IoAlK1raqyUtCllRuFfCAs52ufETJNOFCKnR0txdyrsEl9LdM0U3PPP9dPc6Nj2qu0t5lwDIR8lbgKRjbKqEKZs4lSphSpKlbNKUJkylg3R6Y92EKZs05SZG+ZOmNGEqPXxvdbSk3LqZhr+5F5hmKwmuQtQMSrlNlbpr50idq4xGcVCbEntVam0mKbfu3EJNuf0LK72z+p0kxWUAAAAASUVORK5CYII=';
+      assert(pngDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can save dom with inlined svg background to png dataurl',
+        async () => {
+      const input = createDomWithInlineSvgBackgroundImage();
+
+      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      const expectedDataUrl = 'x';
+      assert(pngDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can save dom with external background to png dataurl',
+        async () => {
+      const input = createDomWithExternalSvgBackgroundImage();
+
+      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      const expectedDataUrl = 'x';
       assert(pngDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');
@@ -73,5 +125,6 @@
     });
   </script>
 </head>
-  <body></body>
+  <body>
+  </body>
 </html>
