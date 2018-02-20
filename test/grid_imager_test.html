@@ -16,8 +16,8 @@
     }
 
     beforeTest = complete => {
-      gi = new GridImager();
-      gi.addCssFile(cssFilePath, () => {
+      gi = new GridImager(() => true, 1);
+      gi.addCssFile(cssFilePath).then(() => {
         gi.recalculateStyleString();
         complete();
       });

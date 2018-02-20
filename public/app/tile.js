@@ -129,7 +129,7 @@ class Tile {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
       this.imageElement_.style.visibility = 'hidden';
-      // this.containerElement_.style.filter = '';
+      this.containerElement_.style.filter = '';
       debug(`Tile ${this.key} activated.`);
       this.active_ = true;
     }
@@ -140,7 +140,7 @@ class Tile {
     if (!this.active_) return;
     this.containerElement_.removeChild(this.mapElement);
     this.imageElement_.style.visibility = 'visible';
-    // this.containerElement_.style.filter = 'grayscale(1)';
+    this.containerElement_.style.filter = 'grayscale(1)';
     this.imageIsValid_ = true;
     this.active_ = false;
     const duration = Math.ceil(performance.now() - start);
@@ -174,16 +174,21 @@ class Tile {
       return;
     }
     state.theMap.concurrentTileCachingOperations++;
-    domtoimage.toPng(this.mapElement, {
-      width: this.width,
-      height: this.height,
-      filter: node => (!node.style || node.style.visibility != 'hidden') &&
-          (!node.classList || !node.classList.contains('grid-layer')),
-      scale: 6, // Maximum zoom level
-      isResponsive: () => performance.now() % 100 == 0,
-      isInterrupted: () => this.isInterrupted_(),
-      disableSmoothing: true,
-    }).then(dataUrl => {
+    state.gridImager
+        .node2pngDataUrl(this.mapElement, this.width, this.height)
+        .then(dataUrl => {
+      
+//    });
+//    domtoimage.toPng(this.mapElement, {
+//      width: this.width,
+//      height: this.height,
+//      filter: node => (!node.style || node.style.visibility != 'hidden') &&
+//          (!node.classList || !node.classList.contains('grid-layer')),
+//      scale: 6, // Maximum zoom level
+//      isResponsive: () => performance.now() % 100 == 0,
+//      isInterrupted: () => this.isInterrupted_(),
+//      disableSmoothing: true,
+//    }).then(dataUrl => {
       state.theMap.concurrentTileCachingOperations--;
       // Local locks already interrupt, so it's only global locks we have to
       // worry about.

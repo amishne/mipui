@@ -1,13 +1,17 @@
 class GridImager {
-  constructor() {
+  constructor(filter, scale) {
     this.cssFiles_ = new Map();
     this.styleString_ = '';
+    this.filter_ = filter;
+    this.scale_ = scale;
   }
 
-  addCssFile(path, callback) {
-    this.loadFile_(path, fileContent => {
-      this.cssFiles_.set(path, fileContent);
-      callback();
+  addCssFile(path) {
+    return new Promise((resolve, reject) => {
+      this.loadFile_(path, fileContent => {
+        this.cssFiles_.set(path, fileContent);
+        resolve();
+      });
     });
   }
 
@@ -50,7 +54,7 @@ class GridImager {
 
   async node2xml_(node) {
     const start = performance.now();
-    const cloned = node.cloneNode(true);
+    const cloned = this.cloneNode_(node);
     debug(`node cloning done in ${this.msSince_(start)}`);
     const documentInsertionStart = performance.now();
     const cloneContainer = document.createElement('div');
@@ -141,6 +145,16 @@ class GridImager {
       callback(xhr.responseText);
     };
     xhr.send();
+  }
+
+  cloneNode_(node) {
+    const cloned = node.cloneNode(false);
+    for (const child of node.childNodes) {
+      if (!this.filter_ || this.filter_(child)) {
+        cloned.appendChild(this.cloneNode_(child));
+      }
+    }
+    return cloned;
   }
 
   async processNode_(node) {
