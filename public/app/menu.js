@@ -160,7 +160,6 @@ class Menu {
       } else {
         const hasTools =
             menuItem.submenu.items.findIndex(item => item.type == 'tool') >= 0;
-        // If the target menu has no tools, 
         display = hasTools ?
           this.menuItems_.find(item => item.isSelected)
               .submenu.element.style.display : 'block';

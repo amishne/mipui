@@ -95,7 +95,7 @@ class GridImager {
 
   async foreignObjectString2imageElement_(foreignObjectString, width, height) {
     const svgDataUrl = await this.foreignObjectString2svgDataUrl_(
-        foreignObjectString, width, height)
+        foreignObjectString, width, height);
     return await this.dataUrl2imageElement_(svgDataUrl);
   }
 
@@ -116,7 +116,7 @@ class GridImager {
         context.drawImage(imageElement, 0, 0);
         debug(`imageElement2canvas_() done in ${this.msSince_(start)}`);
         resolve(canvas);
-      }
+      };
     });
   }
 
