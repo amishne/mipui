@@ -149,8 +149,8 @@ class GridImager {
     if (backgroundImage.startsWith('url')) {
       const dataUrl = backgroundImage.substr(5, backgroundImage.length - 7);
       if (backgroundImage.includes('data:image/svg+xml;')) {
-        const width = 200;//node.clientWidth;
-        const height = 20;//node.clientHeight;
+        const {width, height} =
+            this.extractDimensionsFromSvgStr_(dataUrl);
         const pngDataUrl =
             await this.svgDataUrl2pngDataUrl_(dataUrl, width, height);
         node.style.backgroundImage = `url("${pngDataUrl}")`;
@@ -164,5 +164,16 @@ class GridImager {
     for (let i = 0; i < node.childElementCount; i++) {
       await this.processNode_(node.children[i]);
     }
+  }
+  
+  extractDimensionsFromSvgStr_(svgDataUrl) {
+    let width = 0;
+    let height = 0;
+    svgDataUrl.replace(/<svg xmlns=.http:\/\/www\.w3\.org\/2000\/svg.[^>]*width=.(\d+).[^>]*height=.(\d+)./, (match, group1, group2) => {
+      width = group1;
+      height = group2;
+      return match;
+    });
+    return {width, height};
   }
 }
