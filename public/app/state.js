@@ -55,7 +55,7 @@ class State {
 
     this.currentTheme = themes[0];
 
-    this.appliedThemeElements_ = [];
+    this.appliedThemeElements_ = new Map();
 
     this.lastUsedSvg = null;
 
@@ -159,11 +159,11 @@ class State {
     this.currentTheme =
         themes.find(theme => theme.propertyIndex == newPropertyIndex);
 
-    this.appliedThemeElements_.forEach(element => {
+    this.appliedThemeElements_.forEach((element, path) => {
       element.parentNode.removeChild(element);
-      this.tileGridImager.removeCssFile(element.href);
+      this.tileGridImager.removeCssFile(path);
     });
-    this.appliedThemeElements_ = [];
+    this.appliedThemeElements_ = new Map();
     const head = document.getElementsByTagName('head')[0];
     const gridImagerPromises = [];
     this.currentTheme.files.forEach(file => {
@@ -173,7 +173,7 @@ class State {
       css.href = file;
       head.appendChild(css);
       gridImagerPromises.push(this.tileGridImager.addCssFile(file));
-      this.appliedThemeElements_.push(css);
+      this.appliedThemeElements_.set(file, css);
     });
     const menuIconsFromMap =
         Array.from(document.getElementsByClassName('menu-icon-from-map'));
@@ -182,8 +182,8 @@ class State {
           `url("${this.currentTheme.menuIconFile}")`;
     });
     Promise.all(gridImagerPromises).then(() => {
-      this.theMap.invalidateTiles();
       this.tileGridImager.recalculateStyleString();
+      this.theMap.invalidateTiles();
     });
   }
 

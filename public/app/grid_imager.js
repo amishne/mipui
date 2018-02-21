@@ -8,9 +8,14 @@ class GridImager {
   }
 
   addCssFile(path) {
+    this.cssFiles_.set(path, '');
     return new Promise((resolve, reject) => {
       this.loadFile_(path, fileContent => {
-        this.cssFiles_.set(path, fileContent);
+        // Verify the entry still exists, i.e. that it wasn't deleted by a theme
+        // change.
+        if (this.cssFiles_.has(path)) {
+          this.cssFiles_.set(path, fileContent);
+        }
         resolve();
       });
     });
