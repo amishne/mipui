@@ -61,9 +61,12 @@ class State {
 
     this.hasUnsavedChanges = false;
 
-    this.gridImager = new GridImager(node =>
-      (!node.style || node.style.visibility != 'hidden') &&
-      (!node.classList || !node.classList.contains('grid-layer')), 6);
+    this.gridImager = new GridImager({
+      filter: node => (!node.style || node.style.visibility != 'hidden') &&
+          (!node.classList || !node.classList.contains('grid-layer')),
+      scale: 6,
+      disableSmoothing: true,
+    });
     this.gridImager.addCssFile('./grid.css').then(() => {
       this.gridImager.addCssFile('./angled_wall.css').then(() => {
         this.gridImager.recalculateStyleString();

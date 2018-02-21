@@ -1,9 +1,10 @@
 class GridImager {
-  constructor(filter, scale) {
+  constructor(options) {
     this.cssFiles_ = new Map();
     this.styleString_ = '';
-    this.filter_ = filter;
-    this.scale_ = scale;
+    this.filter_ = options.filter || (_ => true);
+    this.scale_ = options.scale || 1;
+    this.disableSmoothing_ = options.disableSmoothing || false;
   }
 
   addCssFile(path) {
@@ -115,7 +116,15 @@ class GridImager {
       const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
+      canvas.style.width = width;
+      canvas.style.height = height
+      canvas.width = this.scale_ * width;
+      canvas.height = this.scale_ * height;
       const context = canvas.getContext('2d');
+      context.scale(this.scale_, this.scale_);
+      if (this.disableSmoothing_) {
+        context.imageSmoothingEnabled = false;
+      }
       imageElement.onload = () => {
         context.drawImage(imageElement, 0, 0);
         debug(`imageElement2canvas_() done in ${this.msSince_(start)}`);
