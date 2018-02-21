@@ -61,15 +61,15 @@ class State {
 
     this.hasUnsavedChanges = false;
 
-    this.gridImager = new GridImager({
+    this.tileGridImager = new GridImager({
       filter: node => (!node.style || node.style.visibility != 'hidden') &&
           (!node.classList || !node.classList.contains('grid-layer')),
       scale: 6,
       disableSmoothing: true,
     });
-    this.gridImager.addCssFile('./grid.css').then(() => {
-      this.gridImager.addCssFile('./angled_wall.css').then(() => {
-        this.gridImager.recalculateStyleString();
+    this.tileGridImager.addCssFile('./grid.css').then(() => {
+      this.tileGridImager.addCssFile('./angled_wall.css').then(() => {
+        this.tileGridImager.recalculateStyleString();
       });
     });
   }
@@ -161,7 +161,7 @@ class State {
 
     this.appliedThemeElements_.forEach(element => {
       element.parentNode.removeChild(element);
-      this.gridImager.removeCssFile(element.href);
+      this.tileGridImager.removeCssFile(element.href);
     });
     this.appliedThemeElements_ = [];
     const head = document.getElementsByTagName('head')[0];
@@ -172,7 +172,7 @@ class State {
       css.rel = 'stylesheet';
       css.href = file;
       head.appendChild(css);
-      gridImagerPromises.push(this.gridImager.addCssFile(file));
+      gridImagerPromises.push(this.tileGridImager.addCssFile(file));
       this.appliedThemeElements_.push(css);
     });
     const menuIconsFromMap =
@@ -182,8 +182,8 @@ class State {
           `url("${this.currentTheme.menuIconFile}")`;
     });
     Promise.all(gridImagerPromises).then(() => {
-      this.gridImager.recalculateStyleString();
       this.theMap.invalidateTiles();
+      this.tileGridImager.recalculateStyleString();
     });
   }
 

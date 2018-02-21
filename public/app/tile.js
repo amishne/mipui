@@ -174,39 +174,27 @@ class Tile {
       return;
     }
     state.theMap.concurrentTileCachingOperations++;
-    state.gridImager
+    state.tileGridImager
         .node2pngDataUrl(this.mapElement, this.width, this.height)
         .then(dataUrl => {
-      
-//    });
-//    domtoimage.toPng(this.mapElement, {
-//      width: this.width,
-//      height: this.height,
-//      filter: node => (!node.style || node.style.visibility != 'hidden') &&
-//          (!node.classList || !node.classList.contains('grid-layer')),
-//      scale: 6, // Maximum zoom level
-//      isResponsive: () => performance.now() % 100 == 0,
-//      isInterrupted: () => this.isInterrupted_(),
-//      disableSmoothing: true,
-//    }).then(dataUrl => {
-      state.theMap.concurrentTileCachingOperations--;
-      // Local locks already interrupt, so it's only global locks we have to
-      // worry about.
-      if (state.theMap.areTilesLocked()) return;
-      this.imageElement_.src = dataUrl;
-      this.imageElement_.style.width = this.width;
-      this.imageElement_.style.height = this.height;
-      this.deactivate_(start);
-      tilesCached++;
-      if (tilesCached % 10 == 0) {
-        const duration =
-            Math.ceil((performance.now() - firstTileCacheStart) / 1000);
-        debug(`Cached ${tilesCached} tiles in ${duration}s`);
-      }
-    }).catch(reason => {
-      state.theMap.concurrentTileCachingOperations--;
-      debug(`Tile ${this.key} caching failed: ${reason}.`);
-    });
+          state.theMap.concurrentTileCachingOperations--;
+          // Local locks already interrupt, so it's only global locks we have to
+          // worry about.
+          if (state.theMap.areTilesLocked()) return;
+          this.imageElement_.src = dataUrl;
+          this.imageElement_.style.width = this.width;
+          this.imageElement_.style.height = this.height;
+          this.deactivate_(start);
+          tilesCached++;
+          if (tilesCached % 10 == 0) {
+            const duration =
+                Math.ceil((performance.now() - firstTileCacheStart) / 1000);
+            debug(`Cached ${tilesCached} tiles in ${duration}s`);
+          }
+        }).catch(reason => {
+          state.theMap.concurrentTileCachingOperations--;
+          debug(`Tile ${this.key} caching failed: ${reason}.`);
+        });
   }
 
   restartTimer_() {
