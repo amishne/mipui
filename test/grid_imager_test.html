@@ -53,6 +53,16 @@
       document.body.appendChild(square);
       return square;
     }
+    
+    function createMaskedDom() {
+      const square = document.createElement('div');
+      square.classList.add('square');
+      const maskedDiamond = document.createElement('div');
+      maskedDiamond.classList.add('masked-diamond');
+      square.appendChild(maskedDiamond);
+      document.body.appendChild(square);
+      return square;
+    }
 
     addTest('Can save simple dom to svg dataurl', async () => {
       const input = createSimpleDom();
@@ -118,6 +128,20 @@
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
       const expectedDataUrl = 'data:image/png;base64,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';
+      assert(pngDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can save dom with masks to png output', async () => {
+      const input = createMaskedDom();
+
+      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA/klEQVRoQ+2aywrDMAwE5f//aJcWCj3kYbMrpYLJ2V6JkefieMyIGXwQgMAhgYEgnAwInBNAkIanY8SMGaNh5/1aRpBmM3vL8f2QJH94CJLP2FbhVw4ksWG9DEKQGs5ylSM5kETGehuAILeInl9wJQeS5M4HQXL5yukrciCJjPk0AEHy2MrJO3IgiYz7MABBcrhaUhHEglEKQRAJX/7mHUm49vXPA0H8TO2JK5Ighx37JxBBcrjaU7nmtSNdCkSQJUz/sYgfhfVzQJB65lJFnppI+LY3I8g2suc38FixbgYIUseaSg0JIEjDodFyHQEEqWNNpYYEEKTh0Gi5jsALVPdD7W2wDYIAAAAASUVORK5CYII=';
       assert(pngDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');

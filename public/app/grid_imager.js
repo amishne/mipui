@@ -131,7 +131,9 @@ class GridImager {
         context.imageSmoothingEnabled = false;
       }
       imageElement.onload = () => {
+        const startDraw = performance.now();
         context.drawImage(imageElement, 0, 0);
+        debug(`drawing image on canvas done in ${this.msSince_(startDraw)}`);
         debug(`imageElement2canvas_() done in ${this.msSince_(start)}`);
         resolve(canvas);
       };
@@ -172,28 +174,46 @@ class GridImager {
   }
 
   async processNode_(node) {
-    const backgroundImage =
-        getComputedStyle(node).backgroundImage.replace(/\\"/g, "'");
+    const computedStyle = getComputedStyle(node);
+    const backgroundImage = computedStyle.backgroundImage.replace(/\\"/g, "'");
+    const maskNonWebkit = computedStyle.mask.replace(/\\"/g, "'");
+    const maskWebkit = computedStyle.webkitMaskImage.replace(/\\"/g, "'");
+    let mask = '';
+    if (maskNonWebkit != '' && maskNonWebkit != 'none') mask = maskNonWebkit;
+    else if (maskWebkit != '' && maskWebkit != 'none') mask = maskWebkit;
     if (backgroundImage.startsWith('url')) {
-      const dataUrl = backgroundImage.substr(5, backgroundImage.length - 7);
-      if (backgroundImage.includes('data:image/svg+xml;')) {
-        const {width, height} =
-            this.extractDimensionsFromSvgStr_(dataUrl);
-        const pngDataUrl =
-            await this.svgDataUrl2pngDataUrl_(dataUrl, width, height);
-        node.style.backgroundImage = `url("${pngDataUrl}")`;
-      } else if (backgroundImage.includes('data:image/png;')) {
-        // If it's already png, do nothing.
-      } else {
-        // If it's a URL but not svg or png, it must be an external reference.
-        debug('Unsupported external image reference when caching.');
-      }
+      const newPropertyValue =
+          await this.replaceInlineSvgProperty_(backgroundImage);
+      node.style.backgroundImage = newPropertyValue;
+    }
+    if (mask.startsWith('url')) {
+      const newPropertyValue = await this.replaceInlineSvgProperty_(mask);
+      node.style.mask = newPropertyValue;
+      node.style.webkitMaskImage = newPropertyValue;
     }
     for (let i = 0; i < node.childElementCount; i++) {
       await this.processNode_(node.children[i]);
     }
   }
   
+  async replaceInlineSvgProperty_(property) {
+    const dataUrl = property.substr(5, property.length - 7);
+    if (property.includes('data:image/svg+xml;')) {
+      const {width, height} =
+          this.extractDimensionsFromSvgStr_(dataUrl);
+      const pngDataUrl =
+          await this.svgDataUrl2pngDataUrl_(dataUrl, width, height);
+      return `url("${pngDataUrl}")`;
+    } else if (backgroundImage.includes('data:image/png;')) {
+      // If it's already png, do nothing.
+      return property;
+    } else {
+      // If it's a URL but not svg or png, it must be an external reference.
+      debug('Unsupported external image reference when caching.');
+      return property;
+    }
+  }
+
   extractDimensionsFromSvgStr_(svgDataUrl) {
     let width = 0;
     let height = 0;
