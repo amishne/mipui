@@ -64,6 +64,17 @@
       return square;
     }
 
+    function createBackgroundAndMaskDom() {
+      const square = document.createElement('div');
+      square.classList.add('square');
+      const inner = document.createElement('div');
+      inner.classList.add('inline-svg-background');
+      inner.classList.add('masked-diamond');
+      square.appendChild(inner);
+      document.body.appendChild(square);
+      return square;
+    }
+
     addTest('Can save simple dom to svg dataurl', async () => {
       const input = createSimpleDom();
 
@@ -141,7 +152,22 @@
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
-      const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA/klEQVRoQ+2aywrDMAwE5f//aJcWCj3kYbMrpYLJ2V6JkefieMyIGXwQgMAhgYEgnAwInBNAkIanY8SMGaNh5/1aRpBmM3vL8f2QJH94CJLP2FbhVw4ksWG9DEKQGs5ylSM5kETGehuAILeInl9wJQeS5M4HQXL5yukrciCJjPk0AEHy2MrJO3IgiYz7MABBcrhaUhHEglEKQRAJX/7mHUm49vXPA0H8TO2JK5Ighx37JxBBcrjaU7nmtSNdCkSQJUz/sYgfhfVzQJB65lJFnppI+LY3I8g2suc38FixbgYIUseaSg0JIEjDodFyHQEEqWNNpYYEEKTh0Gi5jsALVPdD7W2wDYIAAAAASUVORK5CYII=';
+      const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA50lEQVRoQ+2aQQ6EIBAEm/8/mo0mJhxYo166DuUHmHRRMo6Mmcz4mIAJbBMYCuLOMIH/CSgIaHeMzMwMUEWWoiCQPXDIcT1KAoGSREEALFY5lAQAZClBQco8dnIoSRmKgjAA3MmhJBBGTrE6IJ7IoSQdNuuqtlgFBm/kUJICIFuscugf/s062eow8wTp5J43p4hylCA55u0Ff6z8RBLlKDPyI70M4KbdUo4um/MlpiAACBtJlKPPRUEYDM4qvGoCguEUCwrDy4o4MLZYOCQWREpAQUg0rAWXgILgkFgQKQEFIdGwFlwCP7UzQ+3f33XdAAAAAElFTkSuQmCC';
+      assert(pngDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can save dom with background image and masks to png output',
+        async () => {
+      const input = createBackgroundAndMaskDom();
+
+      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA9klEQVRoQ+3a0QqCQBBG4fX9H7ooEiQsdAed/+LzunWHczwo5vIY4zEcCCCwS2ARiCsDgd8EBBJ0dSzD7TxIx3sUgYQYecWxHp55Q6QIJEPENg6RZDhZp3AHafaxF4dImqVsthdIo4t/cYikUYxA+uEfiUMkAZ685r1fwpk4RHK/n+2OHrEa+AukAfrklgKZBFdddiYSr32rtOfXC2SeXXnlkUjEUcZcOoFASvjqi73mrTO88gwCuZLuwXP7o/AgqIafCaQB+t6WPjUJEfE1hkCCvPhYMUjGZxSB5DkxURABgQTJMEoeAYHkOTFREAGBBMkwSh6BJwN9Ne3iBp1FAAAAAElFTkSuQmCC';
       assert(pngDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');

@@ -204,7 +204,7 @@ class GridImager {
       const pngDataUrl =
           await this.svgDataUrl2pngDataUrl_(dataUrl, width, height);
       return `url("${pngDataUrl}")`;
-    } else if (backgroundImage.includes('data:image/png;')) {
+    } else if (property.includes('data:image/png;')) {
       // If it's already png, do nothing.
       return property;
     } else {
