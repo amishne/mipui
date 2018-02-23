@@ -11,7 +11,7 @@ class GridImager {
     this.cssFiles_.set(path, '');
     return new Promise((resolve, reject) => {
       this.loadFile_(path, fileContent => {
-        this.processCss_(fileContent).then(processedCss => {
+        this.replaceInlinedSvgWithPng_(fileContent).then(processedCss => {
           // Verify the entry still exists, i.e. that it wasn't deleted by a
           // theme change.
           if (this.cssFiles_.has(path)) {
@@ -66,18 +66,11 @@ class GridImager {
     let actualNode = node;
     let cloneContainer = null;
     if (needsCloning) {
-      actualNode = this.cloneNode_(node);
-      debug(`node cloning done in ${this.msSince_(start)}`);
-      const documentInsertionStart = performance.now();
       cloneContainer = document.createElement('div');
       cloneContainer.style.display = 'none';
       node.parentElement.appendChild(cloneContainer);
-      cloneContainer.appendChild(actualNode);
-      debug(`cloned node document insertion done in ${
-        this.msSince_(documentInsertionStart)}`);
-      const processStart = performance.now();
-      await this.processNode_(actualNode);
-      debug(`cloned node processing done in ${this.msSince_(processStart)}`);
+      actualNode = await this.cloneNode_(node, cloneContainer);
+      debug(`node cloning done in ${this.msSince_(start)}`);
     }
     const serializeStart = performance.now();
     const result = new XMLSerializer().serializeToString(actualNode);
@@ -171,80 +164,47 @@ class GridImager {
     };
     xhr.send();
   }
-  
-  async processCss_(cssContent) {
-    const regex = /url\(['"](data:image\/svg\+xml;[^\n]+)['"]\);/g;
+
+  async replaceInlinedSvgWithPng_(text) {
+    const regex =
+        /url\((\\?&quot;|"|')(data:image\/svg\+xml;.*\/svg *>)(\\?&quot;|"|')\);/g;
     const inlinedSvgs = [];
     let match = null;
-    while (match = regex.exec(cssContent)) {
+    while (match = regex.exec(text)) {
+      const quoteLength = match[1].length;
+      const svgDataUrl = match[2];
+      const begin = match.index + 4 + quoteLength;
+      const decodedSvgDataUrl = svgDataUrl
+          .replace(/&amp;/g, '&')
+          .replace(/\\?&quot;/g, '"')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>');
       inlinedSvgs.push({
-        begin: match.index + 5,
-        str: match[1],
+        begin,
+        end: begin + svgDataUrl.length,
+        str: decodedSvgDataUrl,
       });
     }
     let result = '';
     let lastIndex = 0;
     for (const inlinedSvg of inlinedSvgs) {
-      result += cssContent.substring(lastIndex, inlinedSvg.begin);
+      result += text.substring(lastIndex, inlinedSvg.begin);
       const {width, height} =
           this.extractDimensionsFromSvgStr_(inlinedSvg.str);
       const pngDataUrl =
           await this.svgDataUrl2pngDataUrl_(inlinedSvg.str, width, height);
       result += pngDataUrl;
-      lastIndex = inlinedSvg.begin + inlinedSvg.str.length;
+      lastIndex = inlinedSvg.end;
     };
-    result += cssContent.substring(lastIndex);
+    result += text.substring(lastIndex);
     return result;
   }
 
-  cloneNode_(node) {
-    const cloned = node.cloneNode(false);
-    for (const child of node.childNodes) {
-      if (!this.filter_ || this.filter_(child)) {
-        cloned.appendChild(this.cloneNode_(child));
-      }
-    }
-    return cloned;
-  }
-
-  async processNode_(node) {
-    const style = node.style;
-    const backgroundImage = style.backgroundImage.replace(/\\"/g, "'");
-    const maskNonWebkit = style.mask.replace(/\\"/g, "'");
-    const maskWebkit = style.webkitMaskImage.replace(/\\"/g, "'");
-    let mask = '';
-    if (maskNonWebkit != '' && maskNonWebkit != 'none') mask = maskNonWebkit;
-    else if (maskWebkit != '' && maskWebkit != 'none') mask = maskWebkit;
-    if (backgroundImage.startsWith('url')) {
-      node.style.backgroundImage =
-          await this.replaceInlineSvgProperty_(backgroundImage);
-    }
-    if (mask.startsWith('url')) {
-      const newMaskProperty = await this.replaceInlineSvgProperty_(mask);
-      node.style.mask = newMaskProperty;
-      node.style.webkitMaskImage = newMaskProperty;
-    }
-    for (let i = 0; i < node.childElementCount; i++) {
-      await this.processNode_(node.children[i]);
-    }
-  }
-  
-  async replaceInlineSvgProperty_(property) {
-    const dataUrl = property.substr(5, property.length - 7);
-    if (property.includes('data:image/svg+xml;')) {
-      const {width, height} =
-          this.extractDimensionsFromSvgStr_(dataUrl);
-      const pngDataUrl =
-          await this.svgDataUrl2pngDataUrl_(dataUrl, width, height);
-      return `url("${pngDataUrl}")`;
-    } else if (property.includes('data:image/png;')) {
-      // If it's already png, do nothing.
-      return property;
-    } else {
-      // If it's a URL but not svg or png, it must be an external reference.
-      debug('Unsupported external image reference when caching.');
-      return property;
-    }
+  async cloneNode_(node, parent) {
+    const cloned = document.createElement(node.tag);
+    parent.appendChild(cloned);
+    cloned.outerHTML = await this.replaceInlinedSvgWithPng_(node.outerHTML);
+    return parent.children[0];
   }
 
   extractDimensionsFromSvgStr_(svgDataUrl) {
