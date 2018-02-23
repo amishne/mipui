@@ -11,12 +11,14 @@ class GridImager {
     this.cssFiles_.set(path, '');
     return new Promise((resolve, reject) => {
       this.loadFile_(path, fileContent => {
-        // Verify the entry still exists, i.e. that it wasn't deleted by a theme
-        // change.
-        if (this.cssFiles_.has(path)) {
-          this.cssFiles_.set(path, fileContent);
-        }
-        resolve();
+        this.processCss_(fileContent).then(processedCss => {
+          // Verify the entry still exists, i.e. that it wasn't deleted by a
+          // theme change.
+          if (this.cssFiles_.has(path)) {
+            this.cssFiles_.set(path, processedCss);
+          }
+          resolve();
+        });
       });
     });
   }
@@ -60,22 +62,29 @@ class GridImager {
 
   async node2xml_(node) {
     const start = performance.now();
-    const cloned = this.cloneNode_(node);
-    debug(`node cloning done in ${this.msSince_(start)}`);
-    const documentInsertionStart = performance.now();
-    const cloneContainer = document.createElement('div');
-    cloneContainer.style.display = 'none';
-    node.parentElement.appendChild(cloneContainer);
-    cloneContainer.appendChild(cloned);
-    debug(`cloned node document insertion done in ${
-      this.msSince_(documentInsertionStart)}`);
-    const processStart = performance.now();
-    await this.processNode_(cloned);
-    debug(`node processing done in ${this.msSince_(processStart)}`);
+    const needsCloning = node.innerHTML.includes('data:image/svg+xml;');
+    let actualNode = node;
+    let cloneContainer = null;
+    if (needsCloning) {
+      actualNode = this.cloneNode_(node);
+      debug(`node cloning done in ${this.msSince_(start)}`);
+      const documentInsertionStart = performance.now();
+      cloneContainer = document.createElement('div');
+      cloneContainer.style.display = 'none';
+      node.parentElement.appendChild(cloneContainer);
+      cloneContainer.appendChild(actualNode);
+      debug(`cloned node document insertion done in ${
+        this.msSince_(documentInsertionStart)}`);
+      const processStart = performance.now();
+      await this.processNode_(actualNode);
+      debug(`cloned node processing done in ${this.msSince_(processStart)}`);
+    }
     const serializeStart = performance.now();
-    const result = new XMLSerializer().serializeToString(cloned);
+    const result = new XMLSerializer().serializeToString(actualNode);
     debug(`node serialization done in ${this.msSince_(serializeStart)}`);
-    node.parentElement.removeChild(cloneContainer);
+    if (needsCloning) {
+      node.parentElement.removeChild(cloneContainer);
+    }
     debug(`node2xml_() done in ${this.msSince_(start)}`);
     return result;
   }
@@ -162,6 +171,31 @@ class GridImager {
     };
     xhr.send();
   }
+  
+  async processCss_(cssContent) {
+    const regex = /url\(['"](data:image\/svg\+xml;[^\n]+)['"]\);/g;
+    const inlinedSvgs = [];
+    let match = null;
+    while (match = regex.exec(cssContent)) {
+      inlinedSvgs.push({
+        begin: match.index + 5,
+        str: match[1],
+      });
+    }
+    let result = '';
+    let lastIndex = 0;
+    for (const inlinedSvg of inlinedSvgs) {
+      result += cssContent.substring(lastIndex, inlinedSvg.begin);
+      const {width, height} =
+          this.extractDimensionsFromSvgStr_(inlinedSvg.str);
+      const pngDataUrl =
+          await this.svgDataUrl2pngDataUrl_(inlinedSvg.str, width, height);
+      result += pngDataUrl;
+      lastIndex = inlinedSvg.begin + inlinedSvg.str.length;
+    };
+    result += cssContent.substring(lastIndex);
+    return result;
+  }
 
   cloneNode_(node) {
     const cloned = node.cloneNode(false);
@@ -174,22 +208,21 @@ class GridImager {
   }
 
   async processNode_(node) {
-    const computedStyle = getComputedStyle(node);
-    const backgroundImage = computedStyle.backgroundImage.replace(/\\"/g, "'");
-    const maskNonWebkit = computedStyle.mask.replace(/\\"/g, "'");
-    const maskWebkit = computedStyle.webkitMaskImage.replace(/\\"/g, "'");
+    const style = node.style;
+    const backgroundImage = style.backgroundImage.replace(/\\"/g, "'");
+    const maskNonWebkit = style.mask.replace(/\\"/g, "'");
+    const maskWebkit = style.webkitMaskImage.replace(/\\"/g, "'");
     let mask = '';
     if (maskNonWebkit != '' && maskNonWebkit != 'none') mask = maskNonWebkit;
     else if (maskWebkit != '' && maskWebkit != 'none') mask = maskWebkit;
     if (backgroundImage.startsWith('url')) {
-      const newPropertyValue =
+      node.style.backgroundImage =
           await this.replaceInlineSvgProperty_(backgroundImage);
-      node.style.backgroundImage = newPropertyValue;
     }
     if (mask.startsWith('url')) {
-      const newPropertyValue = await this.replaceInlineSvgProperty_(mask);
-      node.style.mask = newPropertyValue;
-      node.style.webkitMaskImage = newPropertyValue;
+      const newMaskProperty = await this.replaceInlineSvgProperty_(mask);
+      node.style.mask = newMaskProperty;
+      node.style.webkitMaskImage = newMaskProperty;
     }
     for (let i = 0; i < node.childElementCount; i++) {
       await this.processNode_(node.children[i]);
