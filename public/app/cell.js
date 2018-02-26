@@ -61,6 +61,10 @@ class Cell {
 
   isVariation(layer, kind, variation) {
     const content = this.getLayerContent(layer);
+    return this.contentIsVariation_(content, layer, kind, variation);
+  }
+
+  contentIsVariation_(content, layer, kind, variation) {
     if (!content) return false;
     if (content[ck.kind] !== kind.id) return false;
     if (content[ck.variation] !== variation.id) return false;
@@ -269,15 +273,37 @@ class Cell {
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
     this.setImageFromVariation_(element, layer, content);
-    this.setClip_(
-        element, content[ck.clipInclude], content[ck.clipExclude]);
+    this.setMask_(element, content);
   }
 
-  setClip_(element, clipInclude, clipExclude) {
+  setMask_(element, content) {
     if (!element) return;
-    element.style.mask = null;
-    element.style['-webkit-mask'] = null;
-    if (!clipInclude && !clipExclude) return;
+    let mask = null;
+    if (this.contentIsVariation_(
+        content, ct.walls, ct.walls.smooth, ct.walls.smooth.angled)) {
+      mask = createAngledWallSvgMask(content[ck.connections]);
+    } else {
+      const clipInclude = content[ck.clipInclude];
+      const clipExclude = content[ck.clipExclude];
+      if (clipInclude || clipExclude) {
+        mask = this.createMaskSvgFromClip_(content, clipInclude, clipExclude);
+      }
+    }
+    element.style.mask = mask;
+    element.style['-webkit-mask'] = mask;
+  }
+
+  setAngledWallMask_(element, content) {
+    if (!this.contentIsVariation_(
+        content, ct.walls, ct.walls.smooth, ct.walls.smooth.angled)) {
+      return;
+    }
+    const mask = createAngledWallSvgMask(content[ck.connections]);
+    element.style.mask = mask;
+    element.style['-webkit-mask'] = mask;
+  }
+
+  createMaskSvgFromClip_(element, clipInclude, clipExclude) {
     const shapes = [];
     if (clipInclude) {
       clipInclude.split('|').forEach(clipShape => {
@@ -293,13 +319,11 @@ class Cell {
         shapes.push(this.clipToSvgShape_(clipShape, 'black'));
       });
     }
-    const svg =
-        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
+    return 'url("data:image/svg+xml;utf8,' +
+        "<svg xmlns='http://www.w3.org/2000/svg'>" +
         `<defs><mask id='m'>${shapes.join('')}</mask></defs>` +
         "<rect x='0' y='0' width='100%' height='100%' mask='url(%23m)' />" +
-        '</svg>';
-    element.style['-webkit-mask'] = `url("${svg}")`;
-    element.style['mask'] = `url("${svg}")`;
+        '</svg>")';
   }
 
   clipToSvgShape_(clipShape, color) {
