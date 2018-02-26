@@ -1815,6 +1815,34 @@ class Menu {
               window.open().document.write('<img src="' + dataUrl + '"/>');
             },
           },
+          {
+            name: 'Disable tiling',
+            type: 'button',
+            presentation: 'label',
+            text: 'No tiles',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              tilingCachingEnabled = false;
+              const thisItem = this.debugMenuItem_.submenu.items.find(
+                  item => item.name == 'Disable tiling');
+              thisItem.text = 'Done';
+              this.updateItem_(thisItem);
+            },
+          },
+          {
+            name: 'Greyed cached tiles',
+            type: 'button',
+            presentation: 'label',
+            text: 'Grey tiles',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              cachedTilesGreyedOut = true;
+              const thisItem = this.debugMenuItem_.submenu.items.find(
+                  item => item.name == 'Greyed cached tiles');
+              thisItem.text = 'Done';
+              this.updateItem_(thisItem);
+            },
+          },
         ],
       },
     };
