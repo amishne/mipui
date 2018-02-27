@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Improving Mipui Performance</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-96544349-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+</head>
+<body>
+  <article>
+    <h1>The road to improving Mipui performance</h1>
+    <em>Alon Mishne, February 2018</em>
+    <p>
+      <!-- Summary -->
+      On December 2017 I created a poll to get a feel on what was important for the community. I had free-text fields and a recurring complaint there was performance on large maps, so I decided to tackle that. I knew it would be tricky, but I didn't know how much. This post gives a rough overview of the problem, the solution, and why it has difficult.
+    </p>
+    <h2>Background</h2>
+    <p>
+      <!-- What is Mipui -->
+      <a href="https://www.mipui.net">Mipui</a> is a web app I'm developing, serving as a map editor for top-down grid-based maps, the type used in role-playing games such as D&amp;D. It also has other capabilities - saves to cloud, live updates shared across users, and more - but those are out of scope here.
+    </p>
+    <p>
+      <!-- Mipui is flexible in map size -->
+      From an early point in the development, the map size has been flexible. It defaults to 20x20, but you can change it to any size using the buttons on the side of the map. Later on I added a dedicated map resize button, which makes it easier to quickly resize to any size.
+    </p>
+    <p>
+      <!-- Mipui is slow -->
+      On my machine, the performance of 20x20 maps was smooth. By performance I mean the frames per second (FPS) when panning, zooming, hovering and drawing on the map. However things started to slow down as the maps got bigger. The slowdown was starting to get noticeable on 30x30 maps, and on 50x50 it was already getting into frustrating territory. So, this is the problem I set out to tackle.
+    </p>
+    <p>
+      <!-- Target -->
+      I didn't have a clear target when I started, but I was hoping I could get 100x100 maps running smoothly - that would be a win for me.
+    </p>
+    <h2>The Reason it was Slow</h2>
+    <p>
+      <!-- Profiling results -->
+      Initial profiling indicated what I suspected - the slowdown wasn't really caused by anything in my code, but was due to the time it took the browser to render the dom tree.
+    </p>
+    <p>
+      <!-- Large number of divs -->
+      Mipui's grid is actually a collection of absolutely-positioned elements (all divs). Because Mipui actually places a wall grid cell in-between every two non-wall cells, the actual number of cells for a 20x20 map is 41x41. Worse, it's not just a single div per cell; every layer is assigned a div per cell, where layers are floor layer, wall layer, text layer etc. Empty values don't get a div so it's not really that bad, but the minimum number of divs per cell is 2: the floor layer and a "grid" layer, which is an invisible layer which is the one actually interacting with the mouse.
+    </p>
+    <p>
+      <!-- Actual div count -->
+      If I estimate an average of 1 non-empty layer per cell, which feels about right to me - so a total of 3 with the wall and grid layers - then the total number of divs for a 20x20 map is 41x41x3 = 5043. For a 50x50 map, that grows to 101x101x3 = 30603. My aspirational 100x100 map is 121203 divs, yet another order of magnitude over the already slow 50x50 map.
+    </p>
+    <p>
+      <!-- Comparison with other websites -->
+      For reference, the number of elements on my Facebook homepage is 1866 and in my Gmail inbox-with-preview it's 4332, and they certainly don't all respond to mouse events and move around. So no wonder my high div count made things so slow - looks like typical websites don't have so many dynamic and interactive divs on-screen at once.
+    </p>
+    <h5 class="note">Side Note: Why Not Canvas?</h5>
+    <p class="note">
+      At the early stages of the project I considered using canvas instead of divs, but ended up ruling that out for various reasons which are outside the scope here. And in any case, by the time I started the performance work mentioned in this post, changing it from divs to canvas would have been a considerable effort, and I wasn't entirely sure that it would solve the problem, and I was guessing it would also introduce new issues of its own.
+    </p>
+    <h2>Initial Attempts</h2>
+    <p>
+      <!-- Small things -->
+      I started out with some small things. I prevented the map-resize button from moving every time you zoom or pan the map, instead only disappearing and reappearing a second after the zoom/pan was complete (big performance boost); I moved some interaction logic to only occur on each frame with requestAnimationFrame (small boost) and I cached some sizing values that I needed (small boost). None of these was enough to really tackle the problem.
+    </p>
+  </article>
+</body>
+</html>
