@@ -118,12 +118,12 @@ class GridImager {
     return imageElement;
   }
 
-  async imageElement2canvas_(imageElement, width, height, callback) {
+  async imageElement2canvas_(imageElement, width, height) {
     return new Promise((resolve, reject) => {
       const start = performance.now();
       const canvas = document.createElement('canvas');
       canvas.style.width = width;
-      canvas.style.height = height
+      canvas.style.height = height;
       canvas.width = this.scale_ * width;
       canvas.height = this.scale_ * height;
       const context = canvas.getContext('2d');
@@ -132,10 +132,9 @@ class GridImager {
         context.imageSmoothingEnabled = false;
       }
       if (!this.imageElementContainer_) {
-        this.imageElementContainer_ = document.createElement('div') || document.body;
-        //this.imageElementContainer_.style.display = 'none';
-        (document.getElementById('mapContainer') || document.body)
-            .appendChild(this.imageElementContainer_);
+        const parent = document.getElementById('mapContainer');
+        this.imageElementContainer_ =
+            createAndAppendDivWithClass(parent, 'grid-imager-image-container');
       }
       imageElement.addEventListener('load', () => {
         const startDraw = performance.now();

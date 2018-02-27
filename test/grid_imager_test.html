@@ -4,6 +4,12 @@
   <script src="harness.js" type="text/javascript"></script>
   <script type="text/javascript">
     debug = x => { console.log(x); };
+    createAndAppendDivWithClass = (parent, cssClass) => {
+      const element = document.createElement('div');
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      return element;
+    };
     const cssFilePath = 'grid_imager_test_style.css';
 
     beforeSuite = () => {

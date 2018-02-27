@@ -190,3 +190,7 @@ modal-dialog-anchorbox-line {
 .modal-dialog-accept-button {
   font-weight: bold;
 }
+
+.grid-imager-image-container {
+  display: none;
+}
