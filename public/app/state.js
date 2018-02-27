@@ -68,9 +68,7 @@ class State {
       disableSmoothing: true,
     });
     this.tileGridImager.addCssFile('./grid.css').then(() => {
-      this.tileGridImager.addCssFile('./angled_wall.css').then(() => {
-        this.tileGridImager.recalculateStyleString();
-      });
+      this.tileGridImager.recalculateStyleString();
     });
   }
 

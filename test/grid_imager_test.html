@@ -80,8 +80,8 @@
 
       const svgDataUrl = await gi.node2svgDataUrl(input, 200, 20);
 
-      assert(svgDataUrl.includes('%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20class%3D%22square%22%3E%3Cdiv%20class%3D%22circle%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E</svg>'));
-      assert(svgDataUrl.startsWith('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">%3CforeignObject%20style%3D%22width%3A100%25%3Bheight%3A100%25%22%3E%3Cstyle%3E%3C!--%20grid_imager_test_style.css%20--%3E'));
+      expectedDataUrl = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">%3CforeignObject%20style%3D%22width%3A100%25%3Bheight%3A100%25%3B%22%3E%3Cstyle%3E%3C!--%20grid_imager_test_style.css%20--%3E%20.square%20%7B%20width%3A%20200px%3B%20height%3A%2020px%3B%20background-color%3A%20red%3B%20%7D%20.circle%20%7B%20background-color%3A%20blue%3B%20border-radius%3A%2050%25%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.inline-svg-background%20%7B%20background-image%3A%20url(\'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABl0lEQVRoQ%2B2b4U3DMBCFXyeATgKdAEYoG8AITEDZgA1gA2ADmADYBDZAJ7lSVCkksa93Efn8p398753f%2Bam%2BxFmJka3AVtKZpEtJ5yWZT0lvkuz3NTvBJfOvlrz45LWbGR47puhLx0xyU8ySnPLy6DFITs13ku4mUlvM%2FcQYpjcqgEEaBawIrzHHnuZW0kMFJyGVCmCQSuEqw%2BxY9VEZuw%2FbcNxqVHBCOAaZIJbDVOsnrCFvGYZhJmEEKIBBAkQuFPa06tmJ7krSixMWMH8ogEHitkdL73GYpTXrhsc4sgIY5MgCd%2BDtvcaFE917eW%2FiBAdMnwIYJG5vfEs6caIzrLUTFjAcsWaxBzwN8iPpdBar%2BudJ8A8SV2COWHFauzFhEDcpB4Fo0gclmt8EDBJXEx7zxmntxoRB3KQcBeTxovBrxAXHUckwaVgBDDKskecMrpp4qhmAhUECRD6gaOlFuKwYXC8MEix4oasxCeZIqBUGSRC9UNpx62nE5UXrOa65wZtTKAySo3uX1Z5umVn6PrnlUmJijX4BgdUuFe6ZlkYAAAAASUVORK5CYII%3D\')%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.external-svg-background%20%7B%20background-image%3A%20url(%22..%2Fpublic%2Fapp%2Fassets%2Fwyvern.svg%22)%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.masked-diamond%20%7B%20background-color%3A%20blue%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20mask%3A%20url(%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ%2B3awQqDMBAA0fj%2FH92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe%2F4zXG4KSREzL6yNjj%2BFy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH%2F%2BIQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA%2FPAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c%2Fukwm8AXOJDhXySu78AAAAAElFTkSuQmCC%22)%3B%20-webkit-mask%3A%20url(%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ%2B3awQqDMBAA0fj%2FH92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe%2F4zXG4KSREzL6yNjj%2BFy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH%2F%2BIQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA%2FPAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c%2Fukwm8AXOJDhXySu78AAAAAElFTkSuQmCC%22)%3B%20%7D%20%3C%2Fstyle%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20class%3D%22square%22%3E%3Cdiv%20class%3D%22circle%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E</svg>';
+      assert(svgDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');
       img.src = svgDataUrl;
@@ -94,7 +94,7 @@
 
       const svgElement = await gi.node2svgElement(input);
 
-      const expectedInnerHtml = '<foreignobject style="width:100%;height:100%"><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></foreignobject>';
+      const expectedInnerHtml = '<foreignobject style="width:100%;height:100%;"><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></foreignobject>';
       assert(svgElement.innerHTML == expectedInnerHtml);
 
       document.body.appendChild(svgElement);

@@ -5,6 +5,7 @@ class GridImager {
     this.filter_ = options.filter || (_ => true);
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
+    this.imageElementContainer_ = null;
   }
 
   addCssFile(path) {
@@ -83,7 +84,7 @@ class GridImager {
   }
 
   async xml2foreignObjectString_(xml, includeStyle) {
-    return '<foreignObject style="width:100%;height:100%">' +
+    return '<foreignObject style="width:100%;height:100%;">' +
       (includeStyle ? this.styleString_ : '') + xml + '</foreignObject>'
         .replace(/\n/g, ' ')
         .replace(/ +/g, ' ');
@@ -121,8 +122,6 @@ class GridImager {
     return new Promise((resolve, reject) => {
       const start = performance.now();
       const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
       canvas.style.width = width;
       canvas.style.height = height
       canvas.width = this.scale_ * width;
@@ -132,13 +131,21 @@ class GridImager {
       if (this.disableSmoothing_) {
         context.imageSmoothingEnabled = false;
       }
-      imageElement.onload = () => {
+      if (!this.imageElementContainer_) {
+        this.imageElementContainer_ = document.createElement('div') || document.body;
+        //this.imageElementContainer_.style.display = 'none';
+        (document.getElementById('mapContainer') || document.body)
+            .appendChild(this.imageElementContainer_);
+      }
+      imageElement.addEventListener('load', () => {
         const startDraw = performance.now();
         context.drawImage(imageElement, 0, 0);
         debug(`drawing image on canvas done in ${this.msSince_(startDraw)}`);
+        this.imageElementContainer_.removeChild(imageElement);
         debug(`imageElement2canvas_() done in ${this.msSince_(start)}`);
         resolve(canvas);
-      };
+      });
+      this.imageElementContainer_.appendChild(imageElement);
     });
   }
 
