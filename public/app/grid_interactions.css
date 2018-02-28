@@ -1,0 +1,207 @@
+/* If a style would not be needed for exporting the map to an image, put it
+here. */
+
+.text-cell-adding, .text-cell-removing, .text-cell-editing,
+.image-cell-adding, .image-cell-removing, .image-cell-editing {
+  border: 1px dashed rgb(50, 50, 50);
+  margin: 1px 2px 2px 1px;
+}
+
+.image-cell-removing {
+  border-color: red;
+}
+
+.text-cell-textarea, .image-cell-textarea {
+  position: absolute;
+  z-index: 11;
+  resize: none;
+  margin: 1px 0px 0px 1px;
+  overflow: hidden;
+  text-align: center;
+  border: 0;
+  outline: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-shadow: 0px 0px 8px 2px rgba(50,50,50,0.5);
+}
+
+.image-cell-textarea {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.text-hover-widget, .image-hover-widget {
+  position: absolute;
+  cursor: text;
+  z-index: 10;
+  margin: 2px 3px 3px 2px;
+}
+
+.fixed-image-hover-widget {
+  position: absolute;
+  margin: 0 1px 1px 0;
+  z-index: 10;
+}
+
+.text-delete-widget, .image-delete-widget {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  cursor: pointer;
+  margin-left: -2px;
+  z-index: 12;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><line x1='0' y1='0' x2='6' y2='6' stroke='red' stroke-width='1' /><line x1='6' y1='0' x2='0' y2='6' stroke='red' stroke-width='1' /></svg>");
+}
+
+.image-delete-widget {
+  margin-left: -5px;
+}
+
+.text-resize-widget, .image-resize-widget {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  cursor: se-resize;
+  margin-left: -2px;
+  margin-top: -2px;
+  z-index: 12;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><polygon points='0,6 6,6 6,0'/></svg>");
+}
+
+.image-resize-widget {
+  margin-left: -5px;
+  margin-top: -5px;
+}
+
+.box-move-widget {
+  position: absolute;
+  background-color: yellow;
+  width: 6px;
+  height: 6px;
+  cursor: move;
+  z-index: 12;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><rect x='0' y='0' width='6' height='6' stroke-width='1' fill='none' stroke='black'/></svg>");
+}
+
+.image-cell-editing .image, .image-cell-adding .image {
+  margin: -2px -3px -3px -2px;
+}
+
+.stairs-cell-adding, .stairs-cell-removing, .stairs-cell-editing {
+  margin: -1px 0 0 -1px;
+}
+
+.stairs-cell-adding, .stairs-cell-removing {
+  filter: opacity(0.6);
+}
+
+.stairs-cell-adding, .stairs-cell-editing {
+  border: 1px dashed rgb(50, 50, 50);
+}
+
+.stairs-cell-removing {
+  border: 1px dashed red;
+}
+
+.image-cell-removing {
+  border-color: red;
+}
+
+.square-cell-corner-removing, .circle-cell-corner-removing {
+  z-index: -1;
+}
+
+.square-cell-primary-removing, .square-cell-horizontal-removing,
+.square-cell-vertical-removing, .circle-cell-primary-removing,
+.circle-cell-horizontal-removing, .circle-cell-vertical-removing {
+  z-index: -2;
+}
+
+/* hsl(60, 23.8, 79.4) */
+.square-wall-cell-adding, .square-wall-cell-editing,
+.oval-wall-cell-adding, .oval-wall-cell-editing {
+  background-color: rgb(215, 215, 190);
+}
+
+/* hsl(47, 52.1, 81.2) */
+.square-wall-cell-removing, .oval-wall-cell-removing {
+  background-color: rgb(232, 221, 182);
+  z-index: 1;
+}
+
+.angled-wall-cell-adding {
+  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
+}
+
+.angled-wall-cell-editing {
+  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
+}
+
+.angled-wall-cell-removing {
+  filter: hue-rotate(13deg) saturate(0.92) brightness(1.16);
+}
+
+.door-cell-adding, .window-cell-adding {
+  background-color: rgba(255, 250, 240, 0.2);
+  border-color: rgba(100, 100, 100, 0.8);
+}
+
+.door-cell-removing, .window-cell-removing {
+  background-color: rgba(255, 250, 240, 0.5);
+  border-color: rgba(100, 100, 100, 0.8);
+}
+
+.bars-cell-adding, .fence-cell-adding, .curtain-cell-adding {
+  opacity: 0.7;
+}
+
+.bars-cell-removing, .fence-cell-removing, .curtain-cell-removing {
+  opacity: 0.3;
+}
+
+.text-cell-adding {
+  color: rgba(50, 50, 50, 0.6);
+}
+
+.text-cell-removing {
+  color: rgba(50, 50, 50, 0.3);
+}
+
+.green-square-adding, .green-circle-adding, .green-square-removing,
+.green-circle-removing {
+  filter: hue-rotate(165deg) brightness(2.0);
+}
+
+.brown-square-adding, .brown-circle-adding, .brown-square-removing,
+.brown-circle-removing {
+  filter: hue-rotate(65deg) brightness(3.0);
+}
+
+.blue-square-adding, .blue-circle-adding, .blue-square-removing,
+.blue-circle-removing {
+  filter: hue-rotate(215deg) brightness(3.0);
+}
+
+.red-square-adding, .red-circle-adding, .red-square-removing,
+.red-circle-removing {
+  filter: hue-rotate(45deg) brightness(2.5);
+}
+
+.white-square-adding, .white-circle-adding, .white-square-removing,
+.white-circle-removing {
+}
+
+.editor-view .hidden-cell-adding {
+  opacity: 0.2;
+}
+
+.editor-view .hidden-cell-removing {
+  opacity: 0.1;
+}
+
+.gmoverlay-square-adding {
+  opacity: 0.2;
+}
+
+.gmoverlay-square-removing {
+  opacity: 0.1;
+}

@@ -1,3 +1,5 @@
+/* If a style would be needed for exporting the map to an image, put it here. */
+
 .the-map {
   transform-origin: top left;
   display: inline-block;
@@ -10,15 +12,6 @@
 
 .the-map * {
   box-sizing: border-box;
-}
-
-.mobile-cursor {
-  position: fixed;
-  left: calc(50% - 12.5px);
-  top: calc(50% - 12.5px);
-  width: 25px;
-  height: 25px;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAYUlEQVRIS+1WQQ4AIAiS/z/aRs2tW9KhdcCzijJkIoTIzKx0AOiWthPZkCDsTSyDHCk2XVbXh3eyW8VRwxHcYF68EijtK0VK7rSgJ5uIU9kg+4TZIG2QHxpkX8DrJbr5uwYYoKkOM2ZJzgAAAABJRU5ErkJggg==");
 }
 
 .tile {
@@ -149,90 +142,7 @@
   white-space: pre-wrap;
 }
 
-.text-cell-adding, .text-cell-removing, .text-cell-editing,
-.image-cell-adding, .image-cell-removing, .image-cell-editing {
-  border: 1px dashed rgb(50, 50, 50);
-  margin: 1px 2px 2px 1px;
-}
 
-.image-cell-removing {
-  border-color: red;
-}
-
-.text-cell-textarea, .image-cell-textarea {
-  position: absolute;
-  z-index: 11;
-  resize: none;
-  margin: 1px 0px 0px 1px;
-  overflow: hidden;
-  text-align: center;
-  border: 0;
-  outline: 0;
-  padding-left: 0;
-  padding-right: 0;
-  box-shadow: 0px 0px 8px 2px rgba(50,50,50,0.5);
-}
-
-.image-cell-textarea {
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-.text-hover-widget, .image-hover-widget {
-  position: absolute;
-  cursor: text;
-  z-index: 10;
-  margin: 2px 3px 3px 2px;
-}
-
-.fixed-image-hover-widget {
-  position: absolute;
-  margin: 0 1px 1px 0;
-  z-index: 10;
-}
-
-.text-delete-widget, .image-delete-widget {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  cursor: pointer;
-  margin-left: -2px;
-  z-index: 12;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><line x1='0' y1='0' x2='6' y2='6' stroke='red' stroke-width='1' /><line x1='6' y1='0' x2='0' y2='6' stroke='red' stroke-width='1' /></svg>");
-}
-
-.image-delete-widget {
-  margin-left: -5px;
-}
-
-.text-resize-widget, .image-resize-widget {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  cursor: se-resize;
-  margin-left: -2px;
-  margin-top: -2px;
-  z-index: 12;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><polygon points='0,6 6,6 6,0'/></svg>");
-}
-
-.image-resize-widget {
-  margin-left: -5px;
-  margin-top: -5px;
-}
-
-.box-move-widget {
-  position: absolute;
-  background-color: yellow;
-  width: 6px;
-  height: 6px;
-  cursor: move;
-  z-index: 12;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><rect x='0' y='0' width='6' height='6' stroke-width='1' fill='none' stroke='black'/></svg>");
-}
-
-.image-cell-editing .image, .image-cell-adding .image {
-  margin: -2px -3px -3px -2px;
-}
 
 .primary-cell {
   width: 25px;
@@ -260,26 +170,6 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%239C92AC' fill-opacity='0.15'%3E%3Cpath fill-rule='evenodd' d='M0 0h4v4H0V0zm4 4h4v4H4V4z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-.stairs-cell-adding, .stairs-cell-removing, .stairs-cell-editing {
-  margin: -1px 0 0 -1px;
-}
-
-.stairs-cell-adding, .stairs-cell-removing {
-  filter: opacity(0.6);
-}
-
-.stairs-cell-adding, .stairs-cell-editing {
-  border: 1px dashed rgb(50, 50, 50);
-}
-
-.stairs-cell-removing {
-  border: 1px dashed red;
-}
-
-.image-cell-removing {
-  border-color: red;
-}
-
 .square-cell-primary, .square-cell-vertical, .square-cell-horizontal,
 .circle-cell-primary, .circle-cell-vertical, .circle-cell-horizontal {
   margin: -1px -0px -0px -1px;
@@ -298,16 +188,6 @@
   margin: -8px -7px -7px -8px;
   z-index: 2;
   background: rgb(255, 0, 0) !important;
-}
-
-.square-cell-corner-removing, .circle-cell-corner-removing {
-  z-index: -1;
-}
-
-.square-cell-primary-removing, .square-cell-horizontal-removing,
-.square-cell-vertical-removing, .circle-cell-primary-removing,
-.circle-cell-horizontal-removing, .circle-cell-vertical-removing {
-  z-index: -2;
 }
 
 .square-cell-0 {
@@ -444,30 +324,6 @@
   border-color: bisque;
 }
 
-/* hsl(60, 23.8, 79.4) */
-.square-wall-cell-adding, .square-wall-cell-editing,
-.oval-wall-cell-adding, .oval-wall-cell-editing {
-  background-color: rgb(215, 215, 190);
-}
-
-/* hsl(47, 52.1, 81.2) */
-.square-wall-cell-removing, .oval-wall-cell-removing {
-  background-color: rgb(232, 221, 182);
-  z-index: 1;
-}
-
-.angled-wall-cell-adding {
-  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
-}
-
-.angled-wall-cell-editing {
-  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
-}
-
-.angled-wall-cell-removing {
-  filter: hue-rotate(13deg) saturate(0.92) brightness(1.16);
-}
-
 .door-cell {
   background-color: rgb(255, 250, 240);
   border-width: 1px;
@@ -504,30 +360,12 @@
   border-color: rgb(100, 100, 100);
 }
 
-.door-cell-adding, .window-cell-adding {
-  background-color: rgba(255, 250, 240, 0.2);
-  border-color: rgba(100, 100, 100, 0.8);
-}
-
-.door-cell-removing, .window-cell-removing {
-  background-color: rgba(255, 250, 240, 0.5);
-  border-color: rgba(100, 100, 100, 0.8);
-}
-
 .window-cell-vertical {
   margin: 3px 2px 4px 1px;
 }
 
 .window-cell-horizontal {
   margin: 1px 4px 2px 3px;
-}
-
-.bars-cell-adding, .fence-cell-adding, .curtain-cell-adding {
-  opacity: 0.7;
-}
-
-.bars-cell-removing, .fence-cell-removing, .curtain-cell-removing {
-  opacity: 0.3;
 }
 
 .bars-cell-horizontal {
@@ -598,14 +436,6 @@
   fill: crimson;
 }
 
-.text-cell-adding {
-  color: rgba(50, 50, 50, 0.6);
-}
-
-.text-cell-removing {
-  color: rgba(50, 50, 50, 0.3);
-}
-
 .text-cell-textarea, .image-cell-textarea, .text-cell {
   font-family: sans-serif;
   font-weight: bold;
@@ -615,44 +445,20 @@
   filter: hue-rotate(160deg) brightness(1.5);
 }
 
-.green-square-adding, .green-circle-adding, .green-square-removing,
-.green-circle-removing {
-  filter: hue-rotate(165deg) brightness(2.0);
-}
-
 .brown-square, .brown-circle {
   filter: hue-rotate(65deg) brightness(2.5);
-}
-
-.brown-square-adding, .brown-circle-adding, .brown-square-removing,
-.brown-circle-removing {
-  filter: hue-rotate(65deg) brightness(3.0);
 }
 
 .blue-square, .blue-circle {
   filter: hue-rotate(215deg) brightness(2.5);
 }
 
-.blue-square-adding, .blue-circle-adding, .blue-square-removing,
-.blue-circle-removing {
-  filter: hue-rotate(215deg) brightness(3.0);
-}
-
 .red-square, .red-circle {
   filter: hue-rotate(45deg) brightness(2.0);
 }
 
-.red-square-adding, .red-circle-adding, .red-square-removing,
-.red-circle-removing {
-  filter: hue-rotate(45deg) brightness(2.5);
-}
-
 .white-square, .white-circle {
   filter: grayscale(100%) brightness(3.4) contrast(2.4);
-}
-
-.white-square-adding, .white-circle-adding, .white-square-removing,
-.white-circle-removing {
 }
 
 .stairs-cell-horizontal {
@@ -697,14 +503,6 @@
   opacity: 0.4;
 }
 
-.editor-view .hidden-cell-adding {
-  opacity: 0.2;
-}
-
-.editor-view .hidden-cell-removing {
-  opacity: 0.1;
-}
-
 .hidden-secret-door-cell {
   display: none;
   border: 1px dashed mediumvioletred;
@@ -719,12 +517,4 @@
   position: absolute;
   background-color: mediumvioletred;
   opacity: 0.4;
-}
-
-.gmoverlay-square-adding {
-  opacity: 0.2;
-}
-
-.gmoverlay-square-removing {
-  opacity: 0.1;
 }
