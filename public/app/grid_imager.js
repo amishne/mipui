@@ -1,3 +1,8 @@
+const INLINE_SVG_REGEX =
+    /url\((\\?&quot;|"|')(data:image\/svg\+xml;.*\/svg *>)(\\?&quot;|"|')\);/g;
+const EXTRACT_DIMENSIONS_REGEX =
+    /<svg[^>]*width=.(\d+).[^>]*height=.(\d+)./;
+
 class GridImager {
   constructor(options) {
     this.cssFiles_ = new Map();
@@ -84,8 +89,9 @@ class GridImager {
   }
 
   async xml2foreignObjectString_(xml, includeStyle) {
-    return '<foreignObject style="width:100%;height:100%;">' +
-      (includeStyle ? this.styleString_ : '') + xml + '</foreignObject>'
+    return '<foreignObject x="0" y="0" width="100%" height="100%">' +
+      '<html xmlns="http://www.w3.org/1999/xhtml">' +
+      (includeStyle ? this.styleString_ : '') + xml + '</html></foreignObject>'
         .replace(/\n/g, ' ')
         .replace(/ +/g, ' ');
   }
@@ -172,11 +178,9 @@ class GridImager {
   }
 
   async replaceInlinedSvgWithPng_(text) {
-    const regex =
-        /url\((\\?&quot;|"|')(data:image\/svg\+xml;.*\/svg *>)(\\?&quot;|"|')\);/g;
     const inlinedSvgs = [];
     let match = null;
-    while (match = regex.exec(text)) {
+    while (match = INLINE_SVG_REGEX.exec(text)) {
       const quoteLength = match[1].length;
       const svgDataUrl = match[2];
       const begin = match.index + 4 + quoteLength;
@@ -216,7 +220,7 @@ class GridImager {
   extractDimensionsFromSvgStr_(svgDataUrl) {
     let width = 0;
     let height = 0;
-    svgDataUrl.replace(/<svg xmlns=.http:\/\/www\.w3\.org\/2000\/svg.[^>]*width=.(\d+).[^>]*height=.(\d+)./, (match, group1, group2) => {
+    svgDataUrl.replace(EXTRACT_DIMENSIONS_REGEX, (match, group1, group2) => {
       width = group1;
       height = group2;
       return match;
