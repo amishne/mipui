@@ -36,7 +36,7 @@ class GridImager {
   recalculateStyleString() {
     this.styleString_ = Array.from(this.cssFiles_.entries())
         .map(([path, fileContent]) =>
-          `<style><!-- ${path} -->\n${fileContent}</style>`).join('\n')
+          `<style>/*${path}*/\n${fileContent}</style>`).join('\n')
         .replace(/\s+/g, ' ');
   }
 
