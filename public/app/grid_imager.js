@@ -1,5 +1,5 @@
 const INLINE_SVG_REGEX =
-    /url\((\\?&quot;|"|')(data:image\/svg\+xml;.*\/svg *>)(\\?&quot;|"|')\);/g;
+    /url\((\\?&quot;|"|')(data:image\/svg\+xml;(?![^\\]\1)+)\1\);/g;
 const EXTRACT_DIMENSIONS_REGEX =
     /<svg[^>]*width=.(\d+).[^>]*height=.(\d+)./;
 
@@ -211,7 +211,7 @@ class GridImager {
   }
 
   async cloneNode_(node, parent) {
-    const cloned = document.createElement(node.tag);
+    const cloned = document.createElement(node.tagName);
     parent.appendChild(cloned);
     cloned.outerHTML = await this.replaceInlinedSvgWithPng_(node.outerHTML);
     return parent.children[0];
