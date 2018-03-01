@@ -1,5 +1,5 @@
 const INLINE_SVG_REGEX =
-    /url\((\\?&quot;|"|')(data:image\/svg\+xml;(?![^\\]\1)+)\1\);/g;
+    /url\((\\?(&quot;|"|'))(data:image\/svg\+xml;(?:(?!\1).)*)\1\);/g;
 const EXTRACT_DIMENSIONS_REGEX =
     /<svg[^>]*width=.(\d+).[^>]*height=.(\d+)./;
 
@@ -36,8 +36,7 @@ class GridImager {
   recalculateStyleString() {
     this.styleString_ = Array.from(this.cssFiles_.entries())
         .map(([path, fileContent]) =>
-          `<style>/*${path}*/\n${fileContent}</style>`).join('\n')
-        .replace(/\s+/g, ' ');
+          `<style>${fileContent}</style>`).join('\n').replace(/\s+/g, ' ');
   }
 
   async node2svgElement(node) {
@@ -182,7 +181,7 @@ class GridImager {
     let match = null;
     while (match = INLINE_SVG_REGEX.exec(text)) {
       const quoteLength = match[1].length;
-      const svgDataUrl = match[2];
+      const svgDataUrl = match[3];
       const begin = match.index + 4 + quoteLength;
       const decodedSvgDataUrl = svgDataUrl
           .replace(/&amp;/g, '&')
