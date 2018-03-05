@@ -19,7 +19,7 @@
 <body>
   <article>
     <h1>The road to improving Mipui performance</h1>
-    <em>Alon Mishne, February 2018</em>
+    <em>Alon Mishne, March 2018</em>
     <p>
       <!-- Summary -->
       On December 2017 I created a poll to get a feel on what was important for the community. I had free-text fields and a recurring complaint there was performance on large maps, so I decided to tackle that. I knew it would be tricky, but I didn't know how much. This post gives a rough overview of the problem, the solution, and why it has difficult.
@@ -39,7 +39,7 @@
     </p>
     <p>
       <!-- Target -->
-      I didn't have a clear target when I started, but I was hoping I could get 100x100 maps running smoothly - that would be a win for me.
+      I didn't have a clear target when I started, but I was hoping I could get 100x100 maps running smoothly - I would consider that a success.
     </p>
     <h2>The Reason it was Slow</h2>
     <p>
@@ -48,7 +48,7 @@
     </p>
     <p>
       <!-- Large number of divs -->
-      Mipui's grid is actually a collection of absolutely-positioned elements (all divs). Because Mipui actually places a wall grid cell in-between every two non-wall cells, the actual number of cells for a 20x20 map is 41x41. Worse, it's not just a single div per cell; every layer is assigned a div per cell, where layers are floor layer, wall layer, text layer etc. Empty values don't get a div so it's not really that bad, but the minimum number of divs per cell is 2: the floor layer and a "grid" layer, which is an invisible layer which is the one actually interacting with the mouse.
+      Mipui's grid is actually a collection of absolutely-positioned elements (all divs). Because Mipui actually places a wall grid cell in-between every two non-wall cells, the actual number of cells for a 20x20 map is 41x41. Worse, it's not just a single div per cell; every "layer" is assigned a div per cell, where layers are floor layer, wall layer, text layer etc. Empty layer values don't get a div so it's not really that bad, but the minimum number of divs per cell is 2: the floor layer and a "grid" layer, which is an invisible layer which is the one actually interacting with the mouse.
     </p>
     <p>
       <!-- Actual div count -->
@@ -60,12 +60,38 @@
     </p>
     <h5 class="note">Side Note: Why Not Canvas?</h5>
     <p class="note">
-      At the early stages of the project I considered using canvas instead of divs, but ended up ruling that out for various reasons which are outside the scope here. And in any case, by the time I started the performance work mentioned in this post, changing it from divs to canvas would have been a considerable effort, and I wasn't entirely sure that it would solve the problem, and I was guessing it would also introduce new issues of its own.
+      At the early stages of the project I considered using canvas instead of divs, but ended up ruling that out for various reasons which are outside the scope here. By the time I started the performance work mentioned in this post, changing it from divs to canvas would have been a considerable effort, and I wasn't entirely sure that it would solve the problem, and I was guessing it would also introduce new issues of its own.
     </p>
     <h2>Initial Attempts</h2>
     <p>
       <!-- Small things -->
-      I started out with some small things. I prevented the map-resize button from moving every time you zoom or pan the map, instead only disappearing and reappearing a second after the zoom/pan was complete (big performance boost); I moved some interaction logic to only occur on each frame with requestAnimationFrame (small boost) and I cached some sizing values that I needed (small boost). None of these was enough to really tackle the problem.
+      Even before my December 2017 survey I tried to improve on performance, and started out with some small things. I prevented the map-resize button from moving every time you zoom or pan the map, instead only disappearing and reappearing a second after the zoom/pan was complete (big performance boost); I moved some interaction logic to only occur on each frame with requestAnimationFrame (small boost) and I cached some sizing values that I needed (barely noticeable boost). None of these was enough to really tackle the problem.
+    </p>
+    <h3>The will-change Property</h3>
+    <p>
+      <!-- what will-change is -->
+      The next improvement attempt was trying to use the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/will-change">will-change</a> property. According to the documentation it's supposed to give the browser a "heads-up" that something is about to change, but through experimentation I found out that in Chrome, what "will-change: contents" really does is cache the element to an image. That's actually the opposite of what I was expecting (if anything, it's anything that <em>isn't</em> about to change that should be cached), but it still seemed to have a lot of potential to be used for improving performance.
+    </p>
+    <p>
+      <!-- using will-change -->
+      I tried applying will-change at several resolutions, and finally found out that applying it to all layer elements resulted in a significant performance boost - around x2 FPS - particularly for zooming operations. Of course there were a few problems I had to solve, for example zooming in would actually lead to a blurry image, because of the image caching. So I had to forcefully remove and re-apply the will-change property after the zoom is complete to force the browser to re-cache the image. Another problem was that the map now had occasionally artifacts, which was very annoying. Still, x2 was too good to skip so I used it.
+    </p>
+    <p>
+      <!-- tiling for will-change -->
+      Seeing the browser cache to image gave me an idea: what if I would tile the map - that is divide it to small submaps, sized 5x5 or 10x10 or something like that, and I'd apply will-change on that tile level, or tile layer level, instead of on entire map layers? That way I'll be able to edit small chunks at a time, while everything else is cached to image and has little performance impact.
+    </p>
+    <p>
+      <!-- will-change + tiling results -->
+      I did some non-trivial amount of work to implement the tiling approach, but at the end I tested it and it had no performance benefit. Still, that tiling idea felt powerful, so I left the code around.
+    </p>
+    <h3>Caching Tiles to Images</h3>
+    <p>
+      <!-- Reviving the tile caching idea -->
+      So, along comes December 2017 and the performance complaints, and I'm thinking about the tiling idea again, this time more seriously. I'm already using <a href="https://github.com/tsayen/dom-to-image">a library that knows how to transform arbitrary dom to image</a> for exporting the map to PNG - could I utilize that with my tiling code to properly cache tiles to images? In theory the performance improvement could be dramatic. With 10x10 tiles, a 100x100 map will be around 100 image elements instead of 120k+ divs! Sure, a bunch of the tiles will be "active", but I already know that with just a few thousands elements thing run smoothly. So, I decided to go for it.
+    </p>
+    <p>
+      <!-- The challenges -->
+      Turns out there are two major challenges involved with this approach. The first is getting the tile boundary to be smooth in the presence of content that can cross tile boundaries - either explicitly with multi-cell elements (such as multi-cell text and tokens), or implicitly with the shadow dropped by wall elements, which is a crucial part of the design. The second challenge is performance: turns out the dom-to-image library I was using is way too slow to be used in this manner, taking up to a second for even small tiles, causing noticeable jank.
     </p>
   </article>
 </body>
