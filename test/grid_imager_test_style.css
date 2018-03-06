@@ -11,6 +11,12 @@
   height: 20px;
 }
 
+.percent-circle {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="20"><circle r="10" cx="100" cy="10"/></svg>');
+  width: 200px;
+  height: 20px;
+}
+
 .inline-svg-background {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><circle r="10" cx="100" cy="10"/></svg>');
   width: 200px;

@@ -1,7 +1,7 @@
 const INLINE_SVG_REGEX =
-    /url\((\\?(&quot;|"|'))(data:image\/svg\+xml;(?:(?!\1).)*)\1\);/g;
+    /url\((\\?(&quot;|"|'))(data:image\/svg\+xml.(?:(?!\1).)*)\1\)/;
 const EXTRACT_DIMENSIONS_REGEX =
-    /<svg[^>]*width=.(\d+).[^>]*height=.(\d+)./;
+    /<svg[^>]*width=.([0-9.%]+).[^>]*height=.([0-9.%]+)./;
 
 class GridImager {
   constructor(options) {
@@ -11,22 +11,48 @@ class GridImager {
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
     this.imageElementContainer_ = null;
+    this.unknownSizeSelectors_ = {};
   }
 
-  addCssFile(path) {
+  async addCssElement(path, element) {
     this.cssFiles_.set(path, '');
-    return new Promise((resolve, reject) => {
-      this.loadFile_(path, fileContent => {
-        this.replaceInlinedSvgWithPng_(fileContent).then(processedCss => {
-          // Verify the entry still exists, i.e. that it wasn't deleted by a
-          // theme change.
-          if (this.cssFiles_.has(path)) {
-            this.cssFiles_.set(path, processedCss);
-          }
-          resolve();
-        });
-      });
-    });
+    let cssStr = '';
+    for (const rule of element.sheet.cssRules) {
+      const selector = rule.selectorText;
+      const properties = {};
+      for (let i = 0; i < rule.style.length; i++) {
+        const propertyName = rule.style.item(i);
+        const propertyValue = rule.style.getPropertyValue(propertyName);
+        const propertyWithSvgImage =
+            this.getSvgImageFromProperty_(propertyValue);
+        if (!propertyWithSvgImage) {
+          properties[propertyName] = propertyValue;
+          continue;
+        }
+        if (!propertyWithSvgImage.hasKnownSize) {
+          this.addUnknownSizeSelector_(selector, propertyName);
+          properties[propertyName] = propertyValue;
+          continue;
+        }
+        const pngDataUrl = await this.svgDataUrl2pngDataUrl_(
+            propertyWithSvgImage.dataUrl,
+            propertyWithSvgImage.width,
+            propertyWithSvgImage.height);
+        properties[propertyName] =
+            propertyValue.substring(0, propertyWithSvgImage.begin) +
+            pngDataUrl + propertyValue.substr(propertyWithSvgImage.end);
+      }
+      cssStr += `${selector}{`;
+      for (const key of Object.keys(properties)) {
+        cssStr += `${key}:${properties[key]};`;
+      }
+      cssStr += '}';
+    }
+    // Verify the entry still exists, i.e. that it wasn't deleted by a
+    // theme change.
+    if (this.cssFiles_.has(path)) {
+      this.cssFiles_.set(path, cssStr);
+    }
   }
 
   removeCssFile(path) {
@@ -225,5 +251,37 @@ class GridImager {
       return match;
     });
     return {width, height};
+  }
+
+  getSvgImageFromProperty_(value) {
+    const match = INLINE_SVG_REGEX.exec(value);
+    if (!match) return null;
+    const quoteLength = match[1].length;
+    const svgDataUrl = match[3];
+    const {width, height} = this.extractDimensionsFromSvgStr_(svgDataUrl);
+    const begin = match.index + 4 + quoteLength;
+    const decodedSvgDataUrl = svgDataUrl
+        .replace(/&amp;/g, '&')
+        .replace(/\\?&quot;/g, '"')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>');
+    return {
+      begin,
+      end: begin + svgDataUrl.length,
+      str: decodedSvgDataUrl,
+      hasKnownSize:
+          width && !width.includes('%') && height && !height.includes('%'),
+      width: Number.parseFloat(width),
+      height: Number.parseFloat(height),
+    };
+  }
+
+  addUnknownSizeSelector_(selector, propertyName) {
+    let curr = this.unknownSizeSelectors_[selector];
+    if (!curr) {
+      curr = [];
+      this.unknownSizeSelectors_[selector] = curr;
+    }
+    curr.push(propertyName);
   }
 }

@@ -81,12 +81,22 @@
       return square;
     }
 
+    function createDomWithPercentSizedSvgImage() {
+      const square = document.createElement('div');
+      square.classList.add('square');
+      const circle = document.createElement('div');
+      circle.classList.add('percent-circle');
+      square.appendChild(circle);
+      document.body.appendChild(square);
+      return square;
+    }
+
     addTest('Can save simple dom to svg dataurl', async () => {
       const input = createSimpleDom();
 
       const svgDataUrl = await gi.node2svgDataUrl(input, 200, 20);
 
-      expectedDataUrl = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">%3CforeignObject%20x%3D%220%22%20y%3D%220%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3Chtml%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cstyle%3E.square%20%7B%20width%3A%20200px%3B%20height%3A%2020px%3B%20background-color%3A%20red%3B%20%7D%20.circle%20%7B%20background-color%3A%20blue%3B%20border-radius%3A%2050%25%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.inline-svg-background%20%7B%20background-image%3A%20url(\'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABl0lEQVRoQ%2B2b4U3DMBCFXyeATgKdAEYoG8AITEDZgA1gA2ADmADYBDZAJ7lSVCkksa93Efn8p398753f%2Bam%2BxFmJka3AVtKZpEtJ5yWZT0lvkuz3NTvBJfOvlrz45LWbGR47puhLx0xyU8ySnPLy6DFITs13ku4mUlvM%2FcQYpjcqgEEaBawIrzHHnuZW0kMFJyGVCmCQSuEqw%2BxY9VEZuw%2FbcNxqVHBCOAaZIJbDVOsnrCFvGYZhJmEEKIBBAkQuFPa06tmJ7krSixMWMH8ogEHitkdL73GYpTXrhsc4sgIY5MgCd%2BDtvcaFE917eW%2FiBAdMnwIYJG5vfEs6caIzrLUTFjAcsWaxBzwN8iPpdBar%2BudJ8A8SV2COWHFauzFhEDcpB4Fo0gclmt8EDBJXEx7zxmntxoRB3KQcBeTxovBrxAXHUckwaVgBDDKskecMrpp4qhmAhUECRD6gaOlFuKwYXC8MEix4oasxCeZIqBUGSRC9UNpx62nE5UXrOa65wZtTKAySo3uX1Z5umVn6PrnlUmJijX4BgdUuFe6ZlkYAAAAASUVORK5CYII%3D\')%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.external-svg-background%20%7B%20background-image%3A%20url(%22..%2Fpublic%2Fapp%2Fassets%2Fwyvern.svg%22)%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.masked-diamond%20%7B%20background-color%3A%20blue%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20mask%3A%20url(%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ%2B3awQqDMBAA0fj%2FH92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe%2F4zXG4KSREzL6yNjj%2BFy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH%2F%2BIQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA%2FPAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c%2Fukwm8AXOJDhXySu78AAAAAElFTkSuQmCC%22)%3B%20-webkit-mask%3A%20url(%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ%2B3awQqDMBAA0fj%2FH92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe%2F4zXG4KSREzL6yNjj%2BFy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH%2F%2BIQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA%2FPAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c%2Fukwm8AXOJDhXySu78AAAAAElFTkSuQmCC%22)%3B%20%7D%20%3C%2Fstyle%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20class%3D%22square%22%3E%3Cdiv%20class%3D%22circle%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2Fhtml%3E%3C%2FforeignObject%3E</svg>';
+      expectedDataUrl = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">%3CforeignObject%20x%3D%220%22%20y%3D%220%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3Chtml%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cstyle%3E.square%20%7B%20width%3A%20200px%3B%20height%3A%2020px%3B%20background-color%3A%20red%3B%20%7D%20.circle%20%7B%20background-color%3A%20blue%3B%20border-radius%3A%2050%25%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.percent-circle%20%7B%20background-image%3A%20url(\'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAGQAAAAUCAYAAAB7wJiVAAAA3UlEQVRoQ%2B2Z2w2CQBBFDxVYinSgJdiRdoId2IIdSCmWYMZIQogwMXuz%2B%2BHld8mdzTlkH0OHn9YETsAeOAJ913o2f1y%2FB4aQMGdgIW2%2BiAtw%2FlbaQuoLWZURU7GQukJieXpslbSQukLGzwa%2BWtVC6gmJ09QtK2chGSHd%2BObeMZWxEB3wLOkOHLKXLCQjpBt%2FArsszkIyQrpxC9GxlCR5yZJg1IV4U9exlCT52CvBqA3xxVDLszjNrZNihPoANxf1TIsT3X4vRqgPiOXrumw2%2BmKoB%2F1rYpy%2BQs77F%2B4LPE8T4ok29YoAAAAASUVORK5CYII%3D\')%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.inline-svg-background%20%7B%20background-image%3A%20url(\'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABl0lEQVRoQ%2B2b4U3DMBCFXyeATgKdAEYoG8AITEDZgA1gA2ADmADYBDZAJ7lSVCkksa93Efn8p398753f%2Bam%2BxFmJka3AVtKZpEtJ5yWZT0lvkuz3NTvBJfOvlrz45LWbGR47puhLx0xyU8ySnPLy6DFITs13ku4mUlvM%2FcQYpjcqgEEaBawIrzHHnuZW0kMFJyGVCmCQSuEqw%2BxY9VEZuw%2FbcNxqVHBCOAaZIJbDVOsnrCFvGYZhJmEEKIBBAkQuFPa06tmJ7krSixMWMH8ogEHitkdL73GYpTXrhsc4sgIY5MgCd%2BDtvcaFE917eW%2FiBAdMnwIYJG5vfEs6caIzrLUTFjAcsWaxBzwN8iPpdBar%2BudJ8A8SV2COWHFauzFhEDcpB4Fo0gclmt8EDBJXEx7zxmntxoRB3KQcBeTxovBrxAXHUckwaVgBDDKskecMrpp4qhmAhUECRD6gaOlFuKwYXC8MEix4oasxCeZIqBUGSRC9UNpx62nE5UXrOa65wZtTKAySo3uX1Z5umVn6PrnlUmJijX4BgdUuFe6ZlkYAAAAASUVORK5CYII%3D\')%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.external-svg-background%20%7B%20background-image%3A%20url(%22..%2Fpublic%2Fapp%2Fassets%2Fwyvern.svg%22)%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20%7D%20.masked-diamond%20%7B%20background-color%3A%20blue%3B%20width%3A%20200px%3B%20height%3A%2020px%3B%20mask%3A%20url(%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ%2B3awQqDMBAA0fj%2FH92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe%2F4zXG4KSREzL6yNjj%2BFy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH%2F%2BIQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA%2FPAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c%2Fukwm8AXOJDhXySu78AAAAAElFTkSuQmCC%22)%3B%20-webkit-mask%3A%20url(%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ%2B3awQqDMBAA0fj%2FH92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe%2F4zXG4KSREzL6yNjj%2BFy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH%2F%2BIQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA%2FPAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c%2Fukwm8AXOJDhXySu78AAAAAElFTkSuQmCC%22)%3B%20%7D%20%3C%2Fstyle%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20class%3D%22square%22%3E%3Cdiv%20class%3D%22circle%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2Fhtml%3E%3C%2FforeignObject%3E</svg>';
       assert(svgDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');
@@ -105,7 +115,7 @@
 
       document.body.appendChild(svgElement);
       testCompleted();
-    })
+    });
 
     addTest('Can save simple dom to png dataurl', async () => {
       const input = createSimpleDom();
@@ -200,6 +210,20 @@
 
       const img = document.createElement('img');
       img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can save simple dom with percent-sized svg', async () => {
+      const input = createDomWithPercentSizedSvgImage();
+
+      const svgDataUrl = await gi.node2svgDataUrl(input, 200, 20);
+
+      expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABnElEQVRoQ+2b4U3DMBSErxPAJsAEsAGwAWzABsAEHaFsACPABMAkwARFh4KEqiby67s+V+X8p3+e75wvPtVOnNkSWMKtG4EnAO8AngG8DaM4BnAGgL/n3UZmYxKYOSB9JgLDcP0nFGOjYEgWQ1j6jPR/uzogHe7/HYD7oC/73Ab7uDxPwAHJMwwpbBKOX4M5gJuQm4uzBByQLMFAfy6rTgL160pfvdxKEox1d0BivFLV3E9wQ55p1GBI3GoIOCA1nMGnVZcir0cAFyIty0wTcECKZkhm77E6RG7Wqee2fQIOyPYZ/zjwvcaLyOt0eG8ikrPMBAEHpGh6HAL4EnlR60OkZRkvsXZiDigDcgDgcyeuav8H4X+QonvsJVYRaLGNAyIGOibnTXoRaLGNAyIGOibnx7xFoMU2DogY6JSc4kXhUcMBx8JL2nsrB6TwFvuoSSFskZUDIgLZKpPZi/iwYitlXZ0DomPZrLRJSByOZrzSQgdEirNdjMutq4bDi9xzPPgEbztYcaUDIgYalePTLYZl7JNbH0qMEtXWfwORV1XtUZE44AAAAABJRU5ErkJggg==';
+      assert(svgDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = svgDataUrl;
       document.body.appendChild(img);
       testCompleted();
     });
