@@ -14,10 +14,10 @@ class GridImager {
     this.unknownSizeSelectors_ = {};
   }
 
-  async addCssElement(path, element) {
+  async addCssStyleSheet(path, cssStyleSheet) {
     this.cssFiles_.set(path, '');
     let cssStr = '';
-    for (const rule of element.sheet.cssRules) {
+    for (const rule of cssStyleSheet.cssRules) {
       const selector = rule.selectorText;
       const properties = {};
       for (let i = 0; i < rule.style.length; i++) {

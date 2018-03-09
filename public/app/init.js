@@ -126,6 +126,17 @@ function start() {
   if (isTouchDevice) {
     switchToMobileMode();
   }
+
+  let gridCss = null;
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    if (document.styleSheets[i].href.endsWith('/grid.css')) {
+      gridCss = document.styleSheets[i];
+      break;
+    }
+  }
+  state.tileGridImager.addCssStyleSheet('./grid.css', gridCss).then(() => {
+    this.tileGridImager.recalculateStyleString();
+  });
 }
 
 const state = new State();

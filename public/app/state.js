@@ -67,16 +67,6 @@ class State {
       scale: 6,
       disableSmoothing: true,
     });
-    const gridCss = document.createElement('link');
-    gridCss.type = 'text/css';
-    gridCss.rel = 'stylesheet';
-    gridCss.href = './grid.css';
-    document.head.appendChild(gridCss);
-    gridCss.onload = () => {
-      this.tileGridImager.addCssElement('./grid.css', gridCss).then(() => {
-        this.tileGridImager.recalculateStyleString();
-      });
-    };
   }
 
   isReadOnly() {
@@ -177,7 +167,8 @@ class State {
       css.rel = 'stylesheet';
       css.href = file;
       head.appendChild(css);
-      gridImagerPromises.push(this.tileGridImager.addCssElement(file, css));
+      gridImagerPromises.push(
+          this.tileGridImager.addCssStyleSheet(file, css.sheet));
       this.appliedThemeElements_.set(file, css);
     });
     const menuIconsFromMap =
