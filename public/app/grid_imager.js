@@ -7,7 +7,8 @@ class GridImager {
   constructor(options) {
     this.cssFiles_ = new Map();
     this.styleString_ = '';
-    this.filter_ = options.filter || (_ => true);
+    this.selectorsOfElementsToStrip_ =
+        options.selectorsOfElementsToStrip || (_ => true);
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
     this.imageElementContainer_ = null;
@@ -257,9 +258,19 @@ class GridImager {
   async cloneNode_(node, parent) {
     const cloned = node.cloneNode(true);
     parent.appendChild(cloned);
+    this.filterOutElements_(cloned);
     this.inlineUnknownSizeSvgs_(cloned);
     await this.replaceInlinedSvgWithPng_(cloned);
     return parent.children[0];
+  }
+
+  filterOutElements_(cloned) {
+    this.selectorsOfElementsToStrip_.forEach(selector => {
+      const elements = cloned.querySelectorAll(selector);
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].parentElement.removeChild(elements[i]);
+      }
+    });
   }
 
   inlineUnknownSizeSvgs_(cloned) {

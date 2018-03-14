@@ -62,8 +62,7 @@ class State {
     this.hasUnsavedChanges = false;
 
     this.tileGridImager = new GridImager({
-      filter: node => (!node.style || node.style.visibility != 'hidden') &&
-          (!node.classList || !node.classList.contains('grid-layer')),
+      selectorsOfElementsToStrip: ['.grid-layer', '*[visibility="hidden"]'],
       scale: 6,
       disableSmoothing: true,
     });
