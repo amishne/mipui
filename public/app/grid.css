@@ -41,6 +41,8 @@
   height: 100%;
   background-clip: padding-box;
   pointer-events: none;
+  left: 0;
+  top: 0;
 }
 
 .widget-layer {
