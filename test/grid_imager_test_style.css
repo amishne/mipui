@@ -23,6 +23,12 @@
   height: 20px;
 }
 
+.inline-svg-with-background-color {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><circle r="10" cx="100" cy="10"/></svg>') green;
+  width: 200px;
+  height: 20px;
+}
+
 .external-svg-background {
   background-image: url("../public/app/assets/wyvern.svg");
   width: 200px;

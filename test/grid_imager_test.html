@@ -185,6 +185,21 @@
       testCompleted();
     });
 
+    addTest('Can save background image with background color', async () => {
+      const input =
+          createDomWithInnerClasses('inline-svg-with-background-color');
+
+      const svgDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABfklEQVRoQ+2bMU7DQBBFfzqOQJmSI1BSUqakpOQIlJQcgTJlSo7AMVJS5gh0oJEWKULKWpP9mkXKW8lyYXtm9NZP9u7aK73oW7R5BPaSDpI+2z4quZa0bvubeaWRWVohyKTbIKR4P5LiVBkhy6bJMqnUS06LIDN6/0NSbJl2Jyk2WikBBCnF3cTIyvFb472k2+qCLzsfglT2f7xWvQ0mfOJ1a5Bg6nIESeEaPDnkCElGWoxJQhJaCQEEKcEsKWardqZkD5KY3TLB7IdBkBLMg2OPvzUyYK/qNaZ5y0hv21qHI2GskTw6AhFjiQBPkCVCruOvkr5Mwa4kPZtiEaZLAEGqbhAEqSJtzYMgVpydYLxiVZG25kEQK85OsHNWz0+FY5Be1WsM0stIM81bhtqZiCeIk+ZSLBYKlwj9u+MIUtklfGpSSduSC0EsGBNBRsYifKyYAO05FUE8HHNRzpEEOXKMTWcjiAlkOgw/TKWRzbgAQWZQP87JL7eze6Cb/we7eUwBUa1KawAAAABJRU5ErkJggg==';
+      assert(svgDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = svgDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
 //    addTest('Can save dom with external background to png dataurl',
 //        async () => {
 //      const input = createDomWithInnerClasses('external-svg-background');
