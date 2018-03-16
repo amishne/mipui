@@ -1,11 +1,13 @@
 const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 100;
 let firstTileCacheStart = null;
-let tilesCached = 0;
+// let tilesCached = 0;
 const SQUARE_CELL = {
   [ck.kind]: ct.walls.smooth.id,
   [ck.variation]: ct.walls.smooth.square.id,
 };
+// eslint-disable-next-line prefer-const
 let tilingCachingEnabled = true;
+// eslint-disable-next-line prefer-const
 let cachedTilesGreyedOut = false;
 
 class Tile {
@@ -192,12 +194,12 @@ class Tile {
           this.imageElement_.style.width = this.width;
           this.imageElement_.style.height = this.height;
           this.deactivate_(start);
-          tilesCached++;
-          if (tilesCached % 10 == 0) {
-            const duration =
-                Math.ceil((performance.now() - firstTileCacheStart) / 1000);
-            debug(`Cached ${tilesCached} tiles in ${duration}s`);
-          }
+          // tilesCached++;
+          // if (tilesCached % 10 == 0) {
+          //   const duration =
+          //       Math.ceil((performance.now() - firstTileCacheStart) / 1000);
+          //   debug(`Cached ${tilesCached} tiles in ${duration}s`);
+          // }
         }).catch(reason => {
           state.theMap.concurrentTileCachingOperations--;
           debug(`Tile ${this.key} caching failed: ${reason}.`);
