@@ -1,3 +1,5 @@
+const MAX_NUM_SELECTED = 3000;
+
 class MagicWandSelectGesture extends SelectGesture {
   constructor() {
     super();
@@ -50,6 +52,7 @@ class MagicWandSelectGesture extends SelectGesture {
         });
       }
       newCells.forEach(cell => this.addSelectedCell_(cell));
+      if (this.selectedCells_.size > MAX_NUM_SELECTED) return;
       front = newFront;
     }
   }
