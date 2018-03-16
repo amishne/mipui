@@ -166,8 +166,18 @@ class State {
       css.rel = 'stylesheet';
       css.href = file;
       head.appendChild(css);
-      gridImagerPromises.push(
-          this.tileGridImager.addCssStyleSheet(file, css.sheet));
+      const gridImagerPromise = new Promise((resolve, reject) => {
+        const addSheet = sheet => {
+          this.tileGridImager.addCssStyleSheet(sheet).then(
+              () => { resolve(); });
+        };
+        if (css.sheet) {
+          addSheet(css.sheet);
+        } else {
+          css.onload = () => addSheet(css.sheet);
+        }
+      });
+      gridImagerPromises.push(gridImagerPromise);
       this.appliedThemeElements_.set(file, css);
     });
     const menuIconsFromMap =

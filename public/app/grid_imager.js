@@ -5,7 +5,7 @@ const EXTRACT_DIMENSIONS_REGEX =
 
 class GridImager {
   constructor(options) {
-    this.cssFiles_ = new Map();
+    this.cssFiles_ = [];   // Order matters!
     this.styleString_ = '';
     this.selectorsOfElementsToStrip_ = options.selectorsOfElementsToStrip || [];
     this.scale_ = options.scale || 1;
@@ -14,8 +14,9 @@ class GridImager {
     this.unknownSizeSelectors_ = {};
   }
 
-  async addCssStyleSheet(path, cssStyleSheet) {
-    this.cssFiles_.set(path, '');
+  async addCssStyleSheet(cssStyleSheet) {
+    const path = cssStyleSheet.href;
+    this.cssFiles_.push({path, content: ''});
     let cssStr = '';
     for (const rule of cssStyleSheet.cssRules) {
       const selector = rule.selectorText;
@@ -50,19 +51,22 @@ class GridImager {
     }
     // Verify the entry still exists, i.e. that it wasn't deleted by a
     // theme change.
-    if (this.cssFiles_.has(path)) {
-      this.cssFiles_.set(path, cssStr);
+    const cssFile = this.cssFiles_.find(cssFile => cssFile.path == path);
+    if (cssFile) {
+      cssFile.content = cssStr;
     }
   }
 
   removeCssFile(path) {
-    this.cssFiles_.delete(path);
+    this.cssFiles_.splice(
+        this.cssFiles_.findIndex(cssFile => cssFile.path == path), 1);
   }
 
   recalculateStyleString() {
-    this.styleString_ = Array.from(this.cssFiles_.entries())
-        .map(([path, fileContent]) =>
-          `<style>${fileContent}</style>`).join('\n').replace(/\s+/g, ' ');
+    this.styleString_ = this.cssFiles_
+        .map(cssFile => `<style>${cssFile.content}</style>`)
+        .join('\n')
+        .replace(/\s+/g, ' ');
   }
 
   async node2svgElement(node) {

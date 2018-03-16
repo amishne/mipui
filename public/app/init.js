@@ -127,14 +127,15 @@ function start() {
     switchToMobileMode();
   }
 
-  let gridCss = null;
+  let gridStyleSheet = null;
   for (let i = 0; i < document.styleSheets.length; i++) {
-    if (document.styleSheets[i].href.endsWith('/grid.css')) {
-      gridCss = document.styleSheets[i];
+    const styleSheet = document.styleSheets[i];
+    if (styleSheet.href.endsWith('app/grid.css')) {
+      gridStyleSheet = styleSheet;
       break;
     }
   }
-  state.tileGridImager.addCssStyleSheet('./grid.css', gridCss).then(() => {
+  state.tileGridImager.addCssStyleSheet(gridStyleSheet).then(() => {
     state.tileGridImager.recalculateStyleString();
   });
 }
