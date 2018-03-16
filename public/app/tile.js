@@ -134,7 +134,7 @@ class Tile {
       if (cachedTilesGreyedOut) {
         this.containerElement_.style.filter = '';
       }
-      debug(`Tile ${this.key} activated.`);
+      // debug(`Tile ${this.key} activated.`);
       this.active_ = true;
     }
     this.restartTimer_();
@@ -149,8 +149,8 @@ class Tile {
     }
     this.imageIsValid_ = true;
     this.active_ = false;
-    const duration = Math.ceil(performance.now() - start);
-    debug(`Deactivated tile ${this.key} in ${duration}ms.`);
+    // const duration = Math.ceil(performance.now() - start);
+    // debug(`Deactivated tile ${this.key} in ${duration}ms.`);
   }
 
   cacheImage_() {
@@ -163,7 +163,7 @@ class Tile {
     const start = performance.now();
     if (!firstTileCacheStart) firstTileCacheStart = performance.now();
     if (this.imageIsValid_) {
-      debug(`Matched tile ${this.key} with the cached image.`);
+      // debug(`Matched tile ${this.key} with the cached image.`);
       this.deactivate_(start);
       return;
     }
@@ -245,7 +245,7 @@ class Tile {
         this.layerElements.get(layer).childElementCount == 0
       );
       if (tileOnlyHasFloors) {
-        debug(`Matched tile ${this.key} with the empty tile image.`);
+        // debug(`Matched tile ${this.key} with the empty tile image.`);
         return emptyTileImage;
       }
     }
@@ -266,7 +266,7 @@ class Tile {
           this.cells.every(
               cell => sameContent(cell.getLayerContent(ct.walls), SQUARE_CELL));
       if (tileOnlyHasFloorsAndWalls && allOwnedCellsAreSquareWalls) {
-        debug(`Matched tile ${this.key} with the full tile image.`);
+        // debug(`Matched tile ${this.key} with the full tile image.`);
         return fullTileImage;
       }
     }

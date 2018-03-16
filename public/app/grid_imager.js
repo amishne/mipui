@@ -2,6 +2,7 @@ const INLINE_SVG_REGEX =
     /url\((\\?(&quot;|"|'))(data:image\/svg\+xml.(?:((?!\1).)|\\\1)*)\1\)/g;
 const EXTRACT_DIMENSIONS_REGEX =
     /<svg[^>]*width=(\\?.)([0-9.%]+)\1[^>]*height=\1([0-9.%]+)\1/;
+function debugPerf(s) {}
 
 class GridImager {
   constructor(options) {
@@ -106,15 +107,15 @@ class GridImager {
       cloneContainer.style.position = 'absolute';
       node.parentElement.appendChild(cloneContainer);
       actualNode = await this.cloneNode_(node, cloneContainer);
-      debug(`node cloning done in ${this.msSince_(start)}`);
+      debugPerf(`node cloning done in ${this.msSince_(start)}`);
     }
     const serializeStart = performance.now();
     const result = new XMLSerializer().serializeToString(actualNode);
-    debug(`node serialization done in ${this.msSince_(serializeStart)}`);
+    debugPerf(`node serialization done in ${this.msSince_(serializeStart)}`);
     if (needsCloning) {
       node.parentElement.removeChild(cloneContainer);
     }
-    debug(`node2xml_() done in ${this.msSince_(start)}`);
+    debugPerf(`node2xml_() done in ${this.msSince_(start)}`);
     return result;
   }
 
@@ -138,7 +139,8 @@ class GridImager {
     const svgElement = document.createElement('svg');
     svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svgElement.innerHTML = foreignObjectString;
-    debug(`foreignObjectString2svgElement_() done in ${this.msSince_(start)}`);
+    debugPerf(
+        `foreignObjectString2svgElement_() done in ${this.msSince_(start)}`);
     return svgElement;
   }
 
@@ -180,9 +182,10 @@ class GridImager {
       imageElement.addEventListener('load', () => {
         const startDraw = performance.now();
         context.drawImage(imageElement, 0, 0);
-        debug(`drawing image on canvas done in ${this.msSince_(startDraw)}`);
+        debugPerf(
+            `drawing image on canvas done in ${this.msSince_(startDraw)}`);
         this.imageElementContainer_.removeChild(imageElement);
-        debug(`imageElement2canvas_() done in ${this.msSince_(start)}`);
+        debugPerf(`imageElement2canvas_() done in ${this.msSince_(start)}`);
         resolve(canvas);
       });
       this.imageElementContainer_.appendChild(imageElement);
@@ -192,7 +195,7 @@ class GridImager {
   async canvas2dataUrl_(canvas) {
     const start = performance.now();
     const pngDataUrl = canvas.toDataURL();
-    debug(`canvas2dataUrl_() done in ${this.msSince_(start)}`);
+    debugPerf(`canvas2dataUrl_() done in ${this.msSince_(start)}`);
     return pngDataUrl;
   }
 
