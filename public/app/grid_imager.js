@@ -7,8 +7,7 @@ class GridImager {
   constructor(options) {
     this.cssFiles_ = new Map();
     this.styleString_ = '';
-    this.selectorsOfElementsToStrip_ =
-        options.selectorsOfElementsToStrip || (_ => true);
+    this.selectorsOfElementsToStrip_ = options.selectorsOfElementsToStrip || [];
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
     this.imageElementContainer_ = null;

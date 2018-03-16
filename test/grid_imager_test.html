@@ -34,75 +34,26 @@
       }, firstRun ? 1000 : 0);
     };
 
-    function createSimpleDom() {
-      const square = document.createElement('div');
-      square.classList.add('square');
-      const circle = document.createElement('div');
-      circle.classList.add('circle');
-      square.appendChild(circle);
-      document.body.appendChild(square);
-      return square;
-    }
-
-    function createDomWithInlineSvgBackgroundImage() {
-      const square = document.createElement('div');
-      square.classList.add('square');
-      const divWithInlineSvgBackgroundImage = document.createElement('div');
-      divWithInlineSvgBackgroundImage.classList.add('inline-svg-background');
-      square.appendChild(divWithInlineSvgBackgroundImage);
-      document.body.appendChild(square);
-      return square;
-    }
-
-    function createDomWithExternalSvgBackgroundImage() {
-      const square = document.createElement('div');
-      square.classList.add('square');
-      const divWithExternalSvgBackgroundImage = document.createElement('div');
-      divWithExternalSvgBackgroundImage.classList.add(
-          'external-svg-background');
-      square.appendChild(divWithExternalSvgBackgroundImage);
-      document.body.appendChild(square);
-      return square;
-    }
-    
-    function createMaskedDom() {
-      const square = document.createElement('div');
-      square.classList.add('square');
-      const maskedDiamond = document.createElement('div');
-      maskedDiamond.classList.add('masked-diamond');
-      square.appendChild(maskedDiamond);
-      document.body.appendChild(square);
-      return square;
-    }
-
-    function createBackgroundAndMaskDom() {
+    function createDomWithInnerClasses(classStr) {
       const square = document.createElement('div');
       square.classList.add('square');
       const inner = document.createElement('div');
-      inner.classList.add('inline-svg-background');
-      inner.classList.add('masked-diamond');
+      inner.className = classStr;
       square.appendChild(inner);
       document.body.appendChild(square);
       return square;
     }
 
-    function createDomWithPercentSizedSvgImage() {
-      const square = document.createElement('div');
-      square.classList.add('square');
-      const circle = document.createElement('div');
-      circle.classList.add('percent-circle');
-      square.appendChild(circle);
-      document.body.appendChild(square);
-      return square;
-    }
-
     addTest('Can save simple dom to svg dataurl', async () => {
-      const input = createSimpleDom();
+      const input = createDomWithInnerClasses('circle');
 
       const svgDataUrl = await gi.node2svgDataUrl(input, 200, 20);
 
-      expectedDataUrl = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><foreignObject x="0" y="0" width="100%" height="100%"><html xmlns="http://www.w3.org/1999/xhtml"><style>.square{width:200px;height:20px;background-color:red;}.circle{background-color:blue;border-top-left-radius:50%;border-top-right-radius:50%;border-bottom-right-radius:50%;border-bottom-left-radius:50%;width:200px;height:20px;}.percent-circle{background-image:;width:200px;height:20px;}.inline-svg-background{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABl0lEQVRoQ+2b4U3DMBCFXyeATgKdAEYoG8AITEDZgA1gA2ADmADYBDZAJ7lSVCkksa93Efn8p398753f+am+xFmJka3AVtKZpEtJ5yWZT0lvkuz3NTvBJfOvlrz45LWbGR47puhLx0xyU8ySnPLy6DFITs13ku4mUlvM/cQYpjcqgEEaBawIrzHHnuZW0kMFJyGVCmCQSuEqw+xY9VEZuw/bcNxqVHBCOAaZIJbDVOsnrCFvGYZhJmEEKIBBAkQuFPa06tmJ7krSixMWMH8ogEHitkdL73GYpTXrhsc4sgIY5MgCd+DtvcaFE917eW/iBAdMnwIYJG5vfEs6caIzrLUTFjAcsWaxBzwN8iPpdBar+udJ8A8SV2COWHFauzFhEDcpB4Fo0gclmt8EDBJXEx7zxmntxoRB3KQcBeTxovBrxAXHUckwaVgBDDKskecMrpp4qhmAhUECRD6gaOlFuKwYXC8MEix4oasxCeZIqBUGSRC9UNpx62nE5UXrOa65wZtTKAySo3uX1Z5umVn6PrnlUmJijX4BgdUuFe6ZlkYAAAAASUVORK5CYII=");width:200px;height:20px;}.external-svg-background{background-image:url("../public/app/assets/wyvern.svg");width:200px;height:20px;}.masked-diamond{background-color:blue;width:200px;height:20px;mask:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ+3awQqDMBAA0fj/H92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe/4zXG4KSREzL6yNjj+Fy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH/+IQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA/PAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c/ukwm8AXOJDhXySu78AAAAAElFTkSuQmCC");-webkit-mask-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAAA7UlEQVRoQ+3awQqDMBAA0fj/H92iUOihFlez7Aae57gNMx0C6jZcCCBwSmDDBgEEzgkIpNe/4zXG4KSREzL6yNjj+Fy8NPFCRA8R33GIpIeTYxcCqZfxKw6R1HsRSAMH/+IQSQNBTpA6CVfiEEmdHydIIftIHCIpFOUEqYEvkBru4V8VSBjZtBsikfA0DXtsEPAxXrNXX4mEo9nUA/PAD8BKWuoxbxLYGWMFMoPi8xleFD5nmDJBIClYbw31qcktbLk3CSSXb3S6jxWjxJLXCyQZsPFrExDI2v7sPpmAQJIBG782AYGs7c/ukwm8AXOJDhXySu78AAAAAElFTkSuQmCC");-webkit-mask-position-x:initial;-webkit-mask-position-y:initial;-webkit-mask-size:initial;-webkit-mask-repeat-x:initial;-webkit-mask-repeat-y:initial;-webkit-mask-origin:initial;-webkit-mask-clip:initial;}</style><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></html></foreignObject></svg>';
-      assert(svgDataUrl == expectedDataUrl);
+      const prefix = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><foreignObject x="0" y="0" width="100%" height="100%"><html xmlns="http://www.w3.org/1999/xhtml"><style>';
+      const suffix = '</style><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></html></foreignObject></svg>';
+
+      assert(svgDataUrl.startsWith(prefix));
+      assert(svgDataUrl.endsWith(suffix));
 
       const img = document.createElement('img');
       img.src = svgDataUrl;
@@ -111,7 +62,7 @@
     });
 
     addTest('Can save simple dom to svg element', async () => {
-      const input = createSimpleDom();
+      const input = createDomWithInnerClasses('circle');
 
       const svgElement = await gi.node2svgElement(input);
 
@@ -123,7 +74,7 @@
     });
 
     addTest('Can save simple dom to png dataurl', async () => {
-      const input = createSimpleDom();
+      const input = createDomWithInnerClasses('circle');
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
@@ -138,7 +89,7 @@
 
     addTest('Can save dom with inlined svg background to png dataurl',
         async () => {
-      const input = createDomWithInlineSvgBackgroundImage();
+      const input = createDomWithInnerClasses('inline-svg-background');
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
@@ -155,7 +106,7 @@
       gi = new GridImager({scale: 2});
       await gi.addCssStyleSheet(cssFilePath, cssElement.sheet);
       gi.recalculateStyleString();
-      const input = createSimpleDom();
+      const input = createDomWithInnerClasses('circle');
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
@@ -169,7 +120,7 @@
     });
 
     addTest('Can save dom with masks to png output', async () => {
-      const input = createMaskedDom();
+      const input = createDomWithInnerClasses('masked-diamond');
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
@@ -184,7 +135,8 @@
 
     addTest('Can save dom with background image and masks to png output',
         async () => {
-      const input = createBackgroundAndMaskDom();
+      const input =
+          createDomWithInnerClasses('inline-svg-background masked-diamond');
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
@@ -220,7 +172,7 @@
     });
 
     addTest('Can save simple dom with percent-sized svg', async () => {
-      const input = createDomWithPercentSizedSvgImage();
+      const input = createDomWithInnerClasses('percent-circle');
 
       const svgDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
@@ -235,7 +187,7 @@
 
 //    addTest('Can save dom with external background to png dataurl',
 //        async () => {
-//      const input = createDomWithExternalSvgBackgroundImage();
+//      const input = createDomWithInnerClasses('external-svg-background');
 //
 //      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 //
