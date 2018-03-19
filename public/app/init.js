@@ -50,7 +50,8 @@ function initializeFirebase(callback) {
     databaseURL: 'https://mipui-dev.firebaseio.com',
   };
   if (!isTouchDevice && (!isProd || isInTestingMode)) {
-    document.getElementById('warning').style.display = 'inline-block';
+    state.warningStatusBar.showMessage(
+        'Warning: Development mode, map might get deleted.');
     debug = s => console.log(s);
   }
   if (!isProd) {
@@ -96,15 +97,10 @@ function start() {
   state.menu.createMenu();
   state.menu.descChanged();
   setStatus(Status.INITIALIZING);
+  state.cursorStatusBar = new StatusBar(1);
+  state.progressStatusBar = new StatusBar(2);
+  state.warningStatusBar = new StatusBar(0, 'lightpink');
   createTheMapAndUpdateElements();
-  if (navigator.userAgent.includes('Chrome')) {
-    // On Chrome we force caching of all layers by setting
-    // "will-change: transform" on them. This produces significant performance
-    // boost.
-    // It's conditional on Chrome because the same change on Firefox actually
-    // slows things down, and other browsers are untested.
-    mapContainer.classList.add('force-layer-caching');
-  }
   createMapResizeButtons();
   initializeFirebase(() => {
     const mid = params.mid ? decodeURIComponent(params.mid) : null;

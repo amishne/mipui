@@ -66,6 +66,10 @@ class State {
       scale: 6,
       disableSmoothing: true,
     });
+
+    this.cursorStatusBar = null;
+    this.progressStatusBar = null;
+    this.warningStatusBar = null;
   }
 
   isReadOnly() {
