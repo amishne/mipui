@@ -301,7 +301,7 @@ class GridImager {
       height = g3;
       return match;
     });
-    return {width, height};
+    return {width: String(width), height: String(height)};
   }
 
   getSvgImageFromProperty_(value) {
