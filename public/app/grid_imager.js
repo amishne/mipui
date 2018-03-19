@@ -2,7 +2,7 @@ const INLINE_SVG_REGEX =
     /url\((\\?(&quot;|"|'))(data:image\/svg\+xml.(?:((?!\1).)|\\\1)*)\1\)/g;
 const EXTRACT_DIMENSIONS_REGEX =
     /<svg[^>]*width=(\\?.)([0-9.%]+)\1[^>]*height=\1([0-9.%]+)\1/;
-function debugPerf(s) {}
+function debugPerf(s) { debug(s); }
 
 class GridImager {
   constructor(options) {
@@ -111,11 +111,11 @@ class GridImager {
     }
     const serializeStart = performance.now();
     const result = new XMLSerializer().serializeToString(actualNode);
-    debugPerf(`node serialization done in ${this.msSince_(serializeStart)}`);
+    // debugPerf(`node serialization done in ${this.msSince_(serializeStart)}`);
     if (needsCloning) {
       node.parentElement.removeChild(cloneContainer);
     }
-    debugPerf(`node2xml_() done in ${this.msSince_(start)}`);
+    // debugPerf(`node2xml_() done in ${this.msSince_(start)}`);
     return result;
   }
 
@@ -163,7 +163,7 @@ class GridImager {
 
   imageElement2canvas_(imageElement, width, height) {
     return new Promise((resolve, reject) => {
-      const start = performance.now();
+      // const start = performance.now();
       const canvas = document.createElement('canvas');
       canvas.style.width = width;
       canvas.style.height = height;
@@ -180,12 +180,12 @@ class GridImager {
             createAndAppendDivWithClass(parent, 'grid-imager-image-container');
       }
       imageElement.addEventListener('load', () => {
-        const startDraw = performance.now();
+        // const startDraw = performance.now();
         context.drawImage(imageElement, 0, 0);
-        debugPerf(
-            `drawing image on canvas done in ${this.msSince_(startDraw)}`);
+        // debugPerf(
+        //     `drawing image on canvas done in ${this.msSince_(startDraw)}`);
         this.imageElementContainer_.removeChild(imageElement);
-        debugPerf(`imageElement2canvas_() done in ${this.msSince_(start)}`);
+        // debugPerf(`imageElement2canvas_() done in ${this.msSince_(start)}`);
         resolve(canvas);
       });
       this.imageElementContainer_.appendChild(imageElement);
