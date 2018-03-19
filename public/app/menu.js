@@ -1230,7 +1230,8 @@ class Menu {
       {
         name: '&Walls',
         presentation: 'selected child',
-        tip: 'Add a wall by clicking a divider cell between two floor cells.',
+        tip: 'Add a wall by clicking a divider cell between two floor cells. ' +
+            'Note paint bucket is limited in size.',
         isSelected: true,
         submenu: {
           items: [
