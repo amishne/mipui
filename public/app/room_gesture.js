@@ -5,6 +5,7 @@ class RoomGesture extends Gesture {
     this.hoveredCell_ = null;
     this.cells_ = new Set();
     this.mode_ = null;
+    this.cursorStatusBarMessage_ = '';
   }
 
   startHover(cell) {
@@ -19,6 +20,7 @@ class RoomGesture extends Gesture {
   }
 
   startGesture() {
+    this.cursorStatusBarMessage_ = 'Width: 1 Height: 1';
     super.startGesture();
     if (!this.anchorCell_) return;
     this.addCell_(this.anchorCell_);
@@ -29,10 +31,19 @@ class RoomGesture extends Gesture {
   stopHover() {}
 
   continueGesture(cell) {
-    if (!this.anchorCell_ || !cell || cell.role != 'primary') return;
+    if (!this.anchorCell_ || !cell || cell.role != 'primary') {
+      if (this.anchorCell_ && cell) {
+        state.cursorStatusBar.showMessage(this.cursorStatusBarMessage_);
+      }
+      return;
+    }
     this.clearCells_();
     this.addCell_(this.anchorCell_);
     const cells = this.anchorCell_.getPrimaryCellsInSquareTo(cell);
+    this.cursorStatusBarMessage_ =
+        `Width: ${1 + Math.abs(cell.column - this.anchorCell_.column)} ` +
+        `Height: ${1 + Math.abs(cell.row - this.anchorCell_.row)}`;
+    state.cursorStatusBar.showMessage(this.cursorStatusBarMessage_);
     cells.forEach(cell => this.addCell_(cell));
     this.process_();
     this.showHighlight_();
