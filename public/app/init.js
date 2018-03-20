@@ -106,6 +106,7 @@ function start() {
     const mid = params.mid ? decodeURIComponent(params.mid) : null;
     const secret = params.secret ? decodeURIComponent(params.secret) : null;
     if (mid) {
+      setStatus(Status.LOADING);
       state.opCenter.connectToExistingMap(mid, secret, () => {
         if (secret) state.menu.setToInitialSelection();
         resetView();
