@@ -206,6 +206,7 @@ modal-dialog-anchorbox-line {
   z-index: 20;
   padding: 0 10px;
   pointer-events: none;
+  white-space: nowrap;
 }
 
 .status-bar-progress {
