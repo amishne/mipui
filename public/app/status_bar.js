@@ -6,6 +6,8 @@ class StatusBar {
     this.element_ = createAndAppendDivWithClass(parent, 'status-bar');
     this.element_.style.bottom = (heightFromBottom + 1) * STATUS_BAR_HEIGHT;
     if (color) this.element_.style.color = color;
+    this.progressCounter_ = 0;
+    this.progressTotal_ = 0;
   }
 
   showMessage(text) {
@@ -13,12 +15,33 @@ class StatusBar {
     this.element_.style.visibility = 'visible';
   }
 
+  startProgress(text, total) {
+    this.progressCounter_ = 0;
+    this.progressTotal_ = total;
+    this.showProgress(text, 0, total);
+  }
+
+  resetProgress() {
+    this.progressCounter_ = 0;
+    this.progressTotal_ = 0;
+    this.hideMessage();
+  }
+
+  incrementProgress(text) {
+    if (this.progressTotal_ == 0) return;
+    this.progressCounter_++;
+    this.showProgress(text, this.progressCounter_, this.progressTotal_);
+  }
+
   showProgress(text, curr, total) {
+    if (curr == total) {
+      this.resetProgress();
+    }
     this.showMessage(text);
     const progress =
         createAndAppendDivWithClass(this.element_, 'status-bar-progress');
-    progress.style.width = 100 * cuur / total;
-    progress.style.paddingRight = 100 * (1 - cuur / total);
+    progress.style.width = 100 * curr / total;
+    progress.style.borderRightWidth = 100 * (1 - curr / total);
   }
 
   hideMessage() {

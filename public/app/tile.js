@@ -9,6 +9,7 @@ const SQUARE_CELL = {
 let tilingCachingEnabled = true;
 // eslint-disable-next-line prefer-const
 let cachedTilesGreyedOut = false;
+const pendingTiles = new Set();
 
 class Tile {
   constructor(parent, key, x, y) {
@@ -144,6 +145,7 @@ class Tile {
 
   deactivate_(start) {
     if (!this.active_) return;
+    state.progressStatusBar.incrementProgress('Rendering...');
     this.containerElement_.removeChild(this.mapElement);
     this.imageElement_.style.visibility = 'visible';
     if (cachedTilesGreyedOut) {
@@ -156,6 +158,7 @@ class Tile {
   }
 
   cacheImage_() {
+    pendingTiles.delete(this);
     if (!tilingCachingEnabled) return;
     if (state.theMap.areTilesLocked()) {
       this.restartTimer_();
@@ -214,12 +217,19 @@ class Tile {
       state.theMap.addTileUnlockListener(this, () => this.restartTimer_());
       return;
     }
+    pendingTiles.add(this);
+    if (pendingTiles.size > 10) {
+      state.progressStatusBar.startProgress('Rendering...', pendingTiles.size);
+    } else if (pendingTiles.size < 5) {
+      state.progressStatusBar.resetProgress();
+    }
     this.timer_ = setTimeout(() => this.cacheImage_(), this.getTimerLength_());
   }
 
   stopTimer_() {
     if (this.timer_) {
       clearTimeout(this.timer_);
+      pendingTiles.delete(this);
       state.theMap.removeTileUnlockListener(this);
     }
     this.timer_ = null;

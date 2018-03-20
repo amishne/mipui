@@ -209,8 +209,10 @@ modal-dialog-anchorbox-line {
 }
 
 .status-bar-progress {
-  display: inline;
-  height: 5px;
-  border: 1px solid white;
+  display: inline-block;
+  height: 2px;
+  margin-left: 10px;
+  vertical-align: middle;
+  border: 1px solid darkgreen;
   background-color: greenyellow;
 }
