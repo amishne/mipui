@@ -51,7 +51,7 @@ function initializeFirebase(callback) {
   };
   if (!isTouchDevice && (!isProd || isInTestingMode)) {
     state.warningStatusBar.showMessage(
-        'Warning: Development mode, map might get deleted.');
+        'Warning: Development mode, long-term map storage not guaranteed.');
     debug = s => console.log(s);
   }
   if (!isProd) {

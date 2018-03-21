@@ -86,7 +86,7 @@ class Tile {
         }
       });
       if (count > 0) {
-        debug(`Deactivating ${count} tiles stuch on 'cursor' lock.`);
+        debug(`Deactivating ${count} tiles stuck on 'cursor' lock.`);
       }
     }
     this.activate_();
@@ -145,7 +145,13 @@ class Tile {
 
   deactivate_(start) {
     if (!this.active_) return;
-    state.progressStatusBar.incrementProgress('Rendering...');
+    pendingTiles.delete(this);
+    if (pendingTiles.size < 5) {
+      state.progressStatusBar.resetProgress();
+    } else {
+      state.progressStatusBar.incrementProgress('Rendering...');
+    }
+
     this.containerElement_.removeChild(this.mapElement);
     this.imageElement_.style.visibility = 'visible';
     if (cachedTilesGreyedOut) {
@@ -158,7 +164,6 @@ class Tile {
   }
 
   cacheImage_() {
-    pendingTiles.delete(this);
     if (!tilingCachingEnabled) return;
     if (state.theMap.areTilesLocked()) {
       this.restartTimer_();
@@ -190,8 +195,7 @@ class Tile {
         .node2pngDataUrl(this.mapElement, this.width, this.height)
         .then(dataUrl => {
           state.theMap.concurrentTileCachingOperations--;
-          // Local locks already interrupt, so it's only global locks we have to
-          // worry about.
+          if (this.isInterrupted_()) return;
           if (state.theMap.areTilesLocked()) return;
           this.imageElement_.src = dataUrl;
           this.imageElement_.style.width = this.width;
@@ -218,8 +222,8 @@ class Tile {
       return;
     }
     pendingTiles.add(this);
-    if (pendingTiles.size > 10) {
-      state.progressStatusBar.startProgress('Rendering...', pendingTiles.size);
+    if (pendingTiles.size > 25) {
+      state.progressStatusBar.showProgress('Rendering...', pendingTiles.size);
     } else if (pendingTiles.size < 5) {
       state.progressStatusBar.resetProgress();
     }
@@ -246,7 +250,7 @@ class Tile {
   }
 
   getTimerLength_() {
-    return 4000 + Math.random() * 2000;
+    return 2000 + Math.random() * 2000;
   }
 
   getImageFromTheme_() {

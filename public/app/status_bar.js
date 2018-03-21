@@ -15,10 +15,9 @@ class StatusBar {
     this.element_.style.visibility = 'visible';
   }
 
-  startProgress(text, total) {
-    this.progressCounter_ = 0;
+  showProgress(text, total) {
     this.progressTotal_ = total;
-    this.showProgress(text, 0, total);
+    this.showProgress_(text, 0, total);
   }
 
   resetProgress() {
@@ -30,11 +29,11 @@ class StatusBar {
   incrementProgress(text) {
     if (this.progressTotal_ == 0) return;
     this.progressCounter_++;
-    this.showProgress(text, this.progressCounter_, this.progressTotal_);
+    this.showProgress_(text, this.progressCounter_, this.progressTotal_);
   }
 
-  showProgress(text, curr, total) {
-    if (curr == total) {
+  showProgress_(text, curr, total) {
+    if (curr >= total) {
       this.resetProgress();
     }
     this.showMessage(text);

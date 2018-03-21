@@ -511,9 +511,9 @@ class Cell {
   }
 
   onMouseEnter(e) {
+    state.cursorStatusBar.showMessage(`x: ${this.column} y: ${this.row}`);
     if (!state.gesture) return;
     this.tile.enter();
-    state.cursorStatusBar.showMessage(`x: ${this.column} y: ${this.row}`);
     if (e.buttons == 0) {
       state.gesture.startHover(this);
     } else if (e.buttons == 1) {
@@ -524,7 +524,10 @@ class Cell {
 
   onMouseLeave(e) {
     this.tile.exit();
-    if (!state.gesture) return;
+    if (!state.gesture) {
+      state.cursorStatusBar.hideMessage();
+      return;
+    }
     if (e.buttons == 0) {
       state.gesture.stopHover();
       state.cursorStatusBar.hideMessage();
