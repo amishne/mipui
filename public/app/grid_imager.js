@@ -104,12 +104,15 @@ class GridImager {
     if (needsCloning) {
       cloneContainer = document.createElement('div');
       cloneContainer.style.opacity = 0;
+      cloneContainer.style.zIndex = -1;
+      cloneContainer.style.width = '100%';
+      cloneContainer.style.height = '100%';
       cloneContainer.style.position = 'absolute';
       node.parentElement.appendChild(cloneContainer);
       actualNode = await this.cloneNode_(node, cloneContainer);
       debugPerf(`node cloning done in ${this.msSince_(start)}`);
     }
-    const serializeStart = performance.now();
+    // const serializeStart = performance.now();
     const result = new XMLSerializer().serializeToString(actualNode);
     // debugPerf(`node serialization done in ${this.msSince_(serializeStart)}`);
     if (needsCloning) {
@@ -247,10 +250,10 @@ class GridImager {
         result += styleStr.substring(lastIndex, inlinedSvg.begin);
         let {width, height} =
             this.extractDimensionsFromSvgStr_(inlinedSvg.str);
-        width =
-            Number.parseFloat(width) * (width.endsWith('%') ? nodeWidth : 1);
-        height =
-            Number.parseFloat(height) * (height.endsWith('%') ? nodeHeight : 1);
+        width = Number.parseFloat(width) *
+            (width.endsWith('%') ? nodeWidth / 100 : 1);
+        height = Number.parseFloat(height) *
+            (height.endsWith('%') ? nodeHeight / 100 : 1);
         const pngDataUrl =
             await this.svgDataUrl2pngDataUrl_(inlinedSvg.str, width, height);
         result += pngDataUrl;
@@ -288,6 +291,9 @@ class GridImager {
         const computedStyle = getComputedStyle(descendent);
         for (const property of properties) {
           descendent.style[property] = computedStyle[property];
+          if (property == 'background-image') {
+            descendent.style.backgroundSize = 'cover';
+          }
         }
       }
     });
