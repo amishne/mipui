@@ -292,7 +292,7 @@ class GridImager {
         for (const property of properties) {
           descendent.style[property] = computedStyle[property];
           if (property == 'background-image') {
-            descendent.style.backgroundSize = 'cover';
+            descendent.style.backgroundSize = 'contain';
           }
         }
       }
