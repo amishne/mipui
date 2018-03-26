@@ -22,6 +22,8 @@ class BoxGesture extends Gesture {
     // The box as it was when editing started - used for reverting to it after
     // canceling the edit.
     this.originalValue_ = null;
+    // Status bar message for the size message.
+    this.cursorStatusBarMessage_ = '';
 
     // Owned elements.
 
@@ -85,6 +87,7 @@ class BoxGesture extends Gesture {
   }
 
   startGesture() {
+    this.cursorStatusBarMessage_ = 'Width: 1 Height: 1';
     super.startGesture();
     const editWasInProgress = this.finishEditing_();
 
@@ -128,6 +131,9 @@ class BoxGesture extends Gesture {
       this.hideHighlight_();
       this.hoveredCell_ = cell;
       if (this.hoveredCell_.role != 'primary') {
+        if (this.mode_ == 'resizing' || this.mode_ == 'adding') {
+          state.cursorStatusBar.showMessage(this.cursorStatusBarMessage_);
+        }
         if (this.mode_ == 'resizing' || this.mode_ == 'moving') {
           this.showHighlight_();
         }
@@ -142,6 +148,13 @@ class BoxGesture extends Gesture {
       this.targetCell_ = this.hoveredCell_;
       this.calculateBoxExtent_();
       this.showHighlight_();
+      if (this.mode_ == 'resizing' || this.mode_ == 'adding') {
+        this.cursorStatusBarMessage_ =
+            `Width: ${
+              1 + Math.abs(this.startCell_.column - this.endCell_.column)} ` +
+            `Height: ${1 + Math.abs(this.startCell_.row - this.endCell_.row)}`;
+        state.cursorStatusBar.showMessage(this.cursorStatusBarMessage_);
+      }
     }
   }
 
