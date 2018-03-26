@@ -383,6 +383,11 @@ class Menu {
           submenuItem.parent.parent.presentation == 'selected child') {
         this.updateItem_(submenuItem.parent.parent);
       }
+      if (submenuItem.tip) {
+        state.infoStatusBar.showMessage(submenuItem.tip);
+      } else {
+        state.infoStatusBar.hideMessage();
+      }
     }
   }
 
@@ -398,6 +403,7 @@ class Menu {
       presentation: 'cells',
       classNames: ['menu-text'],
       isSelected: true,
+      tip: 'Drag when placing to resize.',
       callback: () => {
         state.gesture = new TextGesture(kind, variation);
       },
@@ -498,6 +504,7 @@ class Menu {
       type: 'tool',
       presentation: 'cells',
       classNames: ['menu-stairs'],
+      tip: 'Drag when placing to resize.',
       isSelected,
       callback: () => {
         state.gesture = new StaticBoxGesture(ct.stairs, kind, variation);
@@ -635,6 +642,7 @@ class Menu {
       group: this.groups_.imageIconTools,
       classNames: ['menu-tokens'],
       isSelected: false,
+      tip: 'Drag when placing to resize.',
       id: 'token_' + gameIcon.name,
       gameIcon,
     };
@@ -724,6 +732,7 @@ class Menu {
       presentation: 'cells',
       group: this.groups_.imageVariationTools,
       classNames: ['menu-tokens'],
+      tip: 'Drag when placing to resize.',
       isSelected,
       variation,
     };
@@ -750,6 +759,7 @@ class Menu {
     //           type: 'label' | 'button' | 'tool',
     //           presentation: 'icon' | 'cells' | 'label',
     //           [id: 'element-id',]
+    //           [tip: 'Tip displayed in status bar.',]
     //           [materialIcon: 'icon_name',]
     //           [isSelected: true,]
     //           [classNames: ['classname1', 'classname2'],]
@@ -965,6 +975,7 @@ class Menu {
               type: 'tool',
               presentation: 'icon',
               materialIcon: 'fullscreen',
+              tip: 'Drag to select a larger area.',
               enabledInReadonlyMode: true,
               isSelected: true,
               callback: () => {
@@ -976,6 +987,8 @@ class Menu {
               type: 'tool',
               presentation: 'icon',
               materialIcon: 'flare',
+              tip: 'Note: affects up to ' + MAX_NUM_SELECTED +
+                  ' cells at a time.',
               callback: () => {
                 state.gesture = new MagicWandSelectGesture();
               },
@@ -1230,8 +1243,6 @@ class Menu {
       {
         name: '&Walls',
         presentation: 'selected child',
-        tip: 'Add a wall by clicking a divider cell between two floor cells. ' +
-            'Note paint bucket is limited in size.',
         isSelected: true,
         submenu: {
           items: [
@@ -1264,6 +1275,7 @@ class Menu {
               name: 'Angled wall',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Auto-connects with surrounding walls.',
               iconMapRect: {
                 x: 224,
                 y: 32,
@@ -1277,6 +1289,7 @@ class Menu {
               name: 'Rectangle',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 320,
                 y: 32,
@@ -1289,6 +1302,7 @@ class Menu {
               name: 'Ellipse',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 416,
                 y: 32,
@@ -1301,6 +1315,7 @@ class Menu {
               name: 'Rectangular Room',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 512,
                 y: 32,
@@ -1313,6 +1328,7 @@ class Menu {
               name: 'Elliptical Room',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 608,
                 y: 32,
@@ -1327,6 +1343,8 @@ class Menu {
               presentation: 'icon',
               materialIcon: 'format_color_fill',
               enabledInReadonlyMode: false,
+              tip: 'Note: affects up to ' + MAX_NUM_SELECTED +
+                  ' cells at a time.',
               callback: () => { state.gesture = new PaintBucketGesture(); },
             },
           ],
@@ -1335,7 +1353,6 @@ class Menu {
       {
         name: 'Se&parators',
         presentation: 'selected child',
-        tip: 'Drag when placing to create a multi-cell separator.',
         classNames: ['menu-separators'],
         submenu: {
           items: [
@@ -1343,6 +1360,7 @@ class Menu {
               name: 'Single door',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 20,
                 y: 132,
@@ -1358,6 +1376,7 @@ class Menu {
               name: 'Double door',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 52,
                 y: 132,
@@ -1372,6 +1391,7 @@ class Menu {
               name: 'Secret door',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 84,
                 y: 132,
@@ -1386,6 +1406,7 @@ class Menu {
               name: 'Window',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 116,
                 y: 132,
@@ -1400,6 +1421,7 @@ class Menu {
               name: 'Bars',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 148,
                 y: 132,
@@ -1414,6 +1436,7 @@ class Menu {
               name: 'Fence',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 180,
                 y: 132,
@@ -1428,6 +1451,7 @@ class Menu {
               name: 'Curtain',
               type: 'tool',
               presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
               iconMapRect: {
                 x: 212,
                 y: 132,
@@ -1445,7 +1469,6 @@ class Menu {
       {
         name: '&Text',
         presentation: 'selected child',
-        tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
           items: [
             this.createTextTool_(

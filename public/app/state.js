@@ -69,7 +69,7 @@ class State {
 
     this.cursorStatusBar = null;
     this.progressStatusBar = null;
-    this.warningStatusBar = null;
+    this.infoStatusBar = null;
   }
 
   isReadOnly() {

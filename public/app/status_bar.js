@@ -1,18 +1,18 @@
 const STATUS_BAR_HEIGHT = 20;
 
 class StatusBar {
-  constructor(heightFromBottom, color) {
+  constructor(heightFromBottom) {
     const parent = document.getElementById('mapContainer') || document.body;
     this.element_ = createAndAppendDivWithClass(parent, 'status-bar');
     this.element_.style.bottom = (heightFromBottom + 1) * STATUS_BAR_HEIGHT;
-    if (color) this.element_.style.color = color;
     this.progressCounter_ = 0;
     this.progressTotal_ = 0;
   }
 
-  showMessage(text) {
+  showMessage(text, color) {
     this.element_.innerHTML = text;
     this.element_.style.visibility = 'visible';
+    this.element_.style.color = color || '';
   }
 
   showProgress(text, total) {

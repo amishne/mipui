@@ -50,8 +50,9 @@ function initializeFirebase(callback) {
     databaseURL: 'https://mipui-dev.firebaseio.com',
   };
   if (!isTouchDevice && (!isProd || isInTestingMode)) {
-    state.warningStatusBar.showMessage(
-        'Warning: Development mode, long-term map storage not guaranteed.');
+    state.infoStatusBar.showMessage(
+        'Warning: Development mode, long-term map storage not guaranteed.',
+        'lightpink');
     debug = s => console.log(s);
   }
   if (!isProd) {
@@ -99,7 +100,7 @@ function start() {
   setStatus(Status.INITIALIZING);
   state.cursorStatusBar = new StatusBar(1);
   state.progressStatusBar = new StatusBar(2);
-  state.warningStatusBar = new StatusBar(0, 'lightpink');
+  state.infoStatusBar = new StatusBar(0);
   createTheMapAndUpdateElements();
   createMapResizeButtons();
   initializeFirebase(() => {
