@@ -531,9 +531,11 @@ class BoxGesture extends Gesture {
     this.inputElement_.onmousedown = e => e.stopPropagation();
     this.inputElement_.onmouseup = e => e.stopPropagation();
     const content = this.startCell_.getLayerContent(this.getLayer_());
-    if (content) {
-      this.setInputGeometry_(this.inputElement_, this.startCell_, content);
-    }
+    this.setInputGeometry_(this.inputElement_, this.startCell_, content || {
+      [ck.kind]: this.getKind_().id,
+      [ck.variation]: this.getVariation_().id,
+      [ck.startCell]: this.startCell_.key,
+    });
     this.inputElement_.focus();
     this.inputElement_.select();
   }
