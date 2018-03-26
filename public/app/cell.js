@@ -61,10 +61,10 @@ class Cell {
 
   isVariation(layer, kind, variation) {
     const content = this.getLayerContent(layer);
-    return this.contentIsVariation_(content, layer, kind, variation);
+    return this.contentIsVariation_(content, kind, variation);
   }
 
-  contentIsVariation_(content, layer, kind, variation) {
+  contentIsVariation_(content, kind, variation) {
     if (!content) return false;
     if (content[ck.kind] !== kind.id) return false;
     if (content[ck.variation] !== variation.id) return false;
@@ -273,14 +273,14 @@ class Cell {
     this.setImage_(element, content[ck.image], content[ck.variation]);
     this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
     this.setImageFromVariation_(element, layer, content);
-    this.setMask_(element, content);
+    this.setMask_(element, layer, content);
   }
 
-  setMask_(element, content) {
+  setMask_(element, layer, content) {
     if (!element) return;
     let mask = null;
-    if (this.contentIsVariation_(
-        content, ct.walls, ct.walls.smooth, ct.walls.smooth.angled)) {
+    if (layer == ct.walls && this.contentIsVariation_(
+        content, ct.walls.smooth, ct.walls.smooth.angled)) {
       mask = createAngledWallSvgMask(content[ck.connections]);
     } else {
       const clipInclude = content[ck.clipInclude];
@@ -289,16 +289,6 @@ class Cell {
         mask = this.createMaskSvgFromClip_(content, clipInclude, clipExclude);
       }
     }
-    element.style.mask = mask;
-    element.style['-webkit-mask'] = mask;
-  }
-
-  setAngledWallMask_(element, content) {
-    if (!this.contentIsVariation_(
-        content, ct.walls, ct.walls.smooth, ct.walls.smooth.angled)) {
-      return;
-    }
-    const mask = createAngledWallSvgMask(content[ck.connections]);
     element.style.mask = mask;
     element.style['-webkit-mask'] = mask;
   }
