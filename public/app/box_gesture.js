@@ -499,6 +499,7 @@ class BoxGesture extends Gesture {
   startEditing_() {
     if (!this.isEditable_()) return;
     this.finishEditing_();
+    state.theMap.lockTiles();
     this.createDeleteWidget_();
     this.originalValue_ =
         this.startCell_.getVal(this.getLayer_(), this.getValueKey_());
@@ -546,6 +547,7 @@ class BoxGesture extends Gesture {
   }
 
   finishEditing_(keyboardEvent) {
+    state.theMap.unlockTiles();
     let editWasInProgress = false;
     if (this.inputElement_) {
       this.inputElement_.parentElement.removeChild(this.inputElement_);
