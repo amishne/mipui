@@ -28,9 +28,19 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  visibility: hidden;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+}
+
+.tile-image-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
+  visibility: hidden;
 }
 
 .layer {

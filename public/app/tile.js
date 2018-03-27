@@ -17,10 +17,12 @@ class Tile {
     this.containerElement_ = createAndAppendDivWithClass(parent, 'tile');
     this.mapElement =
         createAndAppendDivWithClass(this.containerElement_, 'tile-map');
+    this.imageContainerElement_ = createAndAppendDivWithClass(
+        this.containerElement_, 'tile-image-container');
     this.imageElement_ = document.createElement('img');
     this.imageElement_.className = 'tile-image';
     this.imageElement_.addEventListener('mouseenter', () => this.enter());
-    this.containerElement_.appendChild(this.imageElement_);
+    this.imageContainerElement_.appendChild(this.imageElement_);
     this.gridLayer = createAndAppendDivWithClass(this.mapElement, 'grid-layer');
 
     // Identity and content
@@ -133,7 +135,7 @@ class Tile {
   activate_() {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
-      this.imageElement_.style.visibility = 'hidden';
+      this.imageContainerElement_.style.visibility = 'hidden';
       if (cachedTilesGreyedOut) {
         this.containerElement_.style.filter = '';
       }
@@ -153,7 +155,7 @@ class Tile {
     }
 
     this.containerElement_.removeChild(this.mapElement);
-    this.imageElement_.style.visibility = 'visible';
+    this.imageContainerElement_.style.visibility = 'visible';
     if (cachedTilesGreyedOut) {
       this.containerElement_.style.filter = 'grayscale(1)';
     }
