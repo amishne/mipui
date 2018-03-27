@@ -195,7 +195,7 @@ class Cell {
       // Using -0.1 instead of 0 because of a webkit bug related to
       // https://bugs.chromium.org/p/chromium/issues/detail?id=804670
       // In essence, this forces the tile to have at least a bit of actual
-      // presence instead the foreignObject, and so its shadow won't be cropped.
+      // presence inside the foreignObject, and so its shadow won't be cropped.
       replica.offsetLeft = -0.1;
       replica.offsetRight = -0.1;
       replica.offsetTop = -0.1;
