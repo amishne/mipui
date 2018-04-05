@@ -3,6 +3,7 @@ let currentTestIndex_ = 0;
 const PATH_FUNCTION_REGEX = /\([^)]*\)$/;
 const PATH_FUNCTION_MATCH_REGEX = /\(([^)]*)\)$/;
 let allowMatchers = true;
+let singleMode_ = false;
 
 function assert(condition) {
   suiteTests_[currentTestIndex_].passed &= !!condition;
@@ -17,8 +18,10 @@ function testCompleted() {
   const currentTest = suiteTests_[currentTestIndex_];
   applyTestResultToElement_(currentTest.passed, currentTest.element);
   revertMocks_(currentTest);
-  currentTestIndex_++;
-  runNextTest_();
+  if (!singleMode_) {
+    currentTestIndex_++;
+    runNextTest_();
+  }
 }
 
 function addTest(name, fn) {
@@ -82,6 +85,16 @@ function createTestElement_(parentElement, name) {
 function applyTestResultToElement_(testPassed, element) {
   element.textContent = testPassed ? 'passed' : 'failed';
   element.style.color = testPassed ? 'limegreen' : 'crimson';
+  const button = document.createElement('button');
+  button.textContent = singleMode_ ? 'Retry all' : 'Retry';
+  element.appendChild(button);
+  const currentIndex = currentTestIndex_;
+  button.onclick = () => {
+    document.body.innerHTML = '';
+    singleMode_ = !singleMode_;
+    currentTestIndex_ = singleMode_ ? currentIndex : 1;
+    runNextTest_();
+  };
 }
 
 function globalFromPath_(path) {
