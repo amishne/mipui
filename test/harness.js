@@ -85,16 +85,27 @@ function createTestElement_(parentElement, name) {
 function applyTestResultToElement_(testPassed, element) {
   element.textContent = testPassed ? 'passed' : 'failed';
   element.style.color = testPassed ? 'limegreen' : 'crimson';
-  const button = document.createElement('button');
-  button.textContent = singleMode_ ? 'Retry all' : 'Retry';
-  element.appendChild(button);
+  const retrySingle = document.createElement('button');
+  retrySingle.textContent = 'Retry';
+  element.appendChild(retrySingle);
   const currentIndex = currentTestIndex_;
-  button.onclick = () => {
+  retrySingle.onclick = () => {
     document.body.innerHTML = '';
-    singleMode_ = !singleMode_;
-    currentTestIndex_ = singleMode_ ? currentIndex : 1;
+    singleMode_ = true;
+    currentTestIndex_ = currentIndex;
     runNextTest_();
   };
+  if (singleMode_) {
+    const retryAll = document.createElement('button');
+    retryAll.textContent = 'Retry all';
+    element.appendChild(retryAll);
+    retryAll.onclick = () => {
+      document.body.innerHTML = '';
+      singleMode_ = false;
+      currentTestIndex_ = 1;
+      runNextTest_();
+    };
+  }
 }
 
 function globalFromPath_(path) {
