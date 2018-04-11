@@ -1,7 +1,5 @@
 const INLINE_SVG_REGEX =
-    /url\((\\?(&quot;|"|'))(data:image\/svg\+xml.(?:((?!\1).)|\\\1)*)\1\)/g;
-const EXTRACT_DIMENSIONS_REGEX =
-    /<svg[^>]*width=(\\?.)([0-9.%]+)\1[^>]*height=\1([0-9.%]+)\1/;
+    /url\((\\?(&quot;|"|'))(data:image\/svg\+xml;utf8,.(((?!\1).)|\\\1)*)\1\)/g;
 
 class GridImager {
   constructor(options) {
@@ -11,37 +9,21 @@ class GridImager {
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
     this.imageElementContainer_ = null;
-    this.unknownSizeSelectors_ = {};
   }
 
   async addCssStyleSheet(cssStyleSheet) {
-    const path = cssStyleSheet.href;
-    this.cssFiles_.push({path, content: ''});
     let cssStr = '';
     for (const rule of cssStyleSheet.cssRules) {
       const selector = rule.selectorText;
       const properties = {};
       for (let i = 0; i < rule.style.length; i++) {
         const propertyName = rule.style.item(i);
-        const propertyValue = rule.style.getPropertyValue(propertyName);
-        const propertyWithSvgImage =
-            this.getSvgImageFromProperty_(propertyValue);
-        if (!propertyWithSvgImage) {
-          properties[propertyName] = propertyValue;
-          continue;
-        }
-        if (!propertyWithSvgImage.hasKnownSize) {
-          this.addUnknownSizeSelector_(selector, propertyName);
-          properties[propertyName] = propertyValue;
-          continue;
-        }
-        const pngDataUrl = await this.svgDataUrl2pngDataUrl_(
-            propertyWithSvgImage.str,
-            propertyWithSvgImage.width,
-            propertyWithSvgImage.height);
-        properties[propertyName] =
-            propertyValue.substring(0, propertyWithSvgImage.begin) +
-            pngDataUrl + propertyValue.substr(propertyWithSvgImage.end);
+        const propertyValue = rule.style.getPropertyValue(propertyName)
+            .replace(INLINE_SVG_REGEX, (match, quote, unused, value) =>
+              'url("data:image/svg+xml;utf8,' +
+                  encodeURIComponent(value.substr(24).replace(/\\"/g, "'")) + '")');
+        properties[propertyName] = propertyValue;
+        continue;
       }
       cssStr += `${selector}{`;
       for (const key of Object.keys(properties)) {
@@ -49,12 +31,7 @@ class GridImager {
       }
       cssStr += '}';
     }
-    // Verify the entry still exists, i.e. that it wasn't deleted by a
-    // theme change.
-    const cssFile = this.cssFiles_.find(cssFile => cssFile.path == path);
-    if (cssFile) {
-      cssFile.content = cssStr;
-    }
+    this.cssFiles_.push({path: cssStyleSheet.href, content: cssStr});
   }
 
   removeCssFile(path) {
@@ -98,33 +75,11 @@ class GridImager {
   }
 
   async node2xml_(node) {
-    const needsCloning = this.nodeNeedsCloning_(node);
-    let actualNode = node;
-    let cloneContainer = null;
-    if (needsCloning) {
-      cloneContainer = document.createElement('div');
-      cloneContainer.style.opacity = 0;
-      cloneContainer.style.zIndex = -1;
-      cloneContainer.style.width = '100%';
-      cloneContainer.style.height = '100%';
-      cloneContainer.style.position = 'absolute';
-      node.parentElement.appendChild(cloneContainer);
-      actualNode = await this.cloneNode_(node, cloneContainer);
-    }
     const serializeStart = performance.now();
-    const result = new XMLSerializer().serializeToString(actualNode);
+    const result = new XMLSerializer().serializeToString(node);
     this.printTimeSince_(
         'XMLSerializer().serializeToString', serializeStart, 50);
-    if (needsCloning) {
-      node.parentElement.removeChild(cloneContainer);
-    }
     return result;
-  }
-
-  nodeNeedsCloning_(node) {
-    return node.innerHTML.includes('data:image/svg+xml') ||
-        Object.keys(this.unknownSizeSelectors_).some(
-            selector => node.querySelectorAll(selector).length > 0);
   }
 
   async xml2foreignObjectString_(xml, includeStyle) {
@@ -132,8 +87,7 @@ class GridImager {
       '<html xmlns="http://www.w3.org/1999/xhtml">' +
       (includeStyle ? this.styleString_ : '') + xml + '</html></foreignObject>')
         .replace(/\n/g, ' ')
-        .replace(/ +/g, ' ')
-        .replace(INLINE_SVG_REGEX, '');
+        .replace(/ +/g, ' ');
   }
 
   async foreignObjectString2svgElement_(foreignObjectString) {
@@ -144,8 +98,11 @@ class GridImager {
   }
 
   async foreignObjectString2svgDataUrl_(foreignObjectString, width, height) {
-    return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" ' +
+    let svgString = '<svg xmlns="http://www.w3.org/2000/svg" ' +
         `width="${width}" height="${height}">${foreignObjectString}` + '</svg>';
+    // svgString = encodeURIComponent(svgString);
+    svgString = svgString.replace(/\\"/g, "'");
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svgString);
   }
 
   async foreignObjectString2imageElement_(foreignObjectString, width, height) {
@@ -202,71 +159,6 @@ class GridImager {
     return await this.canvas2dataUrl_(canvas);
   }
 
-  loadFile_(path, callback) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('get', path, true);
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState != 4) return;
-      callback(xhr.responseText);
-    };
-    xhr.send();
-  }
-
-  async replaceInlinedSvgWithPng_(cloned) {
-    const matchingDescendents = cloned.querySelectorAll('*[style*="svg+xml"]');
-    for (let i = 0; i < matchingDescendents.length; i++) {
-      const element = matchingDescendents[i];
-      const styleStr = element.getAttribute('style');
-      const inlinedSvgs = [];
-      let match = null;
-      INLINE_SVG_REGEX.lastIndex = 0;
-      while (match = INLINE_SVG_REGEX.exec(styleStr)) {
-        const quoteLength = match[1].length;
-        const svgDataUrl = match[3];
-        const begin = match.index + 4 + quoteLength;
-        const decodedSvgDataUrl = svgDataUrl
-            .replace(/&amp;/g, '&')
-            .replace(/\\?&quot;/g, '"')
-            .replace(/\\"/g, '"')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>');
-        inlinedSvgs.push({
-          begin,
-          end: begin + svgDataUrl.length,
-          str: decodedSvgDataUrl,
-        });
-      }
-      let result = '';
-      let lastIndex = 0;
-      const nodeWidth = element.clientWidth;
-      const nodeHeight = element.clientHeight;
-      for (const inlinedSvg of inlinedSvgs) {
-        result += styleStr.substring(lastIndex, inlinedSvg.begin);
-        let {width, height} =
-            this.extractDimensionsFromSvgStr_(inlinedSvg.str);
-        width = Number.parseFloat(width) *
-            (width.endsWith('%') ? nodeWidth / 100 : 1);
-        height = Number.parseFloat(height) *
-            (height.endsWith('%') ? nodeHeight / 100 : 1);
-        const pngDataUrl =
-            await this.svgDataUrl2pngDataUrl_(inlinedSvg.str, width, height);
-        result += pngDataUrl;
-        lastIndex = inlinedSvg.end;
-      };
-      result += styleStr.substring(lastIndex);
-      element.setAttribute('style', result);
-    }
-  }
-
-  async cloneNode_(node, parent) {
-    const cloned = node.cloneNode(true);
-    parent.appendChild(cloned);
-    this.filterOutElements_(cloned);
-    this.inlineUnknownSizeSvgs_(cloned);
-    await this.replaceInlinedSvgWithPng_(cloned);
-    return parent.children[0];
-  }
-
   filterOutElements_(cloned) {
     this.selectorsOfElementsToStrip_.forEach(selector => {
       const elements = cloned.querySelectorAll(selector);
@@ -274,67 +166,5 @@ class GridImager {
         elements[i].parentElement.removeChild(elements[i]);
       }
     });
-  }
-
-  inlineUnknownSizeSvgs_(cloned) {
-    Object.keys(this.unknownSizeSelectors_).forEach(selector => {
-      const matchingDescendents = cloned.querySelectorAll(selector);
-      const properties = this.unknownSizeSelectors_[selector];
-      for (let i = 0; i < matchingDescendents.length; i++) {
-        const descendent = matchingDescendents[i];
-        const computedStyle = getComputedStyle(descendent);
-        for (const property of properties) {
-          descendent.style[property] = computedStyle[property];
-          if (property == 'background-image') {
-            descendent.style.backgroundSize = 'contain';
-          }
-        }
-      }
-    });
-  }
-
-  extractDimensionsFromSvgStr_(svgDataUrl) {
-    let width = 0;
-    let height = 0;
-    svgDataUrl.replace(EXTRACT_DIMENSIONS_REGEX, (match, g1, g2, g3) => {
-      width = g2;
-      height = g3;
-      return match;
-    });
-    return {width: String(width), height: String(height)};
-  }
-
-  getSvgImageFromProperty_(value) {
-    INLINE_SVG_REGEX.lastIndex = 0;
-    const match = INLINE_SVG_REGEX.exec(value);
-    if (!match) return null;
-    const quoteLength = match[1].length;
-    const svgDataUrl = match[3];
-    const {width, height} = this.extractDimensionsFromSvgStr_(svgDataUrl);
-    const begin = match.index + 4 + quoteLength;
-    const decodedSvgDataUrl = svgDataUrl
-        .replace(/&amp;/g, '&')
-        .replace(/\\?&quot;/g, '"')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/\\"/g, '"');
-    return {
-      begin,
-      end: begin + svgDataUrl.length,
-      str: decodedSvgDataUrl,
-      hasKnownSize:
-          width && !width.includes('%') && height && !height.includes('%'),
-      width: Number.parseFloat(width),
-      height: Number.parseFloat(height),
-    };
-  }
-
-  addUnknownSizeSelector_(selector, propertyName) {
-    let curr = this.unknownSizeSelectors_[selector];
-    if (!curr) {
-      curr = [];
-      this.unknownSizeSelectors_[selector] = curr;
-    }
-    curr.push(propertyName);
   }
 }
