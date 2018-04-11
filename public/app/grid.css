@@ -39,7 +39,6 @@
   left: 0;
   top: 0;
   clip-path: inset(0);
-  -webkit-clip-path: inset(0);
   visibility: hidden;
 }
 
@@ -52,13 +51,11 @@
   left: 0;
   top: 0;
   clip-path: inset(0);
-  -webkit-clip-path: inset(0);
 }
 
 .widget-layer {
   z-index: 10;
   clip-path: unset;
-  -webkit-clip-path: unset;
 }
 
 .grid-layer {
@@ -66,7 +63,6 @@
   z-index: 10;
   pointer-events: auto;
   clip-path: unset;
-  -webkit-clip-path: unset;
 }
 
 .mask-layer {
