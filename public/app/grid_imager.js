@@ -1,6 +1,22 @@
 const INLINE_SVG_REGEX =
     /url\((\\?(&quot;|"|'))(data:image\/svg\+xml;utf8,.(((?!\1).)|\\\1)*)\1\)/g;
 
+// Converts map nodes (the entire map or individual tiles) to images.
+// Basic mechanism:
+//
+// 1. Maintain a string with the current style, taken from grid.css and any
+//    theme-loaded styles.
+// 2. Convert the node to XML string.
+// 3. Place the XML string and the maintained style string inside a
+//    foreignObject string.
+// 4. Place the foreignObject string inside a new SVG string.
+// 5. Create an image and set its src to a data URL version of that SVG.
+// 6. Draw the image to a canvas, scaling it in the process.
+// 7. Use the canvas's toDataUrl() to obtain a PNG data URL.
+//
+// This is inspired by https://github.com/tsayen/dom-to-image and is similar in
+// principle, except that I can get away with not cloning any nodes by
+// maintaining the style string and carefully escaping embedded SVGs.
 class GridImager {
   constructor(options) {
     this.cssFiles_ = [];   // Order matters!
@@ -102,7 +118,6 @@ class GridImager {
   async foreignObjectString2svgDataUrl_(foreignObjectString, width, height) {
     let svgString = '<svg xmlns="http://www.w3.org/2000/svg" ' +
         `width="${width}" height="${height}">${foreignObjectString}` + '</svg>';
-    // svgString = encodeURIComponent(svgString);
     svgString = svgString.replace(/\\"/g, "'");
     return 'data:image/svg+xml;utf8,' + encodeURIComponent(svgString);
   }
@@ -121,7 +136,6 @@ class GridImager {
 
   imageElement2canvas_(imageElement, width, height) {
     return new Promise((resolve, reject) => {
-      // const start = performance.now();
       const canvas = document.createElement('canvas');
       canvas.style.width = width;
       canvas.style.height = height;
