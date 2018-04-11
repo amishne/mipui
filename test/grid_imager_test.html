@@ -51,8 +51,8 @@
       const prefix = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><foreignObject x="0" y="0" width="100%" height="100%"><html xmlns="http://www.w3.org/1999/xhtml"><style>';
       const suffix = '</style><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></html></foreignObject></svg>';
 
-      assert(svgDataUrl.startsWith(prefix));
-      assert(svgDataUrl.endsWith(suffix));
+      assert(decodeURIComponent(svgDataUrl).startsWith(prefix));
+      assert(decodeURIComponent(svgDataUrl).endsWith(suffix));
 
       const img = document.createElement('img');
       img.src = svgDataUrl;
@@ -126,7 +126,7 @@
 
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
-      const expectedDataUrl = 'x';
+      const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAAoCAYAAADQUaxgAAACb0lEQVR4Xu3c0U6EMBBAUfj/j8ascSMxlSx02kLn+LwL9MyYG3xw3ZZlW/wQIECAAIGTAquAnBTzcQIECBD4FhAQi0CAAAEClwQE5BKbLxEgQICAgNgBAgWBddmWbVnZECBwICAg1oPAH4FXPN4/ImI9CPwvICC2g8BOYB8PEbEaBI4FBMSGEPgRKMVDRKwHAW8gdoDAocBRPETE8hAoC3gDsRnpBT6Jh4ikXxMABQEBsRapBc7EQ0RSr4rDC4gdIPArcCUeImKDCOx+h/wrE+uQUaAmHiKScWOcuSTgT1j2Ip1ARDxEJN3aOLA/YdmB7AKR8RCR7Nvk/N5A7EAagRbxEJE06+Og3kDsQFaBlvEQkaxb5dzeQOzA9AI94iEi06+RA3oDsQMZBQQk49SduYeAN5Aeyu4xXKBHRPzn3uFj9gCdBQSkM7jbjRNoGRHxGDdXdx4nICDj7N15gECLiIjHgEG65S0EBOQWY/AQPQUiIyIePSfnXncTEJC7TcTzdBGIiIh4dBmVm9xYQEBuPByP1lagJiLi0XY2rv4MAQF5xpw8ZSOBKxERj0bDcNnHCQjI40bmgaMFzkREPKL1Xe/JAgLy5Ol59jCBTyIiHmHcLjSJgIBMMkjHqBc4ioh41Pu6wnwCAjLfTJ2oQqAUEfGoAPXVqQUEZOrxOtwVgX1ExOOKoO9kERCQLJN2zlMCr4iIxykyH04oICAJh+7IBAgQiBAQkAhF1yBAgEBCAQFJOHRHJkCAQISAgEQougYBAgQSCghIwqE7MgECBCIEBCRC0TUIECCQUEBAEg7dkQkQIBAhICARiq5BgACBhAJfekKH2YKJzxUAAAAASUVORK5CYII=';
       assert(pngDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');

@@ -21,7 +21,9 @@ class GridImager {
         const propertyValue = rule.style.getPropertyValue(propertyName)
             .replace(INLINE_SVG_REGEX, (match, quote, unused, value) =>
               'url("data:image/svg+xml;utf8,' +
-                  encodeURIComponent(value.substr(24).replace(/\\"/g, "'")) + '")');
+                  encodeURIComponent(
+                      value.substr(24)
+                          .replace(/\\"/g, "'").replace(/%23/g, '#')) + '")');
         properties[propertyName] = propertyValue;
         continue;
       }
