@@ -42,3 +42,13 @@
   mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='20' shape-rendering='crispEdges'><style>polygon {fill: white;}</style><defs><mask id='m'><polygon points='99 2, 106 9, 99 16, 92 9'/></mask></defs><rect x='0' y='0' width='200' height='20' mask='url(%23m)'/></svg>");
   -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='20' shape-rendering='crispEdges'><style>polygon {fill: white;}</style><defs><mask id='m'><polygon points='99 2, 106 9, 99 16, 92 9'/></mask></defs><rect x='0' y='0' width='200' height='20' mask='url(%23m)'/></svg>");
 }
+
+.overflowing {
+  position: relative;
+  background-color: blue;
+  border-radius: 50%;
+  width: 210px;
+  height: 30px;
+  left: -5px;
+  top: -5px;
+}

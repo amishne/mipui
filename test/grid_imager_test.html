@@ -63,7 +63,7 @@
     addTest('Can save simple dom to svg element', async () => {
       const input = createDomWithInnerClasses('circle');
 
-      const svgElement = await gi.node2svgElement(input);
+      const svgElement = await gi.node2svgElement(input, 200, 20);
 
       const expectedInnerHtml = '<foreignobject x="0" y="0" width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></foreignobject>';
       assert(svgElement.innerHTML == expectedInnerHtml);
@@ -131,6 +131,25 @@
 
       const img = document.createElement('img');
       img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can add margins with overflowing content', async () => {
+      gi = new GridImager({margins: 5});
+      await gi.addCssStyleSheet(cssElement.sheet);
+      gi.recalculateStyleString();
+      const input = createDomWithInnerClasses('overflowing');
+
+      const svgDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+      input.style.border = '5px solid yellow';
+
+      expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAAAeCAYAAABZs0CNAAAEV0lEQVR4Xu2cSWsVQRDHf2NMNHFD3MG4bwjiguKW4NXoQdGDHvQLiAreBeNJD16MH0EPelD04nJTjBuKC4K4xiWiaFxwSVxiHKnO9KNfnMTJ871hZl4VFNWz9tS/+09PN13loRKCgD8JGAWMdnQkUA1UAYMC65bdcwOBij40ynWpK0y+Ab+Arj40yvWfgOiPHtY9J3V9BN7lq9eq3SYfAS/7gPhChjGB2nKYlXNCniHZx6QoHrYD7x2CtQVl1zplT8iYWUkZkcxIMTnQ2mC0GA6MAMLssMy2XDod+wJ8Bj71YoVsMto971bvRVrcTBiR/CnANGBqQBYpu8RJC676ncVDICCVIdezgGRPgRbw5DgREjORfPl1EpJYsrhWRpvKRKCiH5EWBDoBGbVagIBcOStE+xCXI6FE8sEv9AN+UsUTpvOImUYfMyNXbqUWn5i5W6gj+lyqEfDwqaU16IW2N3bbabRQZdZZChOPvzvxfxPpB4O4w3xusDin95hLl1m0UlEEkoVABV3M5R5LuJ7rsfO50y9iFYVIHdRwheVcpJ5m6rjKMtp1oStZvUW/pl8IDKGd5VyhzvToZlOuoaPXdxRMJBlxztDAWVZzmRV06lSmXw2lN6cLgUo6WcFl1nCaBs4wj7t5DvSLSDKfaWInR9nMSyamCwn9WkWgiAhM5CWbOcpOmsy8KyKR/FUbOHH+FOt0nlPExtBXpR8BmV+t5yTH2VgPXrPrkbPY4K8E9gN16XdZPVAESo7AeaARvAtSU0AkvxHYU/KqtQJFIHsI7AWv0QN/O3Aoe/6pR4pAbAjsECLdB2bHVqVWpAhkD4EHSqTsNap6FD8Chkj6axc/8FpjthCQXzsRXWzIVruqNzEiYBcbbJX+WuAgMD3Gj9CqFIG0IiA7zreBd85Z/s6RScKld9XQsU/21KkoAopAPgKyB6+Dmt3AAfAkTN9Ir7u/r7OEw2w1W4TaTKS2iiJQngiMoY1NHGMLR1jKtahbhEwwUl480l3mmU2rp1mjm1bLsy+Vldd20+pqzppNqxJm4UrEvXZ/E8l9iQ2j6N5wXmdCKjSMoqz6WeaclTCKZVw1Pbqei6ULo+gLOQngu82CXHySkOsN4zIHtjqUHQTG8YaVXDKkEfIs5BayITWqFGVEilLZN6q5ySJknmUjZx8yS8PMo4Cn9xQNgQH8Zg73ndjtGyzgNtVIur7CJTKRCq/iX0/6sio4C5gZohP+9bReVwRCEHgNPArRh+6qWqmRS1gmEk3HVeoGT+H7nTx3JluQpOUq93Rc/9uMhmg2z52E7Y4Hxjoq6/RyrJJ8BN4CkolVrC2/0gSRiWo43xJK0hDbLKySiVUyr4q1ao/FumW5rtI7ApIt1WZNFeuW5Zp73R5LdlXJpPoWPCFQpiRhv3ZJwtYfGpDLkizMht0jucMHhyTZl4T7Num+PFdK+dpHYnxJ6PYdkNzdlgTWynM9z/U49uQelR4I/AHwrk2yooRURwAAAABJRU5ErkJggg==';
+      assert(svgDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = svgDataUrl;
+      img.style.backgroundColor = 'cyan';
       document.body.appendChild(img);
       testCompleted();
     });

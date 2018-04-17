@@ -24,6 +24,7 @@ class GridImager {
     this.selectorsOfElementsToStrip_ = options.selectorsOfElementsToStrip || [];
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
+    this.margins_ = options.margins || 0;
     this.imageElementContainer_ = null;
   }
 
@@ -64,21 +65,27 @@ class GridImager {
         .replace(/\s+/g, ' ');
   }
 
-  async node2svgElement(node) {
-    const xml = await this.node2xml_(node);
+  async node2svgElement(node, width, height) {
+    width += 2 * this.margins_;
+    height += 2 * this.margins_;
+    const xml = await this.node2xml_(node, width, height);
     const foreignObjectString = await this.xml2foreignObjectString_(xml, false);
     return await this.foreignObjectString2svgElement_(foreignObjectString);
   }
 
   async node2svgDataUrl(node, width, height) {
-    const xml = await this.node2xml_(node);
+    width += 2 * this.margins_;
+    height += 2 * this.margins_;
+    const xml = await this.node2xml_(node, width, height);
     const foreignObjectString = await this.xml2foreignObjectString_(xml, true);
     return await this.foreignObjectString2svgDataUrl_(
         foreignObjectString, width, height);
   }
 
   async node2pngDataUrl(node, width, height) {
-    const xml = await this.node2xml_(node);
+    width += 2 * this.margins_;
+    height += 2 * this.margins_;
+    const xml = await this.node2xml_(node, width, height);
     const foreignObjectString = await this.xml2foreignObjectString_(xml, true);
     const imageElement = await this.foreignObjectString2imageElement_(
         foreignObjectString, width, height);
@@ -92,9 +99,11 @@ class GridImager {
     debug(`${name} done in ${duration}ms`);
   }
 
-  async node2xml_(node) {
+  async node2xml_(node, width, height) {
     const serializeStart = performance.now();
-    const result = new XMLSerializer().serializeToString(node);
+    const result =
+        `<div style="border: ${this.margins_}px solid transparent">` +
+        new XMLSerializer().serializeToString(node) + '</div>';
     this.printTimeSince_(
         'XMLSerializer().serializeToString', serializeStart, 50);
     return result;
