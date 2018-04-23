@@ -70,6 +70,8 @@ class Tile {
     this.height = this.lastCell.offsetTop + this.lastCell.height - this.top;
     this.containerElement_.style.width = this.width;
     this.containerElement_.style.height = this.height;
+    this.mapElement.style.width = this.width;
+    this.mapElement.style.height = this.height;
 
     this.active_ = true;
     this.cacheImage_();
