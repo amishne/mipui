@@ -12,9 +12,10 @@ let cachedTilesGreyedOut = false;
 const pendingTiles = new Set();
 
 class Tile {
-  constructor(parent, key, x, y) {
+  constructor(parent, key, x, y, index) {
     // Elements
     this.containerElement_ = createAndAppendDivWithClass(parent, 'tile');
+    this.containerElement_.style.zIndex = 1000000 - index;
     this.mapElement =
         createAndAppendDivWithClass(this.containerElement_, 'tile-map');
     this.imageContainerElement_ = createAndAppendDivWithClass(
@@ -200,15 +201,9 @@ class Tile {
           if (this.isInterrupted_()) return;
           if (state.theMap.areTilesLocked()) return;
           this.imageElement_.src = dataUrl;
-          this.imageElement_.style.width = this.width;
-          this.imageElement_.style.height = this.height;
+          this.imageElement_.style.width = 2 + this.width;
+          this.imageElement_.style.height = 2 + this.height;
           this.deactivate_(start);
-          // tilesCached++;
-          // if (tilesCached % 10 == 0) {
-          //   const duration =
-          //       Math.ceil((performance.now() - firstTileCacheStart) / 1000);
-          //   debug(`Cached ${tilesCached} tiles in ${duration}s`);
-          // }
         }).catch(reason => {
           state.theMap.concurrentTileCachingOperations--;
           debug(`Tile ${this.key} caching failed: ${reason}.`);

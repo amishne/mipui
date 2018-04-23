@@ -59,6 +59,7 @@ class CellMap {
     this.clearMap_();
     this.currX = 0;
     this.currY = 0;
+    this.tileIndex = 0;
     for (let i = minY; i < maxY; i++) {
       this.createDividerRow_(mapElement, minX, maxX, i - 1, i);
       this.currX = 0;
@@ -369,7 +370,7 @@ class CellMap {
   }
 
   createTile(parent, key, x, y) {
-    const tile = new Tile(parent, key, x, y);
+    const tile = new Tile(parent, key, x, y, this.tileIndex++);
     ct.children.forEach(layer => {
       const layerElement =
           createAndAppendDivWithClass(

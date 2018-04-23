@@ -64,6 +64,7 @@ class State {
     this.tileGridImager = new GridImager({
       selectorsOfElementsToStrip: ['.grid-layer', '*[visibility="hidden"]'],
       scale: 6,
+      margins: 1,
       disableSmoothing: true,
     });
 

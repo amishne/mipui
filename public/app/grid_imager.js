@@ -102,7 +102,7 @@ class GridImager {
   async node2xml_(node, width, height) {
     const serializeStart = performance.now();
     const result =
-        `<div style="border: ${this.margins_}px solid transparent">` +
+        `<div style="padding: ${this.margins_}px; width: ${width - 2 * this.margins_}px; height: ${height - 2 * this.margins_}px;">` +
         new XMLSerializer().serializeToString(node) + '</div>';
     this.printTimeSince_(
         'XMLSerializer().serializeToString', serializeStart, 50);
@@ -111,7 +111,7 @@ class GridImager {
 
   async xml2foreignObjectString_(xml, includeStyle) {
     return ('<foreignObject x="0" y="0" width="100%" height="100%">' +
-      '<html xmlns="http://www.w3.org/1999/xhtml">' +
+      '<html xmlns="http://www.w3.org/1999/xhtml" style="display: inline;">' +
       (includeStyle ? this.styleString_ : '') + xml + '</html></foreignObject>')
         .replace(/\n/g, ' ')
         .replace(/ +/g, ' ');
@@ -146,8 +146,8 @@ class GridImager {
   imageElement2canvas_(imageElement, width, height) {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
-      canvas.style.width = width;
-      canvas.style.height = height;
+      //canvas.style.width = width;
+      //canvas.style.height = height;
       canvas.width = this.scale_ * width;
       canvas.height = this.scale_ * height;
       const context = canvas.getContext('2d');

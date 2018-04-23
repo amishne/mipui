@@ -5,6 +5,7 @@
 .walls-layer {
   filter: drop-shadow(1px 0px 0px #919191) drop-shadow(-1px 0px 0px #919191)
       drop-shadow(0px 1px 0px #919191) drop-shadow(0px -1px 0px #919191);
+  clip-path: inset(-1px);
 }
 
 .floor-cell {
