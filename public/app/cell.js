@@ -413,6 +413,10 @@ class Cell {
     this.setImage_(element, variation.imagePath, variation);
   }
 
+  getBaseElementAndMaybeCreateAllElements(layer, initialContent, isHighlight) {
+    // Implement this, then change updateElements_ to recalculate replicas.
+  }
+
   getOrCreateLayerElements(layer, initialContent, isHighlight) {
     const element = this.elements_.get(layer);
     if (!element) {
