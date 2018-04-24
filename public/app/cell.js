@@ -414,17 +414,11 @@ class Cell {
   }
 
   getBaseElementAndMaybeCreateAllElements(layer, initialContent, isHighlight) {
-    // Implement this, then change updateElements_ to recalculate replicas.
-  }
-
-  getOrCreateLayerElements(layer, initialContent, isHighlight) {
     const element = this.elements_.get(layer);
-    if (!element) {
-      return this.createElementsFromContent_(
-          layer, initialContent, isHighlight);
-    }
-    return [element].concat(
-        Array.from(this.replicatedElements_.get(layer).values()));
+    if (element) return element;
+    const elements = this.createElementsFromContent_(
+        layer, initialContent, isHighlight);
+    return elements.length >= 1 ? elements[0] : null;
   }
 
   getLayerElements_(layer) {
@@ -465,9 +459,10 @@ class Cell {
       this.removeElements(layer, isHighlight);
       return [];
     }
+    // Implement this, then change updateElements_ to recalculate replicas.
     const elements =
-        this.getOrCreateLayerElements(layer, newContent, isHighlight);
-    elements.forEach(element => {
+        this.getBaseElementAndMaybeCreateAllElements(layer, newContent, isHighlight);
+    [elements].forEach(element => {
       this.modifyElementClasses_(layer, oldContent, element, 'remove');
       this.populateElementFromContent_(element, layer, newContent, isHighlight);
     });
