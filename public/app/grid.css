@@ -13,8 +13,6 @@
 .tile {
   position: absolute;
   border: 1px solid transparent;
-  clip-path: inset(-1px);
-/*  margin: 1px;*/
 }
 
 .tile-map * {
@@ -41,7 +39,6 @@
   position: absolute;
   left: 1px;
   top: 1px;
-  /*clip-path: inset(0);*/
   visibility: hidden;
 }
 

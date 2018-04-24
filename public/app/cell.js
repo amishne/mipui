@@ -45,8 +45,8 @@ class Cell {
         state.opCenter
             .recordCellChange(this.key, layer.id, oldContent, newContent);
       }
-      this.updateElements_(layer, oldContent, newContent, false);
       this.tile.invalidate();
+      this.updateElements_(layer, oldContent, newContent, false);
     }
   }
 
