@@ -1,15 +1,11 @@
 .the-map {
   background-color: white;
+  background-image: url("empty_tile1.png");
 }
 
 .walls-layer {
   filter: drop-shadow(1px 0px 0px #919191) drop-shadow(-1px 0px 0px #919191)
       drop-shadow(0px 1px 0px #919191) drop-shadow(0px -1px 0px #919191);
-}
-
-.floor-cell {
-  background-color: white;
-  border-color: rgb(197, 239, 255);
 }
 
 /* hsl(0, 0, 82) */

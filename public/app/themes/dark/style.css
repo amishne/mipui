@@ -4,11 +4,7 @@
 
 .the-map {
   background-color: #2c354f;
-}
-
-.floor-cell {
-  background-color: #2c354f;
-  border-color: #5c6782;
+  background-image: url("empty_tile1.png");
 }
 
 .walls-layer {

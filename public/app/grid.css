@@ -8,6 +8,10 @@
   position: relative;
   z-index: 0;
   background-color: rgb(245, 245, 220);
+  background-image: url("themes/beige_land/empty_tile1.png");
+  background-size: 32px 32px;
+  background-position: 8px 8px;
+  image-rendering: pixelated;
 }
 
 .tile {

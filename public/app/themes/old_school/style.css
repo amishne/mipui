@@ -1,5 +1,6 @@
 .the-map {
   background-color: white;
+  background-image: url("empty_tile1.png");
 }
 
 .walls-layer {

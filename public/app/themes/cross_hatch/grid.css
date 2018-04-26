@@ -1,7 +1,3 @@
-.floor-cell-vertical {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAYCAYAAADZEIyjAAAAIElEQVQoU2NkQAIdHR3/KyoqGEFCYAIGRiVGg4S0xAAAXsVgGbj4jmUAAAAASUVORK5CYII=") white;
-}
-
-.floor-cell-horizontal {
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAGCAYAAADZq14TAAAAIUlEQVQoU2NkoDFgpLH5DLS3oKOj4z8tfUF7H9DS9SCzAfTSAp4jiY7lAAAAAElFTkSuQmCC") white;
+.the-map {
+  background-image: url("empty_tile1_grid.png");
 }

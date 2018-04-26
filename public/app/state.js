@@ -98,10 +98,6 @@ class State {
     const content = this.pstate_.content || null;
     const cellContent = content ? content[cellKey] : null;
     const layerContent = cellContent ? cellContent[layer.id] : null;
-    if (!layerContent && layer == ct.floors) {
-      // Missing floor translates to the default floor content.
-      return this.defaultFloorContent_;
-    }
     return layerContent || null;
   }
 

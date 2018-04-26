@@ -1,5 +1,6 @@
 .the-map {
   background-color: white;
+  background-image: url("empty_tile1.png");
 }
 
 .walls-layer {
@@ -35,11 +36,6 @@
 
 .square-wall-cell-removing, .oval-wall-cell-removing {
   filter: brightness(2.5) saturate(0.1) opacity(0.5);
-}
-
-.floor-cell {
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAC4UlEQVRIS1XWCW4jMQxE0dZkz/2vGq+xe/AEf0NpwOhFIlksFimP0+m0v729bb+/v/P3+fm5nU6n7d+/f/P3/v6+HY/H7evra7vdbtv5fN7GGNvHx8fWdblctn3f53c29/t9+vGdzTgcDrsNXRYtvLy8zDuj7p4BCAinbAHJxvv1et2+v78noD9BOIXAFQrfyogBB95fX19n1hiA1jfvZSdImfEx7vf7biNUjEMkGNQFFQTinBYMsGiyxoc1z9E/g8S5zZy5PAvoWikJjDsQnArkJ5MCANT6uF6vMxOL0ncxiCYbObTmG0Aco2G9ACkTz7Eim0FdouIxlTGuHp5tzFCQAHCU2tTxcDhMFVYvewEcl8tljxYbM6o2DKqL+1TLo37Vw52d4MBlI+Bk4ng8PjPhgPQgqoDVybtMq1VOozg1pTLMCI6l8fPzs9cTMqlnqlOKin/viUOhy5wPNnxUfKDtmZmsfVHROYWm2vTdtxp0Lb7gGPCt5pTVs09Ck3RLkzNrBZhFHGO+rxOh2qC0PTEy10i4YlqQnoUadC102XGkqClPds0zisLMn55DV+NgavrRhCFKjgKnOIg5XnvqT188+irZzwFpMx5Thiw4XWeV54afLNah2gCtv9ij02+q7nw+75wzbAj23GhI+zJm5L251tixVr89pfuo4cykLoVAn7hwG7KpkAeNTWr9IaD3tWFTn7vazBLoE3xWdAgZNp8afjViZ4g7B9Zbay+wWMjv7JMkWsrVgoQhatKumdoTPakrIdS4GJoqvd1uzync/G9YRg2jurgjWRCUonc9YwJclrP3ChINcww8qOjEq/k6M3LgLkiOU1mTuuNhNiM6oGnY1Ugrfc2h/kysZ0mHVULoz0T34V9E3R3/nSsV1XryJYzUKOCcsmM8JwQldsY//3DokwZd43qVaw0VFfasIGTUsaDPkvtK9TwZo8ImHEPL0TrSC9I/lbo/UUDdbKtXCvgfJPdxb9oQ28EAAAAASUVORK5CYII=);
-  border-color: white;
 }
 
 .door-cell {

@@ -253,17 +253,6 @@ class Tile {
   }
 
   getImageFromTheme_() {
-    const emptyTileImage = state.currentTheme[`emptyTile${tileSize}Src`];
-    if (emptyTileImage) {
-      const tileOnlyHasFloors = ct.children.every(layer =>
-        layer == ct.floors ||
-        this.layerElements.get(layer).childElementCount == 0
-      );
-      if (tileOnlyHasFloors) {
-        // debug(`Matched tile ${this.key} with the empty tile image.`);
-        return emptyTileImage;
-      }
-    }
     const fullTileImage = state.currentTheme[`fullTile${tileSize}Src`];
     if (fullTileImage) {
       const tileOnlyHasFloorsAndWalls = ct.children.every(layer =>
