@@ -86,10 +86,7 @@ class Cell {
     return content ? content[contentKey] : null;
   }
 
-  createElementsFromContent_(layer, content, isHighlight) {
-    if (!this.contentShouldHaveElement_(content)) return null;
-    const elements = [];
-    // Create the base element.
+  createElementInOwnerTile_(layer, content, isHighlight) {
     const element = createAndAppendDivWithClass(
         this.tile.layerElements.get(layer));
     const offsetLeft = this.offsetLeft - this.tile.left;
@@ -100,12 +97,19 @@ class Cell {
     element.style.right = offsetRight;
     element.style.top = offsetTop;
     element.style.bottom = offsetBottom;
-
     this.populateElementFromContent_(element, layer, content, isHighlight);
     this.elements_.set(layer, element);
-    elements.push(element);
+    return element;
+  }
+
+  createReplicas_(layer, content, isHighlight, baseElement) {
+    const offsetLeft = this.offsetLeft - this.tile.left;
+    const offsetRight = this.offsetRight - this.tile.right;
+    const offsetTop = this.offsetTop - this.tile.top;
+    const offsetBottom = this.offsetBottom - this.tile.bottom;
+    const elements = [];
     this.getReplicas_(layer, content).forEach(replica => {
-      const clone = element.cloneNode(true);
+      const clone = baseElement.cloneNode(true);
       clone.style.left = offsetLeft + replica.offsetLeft;
       clone.style.right = offsetRight + replica.offsetRight;
       clone.style.top = offsetTop + replica.offsetTop;
@@ -126,6 +130,31 @@ class Cell {
       elements.push(clone);
     });
     return elements;
+  }
+
+  clearReplicas_(layer, isHighlight) {
+    this.replicatedElements_.get(layer).forEach((replicatedElement, tile) => {
+      if (!isHighlight) {
+        tile.invalidate();
+      } else {
+        if (isHighlight == 'showHighlight') {
+          tile.showHighlight();
+        } else {
+          tile.hideHighlight();
+        }
+      }
+      replicatedElement.parentElement.removeChild(replicatedElement);
+    });
+    this.replicatedElements_.get(layer).clear();
+  }
+
+  createElementsFromContent_(layer, content, isHighlight) {
+    if (!this.contentShouldHaveElement_(content)) return null;
+    const baseElement =
+        this.createElementInOwnerTile_(layer, content, isHighlight);
+    const replicas =
+        this.createReplicas_(layer, content, isHighlight, baseElement);
+    return [baseElement].concat(replicas);
   }
 
   getReplicas_(layer, content) {
@@ -433,19 +462,7 @@ class Cell {
     if (!element) return;
     element.parentElement.removeChild(element);
     this.elements_.delete(layer);
-    this.replicatedElements_.get(layer).forEach((replicatedElement, tile) => {
-      if (!isHighlight) {
-        tile.invalidate();
-      } else {
-        if (isHighlight == 'showHighlight') {
-          tile.showHighlight();
-        } else {
-          tile.hideHighlight();
-        }
-      }
-      replicatedElement.parentElement.removeChild(replicatedElement);
-    });
-    this.replicatedElements_.get(layer).clear();
+    this.clearReplicas_(layer, isHighlight);
   }
 
   contentShouldHaveElement_(content) {
@@ -459,10 +476,17 @@ class Cell {
       this.removeElements(layer, isHighlight);
       return [];
     }
-    // Implement this, then change updateElements_ to recalculate replicas.
-    const elements =
-        this.getBaseElementAndMaybeCreateAllElements(layer, newContent, isHighlight);
-    [elements].forEach(element => {
+    let elements = [];
+    const baseElement = this.elements_.get(layer);
+    if (!baseElement) {
+      elements = this.createElementsFromContent_(
+          layer, newContent, isHighlight);
+    } else {
+      this.clearReplicas_(layer, isHighlight);
+      elements = [baseElement].concat(
+          this.createReplicas_(layer, newContent, isHighlight, baseElement));
+    }
+    elements.forEach(element => {
       this.modifyElementClasses_(layer, oldContent, element, 'remove');
       this.populateElementFromContent_(element, layer, newContent, isHighlight);
     });

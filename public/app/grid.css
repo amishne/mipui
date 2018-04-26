@@ -152,9 +152,8 @@
   text-align: center;
   margin: 2px 3px 3px 2px;
   white-space: pre-wrap;
+  user-select: none;
 }
-
-
 
 .primary-cell {
   width: 25px;
