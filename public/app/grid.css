@@ -13,8 +13,6 @@
 .tile {
   position: absolute;
   margin: 1px;
-  left: 0;
-  top: 0;
 }
 
 .tile-map * {
