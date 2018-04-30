@@ -1571,7 +1571,7 @@ class Menu {
               isSelected: true,
               tip: 'Sight range is limited to 30 cells.',
               callback: () => {
-                state.gesture = new SightGesture();
+                state.gesture = new SightGesture(30);
               },
             },
             {
