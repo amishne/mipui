@@ -1,4 +1,5 @@
 const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 100;
+const RENDERING_MESSAGE = 'Rendering, please wait...';
 let firstTileCacheStart = null;
 // let tilesCached = 0;
 const SQUARE_CELL = {
@@ -154,7 +155,7 @@ class Tile {
     if (pendingTiles.size < 5) {
       state.progressStatusBar.resetProgress();
     } else {
-      state.progressStatusBar.incrementProgress('Rendering...');
+      state.progressStatusBar.incrementProgress(RENDERING_MESSAGE);
     }
 
     this.containerElement_.removeChild(this.mapElement);
@@ -222,7 +223,8 @@ class Tile {
     }
     pendingTiles.add(this);
     if (pendingTiles.size > 25) {
-      state.progressStatusBar.showProgress('Rendering...', pendingTiles.size);
+      state.progressStatusBar.showProgress(
+          RENDERING_MESSAGE, pendingTiles.size);
     } else if (pendingTiles.size < 5) {
       state.progressStatusBar.resetProgress();
     }
