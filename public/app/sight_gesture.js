@@ -1,5 +1,5 @@
 class SightGesture extends Gesture {
-  constructor() {
+  constructor(range) {
     super();
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
@@ -10,6 +10,7 @@ class SightGesture extends Gesture {
     this.shouldMakeOtherCellsHidden =
         Array.from(state.theMap.cells.entries())
             .every(([key, cell]) => !cell.hasLayerContent(ct.mask));
+    this.range_ = (range || 30) * 32;
   }
 
   startHover(cell) {
@@ -238,6 +239,14 @@ class SightGesture extends Gesture {
           const distanceToEnd = cellEnd - originPoint.y;
           const distanceToLeft = columnLeft - originPoint.x;
           const distanceToRight = columnRight - originPoint.x;
+          const maxDistance =
+                Math.sqrt(
+                    Math.pow(Math.max(
+                        Math.abs(distanceToLeft),
+                        Math.abs(distanceToRight)), 2) +
+                    Math.pow(Math.max(
+                        Math.abs(distanceToStart),
+                        Math.abs(distanceToEnd)), 2));
           const cellStartFromScanDirection =
               distanceToStart /
               (cellIsBeforeOrigin ? distanceToLeft : distanceToRight);
@@ -278,7 +287,8 @@ class SightGesture extends Gesture {
                   !this.isHiddenByCellsInSameColumn_(columnCell, originPoint)) {
                 cellsInSight.push(columnCell);
               }
-              const currentCellIsOpaque = this.isOpaque_(columnCell);
+              const currentCellIsOpaque =
+                  maxDistance > this.range_ || this.isOpaque_(columnCell);
               if (currentCellIsOpaque && !sector.prevColCellWasOpaque) {
                 nextSector.end =
                     Math.max(nextSector.start, cellStartFromScanDirection);
@@ -335,6 +345,14 @@ class SightGesture extends Gesture {
           const distanceToEnd = cellEnd - originPoint.x;
           const distanceToTop = rowTop - originPoint.y;
           const distanceToBottom = rowBottom - originPoint.y;
+          const maxDistance =
+                Math.sqrt(
+                    Math.pow(Math.max(
+                        Math.abs(distanceToTop),
+                        Math.abs(distanceToBottom)), 2) +
+                    Math.pow(Math.max(
+                        Math.abs(distanceToStart),
+                        Math.abs(distanceToEnd)), 2));
           const cellStartFromScanDirection =
               distanceToStart /
               (cellIsBeforeOrigin ? distanceToTop : distanceToBottom);
@@ -375,7 +393,8 @@ class SightGesture extends Gesture {
                   !this.isHiddenByCellsInSameRow_(rowCell, originPoint)) {
                 cellsInSight.push(rowCell);
               }
-              const currentCellIsOpaque = this.isOpaque_(rowCell);
+              const currentCellIsOpaque =
+                  maxDistance > this.range_ || this.isOpaque_(rowCell);
               if (currentCellIsOpaque && !sector.prevRowCellWasOpaque) {
                 nextSector.end =
                     Math.max(nextSector.start, cellStartFromScanDirection);
