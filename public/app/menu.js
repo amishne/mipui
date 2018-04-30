@@ -1569,6 +1569,7 @@ class Menu {
               materialIcon: 'my_location',
               enabledInReadonlyMode: false,
               isSelected: true,
+              tip: 'Sight range is limited to 30 cells.',
               callback: () => {
                 state.gesture = new SightGesture();
               },
