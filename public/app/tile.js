@@ -255,8 +255,7 @@ class Tile {
   getImageFromTheme_() {
     const fullTileImage = state.currentTheme[`fullTile${tileSize}Src`];
     if (fullTileImage) {
-      const tileOnlyHasFloorsAndWalls = ct.children.every(layer =>
-        layer == ct.floors ||
+      const tileOnlyHasWalls = ct.children.every(layer =>
         layer == ct.walls ||
         this.layerElements.get(layer).childElementCount == 0
       );
@@ -269,7 +268,7 @@ class Tile {
       const allOwnedCellsAreSquareWalls =
           this.cells.every(
               cell => sameContent(cell.getLayerContent(ct.walls), SQUARE_CELL));
-      if (tileOnlyHasFloorsAndWalls && allOwnedCellsAreSquareWalls) {
+      if (tileOnlyHasWalls && allOwnedCellsAreSquareWalls) {
         // debug(`Matched tile ${this.key} with the full tile image.`);
         return fullTileImage;
       }
