@@ -25,6 +25,8 @@ class GridImager {
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
     this.margins_ = options.margins || 0;
+    this.stripStart_ = options.stripStart || null;
+    this.stripEnd_ = options.stripEnd || null;
     this.imageElementContainer_ = null;
   }
 
@@ -101,9 +103,19 @@ class GridImager {
 
   async node2xml_(node, width, height) {
     const serializeStart = performance.now();
+    let serializedNode = new XMLSerializer().serializeToString(node);
+    if (this.stripStart_) {
+      const stripStartIndex = serializedNode.indexOf(this.stripStart_);
+      const stripEndIndex = serializedNode.indexOf(this.stripEnd_);
+      serializedNode = serializedNode.substring(0, stripStartIndex) +
+          serializedNode.substr(stripEndIndex);
+    }
     const result =
-        `<div style="padding: ${this.margins_}px; width: ${width - 2 * this.margins_}px; height: ${height - 2 * this.margins_}px;">` +
-        new XMLSerializer().serializeToString(node) + '</div>';
+        '<div style="' +
+        `padding: ${this.margins_}px;` +
+        `width: ${width - 2 * this.margins_}px;` +
+        `height: ${height - 2 * this.margins_}px;` +
+        `">${serializedNode}</div>`;
     this.printTimeSince_(
         'XMLSerializer().serializeToString', serializeStart, 50);
     return result;

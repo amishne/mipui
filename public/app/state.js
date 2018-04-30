@@ -66,6 +66,8 @@ class State {
       scale: 6,
       margins: 1,
       disableSmoothing: true,
+      stripStart: '<div class="grid-layer"',
+      stripEnd: '<div class="layer ',
     });
 
     this.cursorStatusBar = null;
