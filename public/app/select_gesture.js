@@ -2,6 +2,7 @@ class SelectGesture extends Gesture {
   constructor() {
     super();
     this.selectedCells_ = new Set();
+    this.selectedTiles_ = new Set();
     this.hoveredCell_ = null;
     this.anchorCell_ = null;
   }
@@ -125,12 +126,18 @@ class SelectGesture extends Gesture {
     this.selectedCells_.forEach(cell => {
       cell.gridElement.classList.remove('selected-cell');
     });
+    this.selectedTiles_.forEach(tile => {
+      tile.unlock_('selection');
+    });
     this.selectedCells_ = new Set();
   }
 
   addSelectedCell_(cell) {
     if (!cell) return;
     this.selectedCells_.add(cell);
+    this.selectedTiles_.add(cell.tile);
+    cell.tile.lock_('selection');
+    cell.tile.invalidate();
     cell.gridElement.classList.add('selected-cell');
   }
 
