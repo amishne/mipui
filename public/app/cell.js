@@ -207,7 +207,9 @@ class Cell {
       });
     }
 
-    if (layer == ct.shapes && this.role == 'corner') {
+    // Just replicate those one tile over.
+    if ((layer == ct.shapes && this.role == 'corner') ||
+        (layer == ct.mask)) {
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
           if (x == 0 && y == 0) continue;
