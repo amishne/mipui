@@ -197,6 +197,9 @@ class Tile {
       return;
     }
     state.theMap.concurrentTileCachingOperations++;
+    if (!state.isReadOnly()) {
+      this.mapElement.classList.add('editor-view');
+    }
     state.tileGridImager
         .node2pngDataUrl(this.mapElement, this.width, this.height)
         .then(dataUrl => {
