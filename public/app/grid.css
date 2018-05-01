@@ -71,6 +71,7 @@
 
 .mask-layer {
   z-index: 9;
+  clip-path: inset(-1px);
 }
 
 .gmoverlay-layer {
