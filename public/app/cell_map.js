@@ -1,5 +1,3 @@
-const tileSize = 5;
-
 class CellMap {
   constructor() {
     this.cells = new Map();
@@ -358,8 +356,8 @@ class CellMap {
   }
 
   getOrCreateTile(parent, cellColumn, cellRow) {
-    const tileX = Math.floor((cellColumn + 1) / tileSize);
-    const tileY = Math.floor((cellRow + 1) / tileSize);
+    const tileX = Math.floor((cellColumn + 1) / constants.tileSize);
+    const tileY = Math.floor((cellRow + 1) / constants.tileSize);
     const tileKey = tileX + ',' + tileY;
     let tile = this.tiles.get(tileKey);
     if (!tile) {

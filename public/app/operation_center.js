@@ -1,6 +1,3 @@
-// Maximum number of operations stored in the undo stack.
-const MAX_STORED_OPERATIONS = 10000;
-
 // This class is responsible for synchronizing operations between clients, and
 // for managing the undo stack.
 //
@@ -43,7 +40,7 @@ class OperationCenter {
 
     // All operations that have been performed on the state since the last
     // state load (or creation). Some may not yet be accepted.
-    // * Once the size of this objects exceeds MAX_STORED_OPERATIONS,
+    // * Once the size of this objects exceeds the max undo stack size,
     //   newly-added operations will wipe old operations.
     this.appliedOperations_ = [];
     // The index of the latest applied operation in this.appliedOperations_.
@@ -361,7 +358,7 @@ class OperationCenter {
             .slice(0, this.latestAppliedOperationIndex_ + 1)
             .concat(op);
     this.latestAppliedOperationIndex_ = this.appliedOperations_.length - 1;
-    if (this.appliedOperations_.length > MAX_STORED_OPERATIONS) {
+    if (this.appliedOperations_.length > constants.maxUndoStackSize) {
       this.appliedOperations_.shift();
       this.latestAppliedOperationIndex_--;
     }

@@ -987,7 +987,7 @@ class Menu {
               type: 'tool',
               presentation: 'icon',
               materialIcon: 'flare',
-              tip: 'Note: affects up to ' + MAX_NUM_SELECTED +
+              tip: 'Note: affects up to ' + constants.maxNumSelectedCells +
                   ' cells at a time.',
               callback: () => {
                 state.gesture = new MagicWandSelectGesture();
@@ -1343,7 +1343,7 @@ class Menu {
               presentation: 'icon',
               materialIcon: 'format_color_fill',
               enabledInReadonlyMode: false,
-              tip: 'Note: affects up to ' + MAX_NUM_SELECTED +
+              tip: 'Note: affects up to ' + constants.maxNumSelectedCells +
                   ' cells at a time.',
               callback: () => { state.gesture = new PaintBucketGesture(); },
             },
@@ -1847,7 +1847,7 @@ class Menu {
             text: 'No tiles',
             enabledInReadonlyMode: true,
             callback: () => {
-              tilingCachingEnabled = false;
+              state.tilingCachingEnabled = false;
               const thisItem = this.debugMenuItem_.submenu.items.find(
                   item => item.name == 'Disable tiling');
               thisItem.text = 'Done';
@@ -1861,7 +1861,7 @@ class Menu {
             text: 'Grey tiles',
             enabledInReadonlyMode: true,
             callback: () => {
-              cachedTilesGreyedOut = true;
+              state.cachedTilesGreyedOut = true;
               const thisItem = this.debugMenuItem_.submenu.items.find(
                   item => item.name == 'Greyed cached tiles');
               thisItem.text = 'Done';

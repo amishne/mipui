@@ -73,6 +73,9 @@ class State {
     this.cursorStatusBar = null;
     this.progressStatusBar = null;
     this.infoStatusBar = null;
+
+    this.tilingCachingEnabled = true;
+    this.cachedTilesGreyedOut = false;
   }
 
   isReadOnly() {

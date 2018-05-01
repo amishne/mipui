@@ -1,4 +1,3 @@
-const CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT = 100;
 const RENDERING_MESSAGE = 'Rendering, please wait...';
 let firstTileCacheStart = null;
 // let tilesCached = 0;
@@ -6,10 +5,6 @@ const SQUARE_CELL = {
   [ck.kind]: ct.walls.smooth.id,
   [ck.variation]: ct.walls.smooth.square.id,
 };
-// eslint-disable-next-line prefer-const
-let tilingCachingEnabled = true;
-// eslint-disable-next-line prefer-const
-let cachedTilesGreyedOut = false;
 const pendingTiles = new Set();
 
 class Tile {
@@ -140,7 +135,7 @@ class Tile {
     if (!this.active_) {
       this.containerElement_.appendChild(this.mapElement);
       this.imageContainerElement_.style.visibility = 'hidden';
-      if (cachedTilesGreyedOut) {
+      if (state.cachedTilesGreyedOut) {
         this.containerElement_.style.filter = '';
       }
       // debug(`Tile ${this.key} activated.`);
@@ -160,7 +155,7 @@ class Tile {
 
     this.containerElement_.removeChild(this.mapElement);
     this.imageContainerElement_.style.visibility = 'visible';
-    if (cachedTilesGreyedOut) {
+    if (state.cachedTilesGreyedOut) {
       this.containerElement_.style.filter = 'grayscale(1)';
     }
     this.imageIsValid_ = true;
@@ -170,7 +165,7 @@ class Tile {
   }
 
   cacheImage_() {
-    if (!tilingCachingEnabled) return;
+    if (!state.tilingCachingEnabled) return;
     if (state.theMap.areTilesLocked()) {
       this.restartTimer_();
       return;
@@ -186,13 +181,13 @@ class Tile {
     const imageFromTheme = this.getImageFromTheme_();
     if (imageFromTheme) {
       this.imageElement_.src = imageFromTheme;
-      this.imageElement_.style.width = tileSize * 32;
-      this.imageElement_.style.height = tileSize * 32;
+      this.imageElement_.style.width = constants.tileSize * 32;
+      this.imageElement_.style.height = constants.tileSize * 32;
       this.deactivate_(start);
       return;
     }
     if (state.theMap.concurrentTileCachingOperations >
-        CONCURRENT_TILE_CACHING_OPERATIONS_LIMIT) {
+        constants.concurrentTileCachingOperationsLimit) {
       this.restartTimer_();
       return;
     }
@@ -258,7 +253,8 @@ class Tile {
   }
 
   getImageFromTheme_() {
-    const fullTileImage = state.currentTheme[`fullTile${tileSize}Src`];
+    const fullTileImage =
+        state.currentTheme[`fullTile${constants.tileSize}Src`];
     if (fullTileImage) {
       const tileOnlyHasWalls = ct.children.every(layer =>
         layer == ct.walls ||
