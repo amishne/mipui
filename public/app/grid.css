@@ -510,10 +510,11 @@
 .hidden-cell {
   position: absolute;
   background-color: rgb(50, 50, 50);
-  box-shadow: 0 0 0 0.3px rgb(50, 50, 50);
+  box-shadow: 0 0 0 1px rgb(50, 50, 50);
 }
 
 .editor-view .hidden-cell {
+  box-shadow: unset;
   background-image: repeating-linear-gradient(45deg, rgb(102, 51, 153), rgb(102, 51, 153) 3px, rgb(100, 100, 100) 3px, rgb(100, 100, 100) 6px);
   opacity: 0.4;
 }
