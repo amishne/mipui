@@ -93,6 +93,7 @@ function createMapResizeButtons() {
 
 function start() {
   const params = getUrlParams();
+  if (params.tc) state.tilingCachingEnabled = true;
   mapContainer = document.getElementById('mapContainer');
   state.menu = new Menu();
   state.menu.createMenu();

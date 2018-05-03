@@ -74,7 +74,7 @@ class State {
     this.progressStatusBar = null;
     this.infoStatusBar = null;
 
-    this.tilingCachingEnabled = true;
+    this.tilingCachingEnabled = false;
     this.cachedTilesGreyedOut = false;
   }
 
@@ -200,7 +200,8 @@ class State {
 
   setMid(mid) {
     this.mid_ = mid;
-    const newUrl = 'index.html?mid=' + encodeURIComponent(this.mid_);
+    let newUrl = 'index.html?mid=' + encodeURIComponent(this.mid_);
+    if (this.tilingCachingEnabled) newUrl += '&tc=yes';
     window.history.replaceState(null, '', newUrl);
   }
 
@@ -213,8 +214,9 @@ class State {
     firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
         .set(secret).then(() => { callback(); })
         .catch(error => { setStatus(Status.AUTH_ERROR); });
-    const newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
+    let newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
         `&secret=${encodeURIComponent(secret)}`;
+    if (this.tilingCachingEnabled) newUrl += '&tc=yes';
     window.history.replaceState(null, '', newUrl);
     document
         .getElementById('theMap').classList.add('editor-view');
