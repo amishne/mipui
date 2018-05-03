@@ -30,6 +30,13 @@ class GridImager {
     this.imageElementContainer_ = null;
   }
 
+  clone(options) {
+    const gridImager = new GridImager(options);
+    gridImager.cssFiles_ = this.cssFiles_;
+    gridImager.styleString_ = this.styleString_;
+    return gridImager;
+  }
+
   async addCssStyleSheet(cssStyleSheet) {
     let cssStr = '';
     for (const rule of cssStyleSheet.cssRules) {
@@ -95,6 +102,17 @@ class GridImager {
     return await this.canvas2dataUrl_(canvas);
   }
 
+  async node2blob(node, width, height) {
+    const pngDataUrl = await this.node2pngDataUrl(node, width, height);
+    const binaryString = atob(pngDataUrl.split(',')[1]);
+    const length = binaryString.length;
+    const binaryArray = new Uint8Array(length);
+    for (let i = 0; i < length; i++) {
+      binaryArray[i] = binaryString.charCodeAt(i);
+    }
+    return new Blob([binaryArray], {type: 'image/png'});
+  }
+
   printTimeSince_(name, start, threshold) {
     const duration = Math.round(performance.now() - start);
     if (duration < threshold) return;
@@ -106,9 +124,14 @@ class GridImager {
     let serializedNode = new XMLSerializer().serializeToString(node);
     if (this.stripStart_) {
       const stripStartIndex = serializedNode.indexOf(this.stripStart_);
-      const stripEndIndex = serializedNode.indexOf(this.stripEnd_);
-      serializedNode = serializedNode.substring(0, stripStartIndex) +
-          serializedNode.substr(stripEndIndex);
+      if (stripStartIndex >= 0) {
+        const stripEndIndex = serializedNode.indexOf(this.stripEnd_,
+            stripStartIndex + this.stripStart_.length);
+        if (stripEndIndex >= 0) {
+          serializedNode = serializedNode.substring(0, stripStartIndex) +
+              serializedNode.substr(stripEndIndex);
+        }
+      }
     }
     const result =
         '<div style="' +
