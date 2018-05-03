@@ -48,8 +48,8 @@
 
       const svgDataUrl = await gi.node2svgDataUrl(input, 200, 20);
 
-      const prefix = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><foreignObject x="0" y="0" width="100%" height="100%"><html xmlns="http://www.w3.org/1999/xhtml"><style>';
-      const suffix = '</style><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></html></foreignObject></svg>';
+      const prefix = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><foreignObject x="0" y="0" width="100%" height="100%"><html xmlns="http://www.w3.org/1999/xhtml" style="display: inline;"><style>';
+      const suffix = '<div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></div></html></foreignObject></svg>';
 
       assert(decodeURIComponent(svgDataUrl).startsWith(prefix));
       assert(decodeURIComponent(svgDataUrl).endsWith(suffix));
@@ -65,7 +65,7 @@
 
       const svgElement = await gi.node2svgElement(input, 200, 20);
 
-      const expectedInnerHtml = '<foreignobject x="0" y="0" width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></foreignobject>';
+      const expectedInnerHtml = '<foreignobject x="0" y="0" width="100%" height="100%"><div style="padding: 0px;width: 200px;height: 20px;"><div xmlns="http://www.w3.org/1999/xhtml" class="square"><div class="circle"></div></div></div></foreignobject>';
       assert(svgElement.innerHTML == expectedInnerHtml);
 
       document.body.appendChild(svgElement);
@@ -93,6 +93,36 @@
       const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
 
       const expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABnElEQVRoQ+2b4U3DMBSErxPAJsAEsAGwAWzABsAEHaFsACPABMAkwARFh4KEqiby67s+V+X8p3+e75wvPtVOnNkSWMKtG4EnAO8AngG8DaM4BnAGgL/n3UZmYxKYOSB9JgLDcP0nFGOjYEgWQ1j6jPR/uzogHe7/HYD7oC/73Ab7uDxPwAHJMwwpbBKOX4M5gJuQm4uzBByQLMFAfy6rTgL160pfvdxKEox1d0BivFLV3E9wQ55p1GBI3GoIOCA1nMGnVZcir0cAFyIty0wTcECKZkhm77E6RG7Wqee2fQIOyPYZ/zjwvcaLyOt0eG8ikrPMBAEHpGh6HAL4EnlR60OkZRkvsXZiDigDcgDgcyeuav8H4X+QonvsJVYRaLGNAyIGOibnTXoRaLGNAyIGOibnx7xFoMU2DogY6JSc4kXhUcMBx8JL2nsrB6TwFvuoSSFskZUDIgLZKpPZi/iwYitlXZ0DomPZrLRJSByOZrzSQgdEirNdjMutq4bDi9xzPPgEbztYcaUDIgYalePTLYZl7JNbH0qMEtXWfwORV1XtUZE44AAAAABJRU5ErkJggg==';
+      assert(pngDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can save dom with external svg background to png dataurl',
+        async () => {
+      const input = createDomWithInnerClasses('external-svg-background');
+
+      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      const expectedDataUrl = 'x';
+      assert(pngDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = pngDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
+
+    addTest('Can save dom with external png background to png dataurl',
+        async () => {
+      const input = createDomWithInnerClasses('external-png-background');
+
+      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      const expectedDataUrl = 'x';
       assert(pngDataUrl == expectedDataUrl);
 
       const img = document.createElement('img');
@@ -234,21 +264,6 @@
       document.body.appendChild(img);
       testCompleted();
     });
-
-//    addTest('Can save dom with external background to png dataurl',
-//        async () => {
-//      const input = createDomWithInnerClasses('external-svg-background');
-//
-//      const pngDataUrl = await gi.node2pngDataUrl(input, 200, 20);
-//
-//      const expectedDataUrl = 'x';
-//      assert(pngDataUrl == expectedDataUrl);
-//
-//      const img = document.createElement('img');
-//      img.src = pngDataUrl;
-//      document.body.appendChild(img);
-//      testCompleted();
-//    });
   </script>
 </head>
   <body>

@@ -35,6 +35,12 @@
   height: 20px;
 }
 
+.external-png-background {
+  background-image: url("grid_imager_background.png");
+  width: 200px;
+  height: 20px;
+}
+
 .masked-diamond {
   background-color: blue;
   width: 200px;
