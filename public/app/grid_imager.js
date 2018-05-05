@@ -1,6 +1,9 @@
 const INLINE_SVG_REGEX =
     /url\((\\?(&quot;|"|'))(data:image\/svg\+xml;utf8,.(((?!\1).)|\\\1)*)\1\)/g;
 
+const EXTERNAL_PNG_REGEX =
+    /url\((\\?(&quot;|"|'))(.*\.png)\1\)/g;
+
 // Converts map nodes (the entire map or individual tiles) to images.
 // Basic mechanism:
 //
@@ -29,6 +32,13 @@ class GridImager {
     this.stripEnd_ = options.stripEnd || null;
     this.imageElementContainer_ = null;
   }
+  
+  createImageElementContainer_() {
+    if (this.imageElementContainer_) return;
+    const parent = document.getElementById('mapContainer');
+    this.imageElementContainer_ =
+        createAndAppendDivWithClass(parent, 'grid-imager-image-container');
+  }
 
   clone(options) {
     const gridImager = new GridImager(options);
@@ -44,12 +54,13 @@ class GridImager {
       const properties = {};
       for (let i = 0; i < rule.style.length; i++) {
         const propertyName = rule.style.item(i);
-        const propertyValue = rule.style.getPropertyValue(propertyName)
+        let propertyValue = rule.style.getPropertyValue(propertyName)
             .replace(INLINE_SVG_REGEX, (match, quote, unused, value) =>
               'url("data:image/svg+xml;utf8,' +
                   encodeURIComponent(
                       value.substr(24)
                           .replace(/\\"/g, "'").replace(/%23/g, '#')) + '")');
+        propertyValue = await this.internExternalImages_(propertyValue);
         properties[propertyName] = propertyValue;
         continue;
       }
@@ -60,6 +71,32 @@ class GridImager {
       cssStr += '}';
     }
     this.cssFiles_.push({path: cssStyleSheet.href, content: cssStr});
+  }
+
+  internExternalImages_(value) {
+    this.createImageElementContainer_();
+    return new Promise(resolve => {
+      const match = EXTERNAL_PNG_REGEX.exec(value);
+      if (!match) {
+        resolve(value);
+        return;
+      }
+      const src = match[3];
+      this.url2imageElement_(src).then(imageElement => {
+        imageElement.addEventListener('load', () => {
+          const width = imageElement.naturalWidth;
+          const height = imageElement.naturalHeight;
+          this.imageElement2canvas_(imageElement, width, height)
+              .then(canvas => {
+                this.imageElementContainer_.removeChild(imageElement);
+                this.canvas2dataUrl_(canvas).then(dataUrl => {
+                  resolve('url("' + dataUrl + '")');
+                });
+              });
+        });
+        this.imageElementContainer_.appendChild(imageElement);
+      });
+    });
   }
 
   removeCssFile(path) {
@@ -178,6 +215,12 @@ class GridImager {
     return imageElement;
   }
 
+  async url2imageElement_(url) {
+    const imageElement = document.createElement('img');
+    imageElement.src = url;
+    return imageElement;
+  }
+
   imageElement2canvas_(imageElement, width, height) {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
@@ -190,19 +233,22 @@ class GridImager {
       if (this.disableSmoothing_) {
         context.imageSmoothingEnabled = false;
       }
-      if (!this.imageElementContainer_) {
-        const parent = document.getElementById('mapContainer');
-        this.imageElementContainer_ =
-            createAndAppendDivWithClass(parent, 'grid-imager-image-container');
-      }
-      imageElement.addEventListener('load', () => {
+      this.createImageElementContainer_();
+      const onLoad = added => {
         const startDraw = performance.now();
         context.drawImage(imageElement, 0, 0);
         this.printTimeSince_('context.drawImage', startDraw, 50);
-        this.imageElementContainer_.removeChild(imageElement);
+        if (added) this.imageElementContainer_.removeChild(imageElement);
         resolve(canvas);
-      });
-      this.imageElementContainer_.appendChild(imageElement);
+      };
+      const isLoaded =
+          imageElement.complete && imageElement.naturalHeight !== 0;
+      if (isLoaded) {
+        onLoad(false);
+      } else {
+        imageElement.addEventListener('load', () => onLoad(true));
+        this.imageElementContainer_.appendChild(imageElement);
+      }
     });
   }
 
