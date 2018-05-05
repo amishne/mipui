@@ -783,10 +783,7 @@ async function downloadPng(scale, startOffset, endOffset, disableCloning) {
   const gridImager = disableCloning ? state.tileGridImager :
     state.tileGridImager.clone({
       scale,
-      disableSmoothing: true,
       margin: -startOffset,
-      stripStart: 'transform:',
-      stripEnd: '">',
     });
   if (!disableCloning) {
     state.theMap.invalidateTiles();

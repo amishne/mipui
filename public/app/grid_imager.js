@@ -22,14 +22,14 @@ const EXTERNAL_PNG_REGEX =
 // maintaining the style string and carefully escaping embedded SVGs.
 class GridImager {
   constructor(options) {
-    this.cssFiles_ = [];   // Order matters!
-    this.styleString_ = '';
     this.selectorsOfElementsToStrip_ = options.selectorsOfElementsToStrip || [];
     this.scale_ = options.scale || 1;
     this.disableSmoothing_ = options.disableSmoothing || false;
     this.margins_ = options.margins || 0;
-    this.stripStart_ = options.stripStart || null;
-    this.stripEnd_ = options.stripEnd || null;
+    this.xmlPreProcessor_ = options.xmlPreProcessor || null;
+
+    this.cssFiles_ = [];   // Order matters!
+    this.styleString_ = '';
     this.imageElementContainer_ = null;
   }
 
@@ -41,9 +41,17 @@ class GridImager {
   }
 
   clone(options) {
-    const gridImager = new GridImager(options);
+    const gridImager = new GridImager({
+      selectorsOfElementsToStrip:
+        options.selectorsOfElementsToStrip || this.selectorsOfElementsToStrip_,
+      scale: options.scale || this.scale_,
+      disableSmoothing: options.disableSmoothing || this.disableSmoothing_,
+      margins: options.margins || this.margins_,
+      xmlPreProcessor: options.xmlPreProcessor || this.xmlPreProcessor_,
+    });
     gridImager.cssFiles_ = this.cssFiles_;
     gridImager.styleString_ = this.styleString_;
+    gridImager.imageElementContainer_ = this.imageElementContainer_;
     return gridImager;
   }
 
@@ -159,16 +167,8 @@ class GridImager {
   async node2xml_(node, width, height) {
     const serializeStart = performance.now();
     let serializedNode = new XMLSerializer().serializeToString(node);
-    if (this.stripStart_) {
-      const stripStartIndex = serializedNode.indexOf(this.stripStart_);
-      if (stripStartIndex >= 0) {
-        const stripEndIndex = serializedNode.indexOf(this.stripEnd_,
-            stripStartIndex + this.stripStart_.length);
-        if (stripEndIndex >= 0) {
-          serializedNode = serializedNode.substring(0, stripStartIndex) +
-              serializedNode.substr(stripEndIndex);
-        }
-      }
+    if (this.xmlPreProcessor_) {
+      serializedNode = this.xmlPreProcessor_(serializedNode);
     }
     const result =
         '<div style="' +

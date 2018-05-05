@@ -66,8 +66,9 @@ class State {
       scale: 6,
       margins: 1,
       disableSmoothing: true,
-      stripStart: '<div class="grid-layer"',
-      stripEnd: '<div class="layer ',
+      xmlPreProcessor: xml =>
+        this.stripText_('<div class="grid-layer"', '<div class="layer ',
+            this.stripText_('transform:', '">', xml)),
     });
 
     this.cursorStatusBar = null;
@@ -129,6 +130,14 @@ class State {
       return;
     }
     cellContent[layer.id] = content;
+  }
+
+  stripText_(start, end, text) {
+    const startIndex = text.indexOf(start);
+    if (startIndex < 0) return text;
+    const endIndex = text.indexOf(end, startIndex + start.length);
+    if (endIndex < 0) return text;
+    return text.substring(0, startIndex) + text.substr(endIndex);
   }
 
   getProperty(property) {
