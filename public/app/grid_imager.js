@@ -32,7 +32,7 @@ class GridImager {
     this.stripEnd_ = options.stripEnd || null;
     this.imageElementContainer_ = null;
   }
-  
+
   createImageElementContainer_() {
     if (this.imageElementContainer_) return;
     const parent = document.getElementById('mapContainer');

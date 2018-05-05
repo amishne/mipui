@@ -736,7 +736,7 @@ function showExportDialog() {
   addRadioButton('1:1', '32 pixels per cell.',
       'This looks like the app looks at default zoom level.');
   addRadioButton('Quick', '192 pixels per cell.',
-      'This is generated faster than the other options below.');
+      'This is generated faster than the other options.');
   addRadioButton('Battlemap', '300 pixels per cell.',
       'When printing in 300 DPI, this will result in 1 inch per cell.');
   addRadioButton('App',
@@ -793,6 +793,6 @@ async function downloadPng(scale, startOffset, endOffset, disableCloning) {
   }
   const theMapElement = document.getElementById('theMap');
   const blob = await gridImager.node2blob(theMapElement,
-      theMapElement.clientWidth * scale, theMapElement.clientHeight * scale);
+      theMapElement.clientWidth, theMapElement.clientHeight);
   saveAs(blob, 'mipui.png');
 }

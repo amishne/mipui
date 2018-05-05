@@ -821,45 +821,13 @@ class Menu {
               },
             },
             {
-              name: 'Export Entire Map to Image',
+              name: 'Export Image',
               type: 'button',
               presentation: 'icon',
               materialIcon: 'camera_alt',
               enabledInReadonlyMode: true,
               callback: () => {
                 showExportDialog();
-              },
-            },
-            {
-              name: 'Export Current View to Image',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'camera_alt',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                const overlay =
-                    createAndAppendDivWithClass(document.body, 'modal-overlay');
-                overlay.textContent = 'Constructing PNG...';
-                setTimeout(() => {
-                  const theMapElement = document.getElementById('theMap');
-                  const mapContainerElement =
-                      document.getElementById('mapContainer');
-                  domtoimage.toBlob(theMapElement, {
-                    width: mapContainerElement.clientWidth,
-                    height: mapContainerElement.clientHeight,
-                    style: {
-                      left: theMapElement.offsetLeft -
-                          mapContainerElement.scrollLeft,
-                      top: theMapElement.offsetTop -
-                          mapContainerElement.scrollTop,
-                    },
-                  }).then(blob => {
-                    saveAs(blob, 'mipui.png');
-                    overlay.parentElement.removeChild(overlay);
-                  }).catch(() => {
-                    overlay.parentElement.removeChild(overlay);
-                  });
-                }, 10);
               },
             },
           ],
