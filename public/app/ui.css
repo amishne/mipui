@@ -218,3 +218,12 @@ modal-dialog-anchorbox-line {
   border: 1px solid darkgreen;
   background-color: greenyellow;
 }
+
+.export-group {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 16px;
+}
+
+.export-details {
+  margin-left: 32px;
+}

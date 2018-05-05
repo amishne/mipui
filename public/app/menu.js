@@ -651,39 +651,6 @@ class Menu {
     return item;
   }
 
-  downloadPng_(scale, startOffset, endOffset) {
-    const overlay = createAndAppendDivWithClass(document.body, 'modal-overlay');
-    const message = createAndAppendDivWithClass(overlay, 'modal-message');
-    message.textContent = 'Constructing PNG...';
-    setTimeout(() => {
-      const numColumns = state.getProperty(pk.lastColumn) -
-          state.getProperty(pk.firstColumn);
-      const numRows = state.getProperty(pk.lastRow) -
-          state.getProperty(pk.firstRow);
-      const width = scale * (1 + state.theMap.dividerWidth +
-          numColumns * (state.theMap.cellWidth +
-          state.theMap.dividerWidth));
-      const height = scale * (1 + state.theMap.dividerHeight +
-          numRows * (state.theMap.cellHeight +
-          state.theMap.dividerHeight));
-      const theMapElement = document.getElementById('theMap');
-      domtoimage.toBlob(theMapElement, {
-        style: {
-          transform: `scale(${scale})`,
-          left: -(startOffset * scale),
-          top: -(startOffset * scale),
-        },
-        width: width - (startOffset + endOffset) * scale,
-        height: height - (startOffset + endOffset) * scale,
-      }).then(blob => {
-        saveAs(blob, 'mipui.png');
-        overlay.parentElement.removeChild(overlay);
-      }).catch(() => {
-        overlay.parentElement.removeChild(overlay);
-      });
-    }, 10);
-  }
-
   updateTokenSelectorSubmenu_() {
     const selector = this.tokenSelector_;
     const text = this.tokenSelectedText_;
@@ -854,42 +821,20 @@ class Menu {
               },
             },
             {
-              name: 'PNG, 32px/square',
+              name: 'Export Entire Map to Image',
               type: 'button',
-              presentation: 'label',
-              text: 'PNG (1:1)',
+              presentation: 'icon',
+              materialIcon: 'camera_alt',
               enabledInReadonlyMode: true,
               callback: () => {
-                this.downloadPng_(1, 0, 0);
+                showExportDialog();
               },
             },
             {
-              name: 'PNG, 70px/square, edge-cropped',
+              name: 'Export Current View to Image',
               type: 'button',
-              presentation: 'label',
-              text: 'PNG (VTT)',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                // VTTs like 70px per square.
-                this.downloadPng_(70 / 32, 3, 4);
-              },
-            },
-            {
-              name: 'PNG, 300px/square',
-              type: 'button',
-              presentation: 'label',
-              text: 'PNG (print)',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                // Standard battlemat size is 1 inch per square.
-                this.downloadPng_(300 / 32, 0, 0);
-              },
-            },
-            {
-              name: "PNG of what's currently shown",
-              type: 'button',
-              presentation: 'label',
-              text: 'PNG (view)',
+              presentation: 'icon',
+              materialIcon: 'camera_alt',
               enabledInReadonlyMode: true,
               callback: () => {
                 const overlay =

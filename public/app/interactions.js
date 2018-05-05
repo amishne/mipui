@@ -653,15 +653,15 @@ function showResizeDialog() {
 
   const dialogButtons =
       createAndAppendDivWithClass(dialog, 'modal-dialog-line');
+  const accept = document.createElement('button');
+  accept.className = 'modal-dialog-button modal-dialog-accept-button';
+  dialogButtons.appendChild(accept);
+  accept.textContent = 'Resize';
   const cancel = document.createElement('button');
   dialogButtons.appendChild(cancel);
   cancel.className = 'modal-dialog-button modal-dialog-cancel-button';
   cancel.textContent = 'Cancel';
   cancel.onclick = closeOverlay;
-  const accept = document.createElement('button');
-  accept.className = 'modal-dialog-button modal-dialog-accept-button';
-  dialogButtons.appendChild(accept);
-  accept.textContent = 'Resize';
   accept.onclick = () => {
     const newWidth = newSizeWidth.value;
     const newHeight = newSizeHeight.value;
@@ -705,4 +705,94 @@ function showResizeDialog() {
     resizeGridBy(-firstColumnDiff, lastColumnDiff, -firstRowDiff, lastRowDiff);
     closeOverlay();
   };
+}
+
+function showExportDialog() {
+  const overlay = createAndAppendDivWithClass(document.body, 'modal-overlay');
+  const closeOverlay = () => {
+    overlay.parentElement.removeChild(overlay);
+  };
+
+  const dialog = createAndAppendDivWithClass(overlay, 'modal-dialog');
+  const exportButtons = [];
+  addRadioButton = (name, ...descriptions) => {
+    const container = createAndAppendDivWithClass(dialog, 'export-group');
+    const button = document.createElement('input');
+    button.type = 'radio';
+    button.name = 'export';
+    button.value = name;
+    const id = 'exportButton' + exportButtons.length;
+    button.id = id;
+    container.appendChild(button);
+    exportButtons.push(button);
+    if (exportButtons.length == 1) button.checked = true;
+    const label = document.createElement('label');
+    label.innerHTML = `<b>${name}</b><br />` +
+        `<div class="export-details">${descriptions.join('<br />')}</div>`;
+    label.setAttribute('for', id);
+    container.appendChild(label);
+  };
+
+  addRadioButton('1:1', '32 pixels per cell.',
+      'This looks like the app looks at default zoom level.');
+  addRadioButton('Quick', '192 pixels per cell.',
+      'This is generated faster than the other options below.');
+  addRadioButton('Battlemap', '300 pixels per cell.',
+      'When printing in 300 DPI, this will result in 1 inch per cell.');
+  addRadioButton('App',
+      '70 pixels per cell, cropped to align with grid.',
+      'This is the most convenient option when importing the image in ' +
+      'other apps, such as virtual tabletops.');
+
+  const dialogButtons =
+      createAndAppendDivWithClass(dialog, 'modal-dialog-line');
+  const accept = document.createElement('button');
+  accept.className = 'modal-dialog-button modal-dialog-accept-button';
+  dialogButtons.appendChild(accept);
+  accept.textContent = 'Export';
+  const cancel = document.createElement('button');
+  dialogButtons.appendChild(cancel);
+  cancel.className = 'modal-dialog-button modal-dialog-cancel-button';
+  cancel.textContent = 'Cancel';
+  cancel.onclick = closeOverlay;
+  accept.onclick = async() => {
+    accept.textContent = 'Exporting...';
+    accept.disabled = 1;
+    state.theMap.lockTiles();
+    const selectedButton = exportButtons.find(button => button.checked);
+    switch (selectedButton.value) {
+      case '1:1':
+        await downloadPng(1, 0, 0);
+        break;
+      case 'Quick':
+        await downloadPng(0, 0, 0, true);
+        break;
+      case 'Battlemap':
+        await downloadPng(300 / 32, 0, 0);
+        break;
+      case 'App':
+        await downloadPng(70 / 32, 3, 4);
+        break;
+    }
+    state.theMap.unlockTiles();
+    closeOverlay();
+  };
+}
+
+async function downloadPng(scale, startOffset, endOffset, disableCloning) {
+  const gridImager = disableCloning ? state.tileGridImager :
+    state.tileGridImager.clone({
+      scale,
+      disableSmoothing: true,
+      margin: -startOffset,
+      stripStart: 'transform:',
+      stripEnd: '">',
+    });
+  if (!disableCloning) {
+    state.theMap.invalidateTiles();
+  }
+  const theMapElement = document.getElementById('theMap');
+  const blob = await gridImager.node2blob(theMapElement,
+      theMapElement.clientWidth * scale, theMapElement.clientHeight * scale);
+  saveAs(blob, 'mipui.png');
 }
