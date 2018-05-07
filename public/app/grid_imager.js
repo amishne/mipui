@@ -27,6 +27,10 @@ class GridImager {
     this.disableSmoothing_ = options.disableSmoothing || false;
     this.margins_ = options.margins || 0;
     this.xmlPreProcessor_ = options.xmlPreProcessor || null;
+    this.cropLeft_ = options.cropLeft || 0;
+    this.cropRight_ = options.cropRight || 0;
+    this.cropTop_ = options.cropTop || 0;
+    this.cropBottom_ = options.cropBottom || 0;
 
     this.cssFiles_ = [];   // Order matters!
     this.styleString_ = '';
@@ -46,8 +50,14 @@ class GridImager {
         options.selectorsOfElementsToStrip || this.selectorsOfElementsToStrip_,
       scale: options.scale || this.scale_,
       disableSmoothing: options.disableSmoothing || this.disableSmoothing_,
-      margins: options.margins || this.margins_,
+      margins: options.margins != null ? options.margins : this.margins_,
       xmlPreProcessor: options.xmlPreProcessor || this.xmlPreProcessor_,
+      cropLeft: options.cropLeft != null ? options.cropLeft : this.cropLeft_,
+      cropRight:
+          options.cropRight != null ? options.cropRight : this.cropRight_,
+      cropTop: options.cropTop != null ? options.cropTop : this.cropTop_,
+      cropBottom:
+          options.cropBottom != null ? options.cropBottom : this.cropBottom_,
     });
     gridImager.cssFiles_ = this.cssFiles_;
     gridImager.styleString_ = this.styleString_;
@@ -224,10 +234,10 @@ class GridImager {
   imageElement2canvas_(imageElement, width, height) {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
-      //canvas.style.width = width;
-      //canvas.style.height = height;
-      canvas.width = this.scale_ * width;
-      canvas.height = this.scale_ * height;
+      const finalWidth = width - (this.cropLeft_ + this.cropRight_);
+      const finalHeight = width - (this.cropTop_ + this.cropBottom_);
+      canvas.width = this.scale_ * finalWidth;
+      canvas.height = this.scale_ * finalHeight;
       const context = canvas.getContext('2d');
       context.scale(this.scale_, this.scale_);
       if (this.disableSmoothing_) {
@@ -236,7 +246,12 @@ class GridImager {
       this.createImageElementContainer_();
       const onLoad = added => {
         const startDraw = performance.now();
-        context.drawImage(imageElement, 0, 0);
+        context.drawImage(
+            imageElement,
+            // Rectangle from source image:
+            this.cropLeft_, this.cropTop_, finalWidth, finalHeight,
+            // Rectangle in canvas:
+            0, 0, finalWidth, finalHeight);
         this.printTimeSince_('context.drawImage', startDraw, 50);
         if (added) this.imageElementContainer_.removeChild(imageElement);
         resolve(canvas);

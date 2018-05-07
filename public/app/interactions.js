@@ -739,7 +739,7 @@ function showExportDialog() {
       'This is generated faster than the other options.');
   addRadioButton('Battlemap', '300 pixels per cell.',
       'When printing in 300 DPI, this will result in 1 inch per cell.');
-  addRadioButton('App',
+  addRadioButton('Cropped',
       '70 pixels per cell, cropped to align with grid.',
       'This is the most convenient option when importing the image in ' +
       'other apps, such as virtual tabletops.');
@@ -765,13 +765,14 @@ function showExportDialog() {
         await downloadPng(1, 0, 0);
         break;
       case 'Quick':
-        await downloadPng(0, 0, 0, true);
+        await downloadPng(192 / 32, 0, 0, true);
         break;
       case 'Battlemap':
         await downloadPng(300 / 32, 0, 0);
         break;
-      case 'App':
-        await downloadPng(70 / 32, 3, 4);
+      case 'Cropped':
+        const scale = 70 / 32;
+        await downloadPng(scale, 4, 4);
         break;
     }
     state.theMap.unlockTiles();
@@ -779,13 +780,16 @@ function showExportDialog() {
   };
 }
 
-async function downloadPng(scale, startOffset, endOffset, disableCloning) {
-  const gridImager = disableCloning ? state.tileGridImager :
-    state.tileGridImager.clone({
-      scale,
-      margin: -startOffset,
-    });
-  if (!disableCloning) {
+async function downloadPng(scale, startOffset, endOffset, useCachedTiles) {
+  const gridImager = state.tileGridImager.clone({
+    scale,
+    cropLeft: startOffset,
+    cropTop: startOffset,
+    cropRight: endOffset,
+    cropBottom: endOffset,
+    margins: 0,
+  });
+  if (!useCachedTiles) {
     state.theMap.invalidateTiles();
   }
   const theMapElement = document.getElementById('theMap');
