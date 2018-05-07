@@ -735,8 +735,10 @@ function showExportDialog() {
 
   addRadioButton('1:1', '32 pixels per cell.',
       'This looks like the app looks at default zoom level.');
-  addRadioButton('Quick', '192 pixels per cell.',
-      'This is generated faster than the other options.');
+  if (state.tilingCachingEnabled) {
+    addRadioButton('Quick', '192 pixels per cell.',
+        'This is generated faster than the other options.');
+  }
   addRadioButton('Battlemap', '300 pixels per cell.',
       'When printing in 300 DPI, this will result in 1 inch per cell.');
   addRadioButton('Cropped',
