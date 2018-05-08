@@ -1,5 +1,5 @@
 class SightGesture extends Gesture {
-  constructor(range) {
+  constructor() {
     super();
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
@@ -10,7 +10,6 @@ class SightGesture extends Gesture {
     this.shouldMakeOtherCellsHidden =
         Array.from(state.theMap.cells.entries())
             .every(([key, cell]) => !cell.hasLayerContent(ct.mask));
-    this.range_ = (range || 30) * 32;
   }
 
   startHover(cell) {
@@ -288,7 +287,8 @@ class SightGesture extends Gesture {
                 cellsInSight.push(columnCell);
               }
               const currentCellIsOpaque =
-                  maxDistance > this.range_ || this.isOpaque_(columnCell);
+                  maxDistance > state.currentSightRange * 32 ||
+                    this.isOpaque_(columnCell);
               if (currentCellIsOpaque && !sector.prevColCellWasOpaque) {
                 nextSector.end =
                     Math.max(nextSector.start, cellStartFromScanDirection);
@@ -394,7 +394,8 @@ class SightGesture extends Gesture {
                 cellsInSight.push(rowCell);
               }
               const currentCellIsOpaque =
-                  maxDistance > this.range_ || this.isOpaque_(rowCell);
+                  maxDistance > state.currentSightRange * 32 ||
+                    this.isOpaque_(rowCell);
               if (currentCellIsOpaque && !sector.prevRowCellWasOpaque) {
                 nextSector.end =
                     Math.max(nextSector.start, cellStartFromScanDirection);

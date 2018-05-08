@@ -212,10 +212,11 @@ class Menu {
       case 'cells':
         this.updateCellsItem_(item, item.cells, item.deferredSvg);
         break;
+      case 'numberbox':
       case 'input':
       case 'textarea':
         const textarea = document.createElement(
-            item.presentation == 'input' ? 'input' : 'textarea');
+            item.presentation == 'textarea' ? 'textarea' : 'input');
         // To prevent keydowns here from acting as shortcuts:
         textarea.onkeydown = e => e.stopPropagation();
         if (item.presentation == 'textarea') {
@@ -227,6 +228,13 @@ class Menu {
         textarea.classList.add('menu-textarea-input');
         if (item.datalistId) {
           textarea.setAttribute('list', item.datalistId);
+        }
+        if (item.presentation == 'numberbox') {
+          textarea.classList.add('menu-numberbox');
+          textarea.type = 'number';
+          textarea.min = item.minNumber || 0;
+          textarea.max = item.maxNumber;
+          textarea.value = item.initialNumber;
         }
         item.element.appendChild(textarea);
         item.oldText = '';
@@ -1482,9 +1490,22 @@ class Menu {
               materialIcon: 'my_location',
               enabledInReadonlyMode: false,
               isSelected: true,
-              tip: 'Sight range is limited to 30 cells.',
               callback: () => {
-                state.gesture = new SightGesture(30);
+                state.gesture = new SightGesture();
+              },
+            },
+            {
+              name: 'Sight Range',
+              type: 'inputContainer',
+              classNames: ['menu-textarea', 'menu-input-container'],
+              presentation: 'numberbox',
+              minNumber: 1,
+              maxNumber: 40,
+              initialNumber: 30,
+              rows: 1,
+              enabledInReadonlyMode: false,
+              onChange: (oldText, newText) => {
+                state.currentSightRange = Number(newText);
               },
             },
             {

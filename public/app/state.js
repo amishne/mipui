@@ -78,6 +78,8 @@ class State {
     this.tilingEnabled = false;
     this.tilingCachingEnabled = false;
     this.cachedTilesGreyedOut = false;
+
+    this.currentSightRange = 30;
   }
 
   isReadOnly() {

@@ -118,6 +118,10 @@
   cursor: auto;
 }
 
+.menu-numberbox {
+  width: 35px;
+}
+
 .menu-textarea {
   white-space: nowrap;
   z-index: 1;
