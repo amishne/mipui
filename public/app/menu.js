@@ -1677,6 +1677,16 @@ class Menu {
           ],
         },
       },
+      {
+        name: "What's New",
+        type: 'button',
+        presentation: 'icon',
+        materialIcon: 'whatshot',
+        enabledInReadonlyMode: true,
+        callback: () => {
+          window.open('../docs/updates.html', '_blank');
+        },
+      },
       // {
       //   name: 'Survey',
       //   type: 'button',
