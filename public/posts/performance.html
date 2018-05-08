@@ -19,7 +19,7 @@
 <body>
   <article>
     <h1>The road to improving Mipui performance</h1>
-    <em>Alon Mishne, March 2018</em>
+    <em>Alon Mishne, May 2018</em>
     <p>
       <!-- Summary -->
       On December 2017 I created a poll to get a feel on what was important for the community. I had free-text fields and a recurring complaint there was performance on large maps, so I decided to tackle that. I knew it would be tricky, but I didn't know how much. This post gives a rough overview of the problem, the solution, and why it has difficult.
@@ -84,7 +84,7 @@
       <!-- will-change + tiling results -->
       I did some non-trivial amount of work to implement the tiling approach, but at the end I tested it and it had no performance benefit. Still, that tiling idea felt powerful, so I left the code around.
     </p>
-    <h3>Caching Tiles to Images</h3>
+    <h2>Ultimate Solution: Caching Tiles to Images</h2>
     <p>
       <!-- Reviving the tile caching idea -->
       So, along comes December 2017 and the performance complaints, and I'm thinking about the tiling idea again, this time more seriously. I'm already using <a href="https://github.com/tsayen/dom-to-image">a library that knows how to transform arbitrary dom to image</a> for exporting the map to PNG - could I utilize that with my tiling code to properly cache tiles to images? In theory the performance improvement could be dramatic. With 10x10 tiles, a 100x100 map will be around 100 image elements instead of 120k+ divs! Sure, a bunch of the tiles will be "active", but I already know that with just a few thousands elements thing run smoothly. So, I decided to go for it.
@@ -93,6 +93,25 @@
       <!-- The challenges -->
       Turns out there are two major challenges involved with this approach. The first is getting the tile boundary to be smooth in the presence of content that can cross tile boundaries - either explicitly with multi-cell elements (such as multi-cell text and tokens), or implicitly with the shadow dropped by wall elements, which is a crucial part of the design. The second challenge is performance: turns out the dom-to-image library I was using is way too slow to be used in this manner, taking up to a second for even small tiles, causing noticeable jank.
     </p>
+    <h3>Challenge 1: Seamless Tile Boundaries</h3>
+    <p>
+      <!-- Why tiles must be hermetic -->
+      I initially toyed with just letting multi-cell elements expand out of their containing tile. But this approach doesn't allow such a token to be inserted in between layers in the neighboring tile - it has to either be at the top or the bottom... so that was a no-go from the start. Tiles have to be hermetic - they must know how to draw their entire content and not let it overflow (unless it's guaranteed to be the top-most content in all neighboring tiles).
+    </p>
+    <p>
+      <!-- Replicas -->
+      Instead, I use what I nicknamed "replicas". When a cell is drawn to a tile, it also calculates which other tiles contain parts of it, and creates a replica of itself in the other tiles, with the same absolute location in the map. This results in two elements in different tiles but that share the same exact absolute location, leading to a smooth transition whiel still being hermetic per tile.
+    </p>
+    <p>
+      <!-- Replicas for walls -->
+      A similar approach is used for walls and other elements that cast shadows. If an element won't actually extend to a neighbor tile but its shadow will, it's also replicated in that tile.
+    </p>
+    <p>
+      <!-- 1px overlap -->
+      The last problem was that the browser would often display a single-pixel "seam" in-between neighboring tiles. To counteract that, tiles actually expand a single pixels to all sides, and they overlap each other so that the seam is now always over such an overflow, and such invisible.
+    </p>
+    <h3>Challenge 2: Faster DOM to Image</h3>
+    Under construction.
   </article>
 </body>
 </html>
