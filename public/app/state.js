@@ -75,6 +75,7 @@ class State {
     this.progressStatusBar = null;
     this.infoStatusBar = null;
 
+    this.tilingEnabled = false;
     this.tilingCachingEnabled = false;
     this.cachedTilesGreyedOut = false;
   }

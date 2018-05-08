@@ -178,13 +178,15 @@ class Tile {
       this.deactivate_(start);
       return;
     }
-    const imageFromTheme = this.getImageFromTheme_();
-    if (imageFromTheme) {
-      this.imageElement_.src = imageFromTheme;
-      this.imageElement_.style.width = constants.tileSize * 32;
-      this.imageElement_.style.height = constants.tileSize * 32;
-      this.deactivate_(start);
-      return;
+    if (state.tilingEnabled) {
+      const imageFromTheme = this.getImageFromTheme_();
+      if (imageFromTheme) {
+        this.imageElement_.src = imageFromTheme;
+        this.imageElement_.style.width = constants.tileSize * 32;
+        this.imageElement_.style.height = constants.tileSize * 32;
+        this.deactivate_(start);
+        return;
+      }
     }
     if (state.theMap.concurrentTileCachingOperations >
         constants.concurrentTileCachingOperationsLimit) {

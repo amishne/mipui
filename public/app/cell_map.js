@@ -356,8 +356,10 @@ class CellMap {
   }
 
   getOrCreateTile(parent, cellColumn, cellRow) {
-    const tileX = Math.floor((cellColumn + 1) / constants.tileSize);
-    const tileY = Math.floor((cellRow + 1) / constants.tileSize);
+    const tileX = state.tilingEnabled ?
+      Math.floor((cellColumn + 1) / constants.tileSize) : 0;
+    const tileY = state.tilingEnabled ?
+      Math.floor((cellRow + 1) / constants.tileSize) : 0;
     const tileKey = tileX + ',' + tileY;
     let tile = this.tiles.get(tileKey);
     if (!tile) {
