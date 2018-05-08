@@ -67,8 +67,8 @@ class State {
       margins: 1,
       disableSmoothing: true,
       xmlPreProcessor: xml =>
-        this.stripText_('<div class="grid-layer"', '<div class="layer ',
-            this.stripText_('transform:', '">', xml)),
+        this.stripText_('<div class="layer-container"',
+            '<div class="layer ', this.stripText_('transform:', '">', xml)),
     });
 
     this.cursorStatusBar = null;

@@ -370,9 +370,12 @@ class CellMap {
   createTile(parent, key, x, y) {
     const tile = new Tile(parent, key, x, y, this.tileIndex++);
     ct.children.forEach(layer => {
+      const layerContainer =
+          createAndAppendDivWithClass(tile.mapElement, 'layer-container ' +
+              layer.name + '-layer-container');
       const layerElement =
           createAndAppendDivWithClass(
-              tile.mapElement, 'layer ' + layer.name + '-layer');
+              layerContainer, 'layer ' + layer.name + '-layer');
       tile.layerElements.set(layer, layerElement);
     });
     return tile;

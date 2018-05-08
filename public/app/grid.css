@@ -51,10 +51,18 @@
   width: 100%;
   height: 100%;
   background-clip: padding-box;
-  pointer-events: none;
   left: 0;
   top: 0;
+}
+
+.layer-container {
+  position: absolute;
   clip-path: inset(-0.1px);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .widget-layer {
@@ -69,46 +77,49 @@
   clip-path: unset;
 }
 
-.mask-layer {
+.mask-layer-container {
   z-index: 9;
   clip-path: inset(-1px);
 }
 
-.gmoverlay-layer {
+.gmoverlay-layer-container {
   z-index: 8;
   display: none;
 }
 
-.editor-view .gmoverlay-layer {
+.editor-view .gmoverlay-layer-container {
   display: inherit;
 }
 
-.text-layer {
+.text-layer-container {
   z-index: 7;
 }
 
-.separators-layer {
+.separators-layer-container {
   z-index: 6;
 }
 
-.images-layer {
+.images-layer-container {
   z-index: 5;
 }
 
-.shapes-layer {
+.shapes-layer-container {
   z-index: 4;
 }
 
-.stairs-layer {
+.stairs-layer-container {
   z-index: 3;
 }
 
-.walls-layer {
+.walls-layer-container {
   z-index: 2;
+}
+
+.walls-layer {
   filter: drop-shadow(2px 2px 3px #919191);
 }
 
-.floors-layer {
+.floors-layer-container {
   z-index: 1;
 }
 
