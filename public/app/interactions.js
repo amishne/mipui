@@ -589,7 +589,7 @@ function showResizeDialog() {
   newSizeWidth.value = currentWidth;
   newSizeWidth.type = 'number';
   newSizeWidth.min = 1;
-  newSizeWidth.max = 1000;
+  newSizeWidth.max = 100;
   const newSizeInfix = createAndAppendDivWithClass(newSizeLine);
   newSizeInfix.textContent = 'x';
   const newSizeHeight = document.createElement('input');
@@ -597,7 +597,7 @@ function showResizeDialog() {
   newSizeHeight.value = currentHeight;
   newSizeHeight.type = 'number';
   newSizeHeight.min = 1;
-  newSizeHeight.max = 1000;
+  newSizeHeight.max = 100;
 
   const anchorButtons = [];
   let selectedAnchor = {x: 0, y: 0};
