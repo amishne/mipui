@@ -49,7 +49,9 @@ class GridImager {
       selectorsOfElementsToStrip:
         options.selectorsOfElementsToStrip || this.selectorsOfElementsToStrip_,
       scale: options.scale || this.scale_,
-      disableSmoothing: options.disableSmoothing || this.disableSmoothing_,
+      disableSmoothing:
+          options.disableSmoothing !== undefined ? options.disableSmoothing :
+            this.disableSmoothing_,
       margins: options.margins != null ? options.margins : this.margins_,
       xmlPreProcessor: options.xmlPreProcessor || this.xmlPreProcessor_,
       cropLeft: options.cropLeft != null ? options.cropLeft : this.cropLeft_,

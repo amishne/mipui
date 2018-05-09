@@ -790,6 +790,7 @@ async function downloadPng(scale, startOffset, endOffset, useCachedTiles) {
     cropRight: endOffset,
     cropBottom: endOffset,
     margins: 0,
+    disableSmoothing: true,
   });
   if (!useCachedTiles) {
     state.theMap.invalidateTiles();

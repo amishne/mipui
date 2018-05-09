@@ -1699,7 +1699,7 @@ class Menu {
         },
       },
       {
-        name: "What's New",
+        name: 'Updates',
         type: 'button',
         presentation: 'icon',
         materialIcon: 'whatshot',
