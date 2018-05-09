@@ -401,8 +401,8 @@ class Cell {
         // The element is cached!
         element.innerHTML = '';
         const svgElement = state.lastUsedSvg.svgElement.cloneNode(true);
-        svgElement.style.width = width;
-        svgElement.style.height = height;
+        svgElement.style.width = width + 'px';
+        svgElement.style.height = height + 'px';
         element.appendChild(svgElement);
       } else {
         const xhr = new XMLHttpRequest();
@@ -412,8 +412,8 @@ class Cell {
           const svgElement = xhr.responseXML.documentElement;
           svgElement.classList.add('image');
           svgElement.classList.add(...classNames);
-          svgElement.style.width = width;
-          svgElement.style.height = height;
+          svgElement.style.width = width + 'px';
+          svgElement.style.height = height + 'px';
           Array.from(svgElement.children)
               .forEach(svgChild => svgChild.removeAttribute('fill'));
           element.innerHTML = '';
