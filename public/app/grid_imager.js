@@ -237,7 +237,7 @@ class GridImager {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
       const finalWidth = width - (this.cropLeft_ + this.cropRight_);
-      const finalHeight = width - (this.cropTop_ + this.cropBottom_);
+      const finalHeight = height - (this.cropTop_ + this.cropBottom_);
       canvas.width = this.scale_ * finalWidth;
       canvas.height = this.scale_ * finalHeight;
       const context = canvas.getContext('2d');
