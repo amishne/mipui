@@ -149,7 +149,7 @@ class Cell {
   }
 
   createElementsFromContent_(layer, content, isHighlight) {
-    if (!this.contentShouldHaveElement_(content)) return null;
+    if (!this.contentShouldHaveElement_(content)) return [];
     const baseElement =
         this.createElementInOwnerTile_(layer, content, isHighlight);
     const replicas =
