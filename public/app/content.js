@@ -116,50 +116,25 @@ const ct = {
     },
   },
   shapes: {
-    classNames: ['shape-cell'],
+    classNames: [
+      'shape-cell',
+      'shape-cell-_ADDING-REMOVING_',
+      'shape-cell-_ROLE_',
+      'shape-cell-_ROLE_-_ADDING-REMOVING_',
+    ],
     square: {
-      classNames: [
-        'square-cell-_CONNECTIONS_',
-        'square-cell-_ROLE_',
-        'square-cell-_ROLE_-_ADDING-REMOVING_',
-      ],
-      green: {
-        classNames: ['green-square', 'green-square-_ADDING-REMOVING_'],
-      },
-      brown: {
-        classNames: ['brown-square', 'brown-square-_ADDING-REMOVING_'],
-      },
-      blue: {
-        classNames: ['blue-square', 'blue-square-_ADDING-REMOVING_'],
-      },
-      red: {
-        classNames: ['red-square', 'red-square-_ADDING-REMOVING_'],
-      },
-      white: {
-        classNames: ['white-square', 'white-square-_ADDING-REMOVING_'],
-      },
+      green: {classNames: ['shape-green']},
+      brown: {classNames: ['shape-brown']},
+      blue: {classNames: ['shape-blue']},
+      red: {classNames: ['shape-red']},
+      white: {classNames: ['shape-white']},
     },
     circle: {
-      classNames: [
-        'circle-cell-_CONNECTIONS_',
-        'circle-cell-_ROLE_',
-        'circle-cell-_ROLE_-_ADDING-REMOVING_',
-      ],
-      green: {
-        classNames: ['green-circle', 'green-circle-_ADDING-REMOVING_'],
-      },
-      brown: {
-        classNames: ['brown-circle', 'brown-circle-_ADDING-REMOVING_'],
-      },
-      blue: {
-        classNames: ['blue-circle', 'blue-circle-_ADDING-REMOVING_'],
-      },
-      red: {
-        classNames: ['red-circle', 'red-circle-_ADDING-REMOVING_'],
-      },
-      white: {
-        classNames: ['white-circle', 'white-circle-_ADDING-REMOVING_'],
-      },
+      green: {classNames: ['shape-green']},
+      brown: {classNames: ['shape-brown']},
+      blue: {classNames: ['shape-blue']},
+      red: {classNames: ['shape-red']},
+      white: {classNames: ['shape-white']},
     },
   },
   stairs: {

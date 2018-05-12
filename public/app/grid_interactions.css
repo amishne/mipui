@@ -106,26 +106,13 @@ here. */
   border-color: red;
 }
 
-.square-cell-corner-removing, .circle-cell-corner-removing {
+.shape-cell-corner-removing {
   z-index: -1;
 }
 
-.square-cell-primary-removing, .square-cell-horizontal-removing,
-.square-cell-vertical-removing, .circle-cell-primary-removing,
-.circle-cell-horizontal-removing, .circle-cell-vertical-removing {
+.shape-cell-primary-removing, .shape-cell-horizontal-removing,
+.shape-cell-vertical-removing {
   z-index: -2;
-}
-
-/* hsl(60, 23.8, 79.4) */
-.square-wall-cell-adding, .square-wall-cell-editing,
-.oval-wall-cell-adding, .oval-wall-cell-editing {
-  background-color: rgb(215, 215, 190);
-}
-
-/* hsl(47, 52.1, 81.2) */
-.square-wall-cell-removing, .oval-wall-cell-removing {
-  background-color: rgb(232, 221, 182);
-  z-index: 1;
 }
 
 .angled-wall-cell-adding {
@@ -164,30 +151,6 @@ here. */
 
 .text-cell-removing {
   color: rgba(50, 50, 50, 0.3);
-}
-
-.green-square-adding, .green-circle-adding, .green-square-removing,
-.green-circle-removing {
-  filter: hue-rotate(165deg) brightness(2.0);
-}
-
-.brown-square-adding, .brown-circle-adding, .brown-square-removing,
-.brown-circle-removing {
-  filter: hue-rotate(65deg) brightness(3.0);
-}
-
-.blue-square-adding, .blue-circle-adding, .blue-square-removing,
-.blue-circle-removing {
-  filter: hue-rotate(215deg) brightness(3.0);
-}
-
-.red-square-adding, .red-circle-adding, .red-square-removing,
-.red-circle-removing {
-  filter: hue-rotate(45deg) brightness(2.5);
-}
-
-.white-square-adding, .white-circle-adding, .white-square-removing,
-.white-circle-removing {
 }
 
 .editor-view .hidden-cell-adding {

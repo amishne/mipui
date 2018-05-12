@@ -295,14 +295,28 @@ class Cell {
   }
 
   populateElementFromContent_(element, layer, content, isHighlight) {
+    const kind = layer.children[content[ck.kind]];
+    const variation = kind.children[content[ck.variation]];
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(
         element, layer, content, isHighlight);
     this.setText_(element, content[ck.text]);
-    this.setImage_(element, content[ck.image], content[ck.variation]);
-    this.setImageHash_(element, content[ck.imageHash], content[ck.variation]);
+    this.setImage_(element, content[ck.image], variation);
+    this.setImageHash_(element, content[ck.imageHash], variation);
     this.setImageFromVariation_(element, layer, content);
     this.setMask_(element, layer, content);
+    this.setShape_(element, layer, kind, content[ck.connections]);
+  }
+
+  setShape_(element, layer, kind, connections) {
+    if (!element || layer != ct.shapes) return;
+    const svgElement =
+        document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgElement.setAttribute('width', element.offsetWidth);
+    svgElement.setAttribute('height', element.offsetHeight);
+    svgElement.innerHTML = createShapeSvgContent(kind, this.role, connections);
+    element.innerHTML = '';
+    element.appendChild(svgElement);
   }
 
   setMask_(element, layer, content) {

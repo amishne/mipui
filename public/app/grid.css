@@ -152,6 +152,11 @@
 
 .shape-cell {
   position: absolute;
+  stroke-width: 2;
+}
+
+.shape-cell-corner {
+  stroke-width: 0;
 }
 
 .stairs-cell {
@@ -197,144 +202,54 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%239C92AC' fill-opacity='0.15'%3E%3Cpath fill-rule='evenodd' d='M0 0h4v4H0V0zm4 4h4v4H4V4z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-.square-cell-primary, .square-cell-vertical, .square-cell-horizontal,
-.circle-cell-primary, .circle-cell-vertical, .circle-cell-horizontal {
+.shape-cell-primary, .shape-cell-horizontal, .shape-cell-vertical {
   margin: -1px -0px -0px -1px;
 }
 
-.square-cell-primary, .circle-cell-primary {
+.shape-cell-primary, .shape-cell-primary {
   z-index: 1;
 }
 
-.square-cell-vertical, .square-cell-horizontal, .circle-cell-vertical,
-.circle-cell-horizontal {
+.shape-cell-horizontal, .shape-cell-vertical {
   z-index: 0;
 }
 
-.square-cell-corner, .circle-cell-corner {
+.shape-cell-corner {
   margin: -8px -7px -7px -8px;
   z-index: 2;
-  background: rgb(255, 0, 0) !important;
 }
 
-.square-cell-0 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 20 6, 20 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
+.shape-cell-adding {
+  filter: brightness(1.3);
 }
 
-.square-cell-1 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
+.shape-cell-removing {
+  filter: brightness(1.6);
 }
 
-.square-cell-2 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 27 6, 27 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
+.shape-green {
+  fill: #009300;
+  stroke: darkgreen;
 }
 
-.square-cell-3 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 6, 27 6, 27 20, 6 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
+.shape-brown {
+  fill: #c36b42;
+  stroke: #71391f;
 }
 
-.square-cell-4 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 20 6, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
+.shape-blue {
+  fill: #93b3d3;
+  stroke: blue;
 }
 
-.square-cell-5, .circle-cell-5 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
+.shape-red {
+  fill: #ff4b4b;
+  stroke: darkred;
 }
 
-.square-cell-6 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 6, 27 6, 27 20, 20 20, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-7 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 6, 27 6, 27 20, 20 20, 20 27, 6 27' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-8 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 20 6, 20 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-9 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 6 6, 6 -2, 20 -2, 20 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-10, .circle-cell-10 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 27 6, 27 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-11 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 6, 27 6, 27 20, -2 20, -2 6, 6 6' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-12 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 20 6, 20 27, 6 27, 6 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-13 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='6 -2, 20 -2, 20 27, 6 27, 6 20, -2 20, -2 6, 6 6' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-14 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 27 6, 27 20, 20 20, 20 27, 6 27, 6 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.square-cell-15 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><polygon points='-2 6, 6 6, 6 -2, 20 -2, 20 6, 27 6, 27 20, 20 20, 20 27, 6 27, 6 20, -2 20' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-0 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><circle cx='13' cy='13' r='7' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-1 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 13, A 7 7 0 1 1 6 13, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-2 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 30 6, V 20, H 13, A 7 7 0 1 1 13 6, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-3 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 0, A 6 6 0 0 0 26 6, H 27, V 20, H 26, A 20 20 0 0 1 6 0, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-4 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 27, H 20, V 13, A 7 7 0 0 0 6 13, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-6 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 27 6, V 20, H 26, A 6 6 0 0 0 20 26, V 27, H 6, V 26, A 20 20 0 0 1 26 6, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-7 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 20 -2, V 0, A 6 6 0 0 0 26 6, H 27, V 20, H 26, A 6 6 0 0 0 20 26, V 27, H 6, V -2, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-8 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 20, V 6, H 13, A 7 7 0 1 1 13 20, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-9 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 0, A 20 20 0 0 1 0 20, H -2, V 6, H 0, A 6 6 0 0 0 6 0, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-11 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 0, A 6 6 0 0 0 6 0, V -2, H 20, V 0, A 6 6 0 0 0 26 6, H 27, V 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-12 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 0, A 20 20 0 0 1 20 26, V 27, H 6, A 6 6 0 0 0 0 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-13 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M 6 -2, H 20, V 27, H 6, V 26, A 6 6 0 0 0 0 20, H -2, V 6, H 0, A 6 6 0 0 0 6 0, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-14 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 27, V 20, H 26, A 6 6 0 0 0 20 26, V 27, H 6, V 26, A 6 6 0 0 0 0 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
-}
-
-.circle-cell-15 {
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><path d='M -2 6, H 0, A 6 6 0 0 0 6 0, V -2, H 20, V 0, A 6 6 0 0 0 26 6, H 27, V 20, A 6 6 0 0 0 20 26, V 27, H 6, V 26, A 6 6 0 0 0 0 20, H -2, z' fill='rgb(255, 0, 0)' stroke-width='1.5' stroke='rgb(150, 0, 0)'/></svg>");
+.shape-white {
+  fill: white;
+  stroke: #717171;
 }
 
 .angled-wall-cell {
@@ -466,26 +381,6 @@
 .text-cell-textarea, .image-cell-textarea, .text-cell {
   font-family: sans-serif;
   font-weight: bold;
-}
-
-.green-square, .green-circle {
-  filter: hue-rotate(160deg) brightness(1.5);
-}
-
-.brown-square, .brown-circle {
-  filter: hue-rotate(65deg) brightness(2.5);
-}
-
-.blue-square, .blue-circle {
-  filter: hue-rotate(215deg) brightness(2.5);
-}
-
-.red-square, .red-circle {
-  filter: hue-rotate(45deg) brightness(2.0);
-}
-
-.white-square, .white-circle {
-  filter: grayscale(100%) brightness(3.4) contrast(2.4);
 }
 
 .stairs-cell-horizontal {
