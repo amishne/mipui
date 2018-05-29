@@ -314,6 +314,7 @@ class Cell {
         document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgElement.setAttribute('width', element.offsetWidth);
     svgElement.setAttribute('height', element.offsetHeight);
+    svgElement.style.position = 'absolute';
     svgElement.innerHTML = createShapeSvgContent(kind, this.role, connections);
     element.innerHTML = '';
     element.appendChild(svgElement);
