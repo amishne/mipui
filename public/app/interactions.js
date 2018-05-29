@@ -735,6 +735,8 @@ function showExportDialog() {
 
   addRadioButton('1:1', '32 pixels per cell.',
       'This looks like the app looks at default zoom level.');
+  addRadioButton('2:1', '64 pixels per cell.',
+      'Useful as 1:1 for high-DPI displays.');
   if (state.tilingCachingEnabled) {
     addRadioButton('Quick', '192 pixels per cell.',
         'This is generated faster than the other options.');
@@ -766,6 +768,9 @@ function showExportDialog() {
       case '1:1':
         await downloadPng(1, 0, 0);
         break;
+      case '2:1':
+        await downloadPng(2, 0, 0);
+        break;
       case 'Quick':
         await downloadPng(192 / 32, 0, 0, true);
         break;
@@ -773,8 +778,7 @@ function showExportDialog() {
         await downloadPng(300 / 32, 0, 0);
         break;
       case 'Cropped':
-        const scale = 70 / 32;
-        await downloadPng(scale, 4, 4);
+        await downloadPng(70 / 32, 4, 4);
         break;
     }
     state.theMap.unlockTiles();
