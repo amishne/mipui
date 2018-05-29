@@ -69,6 +69,8 @@ class GridImager {
 
   async addCssStyleSheet(cssStyleSheet) {
     let cssStr = '';
+    const path = cssStyleSheet.href;
+    const pathFolder = path.substring(0, path.lastIndexOf('/') + 1);
     for (const rule of cssStyleSheet.cssRules) {
       const selector = rule.selectorText;
       const properties = {};
@@ -80,7 +82,8 @@ class GridImager {
                   encodeURIComponent(
                       value.substr(24)
                           .replace(/\\"/g, "'").replace(/%23/g, '#')) + '")');
-        propertyValue = await this.internExternalImages_(propertyValue);
+        propertyValue =
+            await this.internExternalImages_(pathFolder, propertyValue);
         properties[propertyName] = propertyValue;
         continue;
       }
@@ -90,10 +93,10 @@ class GridImager {
       }
       cssStr += '}';
     }
-    this.cssFiles_.push({path: cssStyleSheet.href, content: cssStr});
+    this.cssFiles_.push({path, content: cssStr});
   }
 
-  internExternalImages_(value) {
+  internExternalImages_(pathFolder, value) {
     this.createImageElementContainer_();
     return new Promise(resolve => {
       const match = EXTERNAL_PNG_REGEX.exec(value);
@@ -101,7 +104,7 @@ class GridImager {
         resolve(value);
         return;
       }
-      const src = match[3];
+      const src = pathFolder + match[3];
       this.url2imageElement_(src).then(imageElement => {
         imageElement.addEventListener('load', () => {
           const width = imageElement.naturalWidth;
