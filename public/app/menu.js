@@ -1692,7 +1692,7 @@ class Menu {
               icon: 'assets/twitter.png',
               enabledInReadonlyMode: true,
               callback: () => {
-                window.open('https://twitter.com/alon_mishne', '_blank');
+                window.open('https://twitter.com/MipuiMapEditor', '_blank');
               },
             },
           ],
