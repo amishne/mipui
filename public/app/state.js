@@ -230,8 +230,7 @@ class State {
         `&secret=${encodeURIComponent(secret)}`;
     if (this.tilingCachingEnabled) newUrl += '&tc=yes';
     window.history.replaceState(null, '', newUrl);
-    document
-        .getElementById('theMap').classList.add('editor-view');
+    document.getElementById('theMap').classList.add('editor-view');
   }
 
   getMid() {
