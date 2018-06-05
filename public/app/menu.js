@@ -1802,6 +1802,16 @@ class Menu {
               this.updateItem_(thisItem);
             },
           },
+          {
+            name: 'Force editor view',
+            type: 'button',
+            presentation: 'label',
+            text: 'Editor',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              document.getElementById('theMap').classList.add('editor-view');
+            },
+          },
         ],
       },
     };
