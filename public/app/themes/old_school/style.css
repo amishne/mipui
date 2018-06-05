@@ -81,13 +81,8 @@
   fill: #4592be;
 }
 
-.blue-square, .blue-circle {
-  filter: hue-rotate(190deg) brightness(1.1);
-}
-
-.blue-square-adding, .blue-circle-adding, .blue-square-removing,
-.blue-circle-removing {
-  filter: hue-rotate(190deg) brightness(1.5);
+.shape-blue {
+  stroke: #4592be;
 }
 
 .secret-door-cell, .hidden-secret-door-cell {
