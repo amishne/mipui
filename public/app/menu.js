@@ -7,7 +7,7 @@ class Menu {
         items: [],
       },
       shapeVariationTools: {
-        selectedVariation: ct.shapes.square.green,
+        selectedVariationName: 'green',
         items: [],
       },
       imageIconTools: {
@@ -276,12 +276,12 @@ class Menu {
     item.element.classList.add('menu-icon');
     item.element.classList.add('menu-icon-from-map');
     const {x, y, size} = iconMapRect;
-    const scale = 30 / size;
+    const scale = 30 / (2 * size);
     item.element.style.backgroundImage =
         `url("${state.currentTheme.menuIconFile}")`;
     item.element.style.backgroundPosition =
-        `-${x * scale}px -${y * scale}px`;
-    item.element.style.backgroundSize = `${716 * scale}px ${376 * scale}px`;
+        `-${x * 2 * scale}px -${y * 2 * scale}px`;
+    item.element.style.backgroundSize = `${1424 * scale}px ${784 * scale}px`;
   }
 
   updateCellsItem_(item, cells, deferredSvg) {
@@ -292,6 +292,7 @@ class Menu {
       xhr.open('get', deferredSvg.path, true);
       xhr.onreadystatechange = () => {
         if (xhr.readyState != 4) return;
+        // TODO responseXML can be null?
         const svgElement = xhr.responseXML.documentElement;
         svgElement.classList.add('image');
         svgElement.classList.add(...deferredSvg.classNames);
@@ -434,74 +435,63 @@ class Menu {
     };
   }
 
-  updateShapeTool_(item, kind, variation) {
+  updateShapeTool_(item, kind, variationName) {
+    const variation = kind[variationName];
     item.callback = () => {
       state.gesture = new ShapeGesture(ct.shapes, kind, variation);
       if (item.group == this.groups_.shapeKindTools) {
         this.groups_.shapeVariationTools.items.forEach(shapeVariationItem => {
           this.updateShapeTool_(
-              shapeVariationItem, kind, shapeVariationItem.variation);
+              shapeVariationItem, kind, shapeVariationItem.variationName);
         });
       } else {
         this.groups_.shapeKindTools.items.forEach(shapeKindItem => {
-          this.updateShapeTool_(shapeKindItem, shapeKindItem.kind, variation);
+          this.updateShapeTool_(
+              shapeKindItem, shapeKindItem.kind, variationName);
         });
       }
     };
-
-    const kindClassNames = kind.id == ct.shapes.square.id ? [
-      'square-cell-0',
-      'square-cell-primary',
-    ] : [
-      'circle-cell-0',
-      'circle-cell-primary',
-    ];
-    item.cells = [{
-      classNames: [
-        'grid-cell',
-        'primary-cell',
-        'floor-cell',
-      ],
-    }, {
-      classNames: [
-        'grid-cell',
-        'primary-cell',
-        'shape-cell',
-      ].concat(kindClassNames).concat(variation.classNames),
-    }];
+    item.kind = kind;
+    item.variationName = variationName;
+    const horizontalOffset = kind.children.indexOf(variation);
+    const verticalOffset = kind == ct.shapes.circle ? 1 : 0;
+    item.iconMapRect = {
+      x: 32 * (8 + 2 * horizontalOffset) + 3,
+      y: 32 * (4 + 2 * verticalOffset) + 3,
+      size: 32,
+    };
     if (item.element) {
       this.updateItem_(item);
     }
   }
 
-  createShapeTool_(name, kind, variation, group, isSelected) {
+  createShapeTool_(name, kind, variationName, group, isSelected) {
     const item = {
       name,
       type: 'tool',
-      presentation: 'cells',
+      presentation: 'icon_map',
       classNames: ['menu-shapes'],
       group,
       isSelected,
-      kind,
-      variation,
     };
-    this.updateShapeTool_(item, kind, variation);
+    this.updateShapeTool_(item, kind, variationName);
     return item;
   }
 
   createShapeKindTool_(name, kind, isSelected) {
-    const variation = this.groups_.shapeVariationTools.selectedVariation;
+    const variationName =
+        this.groups_.shapeVariationTools.selectedVariationName;
     this.groups_.shapeKindTools.selectedKind = kind;
     return this.createShapeTool_(
-        name, kind, variation, this.groups_.shapeKindTools, isSelected);
+        name, kind, variationName, this.groups_.shapeKindTools, isSelected);
   }
 
   createShapeVariationTool_(name, variationName, isSelected) {
     const kind = this.groups_.shapeKindTools.selectedKind;
-    const variation = kind[variationName];
-    this.groups_.shapeVariationTools.selectedVariation = variation;
+    this.groups_.shapeVariationTools.selectedVariationName = variationName;
     return this.createShapeTool_(
-        name, kind, variation, this.groups_.shapeVariationTools, isSelected);
+        name, kind, variationName,
+        this.groups_.shapeVariationTools, isSelected);
   }
 
   createStairsTool_(name, kind, variation, isSelected) {
@@ -1175,7 +1165,7 @@ class Menu {
               iconMapRect: {
                 x: 32,
                 y: 32,
-                size: 72,
+                size: 74,
               },
               enabledInReadonlyMode: false,
               callback: () => { state.gesture = new WallGesture(1, false); },
