@@ -135,7 +135,7 @@ function start() {
       break;
     }
   }
-  state.tileGridImager.addCssStyleSheet(gridStyleSheet).then(() => {
+  state.tileGridImager.addCssStyleSheet(0, gridStyleSheet).then(() => {
     state.tileGridImager.recalculateStyleString();
   });
 }

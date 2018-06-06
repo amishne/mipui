@@ -178,7 +178,7 @@ class State {
     this.appliedThemeElements_ = new Map();
     const head = document.getElementsByTagName('head')[0];
     const gridImagerPromises = [];
-    this.currentTheme.files.forEach(file => {
+    this.currentTheme.files.forEach((file, index) => {
       const css = document.createElement('link');
       css.type = 'text/css';
       css.rel = 'stylesheet';
@@ -186,7 +186,7 @@ class State {
       head.appendChild(css);
       const gridImagerPromise = new Promise((resolve, reject) => {
         const addSheet = sheet => {
-          this.tileGridImager.addCssStyleSheet(sheet).then(
+          this.tileGridImager.addCssStyleSheet(index + 1, sheet).then(
               () => { resolve(); });
         };
         if (css.sheet) {

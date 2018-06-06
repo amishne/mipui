@@ -67,7 +67,7 @@ class GridImager {
     return gridImager;
   }
 
-  async addCssStyleSheet(cssStyleSheet) {
+  async addCssStyleSheet(index, cssStyleSheet) {
     let cssStr = '';
     const path = cssStyleSheet.href;
     const pathFolder = path.substring(0, path.lastIndexOf('/') + 1);
@@ -93,7 +93,7 @@ class GridImager {
       }
       cssStr += '}';
     }
-    this.cssFiles_.push({path, content: cssStr});
+    this.cssFiles_[index] = {path, content: cssStr};
   }
 
   internExternalImages_(pathFolder, value) {
