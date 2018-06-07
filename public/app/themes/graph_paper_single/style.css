@@ -9,6 +9,33 @@
   clip-path: inset(-1px);
 }
 
+.floor-cell {	
+  border-color: transparent;	
+  image-rendering: pixelated;	
+  background-clip: border-box;	
+  margin: -1px;	
+}	
+	
+.menu-item .floor-cell {	
+  background-color: white;	
+}	
+/*
+.floor-cell-primary {
+  background: white;
+}
+
+.floor-cell-vertical {
+  background: url("data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAYCAYAAADZEIyjAAAAIElEQVQoU2NkQAJH3///by3IyAgSAhMwMCoxGiSkJQYAyOVgGTiyMN8AAAAASUVORK5CYII=") 1px 1px white;
+}
+
+.floor-cell-horizontal {
+  background: url("data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAGCAYAAADZq14TAAAAIklEQVQoU2NkoDFgpLH5DLS34Oj7//9p6Qva+4CWrgeZDQA0MQO58ZNxzgAAAABJRU5ErkJggg==") 1px 1px white;
+}
+
+.floor-cell-corner {
+  background: url("data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAI0lEQVQYV2NkQAJH3///by3IyAgSAhMwQJwESBWyLhibdKMA7m8XuZeAcRYAAAAASUVORK5CYII=") 1px 1px white;
+}
+*/
 .wall-cell {
   background-color: rgb(210, 210, 210);
   background-image: none;

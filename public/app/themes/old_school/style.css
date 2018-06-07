@@ -17,7 +17,7 @@
 .menu-item .floor-cell {
   background-color: white;
 }
-
+/*
 .floor-cell-primary {
   background: white;
 }
@@ -33,7 +33,7 @@
 .floor-cell-corner {
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAI0lEQVQYV2NkQAKuk/b9353nxAgSAhMwQJwESBWyLhibdKMAhkoWm9xUiqQAAAAASUVORK5CYII=") 1px 1px white;
 }
-
+*/
 .wall-cell {
   background-color: #4592be;
   background-image: none;

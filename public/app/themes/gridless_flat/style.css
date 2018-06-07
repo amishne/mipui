@@ -9,6 +9,12 @@
   clip-path: inset(-1px);
 }
 
+.floor-cell {
+  background-color: white;
+  border-color: white;
+  box-shadow: 0 0 0 0.1px white;
+}
+
 .wall-cell {
   background-color: rgb(210, 210, 210);
   background-image: none;

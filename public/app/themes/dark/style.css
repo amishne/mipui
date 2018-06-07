@@ -11,6 +11,11 @@
   filter: drop-shadow(2px 2px 0px #919191) drop-shadow(-1px -1px 0px #919191);
 }
 
+.floor-cell {
+  background-color: #2c354f;
+  border-color: #5c6782;
+}
+
 .wall-cell {
   background-color: #454e6a;
   border-right: 1px solid;
