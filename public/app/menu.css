@@ -133,14 +133,8 @@
   padding: 0 4px;
 }
 
-.selected-menu-item {
-  border: 1px solid white;
-  padding: 1px;
-}
-
-.selected-submenu-item {
-  border: 1px solid white;
-  padding: 1px;
+.selected-menu-item, .selected-submenu-item {
+  box-shadow: 0 0 3px 2px blue;
 }
 
 .submenu {
