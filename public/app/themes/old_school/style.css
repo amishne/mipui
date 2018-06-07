@@ -34,18 +34,18 @@
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAI0lEQVQYV2NkQAKuk/b9353nxAgSAhMwQJwESBWyLhibdKMAhkoWm9xUiqQAAAAASUVORK5CYII=") 1px 1px white;
 }
 
-.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
+.wall-cell {
   background-color: #4592be;
   background-image: none;
   border-color: #4592be;
   box-shadow: 0 0 0 0.3px #4592be;
 }
 
-.square-wall-cell-adding, oval-wall-cell-adding, oval-wall-cell-editing {
-  background-color: #639bbc;
+.wall-cell-adding, wall-cell-editing {
+  background-color: #7cb2d1;
 }
 
-.square-wall-cell-removing, .oval-wall-cell-removing {
+.wall-cell-removing {
   background-color: #82a7bc;
 }
 

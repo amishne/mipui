@@ -259,7 +259,7 @@
 }
 
 /* hsl(34, 56.9, 70.0) */
-.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
+.wall-cell {
   background-color: rgb(222, 184, 135);
   border-right: 1px solid;
   border-bottom: 1px solid;

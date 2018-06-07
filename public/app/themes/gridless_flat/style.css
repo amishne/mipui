@@ -9,21 +9,18 @@
   clip-path: inset(-1px);
 }
 
-/* hsl(0, 0, 82) */
-.square-wall-cell, .oval-wall-cell, .angled-wall-cell {
+.wall-cell {
   background-color: rgb(210, 210, 210);
   background-image: none;
   border-color: rgb(210, 210, 210);
   box-shadow: 0 0 0 0.3px rgb(210, 210, 210);
 }
 
-/* hsl(26, 0, 92.66) */
-.square-wall-cell-adding, oval-wall-cell-adding, oval-wall-cell-editing {
+.wall-cell-adding, wall-cell-editing {
   background-color: rgb(235, 235, 234);
 }
 
-/* hsl(13, 0, 95.12) */
-.square-wall-cell-removing, .oval-wall-cell-removing {
+.wall-cell-removing {
   background-color: rgb(243, 242, 242);
 }
 

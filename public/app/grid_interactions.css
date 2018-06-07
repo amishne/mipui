@@ -1,6 +1,15 @@
 /* If a style would not be needed for exporting the map to an image, put it
 here. */
 
+.wall-cell-adding, .wall-cell-editing {
+  background-color: rgb(215, 215, 190);
+}
+
+.wall-cell-removing {
+  background-color: rgb(232, 221, 182);
+  z-index: 1;
+}
+
 .text-cell-adding, .text-cell-removing, .text-cell-editing,
 .image-cell-adding, .image-cell-removing, .image-cell-editing {
   border: 1px dashed rgb(50, 50, 50);
@@ -113,18 +122,6 @@ here. */
 .shape-cell-primary-removing, .shape-cell-horizontal-removing,
 .shape-cell-vertical-removing {
   z-index: -2;
-}
-
-.angled-wall-cell-adding {
-  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
-}
-
-.angled-wall-cell-editing {
-  filter: hue-rotate(26deg) saturate(0.42) brightness(1.13);
-}
-
-.angled-wall-cell-removing {
-  filter: hue-rotate(13deg) saturate(0.92) brightness(1.16);
 }
 
 .door-cell-adding, .window-cell-adding {
