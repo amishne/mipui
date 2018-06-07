@@ -111,7 +111,8 @@ class Operation {
     if (!this.data) return;
     if (this.data.p) {
       Object.keys(this.data.p).forEach(property => {
-        const newValue = this.data.p[property][contentToUse];
+        let newValue = this.data.p[property][contentToUse];
+        if (newValue === undefined) newValue = null;
         if (state.getProperty(property) != this.data.p[property]) {
           state.setProperty(property, newValue, false);
         }
@@ -173,8 +174,8 @@ class Operation {
         Object.keys(cellChange).forEach(layerId => {
           const cellLayerChange = cellChange[layerId];
           result.data.c[key][layerId] = {
-            o: cellLayerChange.n,
-            n: cellLayerChange.o,
+            o: cellLayerChange.n === undefined ? null : cellLayerChange.n,
+            n: cellLayerChange.o === undefined ? null : cellLayerChange.o,
           };
         });
       });
