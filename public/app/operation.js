@@ -61,7 +61,7 @@ class Operation {
     }
     if (mapNeedsUpdate) {
       createTheMapAndUpdateElements();
-      if (!directlyCalled) refreshMapResizeButtonLocations();
+      if (!directlyCalled) updateMapTransform(true);
     }
   }
 
