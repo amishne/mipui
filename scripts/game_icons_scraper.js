@@ -4,6 +4,8 @@
 const fs = require('fs');
 const path = require('path');
 const scrapeIt = require('scrape-it');
+const process = require('process');
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 function hashString(s) {
   // http://stackoverflow.com/a/15710692
@@ -31,7 +33,7 @@ function getName(path) {
 }
 
 function scrapeTags(path, callback) {
-  const sitePath = 'http://www.game-icons.net' +
+  const sitePath = 'https://game-icons.net' +
       path
           .replace('/svg/000000/transparent', '')
           .replace('public/app/assets/icons', '')
