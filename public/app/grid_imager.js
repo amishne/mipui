@@ -123,8 +123,11 @@ class GridImager {
   }
 
   removeCssFile(path) {
-    this.cssFiles_.splice(
-        this.cssFiles_.findIndex(cssFile => cssFile.path == path), 1);
+    const indexOfCssFileToRemove =
+        this.cssFiles_.findIndex(cssFile => cssFile.path == path);
+    if (indexOfCssFileToRemove >= 1) {
+      this.cssFiles_.splice(indexOfCssFileToRemove, 1);
+    }
   }
 
   recalculateStyleString() {
