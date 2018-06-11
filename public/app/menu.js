@@ -118,6 +118,13 @@ class Menu {
     if (item.name) {
       const elementLabel =
           createAndAppendDivWithClass(container, 'menu-item-label');
+      switch (item.presentation) {
+        case 'input':
+        case 'textarea':
+        case 'dropdown':
+        case 'label':
+          elementLabel.classList.add('menu-item-label-wide');
+      }
       const regex = /&(\w)/;
       elementLabel.innerHTML =
           item.name.replace(regex, '<span class="menu-shortcut">$1</span>');
