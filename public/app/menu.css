@@ -140,7 +140,7 @@
 }
 
 .selected-menu-item, .selected-submenu-item {
-  box-shadow: 0 0 3px 2px blue;
+  box-shadow: 0 0 1px 1px white, 0 0 0 2px blue;
 }
 
 .submenu {
