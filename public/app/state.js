@@ -165,6 +165,15 @@ class State {
     }
   }
 
+  isStylesheetLoaded_(css) {
+    try {
+      return css.sheet && css.sheet.cssRules.length >= 0;
+    } catch (e) {
+      // In Firefox, accessing cssRules before it's fully loaded will throw.
+      return false;
+    }
+  }
+
   reloadTheme() {
     const newPropertyIndex = this.getProperty(pk.theme);
     if (this.currentTheme.propertyIndex == newPropertyIndex) return;
@@ -187,9 +196,9 @@ class State {
       const gridImagerPromise = new Promise((resolve, reject) => {
         const addSheet = sheet => {
           this.tileGridImager.addCssStyleSheet(index + 1, sheet).then(
-              () => { resolve(); });
+              () => { resolve(); }).catch(err => { debug(err); });
         };
-        if (css.sheet) {
+        if (this.isStylesheetLoaded_(css)) {
           addSheet(css.sheet);
         } else {
           css.onload = () => addSheet(css.sheet);
