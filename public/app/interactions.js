@@ -736,13 +736,17 @@ function showExportDialog() {
   addRadioButton('1:1', '32 pixels per cell.',
       'This looks like the app looks at default zoom level.');
   addRadioButton('2:1', '64 pixels per cell.',
-      'Useful as 1:1 for high-DPI displays.');
+      'This looks like the app looks at default zoom level ' +
+      'on high-DPI displays.');
   if (state.tilingCachingEnabled) {
     addRadioButton('Quick', '192 pixels per cell.',
         'This is generated faster than the other options.');
   }
   addRadioButton('Battlemap', '300 pixels per cell.',
-      'When printing in 300 DPI, this will result in 1 inch per cell.');
+      'When printing in 300 DPI, this will result in 1 inch per cell.',
+      '<span style="color: yellow">Warning: Depending on the browser, this ' +
+      'might fail if the final image is more than 14,000 pixels in width or ' +
+      'height.</span>');
   addRadioButton('Cropped',
       '70 pixels per cell, cropped to align with grid.',
       'This is the most convenient option when importing the image in ' +
