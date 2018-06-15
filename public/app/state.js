@@ -80,6 +80,8 @@ class State {
     this.cachedTilesGreyedOut = false;
 
     this.currentSightRange = 30;
+
+    this.mode = '';
   }
 
   isReadOnly() {

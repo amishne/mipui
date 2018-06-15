@@ -37,10 +37,7 @@ function wireUiElements() {
 }
 
 function initializeFirebase(callback) {
-  const isInTestingMode = false;
-  const isProd =
-      window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/);
-  const config = isProd ? {
+  const config = state.mode == 'prod' ? {
     apiKey: 'AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ',
     authDomain: 'mipui-prod.firebaseapp.com',
     databaseURL: 'https://mipui-prod.firebaseio.com',
@@ -49,15 +46,6 @@ function initializeFirebase(callback) {
     authDomain: 'mipui-dev.firebaseapp.com',
     databaseURL: 'https://mipui-dev.firebaseio.com',
   };
-  if (!isTouchDevice && (!isProd || isInTestingMode)) {
-    state.infoStatusBar.showMessage(
-        'Warning: Development mode, long-term map storage not guaranteed.',
-        'lightpink');
-    debug = s => console.log(s);
-  }
-  if (!isProd) {
-    state.menu.addDebugMenu();
-  }
   firebase.initializeApp(config);
   firebase.database.enableLogging(false);
   firebase.auth().signInAnonymously()
@@ -91,11 +79,7 @@ function createMapResizeButtons() {
   refreshMapResizeButtonLocations();
 }
 
-function start() {
-  const params = getUrlParams();
-  if (params.t || params.tc) state.tilingEnabled = true;
-  if (params.tc) state.tilingCachingEnabled = true;
-  mapContainer = document.getElementById('mapContainer');
+function initializeMenuAndStatus() {
   state.menu = new Menu();
   state.menu.createMenu();
   state.menu.descChanged();
@@ -103,6 +87,20 @@ function start() {
   state.cursorStatusBar = new StatusBar(1);
   state.progressStatusBar = new StatusBar(2);
   state.infoStatusBar = new StatusBar(0);
+  if (state.mode == 'dev') {
+    state.menu.addDebugMenu();
+  }
+}
+
+function start() {
+  const params = getUrlParams();
+  state.mode =
+      window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/) ?
+        'prod' : 'dev';
+  if (params.t || params.tc || state.mode == 'dev') state.tilingEnabled = true;
+  if (params.tc || state.mode == 'dev') state.tilingCachingEnabled = true;
+  mapContainer = document.getElementById('mapContainer');
+  initializeMenuAndStatus();
   createTheMapAndUpdateElements();
   createMapResizeButtons();
   initializeFirebase(() => {
@@ -119,6 +117,11 @@ function start() {
       state.menu.setToInitialSelection();
       document.getElementById('theMap').classList.add('editor-view');
       setStatus(Status.READY);
+    }
+    if (!isTouchDevice && state.mode != 'prod') {
+      state.infoStatusBar.showMessage(
+          'Warning: Development mode, long-term map storage not guaranteed.',
+          'lightpink');
     }
   });
   resetView();
