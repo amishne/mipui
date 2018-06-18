@@ -115,6 +115,7 @@ class Cell {
       clone.style.top = offsetTop + replica.offsetTop;
       clone.style.bottom = offsetBottom + replica.offsetBottom;
 
+      replica.tile.layerElements.get(layer).appendChild(clone);
       if (!isHighlight) {
         replica.tile.invalidate();
       } else {
@@ -124,7 +125,6 @@ class Cell {
           replica.tile.hideHighlight();
         }
       }
-      replica.tile.layerElements.get(layer).appendChild(clone);
 
       this.replicatedElements_.get(layer).set(replica.tile, clone);
       elements.push(clone);
@@ -152,6 +152,7 @@ class Cell {
     if (!this.contentShouldHaveElement_(content)) return [];
     const baseElement =
         this.createElementInOwnerTile_(layer, content, isHighlight);
+    this.tile.invalidate();
     const replicas =
         this.createReplicas_(layer, content, isHighlight, baseElement);
     return [baseElement].concat(replicas);

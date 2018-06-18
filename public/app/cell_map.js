@@ -88,6 +88,7 @@ class CellMap {
     this.tiles = new Map();
     this.globalTileLock_ = false;
     this.tileLockListeners_ = new Map();
+    this.concurrentTileCachingOperations = 0;
     document.getElementById('theMap').innerHTML = '';
   }
 

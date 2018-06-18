@@ -1,4 +1,7 @@
 const RENDERING_MESSAGE = 'Rendering, please wait...';
+const EMPTY_IMAGE = 'data:image/png;base64,' +
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAA' +
+    'C0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII=';
 let firstTileCacheStart = null;
 // let tilesCached = 0;
 const SQUARE_CELL = {
@@ -112,7 +115,6 @@ class Tile {
   invalidate() {
     this.interrupted_ = true;
     this.imageIsValid_ = false;
-    this.locks_.delete('highlight');
     this.activate_();
   }
 
@@ -120,14 +122,14 @@ class Tile {
   lock_(id) {
     if (this.locks_.has(id)) return;
     this.locks_.add(id);
-    this.interrupted_ = true;
+    if (this.locks_.size == 1) this.interrupted_ = true;
     this.stopTimer_();
   }
 
   // Called when we no longer want to prevent caching of this tile.
   unlock_(id) {
     const wasRemoved = this.locks_.delete(id);
-    if (wasRemoved) this.restartTimer_();
+    this.restartTimer_();
     return wasRemoved;
   }
 
@@ -153,23 +155,21 @@ class Tile {
       state.progressStatusBar.incrementProgress(RENDERING_MESSAGE);
     }
 
-    this.containerElement_.removeChild(this.mapElement);
     this.imageContainerElement_.style.visibility = 'visible';
+    this.containerElement_.removeChild(this.mapElement);
     if (state.cachedTilesGreyedOut) {
       this.containerElement_.style.filter = 'grayscale(1)';
     }
     this.imageIsValid_ = true;
     this.active_ = false;
+    this.interrupted_ = false;
     // const duration = Math.ceil(performance.now() - start);
     // debug(`Deactivated tile ${this.key} in ${duration}ms.`);
   }
 
   cacheImage_() {
     if (!state.tilingCachingEnabled) return;
-    if (state.theMap.areTilesLocked()) {
-      this.restartTimer_();
-      return;
-    }
+    if (this.isLocked_()) return;
     this.interrupted_ = false;
     const start = performance.now();
     if (!firstTileCacheStart) firstTileCacheStart = performance.now();
@@ -179,6 +179,13 @@ class Tile {
       return;
     }
     if (state.tilingEnabled) {
+      if (this.isTileEmpty_()) {
+        this.imageElement_.src = EMPTY_IMAGE;
+        this.imageElement_.style.width = 2 + this.width;
+        this.imageElement_.style.height = 2 + this.height;
+        this.deactivate_(start);
+        return;
+      }
       const imageFromTheme = this.getImageFromTheme_();
       if (imageFromTheme) {
         this.imageElement_.src = imageFromTheme;
@@ -197,18 +204,25 @@ class Tile {
     if (!state.isReadOnly()) {
       this.mapElement.classList.add('editor-view');
     }
+    this.lock_('caching');
+    this.interrupted_ = false;
     state.tileGridImager
         .node2pngDataUrl(this.mapElement, this.width, this.height)
         .then(dataUrl => {
           state.theMap.concurrentTileCachingOperations--;
-          if (this.isInterrupted_()) return;
-          if (state.theMap.areTilesLocked()) return;
+          this.unlock_('caching');
+          if (this.isLocked_() || this.interrupted_) {
+            this.restartTimer_();
+            return;
+          }
           this.imageElement_.src = dataUrl;
           this.imageElement_.style.width = 2 + this.width;
           this.imageElement_.style.height = 2 + this.height;
           this.deactivate_(start);
         }).catch(reason => {
           state.theMap.concurrentTileCachingOperations--;
+          this.unlock_('caching');
+          this.restartTimer_();
           debug(`Tile ${this.key} caching failed: ${reason}.`);
         });
   }
@@ -240,18 +254,18 @@ class Tile {
     this.timer_ = null;
   }
 
-  isInterrupted_() {
-    if (this.interrupted_) {
-      this.interrupted_ = false;
-      return true;
-    }
-    // Local locks already interrupt, so it's only global locks we have to
-    // worry about.
-    return state.theMap.areTilesLocked();
+  isLocked_() {
+    return this.locks_.size > 0 || state.theMap.areTilesLocked();
   }
 
   getTimerLength_() {
     return 2000 + Math.random() * 2000;
+  }
+
+  isTileEmpty_() {
+    return ct.children.every(layer =>
+      this.layerElements.get(layer).childElementCount == 0
+    );
   }
 
   getImageFromTheme_() {
