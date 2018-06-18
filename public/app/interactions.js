@@ -715,7 +715,11 @@ function showExportDialog() {
 
   const dialog = createAndAppendDivWithClass(overlay, 'modal-dialog');
   const exportButtons = [];
-  addRadioButton = (name, ...descriptions) => {
+  const currentWidth =
+      state.getProperty(pk.lastColumn) - state.getProperty(pk.firstColumn);
+  const currentHeight =
+      state.getProperty(pk.lastRow) - state.getProperty(pk.firstRow);
+  addRadioButton = (name, size, ...descriptions) => {
     const container = createAndAppendDivWithClass(dialog, 'export-group');
     const button = document.createElement('input');
     button.type = 'radio';
@@ -727,28 +731,34 @@ function showExportDialog() {
     exportButtons.push(button);
     if (exportButtons.length == 1) button.checked = true;
     const label = document.createElement('label');
+    const x = size * currentWidth;
+    const y = size * currentHeight;
+    const lines = [`${size} pixels per cell (final size ${x}x${y}).`]
+        .concat(descriptions);
+    if (x > 14000 || y > 14000) {
+      lines.push('<span style="color: yellow">Warning: Depending on the ' +
+          'browser, images with a dimension over 14,000 might not be ' +
+          'properly generated.</span>');
+    }
     label.innerHTML = `<b>${name}</b><br />` +
-        `<div class="export-details">${descriptions.join('<br />')}</div>`;
+        `<div class="export-details">${lines.join('<br />')}</div>`;
     label.setAttribute('for', id);
     container.appendChild(label);
   };
 
-  addRadioButton('1:1', '32 pixels per cell.',
+  addRadioButton('1:1', 32,
       'This looks like the app looks at default zoom level.');
-  addRadioButton('2:1', '64 pixels per cell.',
+  addRadioButton('2:1', 64,
       'This looks like the app looks at default zoom level ' +
       'on high-DPI displays.');
   if (state.tilingCachingEnabled) {
-    addRadioButton('Quick', '192 pixels per cell.',
+    addRadioButton('Quick', 192,
         'This is generated faster than the other options.');
   }
-  addRadioButton('Battlemap', '300 pixels per cell.',
-      'When printing in 300 DPI, this will result in 1 inch per cell.',
-      '<span style="color: yellow">Warning: Depending on the browser, this ' +
-      'might fail if the final image is more than 14,000 pixels in width or ' +
-      'height.</span>');
-  addRadioButton('Cropped',
-      '70 pixels per cell, cropped to align with grid.',
+  addRadioButton('Battlemap', 300,
+      'When printing in 300 DPI, this will result in 1 inch per cell.');
+  addRadioButton('Cropped', 70,
+      'Cropped to align with grid.',
       'This is the most convenient option when importing the image in ' +
       'other apps, such as virtual tabletops.');
 
