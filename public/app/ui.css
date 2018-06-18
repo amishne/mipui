@@ -30,6 +30,10 @@ body {
   overflow: auto;
 }
 
+#mapFrame {
+  overflow: hidden;
+}
+
 .action-pane {
   position: absolute;
   bottom: 0;
