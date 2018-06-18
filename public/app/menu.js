@@ -1642,6 +1642,16 @@ class Menu {
               },
             },
             {
+              name: 'Updates',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'whatshot',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('../docs/updates.html', '_blank');
+              },
+            },
+            {
               name: 'Feedback',
               type: 'button',
               presentation: 'icon',
@@ -1693,16 +1703,6 @@ class Menu {
               },
             },
           ],
-        },
-      },
-      {
-        name: 'Updates',
-        type: 'button',
-        presentation: 'icon',
-        materialIcon: 'whatshot',
-        enabledInReadonlyMode: true,
-        callback: () => {
-          window.open('../docs/updates.html', '_blank');
         },
       },
       // {
