@@ -33,7 +33,7 @@ class Operation {
 
   undo() {
     this.undoOrRedoProperties_('o');
-    this.refreshMapSizeIfRequired(false);
+    this.refreshMapSizeIfRequired();
     this.undoOrRedoCells_('o');
     this.markComplete();
   }
@@ -41,11 +41,11 @@ class Operation {
   redo() {
     this.undoOrRedoCells_('n');
     this.undoOrRedoProperties_('n');
-    this.refreshMapSizeIfRequired(false);
+    this.refreshMapSizeIfRequired();
     this.markComplete();
   }
 
-  refreshMapSizeIfRequired(directlyCalled) {
+  refreshMapSizeIfRequired() {
     let mapNeedsUpdate = false;
     if (this.data && this.data.p) {
       Object.keys(this.data.p).forEach(property => {
@@ -61,7 +61,7 @@ class Operation {
     }
     if (mapNeedsUpdate) {
       createTheMapAndUpdateElements();
-      if (!directlyCalled) updateMapTransform(true);
+      updateMapTransform(true);
     }
   }
 

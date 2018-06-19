@@ -395,7 +395,6 @@ function resizeGridBy(
         -firstRowDiff * nav.scale *
         (state.theMap.cellHeight + state.theMap.dividerHeight));
   }
-  updateMapTransform(false);
   state.opCenter.recordOperationComplete();
 }
 
@@ -597,7 +596,7 @@ function showResizeDialog() {
   newSizeHeight.value = currentHeight;
   newSizeHeight.type = 'number';
   newSizeHeight.min = 1;
-  newSizeHeight.max = 100;
+  newSizeHeight.max = 200;
 
   const anchorButtons = [];
   let selectedAnchor = {x: 0, y: 0};
@@ -648,8 +647,9 @@ function showResizeDialog() {
 
   const warningLine = createAndAppendDivWithClass(
       dialog, 'modal-dialog-line modal-dialog-warning');
-  warningLine.textContent = 'Warning: Depending on your device, expect ' +
-      'significant slowdowns on maps where width times height is over ~3000.';
+  warningLine.textContent =
+      'Performance degrades as maps get larger. Depending on the device, ' +
+      'browser tab crashes and map corruptions might in maps over 250x250.';
 
   const dialogButtons =
       createAndAppendDivWithClass(dialog, 'modal-dialog-line');

@@ -124,7 +124,7 @@ class OperationCenter {
   // This updates the undo stack and sends the op to the server.
   recordOperationComplete(forceMapRewrite = false) {
     if (this.currentOperation_.length == 0) return;
-    this.currentOperation_.refreshMapSizeIfRequired(true);
+    this.currentOperation_.refreshMapSizeIfRequired();
     this.currentOperation_.markComplete();
     this.currentOperation_.alwaysRewrite = forceMapRewrite;
     this.addLocalOperation_(this.currentOperation_);
