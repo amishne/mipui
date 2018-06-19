@@ -39,6 +39,7 @@ function incrementAndCache(obj, fieldName, valueDiff) {
 }
 
 function invalidateCached(obj, fieldName) {
+  if (!cached[obj]) return;
   cached[obj][fieldName] = null;
 }
 
@@ -92,9 +93,11 @@ function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
   const theMap = document.getElementById('theMap');
   theMap.style.transform = `scale(${nav.scale})`;
   // For proper container sizing:
-  const mapFrame = document.getElementById('mapFrame');
+  invalidateCached(mapContainer, 'offsetWidth');
+  invalidateCached(mapContainer, 'offsetHeight');
   const mapWidth = getCached(mapContainer, 'offsetWidth');
   const mapHeight = getCached(mapContainer, 'offsetHeight');
+  const mapFrame = document.getElementById('mapFrame');
   mapFrame.style.width =
       state.theMap.mapWidth * nav.scale + mapWidth;
   mapFrame.style.height =
@@ -650,7 +653,8 @@ function showResizeDialog() {
       dialog, 'modal-dialog-line modal-dialog-warning');
   warningLine.textContent =
       'Performance degrades as maps get larger. Depending on the device, ' +
-      'browser tab crashes and map corruptions might in maps over 250x250.';
+      'browser tab crashes and map corruptions might occur in maps over ' +
+      '250x250.';
 
   const dialogButtons =
       createAndAppendDivWithClass(dialog, 'modal-dialog-line');
