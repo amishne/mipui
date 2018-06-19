@@ -233,13 +233,13 @@ class Cell {
       if (this.tile.x < replica.tile.x) {
         replica.offsetLeft += replica.tile.width - this.tile.width;
         for (let x = this.tile.x + 1; x <= replica.tile.x; x++) {
-          const tile = state.theMap.tiles.get(x + ',0');
+          const tile = state.theMap.tiles.get(x + ',' + this.tile.y);
           replica.offsetLeft -= tile.width;
           replica.offsetRight += tile.width;
         }
       } else if (replica.tile.x < this.tile.x) {
         for (let x = replica.tile.x; x < this.tile.x; x++) {
-          const tile = state.theMap.tiles.get(x + ',0');
+          const tile = state.theMap.tiles.get(x + ',' + this.tile.y);
           replica.offsetLeft += tile.width;
           replica.offsetRight -= tile.width;
         }
@@ -247,13 +247,13 @@ class Cell {
       if (this.tile.y < replica.tile.y) {
         replica.offsetTop += replica.tile.height - this.tile.height;
         for (let y = this.tile.y + 1; y <= replica.tile.y; y++) {
-          const tile = state.theMap.tiles.get('0,' + y);
+          const tile = state.theMap.tiles.get(this.tile.x + ',' + y);
           replica.offsetTop -= tile.height;
           replica.offsetBottom += tile.height;
         }
       } else if (replica.tile.y < this.tile.y) {
         for (let y = replica.tile.y; y < this.tile.y; y++) {
-          const tile = state.theMap.tiles.get('0,' + y);
+          const tile = state.theMap.tiles.get(this.tile.x + ',' + y);
           replica.offsetTop += tile.height;
           replica.offsetBottom -= tile.height;
         }
