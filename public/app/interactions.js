@@ -395,6 +395,7 @@ function resizeGridBy(
         -firstRowDiff * nav.scale *
         (state.theMap.cellHeight + state.theMap.dividerHeight));
   }
+  updateMapTransform(false);
   state.opCenter.recordOperationComplete();
 }
 
