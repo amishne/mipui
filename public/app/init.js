@@ -97,8 +97,13 @@ function start() {
   state.mode =
       window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/) ?
         'prod' : 'dev';
-  if (params.t || params.tc || state.mode == 'dev') state.tilingEnabled = true;
-  if (params.tc || state.mode == 'dev') state.tilingCachingEnabled = true;
+  if (params.t == 'yes' || params.tc == 'yes' || (params.t != 'no' &&
+      params.tc != 'no' && state.mode == 'dev')) {
+    state.tilingEnabled = true;
+  }
+  if (params.tc == 'yes' || (params.tc != 'no' && state.mode == 'dev')) {
+    state.tilingCachingEnabled = true;
+  }
   mapContainer = document.getElementById('mapContainer');
   initializeMenuAndStatus();
   createTheMapAndUpdateElements();
