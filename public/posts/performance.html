@@ -90,8 +90,12 @@
       So, along comes December 2017 and the performance complaints, and I'm thinking about the tiling idea again, this time more seriously. I'm already using <a href="https://github.com/tsayen/dom-to-image">a library that knows how to transform arbitrary dom to image</a> for exporting the map to PNG - could I utilize that with my tiling code to properly cache tiles to images? In theory the performance improvement could be dramatic. With 10x10 tiles, a 100x100 map will be around 100 image elements instead of 120k+ divs! Sure, a bunch of the tiles will be "active" and thus made out of many divs instead of a single image, but I already know that with just a few thousands elements thing run smoothly. So, I decided to go for it.
     </p>
     <p>
+      <!-- detaching the tree -->
+      I did some prototyping with tiling to test the water. I crudely tiled the map and replaced tiles with arbitrary images, just to see how fast the page responds. I discovered that if I just made the underlying tile invisible or hidden then nothing really changes, but if I actually detach the tile node from the tree then performance does indeed get a huge boost! Detaching and reattaching is easy, so this definitely seemed to be the right way to approach this.
+    </p>
+    <p>
       <!-- The challenges -->
-      Turns out there are two major challenges involved with this approach. The first is getting the tile boundary to be smooth in the presence of content that can cross tile boundaries - either explicitly with multi-cell elements (such as multi-cell text and tokens), or implicitly with the shadow dropped by wall elements, which is a crucial part of the design. The second challenge is performance: turns out the dom-to-image library I was using is way too slow to be used in this manner, taking up to a second for even small tiles, causing noticeable jank.
+      Turns out there are two major challenges involved with this approach. The first is getting the tile boundary to be smooth in the presence of content that can cross tile boundaries - either explicitly with multi-cell elements (such as multi-cell text and tokens), or implicitly with the shadow dropped by wall elements, which is a crucial part of the design. The second challenge is performance: the dom-to-image library I was using is way too slow to be used in this manner, taking up to a second for even small tiles, causing noticeable jank.
     </p>
     <h3>Challenge 1: Seamless Tile Boundaries</h3>
     <p>
