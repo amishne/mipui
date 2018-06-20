@@ -19,7 +19,7 @@
 <body>
   <article>
     <h1>The road to improving Mipui performance</h1>
-    <em>Alon Mishne, May 2018</em>
+    <em>Alon Mishne, June 2018</em>
     <p>
       <!-- Summary -->
       On December 2017 I created a poll to get a feel on what was important for the community. I had free-text fields and a recurring complaint there was performance on large maps, so I decided to tackle that. I knew it would be tricky, but I didn't know how much. This post gives a rough overview of the problem, the solution, and why it has difficult.
@@ -87,7 +87,7 @@
     <h2>Ultimate Solution: Caching Tiles to Images</h2>
     <p>
       <!-- Reviving the tile caching idea -->
-      So, along comes December 2017 and the performance complaints, and I'm thinking about the tiling idea again, this time more seriously. I'm already using <a href="https://github.com/tsayen/dom-to-image">a library that knows how to transform arbitrary dom to image</a> for exporting the map to PNG - could I utilize that with my tiling code to properly cache tiles to images? In theory the performance improvement could be dramatic. With 10x10 tiles, a 100x100 map will be around 100 image elements instead of 120k+ divs! Sure, a bunch of the tiles will be "active", but I already know that with just a few thousands elements thing run smoothly. So, I decided to go for it.
+      So, along comes December 2017 and the performance complaints, and I'm thinking about the tiling idea again, this time more seriously. I'm already using <a href="https://github.com/tsayen/dom-to-image">a library that knows how to transform arbitrary dom to image</a> for exporting the map to PNG - could I utilize that with my tiling code to properly cache tiles to images? In theory the performance improvement could be dramatic. With 10x10 tiles, a 100x100 map will be around 100 image elements instead of 120k+ divs! Sure, a bunch of the tiles will be "active" and thus made out of many divs instead of a single image, but I already know that with just a few thousands elements thing run smoothly. So, I decided to go for it.
     </p>
     <p>
       <!-- The challenges -->
@@ -104,14 +104,33 @@
     </p>
     <p>
       <!-- Replicas for walls -->
-      A similar approach is used for walls and other elements that cast shadows. If an element won't actually extend to a neighbor tile but its shadow will, it's also replicated in that tile.
+      A similar approach is used for walls and other elements that cast shadows. If an element won't actually extend to a neighbor tile but its shadow will, it's also replicated in that tile. This was actually broken in the Chrome version I was using - shadows of clipped elements were missing - so I opened a Chrome bug on it which was fixed later on.
     </p>
     <p>
       <!-- 1px overlap -->
       The last problem was that the browser would often display a single-pixel "seam" in-between neighboring tiles. To counteract that, tiles actually expand a single pixels to all sides, and they overlap each other so that the seam is now always over such an overflow, and such invisible.
     </p>
     <h3>Challenge 2: Faster DOM to Image</h3>
-    Under construction.
+    <p>
+      <!-- sloooooow -->
+      I knew that the dom-to-image library I was using is excruciatingly slow when exporting the entire map to an image, but I was hoping that using tiles that are significantly slower than the full map - for example, 5x5 tiles - this slowness won't be too noticeable. Turns out I was wrong - even small tiles could sometimes reach up to a second to convert, and occasionally more, completely unreasonable for constantly caching tiles in the background.
+    </p>
+    <p>
+      <!-- responsiveness -->
+      Well, my first idea is that I don't actually need tile caching to be fast, I just need it to be responsive. I looked inside the dom-to-image library and saw it was dominated by a loop iterating over <em>all</em> nodes in the target dom. I added a potential interrupt point in-between loop iterations, and triggered that interrupt on some user interaction actions, for example hovering over a new tile. It seemed to be working initially, but I still got some jank, and it turned out there's an atomic phase in the flow that I could not interrupt - serializing the dom to XML, which still sometimes took over a second. The reason is that the XML is huge, mostly because that library copies <em>all</em> styles (<code>getComputedStyle</code>) for <em>all</em> nodes! It had no other choice, really, since the XML needs all styling information inside it.
+    </p>
+    <p>
+      <!-- replacing dom-to-image -->
+      However, what if I didn't need to copy all styling information? It would make the XML far smaller <em>and</em> I would have no need to perform a deep-clone of the target node (another time-consuming phase that dom-to-image had to do)! So I set about to write my own library, <a href="https://github.com/amishne/mipui/blob/master/public/app/grid_imager.js">GridImager</a>. I worked around the styling limitation by maintaining a string with the current active CSS rules in a GridImager instance, then prepending that to the generated XML.
+    </p>
+    <p>
+      <!-- grid imager issues -->
+      The results were dramatic! I could finally get caching small tiles to take under 50ms in most cases, which is low enough to not be too disruptive. However there was nearly an endless sequence of issues I had to tackle before I could get it to support everything I needed, particularly around scaling of external images and inline SVGs. I wrote a test suite and slowly progressed through the issues until everything was ironed out, and I ended up with a lightning-fast alternative to dom-to-image, which I then fully replaced.
+    </p>
+    <h2>Conclusion</h2>
+    <p>
+      The final result is still imperfect; in particular, operations that change a large area (such as paint bucket or theme change) now "activate" a lot of tiles and are slow until the number of activated tiles goes back down. I added a UI element which displays "please wait" in these cases, to minimize frustration. And there are sometimes small hickups still. But in general, this solution works well - small-scale work on a 200x200 map is almost as breezy as on a 20x20 map, with pan and zoom also being very fast. By my metrics, that's a success. Woo!
+    </p>
   </article>
 </body>
 </html>
