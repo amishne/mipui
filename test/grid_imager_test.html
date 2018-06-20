@@ -26,7 +26,7 @@
       gi = new GridImager({});
       setTimeout(() => {
         firstRun = false;
-        gi.addCssStyleSheet(cssElement.sheet).then(() => {
+        gi.addCssStyleSheet(0, cssElement.sheet).then(() => {
           gi.recalculateStyleString();
           complete();
         });
@@ -135,7 +135,7 @@
 
     addTest('Can scale png output', async () => {
       gi = new GridImager({scale: 2});
-      await gi.addCssStyleSheet(cssElement.sheet);
+      await gi.addCssStyleSheet(0, cssElement.sheet);
       gi.recalculateStyleString();
       const input = createDomWithInnerClasses('circle');
 
@@ -152,7 +152,7 @@
 
     addTest('Can scale png resolution', async () => {
       gi = new GridImager({scale: 2});
-      await gi.addCssStyleSheet(cssElement.sheet);
+      await gi.addCssStyleSheet(0, cssElement.sheet);
       gi.recalculateStyleString();
       const input = createDomWithInnerClasses('circle masked-diamond');
 
@@ -169,7 +169,7 @@
 
     addTest('Can add margins with overflowing content', async () => {
       gi = new GridImager({margins: 5});
-      await gi.addCssStyleSheet(cssElement.sheet);
+      await gi.addCssStyleSheet(0, cssElement.sheet);
       gi.recalculateStyleString();
       const input = createDomWithInnerClasses('overflowing');
 
