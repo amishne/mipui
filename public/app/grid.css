@@ -159,6 +159,47 @@
   stroke-width: 0;
 }
 
+.pit-cell {
+  stroke-width: 1;
+  stroke-linejoin: round;
+  stroke: #d0ba9f;
+  border-bottom: none;
+  border-right: none;
+  background-color: unset;
+}
+
+.pit-cell-horizontal {
+  margin: -1px 0;
+}
+
+.pit-cell-vertical {
+  margin: 0 -1px;
+}
+
+.pit-cell-primary, .pit-cell-primary {
+  z-index: 0;
+}
+
+.pit-cell-horizontal, .pit-cell-vertical {
+  z-index: 1;
+}
+
+.pit-cell-corner {
+  margin: -8px -7px -7px -8px;
+  z-index: 2;
+  background-size: 32px 32px;
+  background-image: url("themes/beige_land/empty_tile1.png");
+  background-position: 15px 15px;
+}
+
+.pit-top, .pit-left {
+  fill: rgb(198, 198, 174);
+}
+
+.pit-right, .pit-bottom {
+  fill: rgb(232, 232, 209);
+}
+
 .stairs-cell {
   position: absolute;
   margin: 0 1px 1px 0;

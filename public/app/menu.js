@@ -1468,6 +1468,22 @@ class Menu {
                 ct.stairs.spiral,
                 ct.stairs.spiral.generic,
                 false),
+            {
+              name: 'Pit',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 484,
+                y: 260,
+                size: 30,
+              },
+              enabledInReadonlyMode: false,
+              isSelected: false,
+              callback: () => {
+                state.gesture = new ShapeGesture(
+                    ct.floors, ct.floors.pit, ct.floors.pit.square);
+              },
+            },
           ],
         },
       },

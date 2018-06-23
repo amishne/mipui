@@ -68,3 +68,101 @@ function createShapeSvgContent(kind, role, connections) {
   }
 }
 /* eslint-enable max-len */
+
+function createPitSvgContent(role, connections) {
+  const p =
+      (cssClass, points) => `<polygon class='${cssClass}' points='${points}'/>`;
+  switch (role) {
+    case 'vertical':
+      return p('pit-top', '-1 1, 10 1, 10 5, -1 5') +
+          p('pit-bottom', '-1 19, 10 19, 10 23, -1 23');
+    case 'horizontal':
+      return p('pit-right', '23 -1, 23 10, 19 10, 19 -1') +
+          p('pit-left', '1 -1, 5 -1, 5 10, 1 10');
+    case 'corner':
+      return '';
+  }
+  // Otherwise, it's a primary.
+  switch (connections) {
+    case 0:
+      return p('pit-top', '1 1, 23 1, 19 5, 5 5') +
+          p('pit-right', '23 1, 23 23, 19 19, 19 5') +
+          p('pit-bottom', '5 19, 19 19, 23 23, 1 23') +
+          p('pit-left', '1 1, 5 5, 5 19, 1 23');
+    case 1:
+      return p('pit-right', '23 -1, 23 23, 19 19, 19 -1') +
+          p('pit-bottom', '5 19, 19 19, 23 23, 1 23') +
+          p('pit-left', '1 -1, 5 -5, 5 19, 1 23');
+    case 2:
+      return p('pit-top', '1 1, 26 1, 26 5, 5 5') +
+          p('pit-bottom', '5 19, 26 19, 26 23, 1 23') +
+          p('pit-left', '1 1, 5 5, 5 19, 1 23');
+    case 3:
+      return p('pit-top', '23 1, 19 5, 26 5, 25 1') +
+          p('pit-right', '23 1, 19 5, 19 -1, 23 -1') +
+          p('pit-bottom', '5 19, 26 19, 26 23, 1 23') +
+          p('pit-left', '1 -1, 5 -5, 5 19, 1 23');
+    case 4:
+      return p('pit-top', '1 1, 23 1, 19 5, 5 5') +
+          p('pit-right', '23 1, 23 26, 19 26, 19 5') +
+          p('pit-left', '1 1, 5 5, 5 26, 1 26');
+    case 5:
+      return p('pit-right', '23 -1, 23 26, 19 26, 19 -1') +
+          p('pit-left', '1 -1, 5 -1, 5 26, 1 26');
+    case 6:
+      return p('pit-top', '1 1, 26 1, 26 5, 5 5') +
+          p('pit-right', '23 23, 19 19, 19 26, 23 26') +
+          p('pit-bottom', '19 19, 23 23, 26 23, 26 19') +
+          p('pit-left', '1 1, 5 5, 5 26, 1 26');
+    case 7:
+      return p('pit-top', '23 1, 19 5, 26 5, 25 1') +
+          p('pit-right', '23 1, 19 5, 19 -1, 23 -1') +
+          p('pit-right', '23 23, 19 19, 19 26, 23 26') +
+          p('pit-bottom', '19 19, 23 23, 26 23, 26 19') +
+          p('pit-left', '1 -1, 5 -1, 5 26, 1 26');
+    case 8:
+      return p('pit-top', '-1 1, 23 1, 19 5, -1 5') +
+          p('pit-right', '23 1, 23 23, 19 19, 19 5') +
+          p('pit-bottom', '-1 19, 19 19, 23 23, -1 23');
+    case 9:
+      return p('pit-top', '1 1, 5 5, -1 5, -1 1') +
+          p('pit-right', '23 -1, 23 23, 19 19, 19 -1') +
+          p('pit-bottom', '-1 19, 19 19, 23 23, -1 23') +
+          p('pit-left', '1 1, 5 5, 5 -1, 1 -1');
+    case 10:
+      return p('pit-top', '-1 1, 26 1, 26 5, -1 5') +
+          p('pit-bottom', '-1 19, 26 19, 26 23, -1 23');
+    case 11:
+      return p('pit-top', '23 1, 19 5, 26 5, 25 1') +
+          p('pit-right', '23 1, 19 5, 19 -1, 23 -1') +
+          p('pit-top', '1 1, 5 5, -1 5, -1 1') +
+          p('pit-left', '1 1, 5 5, 5 -1, 1 -1') +
+          p('pit-bottom', '-1 19, 26 19, 26 23, -1 23');
+    case 12:
+      return p('pit-top', '-1 1, 23 1, 19 5, -1 5') +
+          p('pit-right', '23 1, 23 26, 19 26, 19 5') +
+          p('pit-bottom', '-1 19, 5 19, 1 23, -1 23') +
+          p('pit-left', '5 19, 5 26, 1 26, 1 23');
+    case 13:
+      return p('pit-right', '23 -1, 23 26, 19 26, 19 -1') +
+          p('pit-top', '1 1, 5 5, -1 5, -1 1') +
+          p('pit-left', '1 1, 5 5, 5 -1, 1 -1') +
+          p('pit-bottom', '-1 19, 5 19, 1 23, -1 23') +
+          p('pit-left', '5 19, 5 26, 1 26, 1 23');
+    case 14:
+      return p('pit-top', '-1 1, 26 1, 26 5, -1 5') +
+          p('pit-right', '23 23, 19 19, 19 26, 23 26') +
+          p('pit-bottom', '19 19, 23 23, 26 23, 26 19') +
+          p('pit-bottom', '-1 19, 5 19, 1 23, -1 23') +
+          p('pit-left', '5 19, 5 26, 1 26, 1 23');
+    case 15:
+      return p('pit-top', '23 1, 19 5, 26 5, 25 1') +
+          p('pit-right', '23 1, 19 5, 19 -1, 23 -1') +
+          p('pit-top', '1 1, 5 5, -1 5, -1 1') +
+          p('pit-left', '1 1, 5 5, 5 -1, 1 -1') +
+          p('pit-right', '23 23, 19 19, 19 26, 23 26') +
+          p('pit-bottom', '19 19, 23 23, 26 23, 26 19') +
+          p('pit-bottom', '-1 19, 5 19, 1 23, -1 23') +
+          p('pit-left', '5 19, 5 26, 1 26, 1 23');
+  }
+}

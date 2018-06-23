@@ -150,9 +150,9 @@ class Cell {
 
   createElementsFromContent_(layer, content, isHighlight) {
     if (!this.contentShouldHaveElement_(content)) return [];
+    this.tile.invalidate();
     const baseElement =
         this.createElementInOwnerTile_(layer, content, isHighlight);
-    this.tile.invalidate();
     const replicas =
         this.createReplicas_(layer, content, isHighlight, baseElement);
     return [baseElement].concat(replicas);
@@ -209,7 +209,9 @@ class Cell {
     }
 
     // Just replicate those one tile over.
-    if ((layer == ct.shapes && this.role == 'corner') ||
+    if ((layer == ct.shapes && this.role != 'primary') ||
+        (layer == ct.floors && this.role != 'primary' &&
+         content[ck.kind] == ct.floors.pit.id) ||
         (layer == ct.mask)) {
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
@@ -307,6 +309,25 @@ class Cell {
     this.setImageFromVariation_(element, layer, content);
     this.setMask_(element, layer, content);
     this.setShape_(element, layer, kind, content[ck.connections]);
+    this.setElevation_(
+        element, layer, kind, variation, content[ck.connections]);
+  }
+
+  setElevation_(element, layer, kind, variation, connections) {
+    if (!element || variation != ct.floors.pit.square || this.role == 'coner') {
+      return;
+    }
+    element.innerHTML = '';
+    const svgContent = createPitSvgContent(this.role, connections);
+    if (svgContent) {
+      const svgElement =
+          document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svgElement.setAttribute('width', element.offsetWidth);
+      svgElement.setAttribute('height', element.offsetHeight);
+      svgElement.style.position = 'absolute';
+      svgElement.innerHTML = svgContent;
+      element.appendChild(svgElement);
+    }
   }
 
   setShape_(element, layer, kind, connections) {

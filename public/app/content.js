@@ -8,6 +8,15 @@ const ct = {
     floor: {
       generic: {},
     },
+    pit: {
+      square: {
+        classNames: [
+          'pit-cell',
+          'pit-cell-_ROLE_',
+          'pit-cell-_ADDING-REMOVING_',
+        ],
+      },
+    },
   },
   walls: {
     classNames: [
