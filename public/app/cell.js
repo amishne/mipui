@@ -159,7 +159,7 @@ class Cell {
   }
 
   getReplicas_(layer, content) {
-    const replicas = [];
+    const tilesWithReplicas = new Set();
     if (!content) return replicas;
     const endCellKey = content[ck.endCell];
     if (endCellKey) {
@@ -169,7 +169,7 @@ class Cell {
       for (let x = this.tile.x; x <= endCell.tile.x; x++) {
         for (let y = this.tile.y; y <= endCell.tile.y; y++) {
           if (x != this.tile.x || y != this.tile.y) {
-            replicas.push({tile: state.theMap.tiles.get(x + ',' + y)});
+            tilesWithReplicas.add(state.theMap.tiles.get(x + ',' + y));
           }
         }
       }
@@ -204,7 +204,7 @@ class Cell {
             CellMap.cellKey(this.row + dir.y, this.column + dir.x));
         if (!neighborCell) return;
         if (neighborCell.tile == this.tile) return;
-        replicas.push({tile: neighborCell.tile});
+        tilesWithReplicas.add(neighborCell.tile);
       });
     }
 
@@ -220,17 +220,21 @@ class Cell {
               state.theMap.getCell(this.row + y, this.column + x);
           if (!neighborCell) continue;
           if (neighborCell.tile == this.tile) continue;
-          replicas.push({tile: neighborCell.tile});
+          tilesWithReplicas.add(neighborCell.tile);
         }
       }
     }
 
-    // Set offsets on replicas.
-    replicas.forEach(replica => {
-      replica.offsetLeft = 0;
-      replica.offsetRight = 0;
-      replica.offsetTop = 0;
-      replica.offsetBottom = 0;
+    // Create replicas and set offsets on them.
+    const replicas = [];
+    tilesWithReplicas.forEach(tileWithReplica => {
+      const replica = {
+        tile: tileWithReplica,
+        offsetLeft: 0,
+        offsetRight: 0,
+        offsetTop: 0,
+        offsetBottom: 0,
+      };
 
       if (this.tile.x < replica.tile.x) {
         replica.offsetLeft += replica.tile.width - this.tile.width;
@@ -260,6 +264,7 @@ class Cell {
           replica.offsetBottom -= tile.height;
         }
       }
+      replicas.push(replica);
     });
     return replicas;
   }
