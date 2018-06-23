@@ -217,10 +217,10 @@ class Cell {
         for (let y = -1; y <= 1; y++) {
           if (x == 0 && y == 0) continue;
           const neighborCell =
-              state.theMap.getCell(`${this.row + y},${this.column + x}`);
+              state.theMap.getCell(this.row + y, this.column + x);
           if (!neighborCell) continue;
           if (neighborCell.tile == this.tile) continue;
-          replicas.push({tile: neighborCell});
+          replicas.push({tile: neighborCell.tile});
         }
       }
     }
