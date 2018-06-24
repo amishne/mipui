@@ -192,12 +192,26 @@
   background-position: 15px 15px;
 }
 
+.pit-cell-corner-removing {
+  z-index: -1;
+}
+
 .pit-top, .pit-left {
   fill: rgb(198, 198, 174);
 }
 
+.pit-cell-adding .pit-top, .pit-cell-adding .pit-left,
+.pit-cell-removing .pit-top, .pit-cell-removing .pit-left {
+  fill: rgb(227, 227, 201);
+}
+
 .pit-right, .pit-bottom {
   fill: rgb(232, 232, 209);
+}
+
+.pit-cell-adding .pit-right, .pit-cell-adding .pit-bottom,
+.pit-cell-removing .pit-right, .pit-cell-removing .pit-bottom {
+  fill: rgb(244, 244, 222);
 }
 
 .stairs-cell {

@@ -14,6 +14,7 @@ const ct = {
           'pit-cell',
           'pit-cell-_ROLE_',
           'pit-cell-_ADDING-REMOVING_',
+          'pit-cell-_ROLE_-_ADDING-REMOVING_',
         ],
       },
     },
