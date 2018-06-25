@@ -319,19 +319,36 @@ class Cell {
   }
 
   setElevation_(element, layer, kind, variation, connections) {
-    if (!element || variation != ct.floors.pit.square || this.role == 'coner') {
+    if (!element || (kind != ct.floors.pit && kind != ct.floors.passage)) {
       return;
     }
     element.innerHTML = '';
-    const svgContent = createPitSvgContent(this.role, connections);
-    if (svgContent) {
-      const svgElement =
-          document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svgElement.setAttribute('width', element.offsetWidth);
-      svgElement.setAttribute('height', element.offsetHeight);
-      svgElement.style.position = 'absolute';
-      svgElement.innerHTML = svgContent;
-      element.appendChild(svgElement);
+    if (this.role == 'corner') {
+      // Regular style covers this, no need for SVG.
+      return;
+    }
+    if (kind == ct.floors.pit) {
+      const svgContent = createPitSvgContent(this.role, connections);
+      if (svgContent) {
+        const svgElement =
+            document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svgElement.setAttribute('width', element.offsetWidth);
+        svgElement.setAttribute('height', element.offsetHeight);
+        svgElement.style.position = 'absolute';
+        svgElement.innerHTML = svgContent;
+        element.appendChild(svgElement);
+      }
+    } else if (kind == ct.floors.passage) {
+      const svgContent = createShapeSvgContent(kind, this.role, connections);
+      if (svgContent) {
+        const svgElement =
+            document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svgElement.setAttribute('width', element.offsetWidth);
+        svgElement.setAttribute('height', element.offsetHeight);
+        svgElement.style.position = 'absolute';
+        svgElement.innerHTML = svgContent;
+        element.appendChild(svgElement);
+      }
     }
   }
 
@@ -701,7 +718,7 @@ class Cell {
 
   modifyElementClasses_(layer, content, element, addOrRemove) {
     if (!content) return;
-    const kind = ct.children[layer.id].children[content[ck.kind]];
+    const kind = layer.children[content[ck.kind]];
     const variation = kind.children[content[ck.variation]];
     const classNames = [].concat(
         layer.classNames || [],

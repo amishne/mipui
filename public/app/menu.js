@@ -1427,7 +1427,7 @@ class Menu {
         },
       },
       {
-        name: 'Stai&rs',
+        name: 'Ele&vation',
         presentation: 'selected child',
         tip: 'Drag when placing to stretch across multiple cells.',
         classNames: ['menu-stairs'],
@@ -1482,6 +1482,22 @@ class Menu {
               callback: () => {
                 state.gesture = new ShapeGesture(
                     ct.floors, ct.floors.pit, ct.floors.pit.square);
+              },
+            },
+            {
+              name: 'Passage',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 484,
+                y: 260,
+                size: 30,
+              },
+              enabledInReadonlyMode: false,
+              isSelected: false,
+              callback: () => {
+                state.gesture = new ShapeGesture(
+                    ct.floors, ct.floors.passage, ct.floors.passage.dashed);
               },
             },
           ],

@@ -18,6 +18,9 @@ const ct = {
         ],
       },
     },
+    passage: {
+      dashed: {classNames: ['passage-cell', 'passage-cell-_ROLE_']},
+    },
   },
   walls: {
     classNames: [

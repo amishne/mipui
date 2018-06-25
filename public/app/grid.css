@@ -184,18 +184,6 @@
   z-index: 1;
 }
 
-.pit-cell-corner {
-  margin: -8px -7px -7px -8px;
-  z-index: 2;
-  background-size: 32px 32px;
-  background-image: url("themes/beige_land/empty_tile1.png");
-  background-position: 15px 15px;
-}
-
-.pit-cell-corner-removing {
-  z-index: -1;
-}
-
 .pit-top, .pit-left {
   fill: rgb(198, 198, 174);
 }
@@ -212,6 +200,13 @@
 .pit-cell-adding .pit-right, .pit-cell-adding .pit-bottom,
 .pit-cell-removing .pit-right, .pit-cell-removing .pit-bottom {
   fill: rgb(244, 244, 222);
+}
+
+.passage-cell {
+  fill: none;
+  stroke: darkgoldenrod;
+  stroke-dasharray: 4;
+  stroke-width: 2;
 }
 
 .stairs-cell {
