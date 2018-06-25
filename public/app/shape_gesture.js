@@ -6,6 +6,7 @@ class ShapeGesture extends Gesture {
     this.variation_ = variation;
     this.mode_ = null;
     this.cellMasks_ = new Map();
+    this.maskBits_ = layer == ct.shapes ? 4 : 8;
   }
 
   startHover(cell) {
@@ -99,6 +100,9 @@ class ShapeGesture extends Gesture {
     return result;
   }
 
+  // 128   1  16
+  //   8       2
+  //  64   4  32
   populateCellMasks_(cell) {
     this.cellMasks_ = new Map();
     if (this.mode_ == 'adding') {
@@ -121,15 +125,15 @@ class ShapeGesture extends Gesture {
         case 'corner':
           this.populateCellMask_(cell, 15);
           // Connect the surrounding primaries.
-          this.populateCellMask_(cell.getNeighbor('top-right'), 12);
-          this.populateCellMask_(cell.getNeighbor('bottom-right'), 9);
-          this.populateCellMask_(cell.getNeighbor('bottom-left'), 3);
-          this.populateCellMask_(cell.getNeighbor('top-left'), 6);
+          this.populateCellMask_(cell.getNeighbor('top-right'), 76);
+          this.populateCellMask_(cell.getNeighbor('bottom-right'), 137);
+          this.populateCellMask_(cell.getNeighbor('bottom-left'), 19);
+          this.populateCellMask_(cell.getNeighbor('top-left'), 38);
           // Connect the surrounding dividers.
-          this.populateCellMask_(cell.getNeighbor('top', true), 10);
-          this.populateCellMask_(cell.getNeighbor('right', true), 5);
-          this.populateCellMask_(cell.getNeighbor('bottom', true), 10);
-          this.populateCellMask_(cell.getNeighbor('left', true), 5);
+          this.populateCellMask_(cell.getNeighbor('top', true), 14);
+          this.populateCellMask_(cell.getNeighbor('right', true), 13);
+          this.populateCellMask_(cell.getNeighbor('bottom', true), 11);
+          this.populateCellMask_(cell.getNeighbor('left', true), 7);
           break;
       }
     } else {
@@ -212,6 +216,7 @@ class ShapeGesture extends Gesture {
   }
 
   populateCellMask_(cell, mask) {
+    mask = mask & ((1 << this.maskBits_) - 1);
     if (!cell) return mask;
     if (!this.cellMasks_.has(cell)) {
       this.cellMasks_.set(cell, mask);
