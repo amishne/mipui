@@ -323,10 +323,6 @@ class Cell {
       return;
     }
     element.innerHTML = '';
-    if (this.role == 'corner') {
-      // Regular style covers this, no need for SVG.
-      return;
-    }
     if (kind == ct.floors.pit) {
       const svgContent = createPitSvgContent(this.role, connections);
       if (svgContent) {

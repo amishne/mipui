@@ -151,77 +151,63 @@ class ShapeGesture extends Gesture {
           this.populateCellMask_(cell.getNeighbor('bottom', true), null);
           this.populateCellMask_(cell.getNeighbor('left', true), null);
           // Remove the surrounding corners.
-          this.populateCellMask_(cell.getNeighbor('top-right', true), null);
-          this.populateCellMask_(cell.getNeighbor('bottom-right', true), null);
-          this.populateCellMask_(cell.getNeighbor('bottom-left', true), null);
-          this.populateCellMask_(cell.getNeighbor('top-left', true), null);
+          const topRightCorner = cell.getNeighbor('top-right', true);
+          if (topRightCorner) this.removeCorner_(topRightCorner);
+          const bottomRightCorner = cell.getNeighbor('bottom-right', true);
+          if (bottomRightCorner) this.removeCorner_(bottomRightCorner);
+          const bottomLeftCorner = cell.getNeighbor('bottom-left', true);
+          if (bottomLeftCorner) this.removeCorner_(bottomLeftCorner);
+          const topLeftCorner = cell.getNeighbor('top-left', true);
+          if (topLeftCorner) this.removeCorner_(topLeftCorner);
           break;
         case 'vertical':
           // Disconnect the left and right primaries.
           this.populateCellMask_(cell.getNeighbor('left'), 2);
           this.populateCellMask_(cell.getNeighbor('right'), 8);
-          // Disconnect the top and bottom dividers.
-          this.populateCellMask_(cell.getNeighbor('top-same'), 4);
-          this.populateCellMask_(cell.getNeighbor('bottom-same'), 1);
-          // Remove the top corner, and disconnect its surrounding horizontal
-          // dividers.
+          // Remove the surrounding corners.
           const topCorner = cell.getNeighbor('top', true);
-          if (topCorner) {
-            this.populateCellMask_(topCorner, null);
-            this.populateCellMask_(topCorner.getNeighbor('right', true), 8);
-            this.populateCellMask_(topCorner.getNeighbor('left', true), 2);
-          }
-          // Remove the bottom corner, and disconnect its surrounding horizontal
-          // dividers.
+          if (topCorner) this.removeCorner_(topCorner);
           const bottomCorner = cell.getNeighbor('bottom', true);
-          if (bottomCorner) {
-            this.populateCellMask_(bottomCorner, null);
-            this.populateCellMask_(bottomCorner.getNeighbor('right', true), 8);
-            this.populateCellMask_(bottomCorner.getNeighbor('left', true), 2);
-          }
+          if (bottomCorner) this.removeCorner_(bottomCorner);
           break;
         case 'horizontal':
           // Disconnect the top and bottom primaries.
           this.populateCellMask_(cell.getNeighbor('top'), 4);
           this.populateCellMask_(cell.getNeighbor('bottom'), 1);
-          // Disconnect the right and left dividers.
-          this.populateCellMask_(cell.getNeighbor('right-same'), 8);
-          this.populateCellMask_(cell.getNeighbor('left-same'), 2);
-          // Remove the right corner, and disconnect its surrounding vertical
-          // dividers.
+          // Remove the surrounding corners.
           const rightCorner = cell.getNeighbor('right', true);
-          if (rightCorner) {
-            this.populateCellMask_(rightCorner, null);
-            this.populateCellMask_(rightCorner.getNeighbor('top', true), 4);
-            this.populateCellMask_(rightCorner.getNeighbor('bottom', true), 1);
-          }
-          // Remove the left corner, and disconnect its surrounding vertical
-          // dividers.
+          if (rightCorner) this.removeCorner_(rightCorner);
           const leftCorner = cell.getNeighbor('left', true);
-          if (leftCorner) {
-            this.populateCellMask_(leftCorner, null);
-            this.populateCellMask_(leftCorner.getNeighbor('top', true), 4);
-            this.populateCellMask_(leftCorner.getNeighbor('bottom', true), 1);
-          }
+          if (leftCorner) this.removeCorner_(leftCorner);
           break;
         case 'corner':
-          // Disconnect the surrounding dividers.
-          this.populateCellMask_(cell.getNeighbor('top', true), 4);
-          this.populateCellMask_(cell.getNeighbor('right', true), 8);
-          this.populateCellMask_(cell.getNeighbor('bottom', true), 1);
-          this.populateCellMask_(cell.getNeighbor('left', true), 2);
+          this.removeCorner_(cell);
           break;
       }
     }
   }
 
+  removeCorner_(cell) {
+    this.populateCellMask_(cell, null);
+    // Disconnect the surrounding dividers.
+    this.populateCellMask_(cell.getNeighbor('top', true), 4);
+    this.populateCellMask_(cell.getNeighbor('right', true), 8);
+    this.populateCellMask_(cell.getNeighbor('bottom', true), 1);
+    this.populateCellMask_(cell.getNeighbor('left', true), 2);
+    // Disconnect the surrounding primaries.
+    this.populateCellMask_(cell.getNeighbor('top-right'), 64);
+    this.populateCellMask_(cell.getNeighbor('bottom-right'), 128);
+    this.populateCellMask_(cell.getNeighbor('bottom-left'), 16);
+    this.populateCellMask_(cell.getNeighbor('top-left'), 32);
+  }
+
   populateCellMask_(cell, mask) {
-    mask = mask & ((1 << this.maskBits_) - 1);
+    mask = mask == null ? null : (mask & ((1 << this.maskBits_) - 1));
     if (!cell) return mask;
     if (!this.cellMasks_.has(cell)) {
       this.cellMasks_.set(cell, mask);
     } else {
-      const existingMask = this.cellMasks_.get(cell);
+      const existingMask = this.cellMasks_.get(cell) || null;
       let newMask;
       if (this.mode_ == 'removing' && (mask == null || existingMask == null)) {
         newMask = null;
