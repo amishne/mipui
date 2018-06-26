@@ -445,7 +445,7 @@ class Menu {
   updateShapeTool_(item, kind, variationName) {
     const variation = kind[variationName];
     item.callback = () => {
-      state.gesture = new ShapeGesture(ct.shapes, kind, variation);
+      state.gesture = new ShapeGesture(ct.shapes, kind, variation, 4);
       if (item.group == this.groups_.shapeKindTools) {
         this.groups_.shapeVariationTools.items.forEach(shapeVariationItem => {
           this.updateShapeTool_(
@@ -1481,7 +1481,7 @@ class Menu {
               isSelected: false,
               callback: () => {
                 state.gesture = new ShapeGesture(
-                    ct.floors, ct.floors.pit, ct.floors.pit.square);
+                    ct.floors, ct.floors.pit, ct.floors.pit.square, 8);
               },
             },
             {
@@ -1496,8 +1496,8 @@ class Menu {
               enabledInReadonlyMode: false,
               isSelected: false,
               callback: () => {
-                state.gesture = new ShapeGesture(
-                    ct.floors, ct.floors.passage, ct.floors.passage.dashed);
+                state.gesture = new PassageGesture(
+                    ct.stairs, ct.stairs.passage, ct.stairs.passage.dashed, 8);
               },
             },
           ],

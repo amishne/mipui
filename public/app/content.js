@@ -18,9 +18,6 @@ const ct = {
         ],
       },
     },
-    passage: {
-      dashed: {classNames: ['passage-cell', 'passage-cell-_ROLE_']},
-    },
   },
   walls: {
     classNames: [
@@ -135,24 +132,45 @@ const ct = {
     },
   },
   stairs: {
-    classNames: [
-      'stairs-cell',
-      'stairs-cell-_ADDING-REMOVING_',
-      'stairs-cell-_EDITING_',
-    ],
     horizontal: {
-      classNames: ['stairs-cell-horizontal'],
+      classNames: [
+        'stairs-cell',
+        'stairs-cell-_ADDING-REMOVING_',
+        'stairs-cell-_EDITING_',
+        'stairs-cell-horizontal',
+      ],
       generic: {},
       ascendingLeft: {classNames: ['stairs-cell-ascending-left']},
       ascendingRight: {classNames: ['stairs-cell-ascending-right']},
     },
     vertical: {
-      classNames: ['stairs-cell-vertical'],
+      classNames: [
+        'stairs-cell',
+        'stairs-cell-_ADDING-REMOVING_',
+        'stairs-cell-_EDITING_',
+        'stairs-cell-vertical',
+      ],
       generic: {},
       ascendingTop: {classNames: ['stairs-cell-ascending-top']},
       ascendingBottom: {classNames: ['stairs-cell-ascending-bottom']},
     },
-    spiral: { generic: {classNames: ['stairs-cell-spiral']} },
+    spiral: {
+      classNames: [
+        'stairs-cell',
+        'stairs-cell-_ADDING-REMOVING_',
+        'stairs-cell-_EDITING_',
+      ],
+      generic: {classNames: ['stairs-cell-spiral']},
+    },
+    passage: {
+      dashed: {
+        classNames: [
+          'passage-cell',
+          'passage-cell-_ADDING-REMOVING_',
+          'passage-cell-_ROLE_',
+        ],
+      },
+    },
   },
   gmoverlay: {
     shape: {

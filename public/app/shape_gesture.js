@@ -1,5 +1,5 @@
 class ShapeGesture extends Gesture {
-  constructor(layer, kind, variation) {
+  constructor(layer, kind, variation, maskBits) {
     super();
     this.layer_ = layer;
     this.kind_ = kind;

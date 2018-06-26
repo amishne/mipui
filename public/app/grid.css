@@ -203,10 +203,19 @@
 }
 
 .passage-cell {
+  position: absolute;
   fill: none;
   stroke: darkgoldenrod;
-  stroke-dasharray: 4;
+  stroke-dasharray: 3;
   stroke-width: 2;
+}
+
+.passage-cell-adding {
+  opacity: 0.8;
+}
+
+.passage-cell-removing {
+  opacity: 0.5;
 }
 
 .stairs-cell {

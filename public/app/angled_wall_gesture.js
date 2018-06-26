@@ -1,6 +1,6 @@
 class AngledWallGesture extends ShapeGesture {
   constructor(layer, kind, variation) {
-    super(layer, kind, variation);
+    super(layer, kind, variation, 4);
     this.wallRemovingGesture_ = new WallGesture(1, false);
     this.wallRemovingGesture_.toWall = false;
   }

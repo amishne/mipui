@@ -157,3 +157,73 @@ function createPitSvgContent(role, connections) {
           bottomLeftCorner + topLeftCorner;
   }
 }
+
+function createPassageSvgContent(role, connections) {
+  const s = stopName => {
+    switch (stopName) {
+      case 0: return -1;
+      case 1: return 3;
+      case 2: return 21;
+      case 3: return 26;
+      case 'd': return 11;
+    }
+  };
+  const h = (x1name, y1name, x2name) => {
+    const y = s(y1name);
+    return `<line x1='${s(x1name)}' y1='${y}' x2='${s(x2name)}' y2='${y}'/>`;
+  };
+  const v = (x1name, y1name, y2name) => {
+    const x = s(x1name);
+    return `<line x1='${x}' y1='${s(y1name)}' x2='${x}' y2='${s(y2name)}'/>`;
+  };
+  const c = connections;
+  switch (role) {
+    case 'vertical':
+      return (c & 1 ? '' : h(0, 1, 'd')) + (c & 4 ? '' : h(0, 2, 'd'));
+    case 'horizontal':
+      return (c & 2 ? '' : v(2, 0, 'd')) + (c & 8 ? '' : v(1, 0, 'd'));
+    case 'corner':
+      return '';
+  }
+  const shapes = [];
+  const a = shape => { shapes.push(shape); };
+  // Add straight sides.
+  if ((c & 1) == 0) {
+    const start = c & 8 ? 0 : 1;
+    const end = c & 2 ? 3 : 2;
+    a(h(start, 1, end));
+  }
+  if ((c & 2) == 0) {
+    const start = c & 1 ? 0 : 1;
+    const end = c & 4 ? 3 : 2;
+    a(v(2, start, end));
+  }
+  if ((c & 4) == 0) {
+    const start = c & 8 ? 0 : 1;
+    const end = c & 2 ? 3 : 2;
+    a(h(start, 2, end));
+  }
+  if ((c & 8) == 0) {
+    const start = c & 1 ? 0 : 1;
+    const end = c & 4 ? 3 : 2;
+    a(v(1, start, end));
+  }
+  // Add corners
+  if ((c & 3) == 3 && (c & 16) == 0) {
+    a(h(2, 1, 3));
+    a(v(2, 0, 1));
+  }
+  if ((c & 6) == 6 && (c & 32) == 0) {
+    a(h(2, 2, 3));
+    a(v(2, 2, 3));
+  }
+  if ((c & 12) == 12 && (c & 64) == 0) {
+    a(h(0, 1, 1));
+    a(v(1, 2, 3));
+  }
+  if ((c & 9) == 9 && (c & 128) == 0) {
+    a(h(0, 1, 1));
+    a(v(1, 0, 1));
+  }
+  return shapes.join('');
+}

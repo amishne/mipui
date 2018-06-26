@@ -313,51 +313,34 @@ class Cell {
     this.setImageHash_(element, content[ck.imageHash], variation);
     this.setImageFromVariation_(element, layer, content);
     this.setMask_(element, layer, content);
-    this.setShape_(element, layer, kind, content[ck.connections]);
-    this.setElevation_(
-        element, layer, kind, variation, content[ck.connections]);
+    this.setShape_(element, layer, kind, variation, content[ck.connections]);
   }
 
-  setElevation_(element, layer, kind, variation, connections) {
-    if (!element || (kind != ct.floors.pit && kind != ct.floors.passage)) {
+  setShape_(element, layer, kind, variation, connections) {
+    if (!element ||
+        (layer != ct.shapes &&
+         kind != ct.floors.pit &&
+         kind != ct.stairs.passage)) {
       return;
     }
     element.innerHTML = '';
-    if (kind == ct.floors.pit) {
-      const svgContent = createPitSvgContent(this.role, connections);
-      if (svgContent) {
-        const svgElement =
-            document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svgElement.setAttribute('width', element.offsetWidth);
-        svgElement.setAttribute('height', element.offsetHeight);
-        svgElement.style.position = 'absolute';
-        svgElement.innerHTML = svgContent;
-        element.appendChild(svgElement);
-      }
-    } else if (kind == ct.floors.passage) {
-      const svgContent = createShapeSvgContent(kind, this.role, connections);
-      if (svgContent) {
-        const svgElement =
-            document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svgElement.setAttribute('width', element.offsetWidth);
-        svgElement.setAttribute('height', element.offsetHeight);
-        svgElement.style.position = 'absolute';
-        svgElement.innerHTML = svgContent;
-        element.appendChild(svgElement);
-      }
+    let svgContent = null;
+    if (layer == ct.shapes) {
+      svgContent = createShapeSvgContent(kind, this.role, connections);
+    } else if (kind == ct.floors.pit) {
+      svgContent = createPitSvgContent(this.role, connections);
+    } else if (kind == ct.stairs.passage) {
+      svgContent = createPassageSvgContent(this.role, connections);
     }
-  }
-
-  setShape_(element, layer, kind, connections) {
-    if (!element || layer != ct.shapes) return;
-    const svgElement =
-        document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svgElement.setAttribute('width', element.offsetWidth);
-    svgElement.setAttribute('height', element.offsetHeight);
-    svgElement.style.position = 'absolute';
-    svgElement.innerHTML = createShapeSvgContent(kind, this.role, connections);
-    element.innerHTML = '';
-    element.appendChild(svgElement);
+    if (svgContent) {
+      const svgElement =
+          document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svgElement.setAttribute('width', element.offsetWidth);
+      svgElement.setAttribute('height', element.offsetHeight);
+      svgElement.style.position = 'absolute';
+      svgElement.innerHTML = svgContent;
+      element.appendChild(svgElement);
+    }
   }
 
   setMask_(element, layer, content) {

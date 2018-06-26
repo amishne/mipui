@@ -148,7 +148,7 @@ class BoxGesture extends Gesture {
       this.targetCell_ = this.hoveredCell_;
       this.calculateBoxExtent_();
       this.showHighlight_();
-      if (this.mode_ == 'resizing' || this.mode_ == 'adding') {
+      if (this.mode_ == 'resizing' || this.mode_ == 'adding' && this.endCell_) {
         this.cursorStatusBarMessage_ =
             `Width: ${
               1 + Math.abs(this.startCell_.column - this.endCell_.column)} ` +
