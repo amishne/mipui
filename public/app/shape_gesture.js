@@ -7,25 +7,44 @@ class ShapeGesture extends Gesture {
     this.mode_ = null;
     this.cellMasks_ = new Map();
     this.maskBits_ = layer == ct.shapes ? 4 : 8;
+    this.delegatedGesture_ = null;
   }
 
   startHover(cell) {
+    this.delegatedGesture_ = null;
     this.mode_ = cell.hasLayerContent(this.layer_) ? 'removing' : 'adding';
+    if (this.isBoxContent_(cell)) {
+      this.delegatedGesture_ = this.createDelegatedGesture_(cell);
+      this.delegatedGesture_.startHover(cell);
+      return;
+    }
     this.populateCellMasks_(cell);
     this.showHighlight_();
   }
 
   stopHover() {
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.stopHover();
+      return;
+    }
     this.hideHighlight_();
   }
 
   startGesture() {
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.startGesture();
+      return;
+    }
     super.startGesture();
     this.hideHighlight_();
     this.apply_();
   }
 
   continueGesture(cell) {
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.continueGesture();
+      return;
+    }
     if (this.mode_ == 'removing' && !cell.hasLayerContent(this.layer_)) {
       // This is an attempt to remove content from a cell without content.
       return;
@@ -35,6 +54,11 @@ class ShapeGesture extends Gesture {
   }
 
   stopGesture() {
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.stopGesture();
+      this.delegatedGesture_ = null;
+      return;
+    }
     super.stopGesture();
     state.opCenter.recordOperationComplete();
   }
@@ -217,5 +241,36 @@ class ShapeGesture extends Gesture {
       this.cellMasks_.set(cell, newMask);
     }
     return mask;
+  }
+
+  isBoxContent_(cell) {
+    return this.layer_ == ct.stairs && (
+      cell.isKind(ct.stairs, ct.stairs.horizontal) ||
+      cell.isKind(ct.stairs, ct.stairs.vertical) ||
+      cell.isKind(ct.stairs, ct.stairs.spiral));
+  }
+
+  createDelegatedGesture_(cell) {
+    const gesture = new StaticBoxGesture(
+        this.layer_,
+        this.kind_,
+        this.variation_);
+    gesture.mode_ = 'removing';
+    let startCell = cell;
+    let endCell = null;
+    let nonStartCells = [];
+    const startCellKey = cell.getLayerContent(this.layer_)[ck.startCell];
+    if (startCellKey) {
+      startCell = state.theMap.cells.get(startCellKey);
+    }
+    const endCellKey = startCell.getLayerContent(this.layer_)[ck.endCell];
+    if (endCellKey) {
+      endCell = state.theMap.cells.get(endCellKey);
+      nonStartCells = startCell.getPrimaryCellsInSquareTo(endCell).slice(1);
+    }
+    gesture.startCell_ = startCell;
+    gesture.endCell_ = endCell;
+    gesture.nonStartCells_ = nonStartCells;
+    return gesture;
   }
 }

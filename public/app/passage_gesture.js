@@ -1,6 +1,6 @@
 class PassageGesture extends ShapeGesture {
   existsAndHasConnections_(cell) {
-    return cell && cell.hasLayerContent(this.layer_) &&
+    return cell && cell.isKind(this.layer_, this.kind_) &&
         cell.getLayerContent(this.layer_).hasOwnProperty(ck.connections);
   }
 
@@ -60,5 +60,13 @@ class PassageGesture extends ShapeGesture {
       this.populateCellMask_(topLeft, 2 | 32 | 4);
     }
     this.populateCellMask_(cell, this.mode_ == 'removing' ? null : centerMask);
+  }
+
+  populateCellMask_(cell, mask) {
+    if (cell && cell.hasLayerContent(this.layer_) &&
+        !cell.isKind(this.layer_, this.kind_)) {
+      return mask;
+    }
+    return super.populateCellMask_(cell, mask);
   }
 }

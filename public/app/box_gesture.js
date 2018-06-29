@@ -24,6 +24,8 @@ class BoxGesture extends Gesture {
     this.originalValue_ = null;
     // Status bar message for the size message.
     this.cursorStatusBarMessage_ = '';
+    // Delegated gesture in case there's existing non-box content to remove.
+    this.delegatedGesture_ = null;
 
     // Owned elements.
 
@@ -42,6 +44,13 @@ class BoxGesture extends Gesture {
   startHover(cell) {
     if (this.inputElement_) {
       // As long as there's an edit in progress, hovering changes are disabled.
+      return;
+    }
+
+    this.delegatedGesture_ = null;
+    if (this.isShapeContent_(cell)) {
+      this.delegatedGesture_ = this.createDelegatedGesture_(cell);
+      this.delegatedGesture_.startHover(cell);
       return;
     }
 
@@ -76,6 +85,11 @@ class BoxGesture extends Gesture {
       return;
     }
 
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.stopHover();
+      return;
+    }
+
     if (this.startCell_) {
       this.hideHighlight_();
     }
@@ -87,6 +101,11 @@ class BoxGesture extends Gesture {
   }
 
   startGesture() {
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.startGesture();
+      return;
+    }
+
     this.cursorStatusBarMessage_ = 'Width: 1 Height: 1';
     super.startGesture();
     const editWasInProgress = this.finishEditing_();
@@ -126,6 +145,11 @@ class BoxGesture extends Gesture {
       return;
     }
 
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.continueGesture();
+      return;
+    }
+
     if (this.mode_ == 'adding' || this.mode_ == 'resizing' ||
         this.mode_ == 'moving') {
       this.hideHighlight_();
@@ -160,6 +184,12 @@ class BoxGesture extends Gesture {
   }
 
   stopGesture() {
+    if (this.delegatedGesture_) {
+      this.delegatedGesture_.stopGesture();
+      this.delegatedGesture_ = null;
+      return;
+    }
+
     super.stopGesture();
     if ((this.mode_ == 'adding' || this.mode_ == 'resizing' ||
          this.mode_ == 'moving') && this.startCell_) {
@@ -673,5 +703,14 @@ class BoxGesture extends Gesture {
       [ck.variation]: this.getVariation_().id,
       [ck.startCell]: this.startCell_.key,
     };
+  }
+
+  isShapeContent_(cell) {
+    return this.layer_ == ct.stairs &&
+        cell.isKind(ct.stairs, ct.stairs.passage);
+  }
+
+  createDelegatedGesture_(cell) {
+    return new ShapeGesture(this.layer_, this.kind_, this.variation_, 8);
   }
 }
