@@ -303,6 +303,7 @@ class Cell {
   }
 
   populateElementFromContent_(element, layer, content, isHighlight) {
+    if (element) element.className = '';
     const kind = layer.children[content[ck.kind]];
     const variation = kind.children[content[ck.variation]];
     this.modifyElementClasses_(layer, content, element, 'add');
@@ -533,20 +534,7 @@ class Cell {
 
   updateLayerElementsToCurrentContent_(layer, isHighlight) {
     const content = this.getLayerContent(layer);
-    const element = this.elements_.get(layer);
-    if (!element) {
-      this.createElementsFromContent_(layer, content, isHighlight);
-    } else {
-      if (this.contentShouldHaveElement_(content)) {
-        this.getLayerElements_(layer).forEach(element => {
-          element.className = '';
-          this.populateElementFromContent_(
-              element, layer, content, isHighlight);
-        });
-      } else {
-        this.removeElements(layer, isHighlight);
-      }
-    }
+    this.updateElements_(layer, null, content, isHighlight);
   }
 
   updateAllElementsToCurrentContent() {
@@ -618,6 +606,7 @@ class Cell {
     const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
     let baseOffsetRight = this.offsetRight - this.tile.right;
     let baseOffsetBottom = this.offsetBottom - this.tile.bottom;
+    const tilesToRefresh = [];
     this.getReplicas_(layer, content).forEach(replica => {
       if (this.replicatedElements_.has(layer) &&
           this.replicatedElements_.get(layer).has(replica.tile) &&
@@ -625,15 +614,7 @@ class Cell {
         // This element is a replica.
         baseOffsetRight += replica.offsetRight;
         baseOffsetBottom += replica.offsetBottom;
-        if (!isHighlight) {
-          replica.tile.invalidate();
-        } else {
-          if (isHighlight == 'showHighlight') {
-            replica.tile.showHighlight();
-          } else {
-            replica.tile.hideHighlight();
-          }
-        }
+        tilesToRefresh.push(replica.tile);
       }
     });
     element.style.right =
@@ -651,6 +632,17 @@ class Cell {
       element.style.backgroundPosition =
           `${backgroundOffsetLeft}px ${backgroundOffsetTop}px`;
     }
+    tilesToRefresh.forEach(tile => {
+      if (!isHighlight) {
+        tile.invalidate();
+      } else {
+        if (isHighlight == 'showHighlight') {
+          tile.showHighlight();
+        } else {
+          tile.hideHighlight();
+        }
+      }
+    });
   }
 
   addNeighborKey(direction, dividerKey, cellKeys) {
