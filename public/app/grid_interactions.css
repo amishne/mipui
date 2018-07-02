@@ -40,9 +40,16 @@ here. */
 
 .text-hover-widget, .image-hover-widget {
   position: absolute;
-  cursor: text;
   z-index: 10;
   margin: 2px 3px 3px 2px;
+}
+
+.text-hover-widget {
+  cursor: text;
+}
+
+.image-hover-widget {
+  pointer-events: none;
 }
 
 .fixed-image-hover-widget {
