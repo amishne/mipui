@@ -244,6 +244,7 @@ class Cell {
           replica.offsetRight += tile.width;
         }
       } else if (replica.tile.x < this.tile.x) {
+        replica.offsetRight += replica.tile.width - this.tile.width;
         for (let x = replica.tile.x; x < this.tile.x; x++) {
           const tile = state.theMap.tiles.get(x + ',' + this.tile.y);
           replica.offsetLeft += tile.width;
@@ -258,6 +259,7 @@ class Cell {
           replica.offsetBottom += tile.height;
         }
       } else if (replica.tile.y < this.tile.y) {
+        replica.offsetBottom += replica.tile.height - this.tile.height;
         for (let y = replica.tile.y; y < this.tile.y; y++) {
           const tile = state.theMap.tiles.get(this.tile.x + ',' + y);
           replica.offsetTop += tile.height;
