@@ -72,6 +72,7 @@
 }
 
 .grid-layer {
+  position: absolute;
   display: inline-block;
   z-index: 10;
   pointer-events: auto;
@@ -254,12 +255,6 @@
 .horizontal-cell {
   width: 25px;
   height: 7px;
-}
-
-.selected-cell {
-  background-color: rgba(223, 219, 229, 0.25);
-  z-index: 2;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%239C92AC' fill-opacity='0.15'%3E%3Cpath fill-rule='evenodd' d='M0 0h4v4H0V0zm4 4h4v4H4V4z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .shape-cell-primary, .shape-cell-horizontal, .shape-cell-vertical {

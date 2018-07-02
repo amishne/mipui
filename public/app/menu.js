@@ -379,6 +379,13 @@ class Menu {
       // This isn't an interactive item.
       return;
     }
+    if ((submenuItem.name == 'Select Region' &&
+        state.gesture instanceof RegionSelectGesture) ||
+        (submenuItem.name == 'Magic Wand Selection' &&
+        state.gesture instanceof MagicWandSelectGesture)) {
+      // Do not reselect select gestures if they are already selected.
+      return;
+    }
     if (submenuItem.type == 'tool') {
       state.gesture = null;
       submenuItem.parent.submenu.allItems.forEach(otherSubmenuItem => {
