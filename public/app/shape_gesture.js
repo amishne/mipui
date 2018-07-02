@@ -87,10 +87,15 @@ class ShapeGesture extends Gesture {
     });
   }
 
+  calcFinalCellValue_(cell, connections) {
+    return connections;
+  }
+
   calcNewContent_() {
     const result = new Map();
     this.cellMasks_.forEach((val, cell) => {
-      if (val == null) {
+      let finalValue = this.calcFinalCellValue_(cell, val);
+      if (finalValue == null) {
         result.set(cell, null);
         return;
       }
@@ -99,27 +104,26 @@ class ShapeGesture extends Gesture {
         result.set(cell, {
           [ck.kind]: this.kind_.id,
           [ck.variation]: this.variation_.id,
-          [ck.connections]: val,
+          [ck.connections]: finalValue,
         });
         return;
       }
       const existingContent = cell.getLayerContent(this.layer_);
       if (existingContent.hasOwnProperty(ck.connections)) {
         const existingConnections = existingContent[ck.connections];
-        result.set(cell, {
-          [ck.kind]: existingContent[ck.kind],
-          [ck.variation]: existingContent[ck.variation],
-          [ck.connections]:
-              this.mode_ == 'adding' ?
-                existingConnections | val : existingConnections & ~val,
-        });
-      } else {
-        result.set(cell, {
-          [ck.kind]: this.kind_.id,
-          [ck.variation]: this.variation_.id,
-          [ck.connections]: val,
-        });
+        const connections = this.mode_ == 'adding' ?
+          existingConnections | val : existingConnections & ~val;
+        finalValue =  this.calcFinalCellValue_(cell, connections);
+        if (finalValue == null) {
+          result.set(cell, null);
+          return;
+        }
       }
+      result.set(cell, {
+        [ck.kind]: this.kind_.id,
+        [ck.variation]: this.variation_.id,
+        [ck.connections]: finalValue,
+      });
     });
     return result;
   }
@@ -239,6 +243,7 @@ class ShapeGesture extends Gesture {
         newMask = existingMask | mask;
       }
       this.cellMasks_.set(cell, newMask);
+      return newMask;
     }
     return mask;
   }

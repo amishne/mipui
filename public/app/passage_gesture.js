@@ -62,6 +62,13 @@ class PassageGesture extends ShapeGesture {
     this.populateCellMask_(cell, this.mode_ == 'removing' ? null : centerMask);
   }
 
+  calcFinalCellValue_(cell, connections) {
+    if (cell.role == 'corner' && connections == 0) {
+      return null;
+    }
+    return super.calcFinalCellValue_(cell, connections);
+  }
+
   populateCellMask_(cell, mask) {
     if (cell && cell.hasLayerContent(this.layer_) &&
         !cell.isKind(this.layer_, this.kind_)) {
