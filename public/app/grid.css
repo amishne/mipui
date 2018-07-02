@@ -21,6 +21,7 @@
 
 .tile-map * {
   box-sizing: border-box;
+  user-select: none;
 }
 
 .tile-map {
