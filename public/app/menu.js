@@ -1795,6 +1795,7 @@ class Menu {
             callback: () => {
               const inputElement = document.createElement('input');
               inputElement.type = 'file';
+              inputElement.accept = '.json,.mipui';
               inputElement.addEventListener('change', () => {
                 const files = inputElement.files;
                 if (files && files.length > 0) {
