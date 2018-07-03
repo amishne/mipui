@@ -255,7 +255,7 @@ class State {
   load(pstate) {
     this.pstate_ = pstate;
     createTheMapAndUpdateElements();
-    refreshMapResizeButtonLocations();
+    updateMapTransform(true);
     this.menu.descChanged();
     this.reloadTheme();
   }
