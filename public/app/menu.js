@@ -57,7 +57,7 @@ class Menu {
   }
 
   descChanged() {
-    document.querySelector('#mapTitle textarea').value =
+    document.querySelector('#mapTitle input').value =
         state.getProperty(pk.title);
     document.querySelector('#mapLongDesc textarea').value =
         state.getProperty(pk.longDescription);
@@ -223,7 +223,8 @@ class Menu {
       case 'input':
       case 'textarea':
         const textarea = document.createElement(
-            item.presentation == 'textarea' ? 'textarea' : 'input');
+            item.presentation == 'textarea' && item.rows > 1 ?
+              'textarea' : 'input');
         // To prevent keydowns here from acting as shortcuts:
         textarea.onkeydown = e => e.stopPropagation();
         if (item.presentation == 'textarea') {
@@ -1780,10 +1781,11 @@ class Menu {
             materialIcon: 'save',
             enabledInReadonlyMode: true,
             callback: () => {
+              const filename = sanitizeFilename(state.getName().toLowerCase());
               const blob =
                   new Blob([JSON.stringify(state.pstate_)],
                     {type: 'application/json'});
-              saveAs(blob, `mipui_${state.getMid() || 'unnamed'}.json`);
+              saveAs(blob, `${filename}.mipui`);
             },
           },
           {

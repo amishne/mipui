@@ -20,3 +20,13 @@ function clamp(min, num, max) {
 function debug(s) {
   if (!state.isProd) console.log(s);
 }
+
+function sanitizeFilename(input) {
+  const replacement = '_';
+  return input
+      .replace(/[/?<>\\:*|":]/g, replacement)
+      .replace(/[\x00-\x1f\x80-\x9f]/g, replacement)
+      .replace(/^\.+$/, replacement)
+      .replace(/^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i, replacement)
+      .replace(/[. ]+$/, replacement);
+}

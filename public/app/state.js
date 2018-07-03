@@ -252,6 +252,21 @@ class State {
     return this.secret_;
   }
 
+  getName() {
+    const title = this.getProperty(pk.title);
+    return title == this.defaultProperties_[pk.title] ?
+      (this.mid_ || 'unnamed') : title;
+  }
+
+  nameChanged() {
+    document.title = 'Mipui - ' + this.getProperty(pk.title);
+  }
+
+  sanitizeTitle_(title) {
+    if (!title) return title;
+    return title;
+  }
+
   load(pstate) {
     this.pstate_ = pstate;
     createTheMapAndUpdateElements();

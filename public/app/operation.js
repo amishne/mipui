@@ -66,12 +66,15 @@ class Operation {
   }
 
   markComplete() {
+    let titleNeedsUpdate = false;
     let descNeedsUpdate = false;
     let reloadTheme = false;
     if (this.data && this.data.p) {
       Object.keys(this.data.p).forEach(property => {
         switch (property) {
           case pk.title:
+            titleNeedsUpdate = true;
+            // Intentional fallthrough
           case pk.longDescription:
             descNeedsUpdate = true;
             break;
@@ -81,6 +84,9 @@ class Operation {
             break;
         }
       });
+    }
+    if (titleNeedsUpdate) {
+      state.nameChanged();
     }
     if (descNeedsUpdate) {
       state.menu.descChanged();
