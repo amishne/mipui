@@ -124,7 +124,7 @@ class GridImager {
 
   removeCssFile(path) {
     const indexOfCssFileToRemove =
-        this.cssFiles_.findIndex(cssFile => cssFile.path == path);
+        this.cssFiles_.findIndex(cssFile => cssFile.path.endsWith(path));
     if (indexOfCssFileToRemove >= 1) {
       this.cssFiles_.splice(indexOfCssFileToRemove, 1);
     }
