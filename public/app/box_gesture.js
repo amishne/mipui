@@ -711,6 +711,12 @@ class BoxGesture extends Gesture {
   }
 
   createDelegatedGesture_(cell) {
-    return new ShapeGesture(this.layer_, this.kind_, this.variation_, 8);
+    const content = cell.getLayerContent(this.layer_);
+    const kind = this.layer_.children[content[ck.kind]];
+    const variation = kind.children[content[ck.variation]];
+    if (this.layer_ == ct.stairs && kind == ct.stairs.passage) {
+      return new PassageGesture(this.layer_, kind, variation, 8);
+    }
+    return new ShapeGesture(this.layer_, kind, variation, 8);
   }
 }
