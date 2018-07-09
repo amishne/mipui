@@ -122,7 +122,9 @@ class BoxGesture extends Gesture {
     switch (this.mode_) {
       case 'adding':
         this.anchorCell_ = this.targetCell_;
-        this.showHighlight_();
+        if (this.isCellEligible_(this.hoveredCell_)) {
+          this.showHighlight_();
+        }
         break;
       case 'removing':
         this.apply_();
@@ -195,6 +197,9 @@ class BoxGesture extends Gesture {
          this.mode_ == 'moving') && this.startCell_) {
       this.stopHover();
       if (this.mode_ == 'adding') {
+        if (!this.isCellEligible_(this.hoveredCell_)) {
+          return;
+        }
         if (this.isEditable_()) {
           this.startEditing_();
         } else {
