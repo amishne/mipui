@@ -49,7 +49,7 @@ class PassageGesture extends ShapeGesture {
       this.populateCellMask_(topLeft, 32);
     }
     if (cell.role == 'corner' && this.mode_ == 'adding') {
-      centerMask = 255;
+      centerMask = 16;
       this.populateCellMask_(top, 2 | 4 | 8);
       this.populateCellMask_(topRight, 4 | 64 | 8);
       this.populateCellMask_(right, 1 | 4 | 8);
