@@ -218,7 +218,7 @@ function createPassageSvgContent(role, connections) {
     a(v(2, 2, 3));
   }
   if ((c & 12) == 12 && (c & 64) == 0) {
-    a(h(0, 1, 1));
+    a(h(0, 2, 1));
     a(v(1, 2, 3));
   }
   if ((c & 9) == 9 && (c & 128) == 0) {
