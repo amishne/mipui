@@ -82,3 +82,25 @@
 .text-cell {
   text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
 }
+
+.pit-cell {
+  stroke: #bfbfbf;
+  fill: transparent;
+  margin: 0;
+}
+
+.pit-top, .pit-left {
+  fill: rgb(210, 210, 210);
+}
+
+.pit-right, .pit-bottom {
+  fill: white;
+}
+
+.passage-cell-dashed-over-floor {
+  stroke: rgb(210, 210, 210);
+}
+
+.passage-cell-dashed-over-wall {
+  stroke: white;
+}

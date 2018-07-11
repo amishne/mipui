@@ -122,3 +122,25 @@
 .stairs-cell {
   margin: 0;
 }
+
+.pit-cell {
+  stroke: #aaaaaa;
+  stroke-width: 2;
+  background-color: transparent;
+}
+
+.pit-top, .pit-left {
+  fill: #d2d1d1;
+}
+
+.pit-right, .pit-bottom {
+  fill: white;
+}
+
+.passage-cell {
+  stroke-width: 3;
+}
+
+.passage-cell-dashed-over-floor, .passage-cell-dashed-over-wall {
+  stroke: black;
+}

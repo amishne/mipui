@@ -190,10 +190,24 @@
   text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
 }
 
-.passage-cell-over-floor {
+.pit-cell {
+  stroke: #61a4cc;
+  background-color: transparent;
+  margin: 0;
+}
+
+.pit-top, .pit-left {
+  fill: rgb(149, 196, 222);
+}
+
+.pit-right, .pit-bottom {
+  fill: #e5f2f9;
+}
+
+.passage-cell-dashed-over-floor {
   stroke: #4592be;
 }
 
-.passage-cell-over-wall {
+.passage-cell-dashed-over-wall {
   stroke: white;
 }

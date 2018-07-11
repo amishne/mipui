@@ -138,3 +138,24 @@
 .gmoverlay-square-removing {
   opacity: 0.2;
 }
+
+.pit-cell {
+  stroke: #545f7a;
+  background-color: transparent;
+}
+
+.pit-top, .pit-left {
+  fill: rgb(55, 67, 101);
+}
+
+.pit-right, .pit-bottom {
+  fill: #757fa0;
+}
+
+.passage-cell-dashed-over-floor {
+  stroke: #707483;
+}
+
+.passage-cell-dashed-over-wall {
+  stroke: #9e9e9e;
+}

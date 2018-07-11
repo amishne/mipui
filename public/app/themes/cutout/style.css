@@ -70,3 +70,23 @@
 .text-cell {
   text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
 }
+
+.pit-cell {
+  stroke: #becccb;
+}
+
+.pit-top, .pit-left {
+  fill: rgb(210, 210, 210);
+}
+
+.pit-right, .pit-bottom {
+  fill: rgb(249, 249, 249);
+}
+
+.passage-cell-dashed-over-floor {
+  stroke: rgb(189, 204, 203);
+}
+
+.passage-cell-dashed-over-wall {
+  stroke: #8b8b8b;
+}
