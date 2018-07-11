@@ -189,3 +189,11 @@
 .text-cell {
   text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
 }
+
+.passage-cell-over-floor {
+  stroke: #4592be;
+}
+
+.passage-cell-over-wall {
+  stroke: white;
+}

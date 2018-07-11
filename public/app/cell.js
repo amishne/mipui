@@ -504,6 +504,7 @@ class Cell {
     element.parentElement.removeChild(element);
     this.elements_.delete(layer);
     this.clearReplicas_(layer, isHighlight);
+    this.modifyAffectedElementClasses_(layer, 'remove');
   }
 
   contentShouldHaveElement_(content) {
@@ -702,8 +703,26 @@ class Cell {
       if (content.hasOwnProperty(ck.connections)) {
         renamed = renamed.replace(/_CONNECTIONS_/g, content[ck.connections]);
       }
+      if (className.includes('_OVER-WALL_')) {
+        renamed = renamed.replace(/_OVER-WALL_/g,
+            this.hasLayerContent(ct.walls) ? 'over-wall' : 'over-floor');
+      }
       element.classList[addOrRemove](renamed);
     });
+    this.modifyAffectedElementClasses_(layer, addOrRemove);
+  }
+
+  modifyAffectedElementClasses_(layer, addOrRemove) {
+    if (layer == ct.walls) {
+      // Need to fix any existing _OVER-WALL_ element; currently they can only
+      // exist in the stairs layer.
+      const replaceWhat = addOrRemove == 'add' ? /over-floor/g : /over-wall/g;
+      const replaceWith = addOrRemove == 'add' ? 'over-wall' : 'over-floor';
+      this.getLayerElements_(ct.stairs).forEach(stairsElement => {
+        stairsElement.className =
+            stairsElement.className.replace(replaceWhat, replaceWith);
+      });
+    }
   }
 
   showHighlight(layer, content) {

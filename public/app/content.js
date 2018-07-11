@@ -168,6 +168,7 @@ const ct = {
           'passage-cell',
           'passage-cell-_ADDING-REMOVING_',
           'passage-cell-_ROLE_',
+          'passage-cell-_OVER-WALL_',
         ],
       },
     },

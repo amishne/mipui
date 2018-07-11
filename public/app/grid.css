@@ -207,7 +207,6 @@
 .passage-cell {
   position: absolute;
   fill: none;
-  stroke: darkgoldenrod;
   stroke-dasharray: 3;
   stroke-width: 2;
 }
@@ -218,6 +217,14 @@
 
 .passage-cell-removing {
   opacity: 0.5;
+}
+
+.passage-cell-over-floor {
+  stroke: rgb(222, 184, 135);
+}
+
+.passage-cell-over-wall {
+  stroke: rgb(245, 245, 220);
 }
 
 .stairs-cell {
