@@ -163,14 +163,13 @@ const ct = {
       generic: {classNames: ['stairs-cell-spiral']},
     },
     passage: {
-      dashed: {
-        classNames: [
-          'passage-cell',
-          'passage-cell-_ADDING-REMOVING_',
-          'passage-cell-_ROLE_',
-          'passage-cell-_OVER-WALL_',
-        ],
-      },
+      classNames: [
+        'passage-cell',
+        'passage-cell-_ADDING-REMOVING_',
+        'passage-cell-_ROLE_',
+      ],
+      dashed: {classNames: ['passage-cell-dashed-_OVER-WALL_']},
+      hidden: {classNames: ['passage-cell-hidden']},
     },
   },
   gmoverlay: {

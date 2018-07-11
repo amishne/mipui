@@ -1631,6 +1631,22 @@ class Menu {
               },
             },
             {
+              name: 'Hidden Passage',
+              type: 'tool',
+              presentation: 'icon_map',
+              iconMapRect: {
+                x: 484,
+                y: 260,
+                size: 30,
+              },
+              enabledInReadonlyMode: false,
+              isSelected: false,
+              callback: () => {
+                state.gesture = new PassageGesture(
+                    ct.stairs, ct.stairs.passage, ct.stairs.passage.hidden, 8);
+              },
+            },
+            {
               name: 'Hide text & secret doors',
               type: 'button',
               presentation: 'icon',

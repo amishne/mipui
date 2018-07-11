@@ -219,12 +219,21 @@
   opacity: 0.5;
 }
 
-.passage-cell-over-floor {
+.passage-cell-dashed-over-floor {
   stroke: rgb(222, 184, 135);
 }
 
-.passage-cell-over-wall {
+.passage-cell-dashed-over-wall {
   stroke: rgb(245, 245, 220);
+}
+
+.passage-cell-hidden {
+  display: none;
+  stroke: mediumvioletred
+}
+
+.editor-view .passage-cell-hidden {
+  display: inherit;
 }
 
 .stairs-cell {
