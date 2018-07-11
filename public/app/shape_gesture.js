@@ -42,7 +42,7 @@ class ShapeGesture extends Gesture {
 
   continueGesture(cell) {
     if (this.delegatedGesture_) {
-      this.delegatedGesture_.continueGesture();
+      this.delegatedGesture_.continueGesture(cell);
       return;
     }
     if (this.mode_ == 'removing' && !cell.hasLayerContent(this.layer_)) {

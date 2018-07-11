@@ -148,7 +148,7 @@ class BoxGesture extends Gesture {
     }
 
     if (this.delegatedGesture_) {
-      this.delegatedGesture_.continueGesture();
+      this.delegatedGesture_.continueGesture(cell);
       return;
     }
 
