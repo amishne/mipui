@@ -117,7 +117,10 @@ class SightGesture extends Gesture {
     if (!cell) return false;
     if (cell.isKind(ct.separators, ct.separators.window)) return false;
     if (cell.isKind(ct.separators, ct.separators.curtain)) return true;
-    if (cell.isKind(ct.stairs, ct.stairs.passage)) return false;
+    if (this.hoveredCell_.hasLayerContent(ct.walls)) {
+      // If the hovered cell is a wall, only passage cells are transparent.
+      return !cell.isKind(ct.stairs, ct.stairs.passage);
+    }
     if (this.hoveredCell_.isKind(ct.floors, ct.floors.pit) &&
         !cell.isKind(ct.floors, ct.floors.pit)) {
       // Non-pit cells are opaque when inside a pit.
