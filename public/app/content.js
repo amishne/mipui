@@ -131,7 +131,7 @@ const ct = {
       white: {classNames: ['shape-white']},
     },
   },
-  stairs: {
+  elevation: {
     horizontal: {
       classNames: [
         'stairs-cell',

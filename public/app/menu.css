@@ -307,12 +307,12 @@
   top: 4px;
 }
 
-.menu-stairs .floor-cell {
+.menu-elevation .floor-cell {
   position: relative;
   top: 2px;
 }
 
-.menu-stairs .stairs-cell {
+.menu-elevation .stairs-cell {
   position: absolute;
   width: 28px;
   height: 28px;

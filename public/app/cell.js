@@ -323,7 +323,7 @@ class Cell {
     if (!element ||
         (layer != ct.shapes &&
          kind != ct.floors.pit &&
-         kind != ct.stairs.passage)) {
+         kind != ct.elevation.passage)) {
       return;
     }
     element.innerHTML = '';
@@ -332,7 +332,7 @@ class Cell {
       svgContent = createShapeSvgContent(kind, this.role, connections);
     } else if (kind == ct.floors.pit) {
       svgContent = createPitSvgContent(this.role, connections);
-    } else if (kind == ct.stairs.passage) {
+    } else if (kind == ct.elevation.passage) {
       svgContent = createPassageSvgContent(this.role, connections);
     }
     if (svgContent) {
@@ -715,12 +715,12 @@ class Cell {
   modifyAffectedElementClasses_(layer, addOrRemove) {
     if (layer == ct.walls) {
       // Need to fix any existing _OVER-WALL_ element; currently they can only
-      // exist in the stairs layer.
+      // exist in the elevation layer.
       const replaceWhat = addOrRemove == 'add' ? /over-floor/g : /over-wall/g;
       const replaceWith = addOrRemove == 'add' ? 'over-wall' : 'over-floor';
-      this.getLayerElements_(ct.stairs).forEach(stairsElement => {
-        stairsElement.className =
-            stairsElement.className.replace(replaceWhat, replaceWith);
+      this.getLayerElements_(ct.elevation).forEach(elevationElement => {
+        elevationElement.className =
+            elevationElement.className.replace(replaceWhat, replaceWith);
       });
     }
   }

@@ -711,15 +711,15 @@ class BoxGesture extends Gesture {
   }
 
   isShapeContent_(cell) {
-    return this.layer_ == ct.stairs &&
-        cell.isKind(ct.stairs, ct.stairs.passage);
+    return this.layer_ == ct.elevation &&
+        cell.isKind(ct.elevation, ct.elevation.passage);
   }
 
   createDelegatedGesture_(cell) {
     const content = cell.getLayerContent(this.layer_);
     const kind = this.layer_.children[content[ck.kind]];
     const variation = kind.children[content[ck.variation]];
-    if (this.layer_ == ct.stairs && kind == ct.stairs.passage) {
+    if (this.layer_ == ct.elevation && kind == ct.elevation.passage) {
       return new PassageGesture(this.layer_, kind, variation, 8);
     }
     return new ShapeGesture(this.layer_, kind, variation, 8);

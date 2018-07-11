@@ -249,10 +249,10 @@ class ShapeGesture extends Gesture {
   }
 
   isBoxContent_(cell) {
-    return this.layer_ == ct.stairs && (
-      cell.isKind(ct.stairs, ct.stairs.horizontal) ||
-      cell.isKind(ct.stairs, ct.stairs.vertical) ||
-      cell.isKind(ct.stairs, ct.stairs.spiral));
+    return this.layer_ == ct.elevation && (
+      cell.isKind(ct.elevation, ct.elevation.horizontal) ||
+      cell.isKind(ct.elevation, ct.elevation.vertical) ||
+      cell.isKind(ct.elevation, ct.elevation.spiral));
   }
 
   createDelegatedGesture_(cell) {

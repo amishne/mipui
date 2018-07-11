@@ -516,11 +516,11 @@ class Menu {
       name,
       type: 'tool',
       presentation: 'cells',
-      classNames: ['menu-stairs'],
+      classNames: ['menu-elevation'],
       tip: 'Drag when placing to resize.',
       isSelected,
       callback: () => {
-        state.gesture = new StaticBoxGesture(ct.stairs, kind, variation);
+        state.gesture = new StaticBoxGesture(ct.elevation, kind, variation);
       },
       cells: [
         {
@@ -1438,43 +1438,43 @@ class Menu {
         name: 'Ele&vation',
         presentation: 'selected child',
         tip: 'Drag when placing to stretch across multiple cells.',
-        classNames: ['menu-stairs'],
+        classNames: ['menu-elevation'],
         submenu: {
           items: [
             this.createStairsTool_(
                 'Horizontal stairs',
-                ct.stairs.horizontal,
-                ct.stairs.horizontal.generic,
+                ct.elevation.horizontal,
+                ct.elevation.horizontal.generic,
                 true),
             this.createStairsTool_(
                 'Ascending left',
-                ct.stairs.horizontal,
-                ct.stairs.horizontal.ascendingLeft,
+                ct.elevation.horizontal,
+                ct.elevation.horizontal.ascendingLeft,
                 false),
             this.createStairsTool_(
                 'Ascending right',
-                ct.stairs.horizontal,
-                ct.stairs.horizontal.ascendingRight,
+                ct.elevation.horizontal,
+                ct.elevation.horizontal.ascendingRight,
                 false),
             this.createStairsTool_(
                 'Vertical stairs',
-                ct.stairs.vertical,
-                ct.stairs.vertical.generic,
+                ct.elevation.vertical,
+                ct.elevation.vertical.generic,
                 true),
             this.createStairsTool_(
                 'Ascending top',
-                ct.stairs.vertical,
-                ct.stairs.vertical.ascendingTop,
+                ct.elevation.vertical,
+                ct.elevation.vertical.ascendingTop,
                 false),
             this.createStairsTool_(
                 'Ascending bottom',
-                ct.stairs.vertical,
-                ct.stairs.vertical.ascendingBottom,
+                ct.elevation.vertical,
+                ct.elevation.vertical.ascendingBottom,
                 false),
             this.createStairsTool_(
                 'Spiral stairs',
-                ct.stairs.spiral,
-                ct.stairs.spiral.generic,
+                ct.elevation.spiral,
+                ct.elevation.spiral.generic,
                 false),
             {
               name: 'Pit',
@@ -1505,7 +1505,8 @@ class Menu {
               isSelected: false,
               callback: () => {
                 state.gesture = new PassageGesture(
-                    ct.stairs, ct.stairs.passage, ct.stairs.passage.dashed, 8);
+                    ct.elevation, ct.elevation.passage,
+                    ct.elevation.passage.dashed, 8);
               },
             },
           ],
@@ -1643,7 +1644,8 @@ class Menu {
               isSelected: false,
               callback: () => {
                 state.gesture = new PassageGesture(
-                    ct.stairs, ct.stairs.passage, ct.stairs.passage.hidden, 8);
+                    ct.elevation, ct.elevation.passage,
+                    ct.elevation.passage.hidden, 8);
               },
             },
             {
