@@ -114,11 +114,15 @@ class SightGesture extends Gesture {
   }
 
   isOpaque_(cell) {
-    // A cell is opaque if it's a wall (unless it has a window) or if it's a
-    // curtain.
     if (!cell) return false;
     if (cell.isKind(ct.separators, ct.separators.window)) return false;
     if (cell.isKind(ct.separators, ct.separators.curtain)) return true;
+    if (cell.isKind(ct.stairs, ct.stairs.passage)) return false;
+    if (this.hoveredCell_.isKind(ct.floors, ct.floors.pit) &&
+        !cell.isKind(ct.floors, ct.floors.pit)) {
+      // Non-pit cells are opaque when inside a pit.
+      return true;
+    }
     if (cell.role == 'corner') {
       // Because corners are currently not counted as separators, find out
       // whether a corner is a de-facto separator.
