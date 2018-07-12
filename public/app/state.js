@@ -177,47 +177,50 @@ class State {
   }
 
   reloadTheme() {
-    const newPropertyIndex = this.getProperty(pk.theme);
-    if (this.currentTheme.propertyIndex == newPropertyIndex) return;
-    this.currentTheme =
-        themes.find(theme => theme.propertyIndex == newPropertyIndex);
+    return new Promise((resolve, reject) => {
+      const newPropertyIndex = this.getProperty(pk.theme);
+      if (this.currentTheme.propertyIndex == newPropertyIndex) resolve();
+      this.currentTheme =
+          themes.find(theme => theme.propertyIndex == newPropertyIndex);
 
-    this.appliedThemeElements_.forEach((element, path) => {
-      element.parentNode.removeChild(element);
-      this.tileGridImager.removeCssFile(path);
-    });
-    this.appliedThemeElements_ = new Map();
-    const head = document.getElementsByTagName('head')[0];
-    const gridImagerPromises = [];
-    this.currentTheme.files.forEach((file, index) => {
-      const css = document.createElement('link');
-      css.type = 'text/css';
-      css.rel = 'stylesheet';
-      css.href = file;
-      head.appendChild(css);
-      const gridImagerPromise = new Promise((resolve, reject) => {
-        const addSheet = sheet => {
-          this.tileGridImager.addCssStyleSheet(index + 1, sheet).then(
-              () => { resolve(); }).catch(err => { debug(err); });
-        };
-        if (this.isStylesheetLoaded_(css)) {
-          addSheet(css.sheet);
-        } else {
-          css.onload = () => addSheet(css.sheet);
-        }
+      this.appliedThemeElements_.forEach((element, path) => {
+        element.parentNode.removeChild(element);
+        this.tileGridImager.removeCssFile(path);
       });
-      gridImagerPromises.push(gridImagerPromise);
-      this.appliedThemeElements_.set(file, css);
-    });
-    const menuIconsFromMap =
-        Array.from(document.getElementsByClassName('menu-icon-from-map'));
-    menuIconsFromMap.forEach(menuIconFromMap => {
-      menuIconFromMap.style.backgroundImage =
-          `url("${this.currentTheme.menuIconFile}")`;
-    });
-    Promise.all(gridImagerPromises).then(() => {
-      this.tileGridImager.recalculateStyleString();
-      this.theMap.invalidateTiles();
+      this.appliedThemeElements_ = new Map();
+      const head = document.getElementsByTagName('head')[0];
+      const gridImagerPromises = [];
+      this.currentTheme.files.forEach((file, index) => {
+        const css = document.createElement('link');
+        css.type = 'text/css';
+        css.rel = 'stylesheet';
+        css.href = file;
+        head.appendChild(css);
+        const gridImagerPromise = new Promise((innerResolve, innerReject) => {
+          const addSheet = sheet => {
+            this.tileGridImager.addCssStyleSheet(index + 1, sheet).then(
+                () => { innerResolve(); }).catch(err => { debug(err); });
+          };
+          if (this.isStylesheetLoaded_(css)) {
+            addSheet(css.sheet);
+          } else {
+            css.onload = () => addSheet(css.sheet);
+          }
+        });
+        gridImagerPromises.push(gridImagerPromise);
+        this.appliedThemeElements_.set(file, css);
+      });
+      const menuIconsFromMap =
+          Array.from(document.getElementsByClassName('menu-icon-from-map'));
+      menuIconsFromMap.forEach(menuIconFromMap => {
+        menuIconFromMap.style.backgroundImage =
+            `url("${this.currentTheme.menuIconFile}")`;
+      });
+      Promise.all(gridImagerPromises).then(() => {
+        this.tileGridImager.recalculateStyleString();
+        this.theMap.invalidateTiles();
+        resolve();
+      });
     });
   }
 
@@ -252,10 +255,13 @@ class State {
     return this.secret_;
   }
 
-  getName() {
+  getTitle() {
     const title = this.getProperty(pk.title);
-    return title == this.defaultProperties_[pk.title] ?
-      (this.mid_ || 'unnamed') : title;
+    return title == this.defaultProperties_[pk.title] ? '' : title;
+  }
+
+  getTitleOrMid() {
+    return this.getTitle() || this.mid_ || 'unnamed';
   }
 
   nameChanged() {

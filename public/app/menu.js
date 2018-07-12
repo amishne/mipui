@@ -1497,7 +1497,7 @@ class Menu {
               type: 'tool',
               presentation: 'icon_map',
               iconMapRect: {
-                x: 484,
+                x: 548,
                 y: 260,
                 size: 30,
               },
@@ -1636,7 +1636,7 @@ class Menu {
               type: 'tool',
               presentation: 'icon_map',
               iconMapRect: {
-                x: 484,
+                x: 612,
                 y: 260,
                 size: 30,
               },
@@ -1799,7 +1799,8 @@ class Menu {
             materialIcon: 'save',
             enabledInReadonlyMode: true,
             callback: () => {
-              const filename = sanitizeFilename(state.getName().toLowerCase());
+              const filename =
+                  sanitizeFilename(state.getTitleOrMid().toLowerCase());
               const blob =
                   new Blob([JSON.stringify(state.pstate_)],
                     {type: 'application/json'});
@@ -1877,6 +1878,29 @@ class Menu {
             enabledInReadonlyMode: true,
             callback: () => {
               document.getElementById('theMap').classList.add('editor-view');
+            },
+          },
+          {
+            name: 'Theme Images',
+            type: 'button',
+            presentation: 'label',
+            text: 'Themed',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              new Promise(async() => {
+                state.theMap.lockTiles();
+                const currentThemeNum = state.getProperty(pk.theme);
+                for (let i = 0; i < themes.length; i++) {
+                  const theme = themes[i];
+                  state.setProperty(pk.theme, theme.propertyIndex, false);
+                  await state.reloadTheme();
+                  await downloadPng(2, 0, 0, false,
+                      `menu_icons(${theme.name}).png`);
+                }
+                state.setProperty(pk.theme, currentThemeNum, false);
+                await state.reloadTheme();
+                state.theMap.unlockTiles();
+              });
             },
           },
         ],

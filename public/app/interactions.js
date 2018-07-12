@@ -805,7 +805,8 @@ function showExportDialog() {
   };
 }
 
-async function downloadPng(scale, startOffset, endOffset, useCachedTiles) {
+async function downloadPng(
+    scale, startOffset, endOffset, useCachedTiles, name) {
   const gridImager = state.tileGridImager.clone({
     scale,
     cropLeft: startOffset,
@@ -821,5 +822,5 @@ async function downloadPng(scale, startOffset, endOffset, useCachedTiles) {
   const theMapElement = document.getElementById('theMap');
   const blob = await gridImager.node2blob(theMapElement,
       theMapElement.clientWidth, theMapElement.clientHeight);
-  saveAs(blob, 'mipui.png');
+  saveAs(blob, name || state.getTitle() || 'mipui.png');
 }
