@@ -115,6 +115,7 @@
 
 .elevation-layer-container {
   z-index: 3;
+  clip-path: inset(-1px);
 }
 
 .walls-layer-container {
