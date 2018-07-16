@@ -64,6 +64,7 @@
 
 .pit-cell {
   stroke: #bfbfbf;
+  box-shadow: none;
 }
 
 .pit-top, .pit-left {
