@@ -84,6 +84,10 @@
   clip-path: inset(-1px);
 }
 
+.editor-view .mask-layer-container {
+  clip-path: inset(0px);
+}
+
 .gmoverlay-layer-container {
   z-index: 8;
   display: none;
