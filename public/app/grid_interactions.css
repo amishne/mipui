@@ -159,11 +159,11 @@ here. */
 }
 
 .editor-view .hidden-cell-adding {
-  opacity: 0.2;
+  background-image: repeating-linear-gradient(45deg, rgba(102, 51, 153, 0.2), rgba(102, 51, 153, 0.2) 3px, rgba(100, 100, 100, 0.2) 3px, rgba(100, 100, 100, 0.2) 6px);
 }
 
 .editor-view .hidden-cell-removing {
-  opacity: 0.1;
+  background-image: repeating-linear-gradient(45deg, rgba(102, 51, 153, 0.1), rgba(102, 51, 153, 0.1) 3px, rgba(100, 100, 100, 0.1) 3px, rgba(100, 100, 100, 0.1) 6px);
 }
 
 .gmoverlay-square-adding {

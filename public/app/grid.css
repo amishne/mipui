@@ -495,8 +495,8 @@
 
 .editor-view .hidden-cell {
   box-shadow: unset;
-  background-image: repeating-linear-gradient(45deg, rgb(102, 51, 153), rgb(102, 51, 153) 3px, rgb(100, 100, 100) 3px, rgb(100, 100, 100) 6px);
-  opacity: 0.4;
+  background-image: repeating-linear-gradient(45deg, rgba(102, 51, 153, 0.4), rgba(102, 51, 153, 0.4) 3px, rgba(100, 100, 100, 0.4) 3px, rgba(100, 100, 100, 0.4) 6px);
+  background-color: transparent;
 }
 
 .hidden-secret-door-cell {
