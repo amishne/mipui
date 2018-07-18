@@ -28,6 +28,8 @@ class WallGesture extends Gesture {
       [ck.kind]: ct.walls.smooth.id,
       [ck.variation]: ct.walls.smooth.square.id,
     };
+    
+    this.recordOperationCompletion = true;
   }
 
   isWall_(cell, includingClipped) {
@@ -216,7 +218,9 @@ class WallGesture extends Gesture {
 
   stopGesture() {
     super.stopGesture();
-    state.opCenter.recordOperationComplete();
+    if (this.recordOperationCompletion) {
+      state.opCenter.recordOperationComplete();
+    }
   }
 
   apply_() {

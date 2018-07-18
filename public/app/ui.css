@@ -226,11 +226,19 @@ modal-dialog-anchorbox-line {
   background-color: greenyellow;
 }
 
-.export-group {
+.menu-radio-group {
   background: rgba(0, 0, 0, 0.5);
   padding: 16px;
 }
 
-.export-details {
+.menu-radio-details {
   margin-left: 32px;
+}
+
+.menu-radio-details a {
+  color: cyan;
+}
+
+.menu-radio-details a:visited {
+  color: darkseagreen;
 }

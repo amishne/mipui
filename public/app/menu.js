@@ -1903,6 +1903,16 @@ class Menu {
               });
             },
           },
+          {
+            name: 'Import Map',
+            type: 'button',
+            presentation: 'icon',
+            materialIcon: 'open_in_browser',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              showImportDialog();
+            },
+          },
         ],
       },
     };
