@@ -851,7 +851,7 @@ function showImportDialog() {
     container.appendChild(label);
   };
 
-  addRadioButton('donjon', 'Import a .tsv file exported by ' +
+  addRadioButton('donjon', 'Import a TSV file exported by ' +
       '<a href="https://donjon.bin.sh/fantasy/dungeon/index.cgi" ' +
       'target="_blank">donjon Random Dungeon Generator</a>.');
 
@@ -890,7 +890,8 @@ function importDonjonMap() {
       if (files && files.length > 0) {
         const fr = new FileReader();
         fr.addEventListener('load', async() => {
-          const numOpsToUndo = await applyDonjonFile(fr.result);
+          const numOpsToUndo =
+              await applyDonjonFile(inputElement.value, fr.result);
           state.opCenter.recordOperationComplete();
           for (let i = 0; i < numOpsToUndo; i++) {
             state.opCenter.undo();
@@ -904,7 +905,12 @@ function importDonjonMap() {
   });
 }
 
-async function applyDonjonFile(input) {
+async function applyDonjonFile(filename, input) {
+  // Try to guess the name.
+  const match = filename.match(/([^/\\]*)\(tsv\).txt/);
+  if (match) {
+    state.setProperty(pk.title, match[1], true);
+  }
   // donjon files are are one tab-separated row per map row. Values are:
   // "": Wall.
   // "F": Floor.
