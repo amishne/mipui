@@ -28,8 +28,8 @@ class WallGesture extends Gesture {
       [ck.kind]: ct.walls.smooth.id,
       [ck.variation]: ct.walls.smooth.square.id,
     };
-    
-    this.recordOperationCompletion = true;
+
+    this.isBatched = false;
   }
 
   isWall_(cell, includingClipped) {
@@ -218,7 +218,7 @@ class WallGesture extends Gesture {
 
   stopGesture() {
     super.stopGesture();
-    if (this.recordOperationCompletion) {
+    if (!this.isBatched) {
       state.opCenter.recordOperationComplete();
     }
   }
@@ -237,10 +237,12 @@ class WallGesture extends Gesture {
   }
 
   showHighlight_(cell) {
+    if (this.isBatched) return;
     cell.showHighlight(ct.walls, this.createContent_());
   }
 
   hideHighlight_(cell) {
+    if (this.isBatched) return;
     cell.hideHighlight(ct.walls);
   }
 

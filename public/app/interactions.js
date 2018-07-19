@@ -888,9 +888,6 @@ function importDonjonMap() {
     inputElement.type = 'file';
     inputElement.accept = '.tsv,.txt';
     inputElement.addEventListener('change', () => {
-      if (!inputElement.files) {
-        accept();
-      }
       const files = inputElement.files;
       if (files && files.length > 0) {
         const fr = new FileReader();
@@ -911,7 +908,7 @@ function importDonjonMap() {
 }
 
 async function applyDonjonFile(filename, input) {
-  // Try to guess the name.
+  // Try to guess the map title from the file name.
   const match = filename.match(/([^/\\]*)\(tsv\).txt/);
   if (match) {
     state.setProperty(pk.title, match[1], true);
@@ -988,17 +985,17 @@ async function applyDonjonFile(filename, input) {
         const topCell = cell.getNeighbor('top', false);
         if (topCell &&
             topCell.isKind(ct.elevation, ct.elevation.spiral)) {
-          kind = ct.elevation.horizontal;
-          variation = value == 'SDD' || value == 'SU' ?
-            kind.ascendingLeft : kind.ascendingRight;
-          startCell = topCell;
-        }
-        const leftCell = cell.getNeighbor('top', false);
-        if (leftCell &&
-            leftCell.isKind(ct.elevation, ct.elevation.spiral)) {
           kind = ct.elevation.vertical;
           variation = value == 'SDD' || value == 'SU' ?
             kind.ascendingTop : kind.ascendingBottom;
+          startCell = topCell;
+        }
+        const leftCell = cell.getNeighbor('left', false);
+        if (leftCell &&
+            leftCell.isKind(ct.elevation, ct.elevation.spiral)) {
+          kind = ct.elevation.horizontal;
+          variation = value == 'SDD' || value == 'SU' ?
+            kind.ascendingLeft : kind.ascendingRight;
           startCell = leftCell;
         }
         if (startCell) {
