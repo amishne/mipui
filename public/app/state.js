@@ -227,7 +227,7 @@ class State {
   setMid(mid) {
     this.mid_ = mid;
     let newUrl = 'index.html?mid=' + encodeURIComponent(this.mid_);
-    if (this.tilingCachingEnabled) newUrl += '&tc=yes';
+    if (!this.tilingCachingEnabled) newUrl += '&tc=no';
     window.history.replaceState(null, '', newUrl);
   }
 
@@ -242,7 +242,7 @@ class State {
         .catch(error => { setStatus(Status.AUTH_ERROR); });
     let newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
         `&secret=${encodeURIComponent(secret)}`;
-    if (this.tilingCachingEnabled) newUrl += '&tc=yes';
+    if (!this.tilingCachingEnabled) newUrl += '&tc=no';
     window.history.replaceState(null, '', newUrl);
     document.getElementById('theMap').classList.add('editor-view');
   }
