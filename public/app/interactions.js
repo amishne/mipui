@@ -869,6 +869,7 @@ function showImportDialog() {
   accept.onclick = async() => {
     accept.textContent = 'Importing...';
     accept.disabled = 1;
+    state.theMap.lockTiles();
     const selectedButton = importButtons.find(button => button.checked);
     switch (selectedButton.value) {
       case 'donjon':
@@ -876,6 +877,7 @@ function showImportDialog() {
         break;
     }
     // Complete
+    state.theMap.unlockTiles();
     closeOverlay();
   };
 }
@@ -886,6 +888,9 @@ function importDonjonMap() {
     inputElement.type = 'file';
     inputElement.accept = '.tsv,.txt';
     inputElement.addEventListener('change', () => {
+      if (!inputElement.files) {
+        accept();
+      }
       const files = inputElement.files;
       if (files && files.length > 0) {
         const fr = new FileReader();
