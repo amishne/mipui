@@ -212,7 +212,8 @@ class Cell {
     if ((layer == ct.shapes && this.role != 'primary') ||
         (layer == ct.floors && this.role != 'primary' &&
          content[ck.kind] == ct.floors.pit.id) ||
-        (layer == ct.mask)) {
+        (layer == ct.mask) ||
+        (layer == ct.separators)) {
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
           if (x == 0 && y == 0) continue;
