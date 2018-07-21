@@ -49,6 +49,7 @@ class Tile {
     this.interrupted_ = false;
     this.imageIsValid_ = false;
     this.timer_ = null;
+    this.timerStartTime_ = null;
     this.locks_ = new Set();
   }
 
@@ -228,6 +229,13 @@ class Tile {
   }
 
   restartTimer_() {
+    if (this.timer_ && this.timerStartTime_ &&
+        performance.now() - this.timerStartTime_ < 2) {
+      // We do not restart timers if less than 2ms passed since the timer start.
+      // Although this has the potential to accumulate into a problem, in
+      // practice it never causes issues.
+      return;
+    }
     this.stopTimer_();
     if (!this.active_) return;
     if (this.locks_.size > 0) return;
@@ -242,6 +250,7 @@ class Tile {
     } else if (pendingTiles.size < 5) {
       state.progressStatusBar.resetProgress();
     }
+    this.timerStartTime_ = performance.now();
     this.timer_ = setTimeout(() => this.cacheImage_(), this.getTimerLength_());
   }
 
@@ -252,6 +261,7 @@ class Tile {
       state.theMap.removeTileUnlockListener(this);
     }
     this.timer_ = null;
+    this.timerStartTime_ = null;
   }
 
   isLocked_() {
