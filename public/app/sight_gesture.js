@@ -30,6 +30,10 @@ class SightGesture extends Gesture {
       cellInSight.hideHighlight(ct.mask);
       cellInSight.showHighlight(ct.mask, null);
     });
+    // Ensure all tiles remain locked.
+    this.cellsInSight_.forEach(cellInSight => {
+      cellInSight.tile.showHighlight();
+    });
   }
 
   stopHover() {
