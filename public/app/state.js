@@ -54,7 +54,6 @@ class State {
     this.clipboard = null;
 
     this.currentTheme = themes[0];
-
     this.appliedThemeElements_ = new Map();
 
     this.lastUsedSvg = null;
@@ -190,12 +189,10 @@ class State {
       this.appliedThemeElements_ = new Map();
       const head = document.getElementsByTagName('head')[0];
       const gridImagerPromises = [];
-      this.currentTheme.files.forEach((file, index) => {
+      this.currentTheme.files.forEach((path, index) => {
         const css = document.createElement('link');
         css.type = 'text/css';
         css.rel = 'stylesheet';
-        css.href = file;
-        head.appendChild(css);
         const gridImagerPromise = new Promise((innerResolve, innerReject) => {
           const addSheet = sheet => {
             this.tileGridImager.addCssStyleSheet(index + 1, sheet).then(
@@ -208,7 +205,9 @@ class State {
           }
         });
         gridImagerPromises.push(gridImagerPromise);
-        this.appliedThemeElements_.set(file, css);
+        this.appliedThemeElements_.set(path, css);
+        css.href = path;
+        head.appendChild(css);
       });
       const menuIconsFromMap =
           Array.from(document.getElementsByClassName('menu-icon-from-map'));
@@ -216,11 +215,17 @@ class State {
         menuIconFromMap.style.backgroundImage =
             `url("${this.currentTheme.menuIconFile}")`;
       });
-      Promise.all(gridImagerPromises).then(() => {
+      if (gridImagerPromises) {
+        Promise.all(gridImagerPromises).then(() => {
+          this.tileGridImager.recalculateStyleString();
+          this.theMap.invalidateTiles();
+          resolve();
+        });
+      } else {
         this.tileGridImager.recalculateStyleString();
         this.theMap.invalidateTiles();
         resolve();
-      });
+      }
     });
   }
 
