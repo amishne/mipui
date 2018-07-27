@@ -94,7 +94,7 @@ class ImportDialog extends Dialog {
     state.opCenter.recordOperationComplete();
 
     const wallGesture = new WallGesture(1, false);
-    wallGesture.recordOperationCompletion = false;
+    wallGesture.isBatched = true;
     for (let y = 0; y < lines.length; y++) {
       const values = lines[y].split('\t');
       if (values.length != width) return 2;
