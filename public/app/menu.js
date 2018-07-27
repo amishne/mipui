@@ -840,7 +840,7 @@ class Menu {
               materialIcon: 'camera_alt',
               enabledInReadonlyMode: true,
               callback: () => {
-                showExportDialog();
+                new ExportDialog().show();
               },
             },
           ],
@@ -1093,7 +1093,7 @@ class Menu {
               materialIcon: 'photo_size_select_large',
               enabledInReadonlyMode: false,
               callback: () => {
-                showResizeDialog();
+                new ResizeDialog().show();
               },
             },
             {
@@ -1910,7 +1910,7 @@ class Menu {
             materialIcon: 'open_in_browser',
             enabledInReadonlyMode: true,
             callback: () => {
-              showImportDialog();
+              new ImportDialog().show();
             },
           },
         ],

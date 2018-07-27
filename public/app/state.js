@@ -81,6 +81,8 @@ class State {
     this.currentSightRange = 30;
 
     this.mode = '';
+
+    this.dialog = null;
   }
 
   isReadOnly() {
