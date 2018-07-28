@@ -230,8 +230,8 @@ class Tile {
 
   restartTimer_() {
     if (this.timer_ && this.timerStartTime_ &&
-        performance.now() - this.timerStartTime_ < 2) {
-      // We do not restart timers if less than 2ms passed since the timer start.
+        performance.now() - this.timerStartTime_ < 5) {
+      // We do not restart timers if less than 5ms passed since the timer start.
       // Although this has the potential to accumulate into a problem, in
       // practice it never causes issues.
       return;

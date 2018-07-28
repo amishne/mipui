@@ -202,7 +202,7 @@ class WallGesture extends Gesture {
   }
 
   startGesture() {
-    super.startGesture();
+    if (!this.isBatched) super.startGesture();
     this.stopHover();
     this.apply_();
   }
@@ -217,8 +217,8 @@ class WallGesture extends Gesture {
   }
 
   stopGesture() {
-    super.stopGesture();
     if (!this.isBatched) {
+      super.stopGesture();
       state.opCenter.recordOperationComplete();
     }
   }
