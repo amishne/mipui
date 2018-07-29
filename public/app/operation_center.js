@@ -35,6 +35,7 @@ class OperationCenter {
     this.opBeingSent_ = null;
     // Whether opBeingSent_ has been accepted.
     this.opBeingSentWasAccepted_ = false;
+    this.lastOpNumThatWantedRewrite_ = -1;
 
     // Undo-related fields.
 
@@ -559,6 +560,8 @@ class OperationCenter {
   // Rewrites the full map on the server if it's determined to be this client's
   // responsibility.
   rewriteIfRequired_(op) {
+    if (op.alwaysRewrite) this.lastOpNumThatWantedRewrite_ = op.num;
+
     // Don't rewrite if there are still operations to send, either in progress:
     if (this.isCurrentlyProcessingPendingOperations_) return;
     // or waiting:
@@ -566,7 +569,8 @@ class OperationCenter {
 
     const lastOpNum = state.getLastOpNum();
 
-    if (!op.alwaysRewrite) {
+    // Unless any op specifically requested a rewrite, we might skip it.
+    if (this.lastOpNumThatWantedRewrite_ == -1) {
       // Don't rewrite if the lastFullMapNum_ isn't more than 10 operations out-
       // of-date.
       if (lastOpNum - this.lastFullMapNum_ <= 10) return;
@@ -604,6 +608,11 @@ class OperationCenter {
       } else if (committed) {
         debug(`Rewriting map to operation ${num} complete.`);
         this.lastFullMapNum_ = num;
+        if (num >= this.lastOpNumThatWantedRewrite_) {
+          // That op's rewrite was performed, and it was the latest one, so no
+          // more rewrites required.
+          this.lastOpNumThatWantedRewrite_ = -1;
+        }
       } else {
         debug(`Still rewriting map to operation ${num}...`);
       }
