@@ -834,6 +834,16 @@ class Menu {
               },
             },
             {
+              name: 'Import Map',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'open_in_browser',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                new ImportDialog().show();
+              },
+            },
+            {
               name: 'Export Image',
               type: 'button',
               presentation: 'icon',
@@ -1901,16 +1911,6 @@ class Menu {
                 await state.reloadTheme();
                 state.theMap.unlockTiles();
               });
-            },
-          },
-          {
-            name: 'Import Map',
-            type: 'button',
-            presentation: 'icon',
-            materialIcon: 'open_in_browser',
-            enabledInReadonlyMode: true,
-            callback: () => {
-              new ImportDialog().show();
             },
           },
         ],
