@@ -30,6 +30,9 @@ class ImportDialog extends Dialog {
     addRadioButton('donjon', 'Import a TSV file exported by ' +
         '<a href="https://donjon.bin.sh/fantasy/dungeon/index.cgi" ' +
         'target="_blank">donjon Random Dungeon Generator</a>.');
+    if (state.mode == 'dev') {
+      addRadioButton('Image', 'Import a map from an arbitrary image.');
+    }
   }
 
   async act_() {
@@ -38,6 +41,9 @@ class ImportDialog extends Dialog {
     switch (selectedButton.value) {
       case 'donjon':
         await this.importDonjonMap_();
+        break;
+      case 'Image':
+        await this.importFromImage_();
         break;
     }
     // Complete
@@ -181,5 +187,8 @@ class ImportDialog extends Dialog {
       }
     }
     wallGesture.stopHover();
+  }
+
+  importFromImage_() {
   }
 }

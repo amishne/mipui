@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>Mipui Image Importer</title>
+  <meta name="Description" content="Image Importing Wizard for Mipui.">
+  <script src="image_importer.js" type="text/javascript"></script>
+  <script src="utils.js" type="text/javascript"></script>
+  <link href="image_importer.css" rel="stylesheet" type="text/css">
+  <script src="clusterfck-0.1.js" type="text/javascript"></script>
+  <script src="TIMES.bundle.js" type="text/javascript"></script>
+  <script src="opencv.js" type="text/javascript"></script>
+</head>
+<body>
+  <div>
+    <button id="image1">dungeon-map.jpg</button>
+    <button id="image2">blue_map.png</button>
+    <button id="image3">brown_map.png</button>
+    <button id="image4">bw_map.jpg</button>
+    <button id="image5">donjon_map.png</button>
+    <button id="image6">dyson_map1.png</button>
+    <button id="image7">embossed_map.jpg</button>
+  </div>
+  <div>
+    <button id="drawGrid">Draw grid</button>
+    <button id="calcData">Calc data</button>
+    <button id="colorGrid">Color grid</button>
+    <button id="clusterColors">Cluster colors</button>
+  </div>
+  <div>
+    <button id="times">TIMES analysis</button>
+    <button id="myopencv">OpenCV analysis</button>
+  </div>
+  <pre id="clusters"></pre>
+  <div id="canvasContainer"><canvas id="step2preview"></canvas></div>
+</body>
+</html>

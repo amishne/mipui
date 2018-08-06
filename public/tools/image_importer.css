@@ -1,0 +1,5 @@
+#canvasContainer {
+  max-height: 600px;
+  overflow: auto;
+  background-color: grey;
+}
