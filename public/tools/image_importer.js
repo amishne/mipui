@@ -1,112 +1,167 @@
-const images = {
-  dungeon: {
-    src: 'dungeon-map.jpg',
-    grid: {
-      columns: 32,
-      rows: 32,
-      cellSize: 14,
-      offsetLeft: -3,
-      offsetTop: -3,
-      boundarySize: 6,
-    },
+const images = [{
+  src: 'dungeon-map.jpg',
+  name: 'dungeon',
+  grid: {
+    columns: 32,
+    rows: 32,
+    cellSize: 14,
+    offsetLeft: -3,
+    offsetTop: -3,
+    boundarySize: 6,
   },
-  blue: {
-    src: 'blue_map.png',
-    grid: {
-      columns: 32,
-      rows: 32,
-      cellSize: 55,
-      offsetLeft: -10,
-      offsetTop: -10,
-      boundarySize: 20,
-    },
+}, {
+  src: 'blue_map.png',
+  name: 'blue',
+  grid: {
+    columns: 32,
+    rows: 32,
+    cellSize: 55,
+    offsetLeft: -10,
+    offsetTop: -10,
+    boundarySize: 20,
   },
-  brown: {
-    src: 'brown_map.png',
-    grid: {
-      columns: 60,
-      rows: 60,
-      cellSize: 22,
-      offsetLeft: 8,
-      offsetTop: -5,
-      boundarySize: 10,
-    },
+}, {
+  src: 'brown_map.png',
+  name: 'brown',
+  grid: {
+    columns: 60,
+    rows: 60,
+    cellSize: 22,
+    offsetLeft: 8,
+    offsetTop: -5,
+    boundarySize: 10,
   },
-  bw: {
-    src: 'bw_map.jpg',
-    grid: {
-      columns: 41,
-      rows: 34,
-      cellSize: 19,
-      offsetLeft: -3,
-      offsetTop: 1,
-      boundarySize: 6,
-    },
+}, {
+  src: 'bw_map.jpg',
+  name: 'bw',
+  grid: {
+    columns: 41,
+    rows: 34,
+    cellSize: 19,
+    offsetLeft: -3,
+    offsetTop: 1,
+    boundarySize: 6,
   },
-  donjon: {
-    src: 'donjon_map.png',
-    grid: {
-      columns: 60,
-      rows: 60,
-      cellSize: 10,
-      offsetLeft: -2,
-      offsetTop: -2,
-      boundarySize: 4,
-    },
+}, {
+  src: 'donjon_map.png',
+  name: 'donjon',
+  grid: {
+    columns: 60,
+    rows: 60,
+    cellSize: 10,
+    offsetLeft: -2,
+    offsetTop: -2,
+    boundarySize: 4,
   },
-  dyson: {
-    src: 'dyson_map1.png',
-    grid: {
-      columns: 20,
-      rows: 35,
-      cellSize: 22,
-      offsetLeft: 1,
-      offsetTop: 8,
-      boundarySize: 8,
-    },
+}, {
+  src: 'dyson_map1.png',
+  name: 'dyson',
+  grid: {
+    columns: 20,
+    rows: 35,
+    cellSize: 22,
+    offsetLeft: 1,
+    offsetTop: 8,
+    boundarySize: 8,
   },
-  embossed: {
-    src: 'embossed_map.jpg',
-    grid: {
-      columns: 43,
-      rows: 30,
-      cellSize: 16,
-      offsetLeft: 12,
-      offsetTop: -2,
-      boundarySize: 4,
-    },
+}, {
+  src: 'embossed_map.jpg',
+  name: 'embossed',
+  grid: {
+    columns: 43,
+    rows: 30,
+    cellSize: 16,
+    offsetLeft: 12,
+    offsetTop: -2,
+    boundarySize: 4,
   },
-};
-let grid = {};
-let currId = 0;
+}];
+
+function createElement(parent, tag, className, focusable) {
+  const element = document.createElement(tag);
+  element.className = className;
+  parent.appendChild(element);
+  return element;
+}
+
+function start() {
+  const parent = document.getElementById('stackContainer');
+//  createImageStack(parent, images[0]);
+  images.forEach(image => {
+    createImageStack(parent, image);
+  });
+}
+
+function createImageStack(parent, image) {
+  const stackElement = createElement(parent, 'div', 'image-stack');
+  image.stackElement = stackElement;
+  const imageElement = createElement(stackElement, 'img', 'source-image');
+  image.sourceImage = imageElement;
+  imageElement.onload = () => { processImage(image); };
+  imageElement.src = image.src;
+}
+
+function processImage(image) {
+  const canvas = initializeImageCanvas(image);
+  const mat = cv.imread(canvas);
+  // TODO quantize colors here, maybe using cv.kmeans?
+  cv.cvtColor(mat, mat, cv.COLOR_RGBA2GRAY, 0);
+  cv.imshow(createStackCanvas(image), mat);
+  cv.Canny(mat, mat, 100, 300, 3, false);
+  cv.imshow(createStackCanvas(image), mat);
+  const lines = houghTransform(image, mat);
+  cv.imshow(createStackCanvas(image), mat);
+  console.log(lines);
+}
+
+function initializeImageCanvas(image) {
+  const canvas = createStackCanvas(image);
+  canvas.width = image.sourceImage.naturalWidth;
+  canvas.height = image.sourceImage.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(image.sourceImage, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+
+function createStackCanvas(image) {
+  const element = createElement(image.stackElement, 'canvas', 'stack-canvas');
+  element.onclick = () => {
+    element.classList.toggle('focused');
+  };
+  return element;
+}
+
+function houghTransform(image, mat) {
+  const cvLines = new cv.Mat();
+  cv.HoughLines(mat, cvLines, 1, Math.PI / 2, 180, 0, 0, 0, Math.PI);
+  const lines = [];
+  for (let i = 0; i < cvLines.rows; ++i) {
+    const rho = cvLines.data32F[i * 2];
+    const theta = cvLines.data32F[i * 2 + 1];
+    lines.push({rho, theta});
+  }
+  cvLines.delete();
+  // Preview the lines.
+  const dst = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
+  const lineLength = Math.max(mat.rows, mat.cols);
+  for (const line of lines) {
+    const a = Math.cos(line.theta);
+    const b = Math.sin(line.theta);
+    const x0 = a * line.rho;
+    const y0 = b * line.rho;
+    const startPoint = {x: x0 - lineLength * b, y: y0 + lineLength * a};
+    const endPoint = {x: x0 + lineLength * b, y: y0 - lineLength * a};
+    cv.line(dst, startPoint, endPoint, [255, 0, 0, 255]);
+    // Also preview on top of the base image!
+    cv.line(mat, startPoint, endPoint, [255, 0, 0, 255]);
+  }
+  cv.imshow(createStackCanvas(image), dst);
+  dst.delete();
+  return lines;
+}
 
 window.onload = () => {
-  document.getElementById('image1')
-      .addEventListener('click', () => { loadFromDisk('dungeon'); });
-  document.getElementById('image2')
-      .addEventListener('click', () => { loadFromDisk('blue'); });
-  document.getElementById('image3')
-      .addEventListener('click', () => { loadFromDisk('brown'); });
-  document.getElementById('image4')
-      .addEventListener('click', () => { loadFromDisk('bw'); });
-  document.getElementById('image5')
-      .addEventListener('click', () => { loadFromDisk('donjon'); });
-  document.getElementById('image6')
-      .addEventListener('click', () => { loadFromDisk('dyson'); });
-  document.getElementById('image7')
-      .addEventListener('click', () => { loadFromDisk('embossed'); });
-  document.getElementById('drawGrid')
-      .addEventListener('click', () => { setCells(); drawGrid(); });
-  document.getElementById('calcData')
-      .addEventListener('click', calcData);
-  document.getElementById('colorGrid')
-      .addEventListener('click', colorGrid);
-  document.getElementById('clusterColors')
-      .addEventListener('click', clusterColors);
-  document.getElementById('times')
-      .addEventListener('click', times);
-  document.getElementById('myopencv')
-      .addEventListener('click', myopencv);
+  start();
 };
 
 function loadFromDisk(id) {
@@ -124,26 +179,6 @@ function loadFromDisk(id) {
     img.src = images[id].src;
     grid = images[id].grid;
   });
-//  const inputElement = document.createElement('input');
-//  inputElement.type = 'file';
-//  inputElement.accept = '.png';
-//  inputElement.addEventListener('change', () => {
-//    const files = inputElement.files;
-//    if (files && files.length > 0) {
-//      const fr = new FileReader();
-//      fr.addEventListener('load', async() => {
-//        const numOpsToUndo =
-//            await this.applyDonjonFile_(inputElement.value, fr.result);
-//        state.opCenter.recordOperationComplete();
-//        for (let i = 0; i < numOpsToUndo; i++) {
-//          state.opCenter.undo();
-//        }
-//        accept();
-//      });
-//      fr.readAsText(files[0]);
-//    }
-//  });
-//  inputElement.click();
 }
 
 let cells = [];
@@ -249,133 +284,4 @@ function clusterColors() {
       clusterfck.AVERAGE_LINKAGE);
   document.getElementById('clusters').textContent =
       JSON.stringify(clusters, null, 2);
-}
-
-function times() {
-  // TODOs
-  // First do edge detection
-  // Change theta bucketing 72, and only take those around cardinal directions
-  // Change rho bucketing to Math.hypot(width, height)
-  // Find gradient among values above threshold for local maximum
-  const canvas = document.getElementById('step2preview');
-  const ctx = canvas.getContext('2d');
-  const tImage = new T.Image('uint8', canvas.width, canvas.height);
-  tImage.setPixels(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
-  const tRaster = tImage.getRaster();
-  const tRasterWithLines =
-      cpu.houghLines(4, canvas.width * 50)(tRaster);
-  const lines = {
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-  };
-  for (let y = 0; y < tRasterWithLines.height; y++) {
-    for (let x = 0; x < tRasterWithLines.width; x++) {
-      const pixel = tRasterWithLines.getPixel(x, y);
-      if (pixel > 100) {
-        lines[x].push(y);
-      }
-    }
-  }
-  lines[0].sort();
-  lines[1].sort();
-  lines[2].sort();
-  lines[3].sort();
-  for (let i = 3; i < lines[0].length - 3; i++) {
-    console.log(lines[0][i] - lines[0][i - 1]);
-  }
-}
-
-function myopencv() {
-  const src = cv.imread('step2preview');
-  const dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
-  const lines = new cv.Mat();
-  //quantize colors here, maybe using cv.kmeans
-  cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
-  cv.Canny(src, src, 100, 300, 3, false);
-  //cv.imshow('step2preview', src);
-  //return;
-  cv.HoughLines(src, lines, 1, Math.PI / 2, 180, 0, 0, 0, Math.PI);
-  const lineLength = Math.max(src.rows, src.cols);
-  for (let i = 0; i < lines.rows; ++i) {
-    const rho = lines.data32F[i * 2];
-    const theta = lines.data32F[i * 2 + 1];
-    const a = Math.cos(theta);
-    const b = Math.sin(theta);
-    const x0 = a * rho;
-    const y0 = b * rho;
-    const startPoint = {x: x0 - lineLength * b, y: y0 + lineLength * a};
-    const endPoint = {x: x0 + lineLength * b, y: y0 - lineLength * a};
-    cv.line(dst, startPoint, endPoint, [255, 0, 0, 255]);
-  }
-  cv.imshow('step2preview', dst);
-  const lineBuckets = {
-    horizontalLines: [],
-    verticalLines: [],
-  };
-  for (let i = 0; i < lines.rows; ++i) {
-    const rho = lines.data32F[i * 2];
-    const theta = lines.data32F[i * 2 + 1];
-    const bucket = lineBuckets[theta < 1 ? 'horizontalLines' : 'verticalLines'];
-    bucket.push(rho);
-  }
-  lineBuckets.horizontalLines.sort();
-  lineBuckets.verticalLines.sort();
-  const buckets = {
-    horizontalLines: [],
-    verticalLines: [],
-  };
-  let prevRho = 0;
-  lineBuckets.horizontalLines.forEach(rho => {
-    const diff = Math.abs(rho - prevRho);
-    buckets.horizontalLines.push({diff, offset: rho % diff});
-    prevRho = rho;
-  });
-  prevRho = 0;
-  lineBuckets.verticalLines.forEach(rho => {
-    const diff = Math.abs(rho - prevRho);
-    buckets.verticalLines.push({diff, offset: rho % diff});
-    prevRho = rho;
-  });
-  const diffs = {};
-  const allLines = buckets.horizontalLines.concat(buckets.verticalLines);
-  allLines.forEach(({diff, offset}) => {
-    diffs[diff] = (diffs[diff] || 0) + 1;
-  });
-  console.log(diffs);
-  let firstValue = 0;
-  let firstMatch = 0;
-  let secondValue = 0;
-  let secondMatch = 0;
-  Object.keys(diffs).forEach(key => {
-    if (key > 5 && diffs[key] > firstValue) {
-      firstValue = diffs[key];
-      firstMatch = key;
-    } else if (diffs[key] > secondValue) {
-      secondValue = diffs[key];
-      secondMatch = key;
-    }
-  });
-  console.log(`${firstMatch}, ${secondMatch}`);
-  let offsetSum = 0;
-  let count = 0;
-  buckets.horizontalLines.forEach(({diff, offset}) => {
-    if (diff == firstMatch) {
-      offsetSum += offset;
-      count++;
-    }
-  });
-  const offsetLeft = offsetSum / count;
-  offsetSum = 0;
-  count = 0;
-  buckets.verticalLines.forEach(({diff, offset}) => {
-    if (diff == firstMatch) {
-      offsetSum += offset;
-      count++;
-    }
-  });
-  const offsetTop = offsetSum / count;
-  console.log(`offset = ${offsetLeft}, ${offsetTop}`);
-  src.delete(); dst.delete(); lines.delete();
 }
