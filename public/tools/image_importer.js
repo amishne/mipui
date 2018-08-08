@@ -140,6 +140,7 @@ function houghTransform(image, mat) {
   // Get a measure of image "density", to control hough transform threshold.
   const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
   const divisionFactor = 0.34 / density;
+  console.log(divisionFactor);
   // We perform two transforms; one vertical and one horizontal. We do this
   // because the threshold depends on the size, and our map is not necessarily
   // square.
@@ -170,6 +171,10 @@ function houghTransformOnDir(mat, dir, divisionFactor) {
       (dir == 'horizontal' ? mat.cols : mat.rows) / divisionFactor;
   const cvLines = new cv.Mat();
   cv.HoughLines(mat, cvLines, 1, Math.PI / 2, threshold, 0, 0, 0, Math.PI);
+  if (cvLines.rows < 10) {
+    cv.HoughLines(
+        mat, cvLines, 1, Math.PI / 2, threshold / 2, 0, 0, 0, Math.PI);
+  }
   const lines = [];
   for (let i = 0; i < cvLines.rows; ++i) {
     const rho = cvLines.data32F[i * 2];
