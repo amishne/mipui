@@ -232,8 +232,8 @@ function getLineInfo(image, lines) {
   return {
     cellSize,
     dividerSize,
-    offsetLeft: buckets[0].offset,
-    offsetTop: buckets[1].offset,
+    offsetLeft: buckets[1].offset,
+    offsetTop: buckets[0].offset,
   };
 }
 
