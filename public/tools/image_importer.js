@@ -103,14 +103,20 @@ function createImageStack(parent, image) {
 
 function processImage(image) {
   const canvas = initializeImageCanvas(image);
-  const mat = cv.imread(canvas);
-  cv.cvtColor(mat, mat, cv.COLOR_RGBA2GRAY, 0);
+  const src = cv.imread(canvas);
+  const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
+  cv.cvtColor(src, mat, cv.COLOR_RGBA2GRAY, 0);
   cv.imshow(createStackCanvas(image), mat);
   cv.Canny(mat, mat, 100, 300, 3, false);
   cv.imshow(createStackCanvas(image), mat);
   const lines = houghTransform(image, mat);
   cv.imshow(createStackCanvas(image), mat);
-  showLineInfo(image, lines);
+  console.log(image.name);
+  const lineInfo = getLineInfo(image, lines);
+  console.log(lineInfo);
+  showLines(image, src, lineInfo);
+  mat.delete();
+  src.delete();
 }
 
 function initializeImageCanvas(image) {
@@ -163,6 +169,7 @@ function houghTransformOnDir(mat, dir) {
   const lines = [];
   for (let i = 0; i < cvLines.rows; ++i) {
     const rho = cvLines.data32F[i * 2];
+    if (rho < 0) console.log(rho);
     const theta = cvLines.data32F[i * 2 + 1];
     if ((dir == 'horizontal' && theta > 1) ||
         (dir == 'vertical' && theta < 1)) {
@@ -170,39 +177,82 @@ function houghTransformOnDir(mat, dir) {
     }
   }
   cvLines.delete();
+  lines.sort((line1, line2) => line1.rho - line2.rho);
   return lines;
 }
 
-function showLineInfo(image, lines) {
-  const lineSorter = (line1, line2) => line1.rho - line2.rho;
-  const hLines =
-      lines.filter(line => line.dir == 'horizontal').sort(lineSorter);
-  const vLines =
-      lines.filter(line => line.dir == 'vertical').sort(lineSorter);
-  const diffs = {};
-  for (let i = 1; i < hLines.length; i++) {
-    const diff = hLines[i].rho - hLines[i - 1].rho;
-    const offset = hLines[i].rho % diff;
-    diffs[diff] = {
-      count: (diffs[diff] || {count: 0}).count + 1,
-      hOffsetSum: (diffs[diff] || {hOffsetSum: 0}).hOffsetSum + offset,
-    };
-  }
-  for (let i = 1; i < vLines.length; i++) {
-    const diff = vLines[i].rho - vLines[i - 1].rho;
-    const offset = vLines[i].rho % diff;
-    diffs[diff] = {
-      count: (diffs[diff] || {count: 0}).count + 1,
-      hOffsetSum: (diffs[diff] || {}).hOffsetSum,
-      vOffsetSum: ((diffs[diff] || {vOffsetSum: 0}).vOffsetSum || 0) + offset,
-    };
-  }
-  Object.keys(diffs).forEach(key => {
-    const diff = diffs[key];
-    diff.hOffset = diff.hOffsetSum / diff.count;
-    diff.vOffset = diff.vOffsetSum / diff.count;
+function getLineInfo(image, lines) {
+  const buckets = [{
+    dir: 'horizontal',
+    lines: lines.filter(line => line.dir == 'horizontal'),
+  }, {
+    dir: 'vertical',
+    lines: lines.filter(line => line.dir == 'vertical'),
+  }];
+  const diffMap = {};
+  // Collect diffs for each bucket.
+  buckets.forEach(bucket => {
+    for (let i = 1; i < bucket.lines.length; i++) {
+      const line = bucket.lines[i];
+      const diff = line.rho - bucket.lines[i - 1].rho;
+      line.diff = diff;
+      diffMap[diff] = {
+        size: diff,
+        count: (diffMap[diff] || {count: 0}).count + 1,
+        lines: (diffMap[diff] || {lines: []}).lines.concat([line]),
+      };
+    }
   });
-  console.log(diffs);
+  // Aggregate diffs to find the most common ones to act as grid size.
+  const sortedDiffs = Object.keys(diffMap).map(key => diffMap[key])
+      .sort((diff1, diff2) => diff2.count - diff1.count);
+  console.log(sortedDiffs);
+  const first = sortedDiffs[0];
+  const second =
+      sortedDiffs.slice(1).find(diff => first.size > 5 || diff.size > 5);
+  const cellSize = Math.max(first.size, second.size);
+  const dividerSize = Math.min(first.size, second.size);
+  const gridSize = cellSize + dividerSize;
+  // Identify most common offset for each bucket.
+  buckets.forEach(bucket => {
+    const offsets = {};
+    (diffMap[cellSize] || {lines: []}).lines
+        .filter(line => line.dir == bucket.dir).forEach(line => {
+          const offset = line.rho % gridSize;
+          offsets[offset] = {
+            size: offset,
+            count: (offsets[offset] || {count: 0}).count + 1,
+          };
+        });
+    const sortedOffsets = Object.keys(offsets).map(key => offsets[key])
+        .sort((offset1, offset2) => offset2.count - offset1.count);
+    console.log(sortedOffsets);
+    bucket.offset = sortedOffsets[0].size;
+  });
+  return {
+    cellSize,
+    dividerSize,
+    offsetLeft: buckets[0].offset,
+    offsetTop: buckets[1].offset,
+  };
+}
+
+function showLines(image, mat, lineInfo) {
+  let x = Math.round(lineInfo.offsetLeft);
+  while (x < mat.cols) {
+    cv.line(mat, {x, y: 0}, {x, y: mat.rows}, [255, 0, 0, 255]);
+    x += lineInfo.dividerSize;
+    cv.line(mat, {x, y: 0}, {x, y: mat.rows}, [255, 0, 0, 255]);
+    x += lineInfo.cellSize;
+  }
+  let y = Math.round(lineInfo.offsetTop);
+  while (y < mat.rows) {
+    cv.line(mat, {x: 0, y}, {x: mat.cols, y}, [255, 0, 0, 255]);
+    y += lineInfo.dividerSize;
+    cv.line(mat, {x: 0, y}, {x: mat.cols, y}, [255, 0, 0, 255]);
+    y += lineInfo.cellSize;
+  }
+  cv.imshow(createStackCanvas(image), mat);
 }
 
 window.onload = () => {
