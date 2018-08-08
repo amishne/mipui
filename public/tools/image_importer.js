@@ -107,11 +107,11 @@ function processImage(image) {
   const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
   cv.cvtColor(src, mat, cv.COLOR_RGBA2GRAY, 0);
   cv.imshow(createStackCanvas(image), mat);
+  console.log(image.name);
   cv.Canny(mat, mat, 100, 300, 3, false);
   cv.imshow(createStackCanvas(image), mat);
   const lines = houghTransform(image, mat);
   cv.imshow(createStackCanvas(image), mat);
-  console.log(image.name);
   const lineInfo = getLineInfo(image, lines);
   console.log(lineInfo);
   showLines(image, src, lineInfo);
@@ -137,11 +137,14 @@ function createStackCanvas(image) {
 }
 
 function houghTransform(image, mat) {
+  // Get a measure of image "density", to control hough transform threshold.
+  const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
+  const divisionFactor = 0.34 / density;
   // We perform two transforms; one vertical and one horizontal. We do this
   // because the threshold depends on the size, and our map is not necessarily
   // square.
-  const hLines = houghTransformOnDir(mat, 'horizontal');
-  const vLines = houghTransformOnDir(mat, 'vertical');
+  const hLines = houghTransformOnDir(mat, 'horizontal', divisionFactor);
+  const vLines = houghTransformOnDir(mat, 'vertical', divisionFactor);
   // Preview the lines.
   const dst = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
   const lineLength = Math.max(mat.rows, mat.cols);
@@ -162,8 +165,9 @@ function houghTransform(image, mat) {
   return lines;
 }
 
-function houghTransformOnDir(mat, dir) {
-  const threshold = (dir == 'horizontal' ? mat.cols : mat.rows) / 5;
+function houghTransformOnDir(mat, dir, divisionFactor) {
+  const threshold =
+      (dir == 'horizontal' ? mat.cols : mat.rows) / divisionFactor;
   const cvLines = new cv.Mat();
   cv.HoughLines(mat, cvLines, 1, Math.PI / 2, threshold, 0, 0, 0, Math.PI);
   const lines = [];
@@ -207,9 +211,9 @@ function getLineInfo(image, lines) {
   const sortedDiffs = Object.keys(diffMap).map(key => diffMap[key])
       .sort((diff1, diff2) => diff2.count - diff1.count);
   console.log(sortedDiffs);
-  const first = sortedDiffs[0];
-  const second =
-      sortedDiffs.slice(1).find(diff => first.size > 5 || diff.size > 5);
+  const first = sortedDiffs[0] || {size: 1};
+  const second = sortedDiffs.slice(1)
+      .find(diff => first.size > 5 || diff.size > 5) || {size: 10};
   const cellSize = Math.max(first.size, second.size);
   const dividerSize = Math.min(first.size, second.size);
   const gridSize = cellSize + dividerSize;
@@ -227,7 +231,7 @@ function getLineInfo(image, lines) {
     const sortedOffsets = Object.keys(offsets).map(key => offsets[key])
         .sort((offset1, offset2) => offset2.count - offset1.count);
     console.log(sortedOffsets);
-    bucket.offset = sortedOffsets[0].size;
+    bucket.offset = sortedOffsets.length > 0 ? sortedOffsets[0].size : 0;
   });
   return {
     cellSize,
