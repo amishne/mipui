@@ -114,7 +114,16 @@ function processImage(image) {
   cv.imshow(createStackCanvas(image), mat);
   const lineInfo = getLineInfo(image, lines);
   console.log(lineInfo);
-  showLines(image, src, lineInfo);
+  const withLines = src.clone();
+  // Temp fix for donjon
+  if (image.name == 'donjon') {
+    lineInfo.cellSize -= 2;
+    lineInfo.offsetLeft -= 1;
+    lineInfo.offsetTop += 1;
+  }
+  showLines(image, withLines, lineInfo);
+  withLines.delete();
+  assign(image, src, lineInfo);
   mat.delete();
   src.delete();
 }
@@ -140,7 +149,7 @@ function houghTransform(image, mat) {
   // Get a measure of image "density", to control hough transform threshold.
   const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
   const divisionFactor = 0.34 / density;
-  console.log(divisionFactor);
+
   // We perform two transforms; one vertical and one horizontal. We do this
   // because the threshold depends on the size, and our map is not necessarily
   // square.
@@ -178,7 +187,6 @@ function houghTransformOnDir(mat, dir, divisionFactor) {
   const lines = [];
   for (let i = 0; i < cvLines.rows; ++i) {
     const rho = cvLines.data32F[i * 2];
-    if (rho < 0) console.log(rho);
     const theta = cvLines.data32F[i * 2 + 1];
     if ((dir == 'horizontal' && theta > 1) ||
         (dir == 'vertical' && theta < 1)) {
@@ -215,7 +223,7 @@ function getLineInfo(image, lines) {
   // Aggregate diffs to find the most common ones to act as grid size.
   const sortedDiffs = Object.keys(diffMap).map(key => diffMap[key])
       .sort((diff1, diff2) => diff2.count - diff1.count);
-  console.log(sortedDiffs);
+
   const first = sortedDiffs[0] || {size: 1};
   const second = sortedDiffs.slice(1)
       .find(diff => first.size > 5 || diff.size > 5) || {size: 10};
@@ -235,7 +243,6 @@ function getLineInfo(image, lines) {
         });
     const sortedOffsets = Object.keys(offsets).map(key => offsets[key])
         .sort((offset1, offset2) => offset2.count - offset1.count);
-    console.log(sortedOffsets);
     bucket.offset = sortedOffsets.length > 0 ? sortedOffsets[0].size : 0;
   });
   return {
@@ -264,90 +271,100 @@ function showLines(image, mat, lineInfo) {
   cv.imshow(createStackCanvas(image), mat);
 }
 
+function assign(image, mat, lineInfo) {
+  const cellInfo = createCells(mat, lineInfo);
+  calcCellStats(mat, cellInfo);
+}
+
+function createCells(mat, lineInfo) {
+  const cells = [];
+  let x = null;
+  let y = lineInfo.offsetTop;
+  let row = -0.5;
+  let col = null;
+  while (y < mat.rows) {
+    x = lineInfo.offsetLeft;
+    col = -0.5;
+    // Boundary row
+    while (x < mat.cols) {
+      cells.push(createCornerCell(row, col, x, y, lineInfo));
+      x += lineInfo.dividerSize;
+      col += 0.5;
+      cells.push(createHorizontalCell(row, col, x, y, lineInfo));
+      x += lineInfo.cellSize;
+    }
+    cells.push(createCornerCell(row, col, x, y, lineInfo));
+    // Primary row
+    x = lineInfo.offsetLeft;
+    row += 0.5;
+    y += lineInfo.dividerSize;
+    col = -0.5;
+    while (x < mat.cols) {
+      cells.push(createVerticalCell(row, col, x, y, lineInfo));
+      x += lineInfo.dividerSize;
+      col += 0.5;
+      cells.push(createPrimaryCell(row, col, x, y, lineInfo));
+      x += lineInfo.dividerSize;
+    }
+    cells.push(createVerticalCell(row, col, x, y, lineInfo));
+    row += 0.5;
+    y += lineInfo.cellSize;
+  }
+  // Final boundary row
+  x = lineInfo.offsetLeft;
+  col = -0.5;
+  while (x < mat.cols) {
+    cells.push(createCornerCell(row, col, x, y, lineInfo));
+    x += lineInfo.dividerSize;
+    col += 0.5;
+    cells.push(createHorizontalCell(row, col, x, y, lineInfo));
+    x += lineInfo.cellSize;
+  }
+  cells.push(createCornerCell(row, col, x, y, lineInfo));
+  return {
+    width: col,
+    height: row,
+    cells,
+  };
+}
+
+function createCornerCell(row, col, x, y, lineInfo) {
+  return createCell(
+      row, col, x, y, lineInfo.dividerSize, lineInfo.dividerSize, 'corner');
+}
+
+function createHorizontalCell(row, col, x, y, lineInfo) {
+  return createCell(
+      row, col, x, y, lineInfo.cellSize, lineInfo.dividerSize, 'horizontal');
+}
+
+function createVerticalCell(row, col, x, y, lineInfo) {
+  return createCell(
+      row, col, x, y, lineInfo.dividerSize, lineInfo.cellSize, 'vertical');
+}
+
+function createPrimaryCell(row, col, x, y, lineInfo) {
+  return createCell(
+      row, col, x, y, lineInfo.cellSize, lineInfo.cellSize, 'primary');
+}
+
+function createCell(row, col, x, y, width, height, role) {
+  return {row, col, x, y, width, height, role};
+}
+
+function calcCellStats(mat, cellInfo) {
+  cellInfo.cells.forEach(cell => {
+    const cellMat =
+        mat.roi(new cv.Rect(cell.x, cell.y, cell.width, cell.height));
+    cell.meanColor = cv.mean(cellMat);
+    cellMat.delete();
+    console.log(mean);
+  });
+}
+
 window.onload = () => {
   start();
 };
-
-function loadFromDisk(id) {
-  return new Promise((resolve, reject) => {
-    currId = id;
-    const img = document.createElement('img');
-    img.onload = () => {
-      const canvas = document.getElementById('step2preview');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve();
-    };
-    img.src = images[id].src;
-    grid = images[id].grid;
-  });
-}
-
-let cells = [];
-
-function setCells() {
-  cells = [];
-  for (let y = 0; y < grid.rows; y++) {
-    addBoundaryRow(y);
-    addCellRow(y);
-  }
-  addBoundaryRow(grid.rows);
-}
-
-function addBoundaryRow(row) {
-  for (let x = 0; x < grid.columns; x++) {
-    addCornerCell(x, row);
-    addHorizontalCell(x, row);
-  }
-  addCornerCell(grid.columns, row);
-}
-
-function addCellRow(row) {
-  for (let x = 0; x < grid.columns; x++) {
-    addVerticalCell(x, row);
-    addPrimaryCell(x, row);
-  }
-  addVerticalCell(grid.columns, row);
-}
-
-function addPrimaryCell(column, row) {
-  addCell(column, row, grid.boundarySize, grid.boundarySize,
-      grid.cellSize, grid.cellSize);
-}
-
-function addCornerCell(column, row) {
-  addCell(column, row, 0, 0, grid.boundarySize, grid.boundarySize);
-}
-
-function addHorizontalCell(column, row) {
-  addCell(column, row, grid.boundarySize, 0, grid.cellSize, grid.boundarySize);
-}
-
-function addVerticalCell(column, row) {
-  addCell(column, row, 0, grid.boundarySize, grid.boundarySize, grid.cellSize);
-}
-
-function addCell(column, row, offsetLeft, offsetTop, width, height) {
-  cells.push({
-    offsetLeft: grid.offsetLeft +
-        column * (grid.cellSize + grid.boundarySize) + offsetLeft,
-    offsetTop: grid.offsetTop +
-        row * (grid.cellSize + grid.boundarySize) + offsetTop,
-    width,
-    height,
-  });
-}
-
-function drawGrid() {
-  const ctx = document.getElementById('step2preview').getContext('2d');
-  ctx.lineWidth = 0.5;
-  ctx.strokeStyle = 'red';
-  cells.forEach(cell => {
-    ctx.strokeRect(cell.offsetLeft, cell.offsetTop, cell.width, cell.height);
-  });
-}
 
 async function calcData() {
   await loadFromDisk(currId);
