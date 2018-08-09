@@ -86,10 +86,10 @@ function createElement(parent, tag, className, focusable) {
 
 function start() {
   const parent = document.getElementById('stackContainer');
-  // createImageStack(parent, images[0]);
-  images.forEach(image => {
-    createImageStack(parent, image);
-  });
+  createImageStack(parent, images[0]);
+//  images.forEach(image => {
+//    createImageStack(parent, image);
+//  });
 }
 
 function createImageStack(parent, image) {
@@ -273,7 +273,7 @@ function showLines(image, mat, lineInfo) {
 
 function assign(image, mat, lineInfo) {
   const cellInfo = createCells(mat, lineInfo);
-  calcCellStats(mat, cellInfo);
+  calcCellStats(image, mat, cellInfo);
 }
 
 function createCells(mat, lineInfo) {
@@ -292,19 +292,21 @@ function createCells(mat, lineInfo) {
       col += 0.5;
       cells.push(createHorizontalCell(row, col, x, y, lineInfo));
       x += lineInfo.cellSize;
+      col += 0.5;
     }
     cells.push(createCornerCell(row, col, x, y, lineInfo));
     // Primary row
     x = lineInfo.offsetLeft;
-    row += 0.5;
-    y += lineInfo.dividerSize;
     col = -0.5;
+    y += lineInfo.dividerSize;
+    row += 0.5;
     while (x < mat.cols) {
       cells.push(createVerticalCell(row, col, x, y, lineInfo));
       x += lineInfo.dividerSize;
       col += 0.5;
       cells.push(createPrimaryCell(row, col, x, y, lineInfo));
-      x += lineInfo.dividerSize;
+      x += lineInfo.cellSize;
+      col += 0.5;
     }
     cells.push(createVerticalCell(row, col, x, y, lineInfo));
     row += 0.5;
@@ -352,51 +354,31 @@ function createCell(row, col, x, y, width, height, role) {
   return {row, col, x, y, width, height, role};
 }
 
-function calcCellStats(mat, cellInfo) {
+function calcCellStats(image, mat, cellInfo) {
   cellInfo.cells.forEach(cell => {
+    if (cell.x + cell.width > mat.cols || cell.y + cell.height > mat.rows) {
+      cell.meanColor = [0, 0, 0, 255];
+      return;
+    }
     const cellMat =
         mat.roi(new cv.Rect(cell.x, cell.y, cell.width, cell.height));
     cell.meanColor = cv.mean(cellMat);
     cellMat.delete();
-    console.log(mean);
   });
+  const colored = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
+  cellInfo.cells.forEach(cell => {
+    cv.rectangle(colored,
+        new cv.Point(cell.x, cell.y),
+        new cv.Point(cell.x + cell.width, cell.y + cell.height),
+        cell.meanColor, cv.FILLED);
+  });
+  cv.imshow(createStackCanvas(image), colored);
+  colored.delete();
 }
 
 window.onload = () => {
   start();
 };
-
-async function calcData() {
-  await loadFromDisk(currId);
-  const ctx = document.getElementById('step2preview').getContext('2d');
-  cells.forEach(cell => {
-    const data = ctx.getImageData(
-        cell.offsetLeft, cell.offsetTop, cell.width, cell.height).data;
-    let avgColor = [0, 0, 0];
-    for (i = 0; i < data.length - 4; i += 4) {
-      avgColor[0] += data[i];
-      avgColor[1] += data[i + 1];
-      avgColor[2] += data[i + 2];
-    }
-    avgColor = [
-      avgColor[0] / (data.length / 4),
-      avgColor[1] / (data.length / 4),
-      avgColor[2] / (data.length / 4),
-    ];
-    //    console.log(`Cell average color is rgb(${
-    //      avgColor[0]}, ${avgColor[1]}, ${avgColor[2]}).`);
-    cell.avgColor = {r: avgColor[0], g: avgColor[1], b: avgColor[2]};
-  });
-}
-
-function colorGrid() {
-  const ctx = document.getElementById('step2preview').getContext('2d');
-  cells.forEach(cell => {
-    ctx.fillStyle =
-        `rgb(${cell.avgColor.r},${cell.avgColor.g},${cell.avgColor.b})`;
-    ctx.fillRect(cell.offsetLeft, cell.offsetTop, cell.width, cell.height);
-  });
-}
 
 function clusterColors() {
   const colors =
