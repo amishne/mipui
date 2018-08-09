@@ -86,10 +86,10 @@ function createElement(parent, tag, className, focusable) {
 
 function start() {
   const parent = document.getElementById('stackContainer');
-  createImageStack(parent, images[0]);
-//  images.forEach(image => {
-//    createImageStack(parent, image);
-//  });
+  // createImageStack(parent, images[0]);
+  images.forEach(image => {
+    createImageStack(parent, image);
+  });
 }
 
 function createImageStack(parent, image) {
@@ -121,11 +121,21 @@ function processImage(image) {
     lineInfo.offsetLeft -= 1;
     lineInfo.offsetTop += 1;
   }
+  expandLineInfo(lineInfo);
   showLines(image, withLines, lineInfo);
   withLines.delete();
   assign(image, src, lineInfo);
   mat.delete();
   src.delete();
+}
+
+function expandLineInfo(lineInfo) {
+  const expandDividerBy = lineInfo.dividerSize;
+  const before = Math.floor(expandDividerBy / 2);
+  lineInfo.dividerSize += expandDividerBy;
+  lineInfo.cellSize -= expandDividerBy;
+  lineInfo.offsetLeft -= before;
+  lineInfo.offsetTop -= before;
 }
 
 function initializeImageCanvas(image) {
@@ -180,7 +190,8 @@ function houghTransformOnDir(mat, dir, divisionFactor) {
       (dir == 'horizontal' ? mat.cols : mat.rows) / divisionFactor;
   const cvLines = new cv.Mat();
   cv.HoughLines(mat, cvLines, 1, Math.PI / 2, threshold, 0, 0, 0, Math.PI);
-  if (cvLines.rows < 10) {
+  const minNumOfLines = 20;
+  if (cvLines.rows < minNumOfLines) {
     cv.HoughLines(
         mat, cvLines, 1, Math.PI / 2, threshold / 2, 0, 0, 0, Math.PI);
   }
@@ -356,7 +367,8 @@ function createCell(row, col, x, y, width, height, role) {
 
 function calcCellStats(image, mat, cellInfo) {
   cellInfo.cells.forEach(cell => {
-    if (cell.x + cell.width > mat.cols || cell.y + cell.height > mat.rows) {
+    if (cell.x < 0 || cell.y < 0 ||
+        cell.x + cell.width > mat.cols || cell.y + cell.height > mat.rows) {
       cell.meanColor = [0, 0, 0, 255];
       return;
     }
@@ -365,6 +377,7 @@ function calcCellStats(image, mat, cellInfo) {
     cell.meanColor = cv.mean(cellMat);
     cellMat.delete();
   });
+  // Preview average colors
   const colored = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
   cellInfo.cells.forEach(cell => {
     cv.rectangle(colored,
