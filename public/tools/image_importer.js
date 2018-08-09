@@ -130,6 +130,7 @@ function processImage(image) {
 }
 
 function expandLineInfo(lineInfo) {
+  if (lineInfo.dividerSize > lineInfo.cellSize / 3) return;
   const expandDividerBy = lineInfo.dividerSize;
   const before = Math.floor(expandDividerBy / 2);
   lineInfo.dividerSize += expandDividerBy;
