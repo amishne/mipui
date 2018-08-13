@@ -75,6 +75,10 @@ const images = [{
     offsetTop: -2,
     boundarySize: 4,
   },
+}, {
+  src: 'hand_drawn_map.jpg',
+  name: 'hand',
+  grid: {},
 }];
 
 function createElement(parent, tag, className, focusable) {
@@ -86,7 +90,7 @@ function createElement(parent, tag, className, focusable) {
 
 function start() {
   const parent = document.getElementById('stackContainer');
-  // createImageStack(parent, images[0]);
+  //createImageStack(parent, images[0]);
   images.forEach(image => {
     createImageStack(parent, image);
   });
@@ -115,11 +119,15 @@ function processImage(image) {
   const lineInfo = getLineInfo(image, lines);
   console.log(lineInfo);
   const withLines = src.clone();
-  // Temp fix for donjon
+  // Temp fix while color clustering
   if (image.name == 'donjon') {
     lineInfo.cellSize -= 2;
     lineInfo.offsetLeft -= 1;
     lineInfo.offsetTop += 1;
+  } else if (image.name == 'hand') {
+    lineInfo.cellSize -= 0;
+    lineInfo.offsetLeft += 4;
+    lineInfo.offsetTop -= 2;
   }
   expandLineInfo(lineInfo);
   showLines(image, withLines, lineInfo);
@@ -130,7 +138,7 @@ function processImage(image) {
 }
 
 function expandLineInfo(lineInfo) {
-  if (lineInfo.dividerSize > lineInfo.cellSize / 3) return;
+  if (lineInfo.dividerSize > lineInfo.cellSize / 4) return;
   const expandDividerBy = lineInfo.dividerSize;
   const before = Math.floor(expandDividerBy / 2);
   lineInfo.dividerSize += expandDividerBy;
@@ -286,6 +294,7 @@ function showLines(image, mat, lineInfo) {
 function assign(image, mat, lineInfo) {
   const cellInfo = createCells(mat, lineInfo);
   calcCellStats(image, mat, cellInfo);
+  clusterColors(image, mat, cellInfo);
 }
 
 function createCells(mat, lineInfo) {
@@ -370,7 +379,7 @@ function calcCellStats(image, mat, cellInfo) {
   cellInfo.cells.forEach(cell => {
     if (cell.x < 0 || cell.y < 0 ||
         cell.x + cell.width > mat.cols || cell.y + cell.height > mat.rows) {
-      cell.meanColor = [0, 0, 0, 255];
+      cell.meanColor = null;
       return;
     }
     const cellMat =
@@ -381,6 +390,7 @@ function calcCellStats(image, mat, cellInfo) {
   // Preview average colors
   const colored = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
   cellInfo.cells.forEach(cell => {
+    if (!cell.meanColor) return;
     cv.rectangle(colored,
         new cv.Point(cell.x, cell.y),
         new cv.Point(cell.x + cell.width, cell.y + cell.height),
@@ -390,15 +400,53 @@ function calcCellStats(image, mat, cellInfo) {
   colored.delete();
 }
 
+function clusterColors(image, mat, cellInfo) {
+  const unknownCells = cellInfo.cells.filter(cell => !cell.meanColor);
+  const primaryCells =
+      cellInfo.cells.filter(cell => cell.meanColor && cell.role == 'primary');
+  const dividerCells =
+      cellInfo.cells.filter(cell => cell.meanColor && cell.role != 'primary');
+  const primaryClusters = new Ichuk(primaryCells, 'meanColor').split(2);
+  const dividerClusters = new Ichuk(dividerCells, 'meanColor').split(2);
+  const segmented = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
+  drawCluster(segmented, primaryClusters[0], [0, 0, 0, 255]);
+  drawCluster(segmented, primaryClusters[1], [255, 255, 255, 255]);
+  drawCluster(segmented, dividerClusters[0], [255, 0, 0, 255]);
+  drawCluster(segmented, dividerClusters[1], [0, 0, 255, 255]);
+//  const primaryClusters =
+//      clusterfck.hcluster(primaryCells.map(cell => cell.meanColor),
+//          clusterfck.MANHATTAN_DISTANCE, clusterfck.AVERAGE_LINKAGE)[0];
+//  const dividerClusters =
+//      clusterfck.hcluster(dividerCells.map(cell => cell.meanColor),
+//          clusterfck.MANHATTAN_DISTANCE, clusterfck.AVERAGE_LINKAGE)[0];
+//  drawCluster(segmented, primaryCells, primaryClusters.left);
+//  drawCluster(segmented, primaryCells, primaryClusters.right);
+//  drawCluster(segmented, dividerCells, dividerClusters.left);
+//  drawCluster(segmented, dividerCells, dividerClusters.right);
+  cv.imshow(createStackCanvas(image), segmented);
+  segmented.delete();
+  console.log(primaryClusters);
+}
+
+function drawCluster(mat, cluster, color) {
+  cluster.objects.forEach(cell => {
+    cv.rectangle(mat,
+        new cv.Point(cell.x, cell.y),
+        new cv.Point(cell.x + cell.width, cell.y + cell.height),
+        color, cv.FILLED);
+  });
+}
+
+//function drawCluster(mat, cells, cluster) {
+//  cluster.itemIndices.forEach(index => {
+//    const cell = cells[index];
+//    cv.rectangle(mat,
+//        new cv.Point(cell.x, cell.y),
+//        new cv.Point(cell.x + cell.width, cell.y + cell.height),
+//        cluster.canonical, cv.FILLED);
+//  });
+//}
+
 window.onload = () => {
   start();
 };
-
-function clusterColors() {
-  const colors =
-      cells.map(cell => [cell.avgColor.r, cell.avgColor.g, cell.avgColor.b]);
-  const clusters = clusterfck.hcluster(colors, clusterfck.MANHATTAN_DISTANCE,
-      clusterfck.AVERAGE_LINKAGE);
-  document.getElementById('clusters').textContent =
-      JSON.stringify(clusters, null, 2);
-}
