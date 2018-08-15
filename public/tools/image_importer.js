@@ -401,28 +401,24 @@ function calcCellStats(image, mat, cellInfo) {
 }
 
 function clusterColors(image, mat, cellInfo) {
-  const unknownCells = cellInfo.cells.filter(cell => !cell.meanColor);
+  // const unknownCells = cellInfo.cells.filter(cell => !cell.meanColor);
   const primaryCells =
       cellInfo.cells.filter(cell => cell.meanColor && cell.role == 'primary');
   const dividerCells =
       cellInfo.cells.filter(cell => cell.meanColor && cell.role != 'primary');
-  const primaryClusters = new Ichuk(primaryCells, 'meanColor').split(2);
-  const dividerClusters = new Ichuk(dividerCells, 'meanColor').split(2);
+  const primaryClusters =
+      new Ichuk(primaryCells, 'meanColor').getTopClusters(2);
+  const dividerClusters =
+      new Ichuk(dividerCells, 'meanColor').getTopClusters(2);
   const segmented = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
-  drawCluster(segmented, primaryClusters[0], [0, 0, 0, 255]);
-  drawCluster(segmented, primaryClusters[1], [255, 255, 255, 255]);
-  drawCluster(segmented, dividerClusters[0], [255, 0, 0, 255]);
-  drawCluster(segmented, dividerClusters[1], [0, 0, 255, 255]);
-//  const primaryClusters =
-//      clusterfck.hcluster(primaryCells.map(cell => cell.meanColor),
-//          clusterfck.MANHATTAN_DISTANCE, clusterfck.AVERAGE_LINKAGE)[0];
-//  const dividerClusters =
-//      clusterfck.hcluster(dividerCells.map(cell => cell.meanColor),
-//          clusterfck.MANHATTAN_DISTANCE, clusterfck.AVERAGE_LINKAGE)[0];
-//  drawCluster(segmented, primaryCells, primaryClusters.left);
-//  drawCluster(segmented, primaryCells, primaryClusters.right);
-//  drawCluster(segmented, dividerCells, dividerClusters.left);
-//  drawCluster(segmented, dividerCells, dividerClusters.right);
+  const primaryColorFactor = 255 / primaryClusters.length;
+  primaryClusters.forEach((c, i) => {
+    drawCluster(segmented, c, [primaryColorFactor * (i + 1), 0, 0, 255]);
+  });
+  const dividerColorFactor = 255 / dividerClusters.length;
+  dividerClusters.forEach((c, i) => {
+    drawCluster(segmented, c, [0, dividerColorFactor * (i + 1), 0, 255]);
+  });
   cv.imshow(createStackCanvas(image), segmented);
   segmented.delete();
   console.log(primaryClusters);
@@ -436,16 +432,6 @@ function drawCluster(mat, cluster, color) {
         color, cv.FILLED);
   });
 }
-
-//function drawCluster(mat, cells, cluster) {
-//  cluster.itemIndices.forEach(index => {
-//    const cell = cells[index];
-//    cv.rectangle(mat,
-//        new cv.Point(cell.x, cell.y),
-//        new cv.Point(cell.x + cell.width, cell.y + cell.height),
-//        cluster.canonical, cv.FILLED);
-//  });
-//}
 
 window.onload = () => {
   start();

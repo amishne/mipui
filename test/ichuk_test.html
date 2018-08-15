@@ -1,0 +1,66 @@
+<html>
+<head>
+  <script src="../public/tools/ichuk.js" type="text/javascript"></script>
+  <script src="harness.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    // beforeSuite = () => {};
+    // beforeTest = complete => { complete(); };
+
+    function createCluster(arr) {
+      return new Ichuk(arr.map(x => ({d: [x]})), 'd');
+    }
+
+    function sameArray(arr1, arr2) {
+      if (arr1.length != arr2.length) return false;
+      return arr1.every(obj => arr2.includes(obj));
+    }
+
+    function sameCluster(c, arr) {
+      if (c.size != arr.length) return false;
+      return arr.every(elem =>
+          c.objects.some(obj => sameArray(obj[c.dataField_], [elem])));
+    }
+
+    function sameClusters(clusters, arrays) {
+      if (clusters.length != arrays.length) return false;
+      return clusters.every(c => arrays.some(arr => sameCluster(c, arr)));
+    }
+
+    addTest('split() works as expected', async () => {
+      assert(sameClusters(createCluster([1, 2, 100, 101]).split(1), [
+        [1, 2, 100, 101],
+      ]));
+      assert(sameClusters(createCluster([1, 2, 100, 101]).split(2), [
+        [1, 2],
+        [100, 101],
+      ]));
+      assert(sameClusters(createCluster([1, 2, 100, 101, 102, 300]).split(3), [
+        [1, 2],
+        [100, 101, 102],
+        [300],
+      ]));
+      testCompleted();
+    });
+
+    addTest('getTopClusters() works as expected', async () => {
+      assert(sameClusters(createCluster([
+        1, 2, 3, 4, 5, 51, 52, 53, 1000, 1001,
+      ]).getTopClusters(2), [
+        [1, 2, 3, 4, 5],
+        [51, 52, 53],
+        [1000, 1001],
+      ]));
+      assert(sameClusters(createCluster([
+        1, 2, 3, 4, 5, 51, 52, 53, 54, 1000,
+      ]).getTopClusters(2), [
+        [1, 2, 3, 4, 5],
+        [51, 52, 53, 54],
+        [1000],
+      ]));
+      testCompleted();
+    });
+  </script>
+</head>
+  <body>
+  </body>
+</html>

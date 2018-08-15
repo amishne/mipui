@@ -4,6 +4,29 @@ class Ichuk {
     this.dataField_ = dataField;
   }
 
+  get size() {
+    return this.objects.length;
+  }
+
+  getTopClusters(k) {
+    const clusters = this.split(k).sort((c1, c2) => c2.size - c1.size);
+    // Split the first as long as it's guaranteed to contain a sub-cluster
+    // larger than the last.
+    while (clusters[0].size > 1 && clusters[0].size / k > clusters[1].size) {
+      const top = clusters.shift();
+      this.insertSorted_(clusters, top.split(k));
+    }
+    return clusters;
+  }
+
+  insertSorted_(into, from) {
+    from.forEach(fromElem => {
+      let index = into.findIndex(intoElem => intoElem.size < fromElem.size);
+      if (index == -1) index = into.length;
+      into.splice(index, 0, fromElem);
+    });
+  }
+
   split(k) {
     return this.kmeans_(k, Ichuk.distances_.euclidean)
         .map(objects => new Ichuk(objects, this.dataField_));
