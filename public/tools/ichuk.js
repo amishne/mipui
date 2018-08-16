@@ -1,7 +1,8 @@
 class Ichuk {
-  constructor(objects, dataField) {
+  constructor(objects, dataField, id = '') {
     this.objects = objects;
     this.dataField_ = dataField;
+    this.id = id;
   }
 
   get size() {
@@ -28,8 +29,8 @@ class Ichuk {
   }
 
   split(k) {
-    return this.kmeans_(k, Ichuk.distances_.euclidean)
-        .map(objects => new Ichuk(objects, this.dataField_));
+    return this.kmeans_(k, Ichuk.distances_.euclidean).map((objects, index) =>
+      new Ichuk(objects, this.dataField_, this.id + index));
   }
 
   // k-means implementation adapted from https://gist.github.com/tarunc/3141694
@@ -123,5 +124,9 @@ class Ichuk {
       }
     }
     return clusters;
+  }
+
+  toString() {
+    return this.id;
   }
 }
