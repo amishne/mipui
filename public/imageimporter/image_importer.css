@@ -4,6 +4,17 @@
   background-color: darkgrey;
 }
 
+.stack-element {
+  width: 100%;
+  display: inline-block;
+  vertical-align: top;
+  white-space: normal;
+  overflow: auto;
+  background-color: darkgrey;
+  margin: 0 2px;
+  cursor: zoom-in;
+}
+
 .image-stack {
   width: 300px;
   display: inline-block;

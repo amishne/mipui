@@ -4,6 +4,7 @@ class Griddler {
   }
 
   calculateCellInfo() {
+    const src = this.image_.mat;
     const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
     cv.cvtColor(this.image_.mat, mat, cv.COLOR_RGBA2GRAY, 0);
     this.image_.appendMatCanvas(mat);
