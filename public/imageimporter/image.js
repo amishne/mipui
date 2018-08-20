@@ -10,11 +10,20 @@ class Image {
       this.stackElement_ = this.createElement_(parent, 'div', 'image-stack');
       const sourceImage = this.appendStackElement_('img');
       sourceImage.onload = () => {
-        this.mat = cv.imread(sourceImage);
+        this.mat = this.createSourceMat_(sourceImage);
         resolve();
       };
       sourceImage.src = this.src_;
     });
+  }
+
+  createSourceMat_(sourceImage) {
+    const canvas = document.createElement('canvas');
+    canvas.width = sourceImage.naturalWidth;
+    canvas.height = sourceImage.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+    return cv.imread(canvas);
   }
 
   createElement_(parent, tag, className) {

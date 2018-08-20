@@ -12,7 +12,7 @@ const imageSrcs = [
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    if (index > 0) return;
+    //if (index > 0) return;
     const image = new Image(src);
     await image.initialize(parent);
     processImage(image);
