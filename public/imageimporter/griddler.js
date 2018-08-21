@@ -25,6 +25,7 @@ class Griddler {
   houghTransform_(mat) {
     // Get a measure of image "density", to control hough transform threshold.
     const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
+    //const divisionFactor = 0.34 / density;
     const divisionFactor = 0.34 / density;
 
     // We perform two transforms; one vertical and one horizontal. We do this
@@ -84,23 +85,48 @@ class Griddler {
       dir: 'vertical',
       lines: lines.filter(line => line.dir == 'vertical'),
     }];
-    const diffMap = {};
+    const diffMap = new Map();
     // Collect diffs for each bucket.
     buckets.forEach(bucket => {
-      for (let i = 1; i < bucket.lines.length; i++) {
+      for (let i = 2; i < bucket.lines.length; i++) {
         const line = bucket.lines[i];
-        const diff = line.rho - bucket.lines[i - 1].rho;
-        line.diff = diff;
-        diffMap[diff] = {
-          size: diff,
-          count: (diffMap[diff] || {count: 0}).count + 1,
-          lines: (diffMap[diff] || {lines: []}).lines.concat([line]),
-        };
+        const diff1 = line.rho - bucket.lines[i - 1].rho;
+        const diff2 = line.rho - bucket.lines[i - 2].rho;
+        [diff1, diff2].forEach(diff => {
+          if (!diffMap.has(diff)) {
+            diffMap.set(diff, {
+              size: diff,
+              allLines: {
+                horizontal: {
+                  lines: [],
+                  weight: 0,
+                },
+                vertical: {
+                  lines: [],
+                  weight: 0,
+                },
+              },
+            });
+          }
+        });
+        diffMap.get(diff1).allLines[bucket.dir].weight += 1;
+        diffMap.get(diff1).allLines[bucket.dir].lines.push(line);
+        diffMap.get(diff2).allLines[bucket.dir].weight += 0.25;
+        diffMap.get(diff2).allLines[bucket.dir].lines.push(line);
       }
     });
+    // Assign count to each diff.
+    for (const diff of diffMap.values()) {
+      diff.normalizedWeight =
+        diff.allLines.horizontal.weight / buckets[0].lines.length +
+        diff.allLines.vertical.weight / buckets[1].lines.length;
+    };
     // Aggregate diffs to find the most common ones to act as grid size.
-    const sortedDiffs = Object.keys(diffMap).map(key => diffMap[key])
-        .sort((diff1, diff2) => diff2.count - diff1.count);
+    const sortedDiffs = Array.from(diffMap.values())
+        .sort((diff1, diff2) =>
+          diff2.normalizedWeight - diff1.normalizedWeight);
+
+    console.log(sortedDiffs);
 
     const first = sortedDiffs[0] || {size: 1};
     const second = sortedDiffs.slice(1)
@@ -108,21 +134,30 @@ class Griddler {
     const cellSize = Math.max(first.size, second.size);
     const dividerSize = Math.min(first.size, second.size);
     const gridSize = cellSize + dividerSize;
+
     // Identify most common offset for each bucket.
     buckets.forEach(bucket => {
-      const offsets = {};
-      (diffMap[cellSize] || {lines: []}).lines
-          .filter(line => line.dir == bucket.dir).forEach(line => {
-            const offset = line.rho % gridSize;
-            offsets[offset] = {
-              size: offset,
-              count: (offsets[offset] || {count: 0}).count + 1,
-            };
+      const offsets = new Map();
+      const cellDiff = diffMap.get(cellSize);
+      if (!cellDiff) {
+        bucket.offset = 0;
+        return;
+      }
+      cellDiff.allLines[bucket.dir].lines.forEach(line => {
+        const offset = line.rho % gridSize;
+        if (!offsets.has(offset)) {
+          offsets.set(offset, {
+            size: offset,
+            count: 0,
           });
-      const sortedOffsets = Object.keys(offsets).map(key => offsets[key])
+        }
+        offsets.get(offset).count++;
+      });
+      const sortedOffsets = Array.from(offsets.values())
           .sort((offset1, offset2) => offset2.count - offset1.count);
       bucket.offset = sortedOffsets.length > 0 ? sortedOffsets[0].size : 0;
     });
+
     return {
       cellSize,
       dividerSize,
