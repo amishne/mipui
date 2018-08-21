@@ -93,10 +93,10 @@ class Cell {
     const offsetRight = this.offsetRight - this.tile.right;
     const offsetTop = this.offsetTop - this.tile.top;
     const offsetBottom = this.offsetBottom - this.tile.bottom;
-    element.style.left = offsetLeft;
-    element.style.right = offsetRight;
-    element.style.top = offsetTop;
-    element.style.bottom = offsetBottom;
+    element.style.left = offsetLeft + 'px';
+    element.style.right = offsetRight + 'px';
+    element.style.top = offsetTop + 'px';
+    element.style.bottom = offsetBottom + 'px';
     this.populateElementFromContent_(element, layer, content, isHighlight);
     this.elements_.set(layer, element);
     return element;
@@ -110,10 +110,10 @@ class Cell {
     const elements = [];
     this.getReplicas_(layer, content).forEach(replica => {
       const clone = baseElement.cloneNode(true);
-      clone.style.left = offsetLeft + replica.offsetLeft;
-      clone.style.right = offsetRight + replica.offsetRight;
-      clone.style.top = offsetTop + replica.offsetTop;
-      clone.style.bottom = offsetBottom + replica.offsetBottom;
+      clone.style.left = (offsetLeft + replica.offsetLeft) + 'px';
+      clone.style.right = (offsetRight + replica.offsetRight) + 'px';
+      clone.style.top = (offsetTop + replica.offsetTop) + 'px';
+      clone.style.bottom = (offsetBottom + replica.offsetBottom) + 'px';
 
       replica.tile.layerElements.get(layer).appendChild(clone);
       if (!isHighlight) {
@@ -622,9 +622,9 @@ class Cell {
       }
     });
     element.style.right =
-        baseOffsetRight - (this.offsetRight - endCell.offsetRight);
+        (baseOffsetRight - (this.offsetRight - endCell.offsetRight)) + 'px';
     element.style.bottom =
-        baseOffsetBottom - (this.offsetBottom - endCell.offsetBottom);
+        (baseOffsetBottom - (this.offsetBottom - endCell.offsetBottom)) + 'px';
     if (layer == ct.walls) {
       // Set background offset.
       let backgroundOffsetLeft = -this.offsetLeft;

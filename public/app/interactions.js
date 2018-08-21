@@ -108,11 +108,11 @@ function updateMapTransform(shouldRefreshMapResizeButtonLocations) {
   const mapHeight = getCached(mapContainer, 'offsetHeight');
   const mapFrame = document.getElementById('mapFrame');
   mapFrame.style.width =
-      state.theMap.mapWidth * nav.scale + mapWidth;
+      (state.theMap.mapWidth * nav.scale + mapWidth) + 'px';
   mapFrame.style.height =
-      state.theMap.mapHeight * nav.scale + mapHeight;
-  theMap.style.left = mapWidth / 2;
-  theMap.style.top = mapHeight / 2;
+      (state.theMap.mapHeight * nav.scale + mapHeight) + 'px';
+  theMap.style.left = (mapWidth / 2) + 'px';
+  theMap.style.top = (mapHeight / 2) + 'px';
   if (shouldRefreshMapResizeButtonLocations) {
     refreshMapResizeButtonLocations();
   }
@@ -527,8 +527,8 @@ function refreshMapResizeButtonLocations() {
         case 'left': x = rect.left; offsetX = -70; break;
         case 'top': y = rect.top; offsetY = -70; break;
       }
-      button.element.style.left = x + offsetX;
-      button.element.style.top = y + offsetY;
+      button.element.style.left = (x + offsetX) + 'px';
+      button.element.style.top = (y + offsetY) + 'px';
       refreshMapResizeButtonLocationsTimeout = null;
     });
     theMap.classList.add('resized-map');

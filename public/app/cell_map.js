@@ -77,8 +77,8 @@ class CellMap {
       cell.offsetRight = (width - 1) - (cell.offsetLeft + cell.width);
       cell.offsetBottom = (height - 1) - (cell.offsetTop + cell.height);
     });
-    container.style.width = width;
-    container.style.height = height;
+    container.style.width = width + 'px';
+    container.style.height = height + 'px';
     this.mapWidth = width;
     this.mapHeight = height;
   }
@@ -186,8 +186,8 @@ class CellMap {
     cell.offsetLeft = this.currX;
     cell.offsetTop = this.currY;
     this.cells.set(key, cell);
-    element.style.left = cell.offsetLeft - tile.left;
-    element.style.top = cell.offsetTop - tile.top;
+    element.style.left = (cell.offsetLeft - tile.left) + 'px';
+    element.style.top = (cell.offsetTop - tile.top) + 'px';
     this.updateTileFirstAndLastCells_(tile, cell);
     return cell;
   }

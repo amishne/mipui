@@ -392,14 +392,14 @@ class BoxGesture extends Gesture {
     this.hoverWidget_ = createAndAppendDivWithClass(
         this.startCell_.gridElement, this.getHoverWidgetCssClassName_());
     this.hoverWidget_.style.left =
-        this.startCell_.offsetLeft - this.startCell_.offsetLeft;
+        (this.startCell_.offsetLeft - this.startCell_.offsetLeft) + 'px';
     this.hoverWidget_.style.top =
-        this.startCell_.offsetTop - this.startCell_.offsetTop;
+        (this.startCell_.offsetTop - this.startCell_.offsetTop) + 'px';
     const layerElement =
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
-    this.hoverWidget_.style.width = layerElement.scrollWidth;
-    this.hoverWidget_.style.height = layerElement.scrollHeight;
+    this.hoverWidget_.style.width = layerElement.scrollWidth + 'px';
+    this.hoverWidget_.style.height = layerElement.scrollHeight + 'px';
     this.hoverWidget_.onmousedown = e => {
       if (e.button == 0) {
         this.startEditing_();
@@ -425,7 +425,7 @@ class BoxGesture extends Gesture {
     const layerElement =
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
-    this.deleteWidget_.style.left = layerElement.scrollWidth;
+    this.deleteWidget_.style.left = layerElement.scrollWidth + 'px';
     const deleteGesture = this.createNewGesture_();
     deleteGesture.mode_ = 'removing';
     deleteGesture.startCell_ = this.startCell_;
@@ -469,8 +469,8 @@ class BoxGesture extends Gesture {
     const layerElement =
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
-    this.resizeWidget_.style.left = layerElement.scrollWidth;
-    this.resizeWidget_.style.top = layerElement.scrollHeight;
+    this.resizeWidget_.style.left = layerElement.scrollWidth + 'px';
+    this.resizeWidget_.style.top = layerElement.scrollHeight + 'px';
     this.resizeWidget_.onmousedown = e => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();
@@ -543,8 +543,8 @@ class BoxGesture extends Gesture {
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
     this.inputElement_ = this.createInputElement_();
-    this.inputElement_.style.width = layerElement.offsetWidth + 2;
-    this.inputElement_.style.height = layerElement.offsetHeight + 2;
+    this.inputElement_.style.width = (layerElement.offsetWidth + 2) + 'px';
+    this.inputElement_.style.height = (layerElement.offsetHeight + 2) + 'px';
     this.inputElement_.value =
         this.startCell_.hasLayerContent(this.getLayer_()) ?
           this.startCell_.getVal(this.getLayer_(), this.getValueKey_()) :

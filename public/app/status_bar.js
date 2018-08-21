@@ -39,8 +39,8 @@ class StatusBar {
     this.showMessage(text);
     const progress =
         createAndAppendDivWithClass(this.element_, 'status-bar-progress');
-    progress.style.width = 100 * curr / total;
-    progress.style.borderRightWidth = 100 * (1 - curr / total);
+    progress.style.width = (100 * curr / total) + 'px';
+    progress.style.borderRightWidth = (100 * (1 - curr / total)) + 'px';
   }
 
   hideMessage() {

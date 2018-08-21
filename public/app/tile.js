@@ -58,8 +58,8 @@ class Tile {
     this.dimensionsInitialized_ = true;
     this.left = left;
     this.top = top;
-    this.containerElement_.style.left = left;
-    this.containerElement_.style.top = top;
+    this.containerElement_.style.left = left + 'px';
+    this.containerElement_.style.top = top + 'px';
   }
 
   finalizeDimensions() {
@@ -68,10 +68,10 @@ class Tile {
     this.bottom = this.lastCell.offsetBottom;
     this.width = this.lastCell.offsetLeft + this.lastCell.width - this.left;
     this.height = this.lastCell.offsetTop + this.lastCell.height - this.top;
-    this.containerElement_.style.width = this.width;
-    this.containerElement_.style.height = this.height;
-    this.mapElement.style.width = this.width;
-    this.mapElement.style.height = this.height;
+    this.containerElement_.style.width = this.width + 'px';
+    this.containerElement_.style.height = this.height + 'px';
+    this.mapElement.style.width = this.width + 'px';
+    this.mapElement.style.height = this.height + 'px';
 
     this.active_ = true;
     this.cacheImage_();
@@ -182,16 +182,16 @@ class Tile {
     if (state.tilingEnabled) {
       if (this.isTileEmpty_()) {
         this.imageElement_.src = EMPTY_IMAGE;
-        this.imageElement_.style.width = 2 + this.width;
-        this.imageElement_.style.height = 2 + this.height;
+        this.imageElement_.style.width = (2 + this.width) + 'px';
+        this.imageElement_.style.height = (2 + this.height) + 'px';
         this.deactivate_(start);
         return;
       }
       const imageFromTheme = this.getImageFromTheme_();
       if (imageFromTheme) {
         this.imageElement_.src = imageFromTheme;
-        this.imageElement_.style.width = constants.tileSize * 32;
-        this.imageElement_.style.height = constants.tileSize * 32;
+        this.imageElement_.style.width = (constants.tileSize * 32) + 'px';
+        this.imageElement_.style.height = (constants.tileSize * 32) + 'px';
         this.deactivate_(start);
         return;
       }
@@ -217,8 +217,8 @@ class Tile {
             return;
           }
           this.imageElement_.src = dataUrl;
-          this.imageElement_.style.width = 2 + this.width;
-          this.imageElement_.style.height = 2 + this.height;
+          this.imageElement_.style.width = (2 + this.width) + 'px';
+          this.imageElement_.style.height = (2 + this.height) + 'px';
           this.deactivate_(start);
         }).catch(reason => {
           state.theMap.concurrentTileCachingOperations--;
