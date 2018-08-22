@@ -54,15 +54,24 @@ class Griddler {
   }
 
   houghTransformOnDir_(mat, dir, divisionFactor) {
-    const threshold =
-        (dir == 'horizontal' ? mat.cols : mat.rows) / divisionFactor;
-    const cvLines = new cv.Mat();
-    cv.HoughLines(mat, cvLines, 1, Math.PI / 2, threshold, 0, 0, 0, Math.PI);
-    const minNumOfLines = 20;
-    if (cvLines.rows < minNumOfLines) {
-      cv.HoughLines(
-          mat, cvLines, 1, Math.PI / 2, threshold / 2, 0, 0, 0, Math.PI);
+    const mapSize = dir == 'horizontal' ? mat.cols : mat.rows;
+    let threshold = mapSize / divisionFactor;
+    let lines = [];
+    const minLineCount = 20;
+    const maxLineCount = mapSize / 5;
+    while (lines.length < minLineCount || lines.length > maxLineCount) {
+      const cvLines = new cv.Mat();
+      cv.HoughLines(mat, cvLines, 1, Math.PI / 2, threshold, 0, 0, 0, Math.PI);
+      lines = this.getLinesFromHoughTransformResult_(cvLines, dir);
+      cvLines.delete();
+      threshold *= lines.length < minLineCount ? 0.5 : 1.5;
+      if (threshold < 50 || threshold > 1000) break;
     }
+    lines.sort((line1, line2) => line1.rho - line2.rho);
+    return lines;
+  }
+
+  getLinesFromHoughTransformResult_(cvLines, dir) {
     const lines = [];
     for (let i = 0; i < cvLines.rows; ++i) {
       const rho = cvLines.data32F[i * 2];
@@ -72,8 +81,6 @@ class Griddler {
         lines.push({rho, theta, dir});
       }
     }
-    cvLines.delete();
-    lines.sort((line1, line2) => line1.rho - line2.rho);
     return lines;
   }
 
@@ -111,7 +118,7 @@ class Griddler {
         });
         diffMap.get(diff1).allLines[bucket.dir].weight += 1;
         diffMap.get(diff1).allLines[bucket.dir].lines.push(line);
-        diffMap.get(diff2).allLines[bucket.dir].weight += 0.25;
+        diffMap.get(diff2).allLines[bucket.dir].weight -= 0.25;
         diffMap.get(diff2).allLines[bucket.dir].lines.push(line);
       }
     });
@@ -130,7 +137,7 @@ class Griddler {
 
     const first = sortedDiffs[0] || {size: 1};
     const second = sortedDiffs.slice(1)
-        .find(diff => first.size > 5 || diff.size > 5) || {size: 10};
+        .find(diff => first.size > 10 || diff.size > 10) || {size: 10};
     const cellSize = Math.max(first.size, second.size);
     const dividerSize = Math.min(first.size, second.size);
     const gridSize = cellSize + dividerSize;

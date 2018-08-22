@@ -7,14 +7,17 @@ const imageSrcs = [
   'dyson_map1.png',
   'embossed_map.jpg',
   'hand_drawn_map.jpg',
+  'dyson2-map.jpg',
+  'gridless-map.jpg',
 ];
 
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    //if (index > 0) return;
+    // if (index != 7) return;
     const image = new Image(src);
     await image.initialize(parent);
+    console.log(`${index}) ${src}`);
     processImage(image);
   });
 }
