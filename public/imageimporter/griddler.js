@@ -3,7 +3,7 @@ class Griddler {
     this.image_ = image;
   }
 
-  calculateCellInfo() {
+  calculateLineInfo() {
     const src = this.image_.mat;
     const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
     cv.cvtColor(this.image_.mat, mat, cv.COLOR_RGBA2GRAY, 0);
@@ -25,7 +25,6 @@ class Griddler {
   houghTransform_(mat) {
     // Get a measure of image "density", to control hough transform threshold.
     const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
-    //const divisionFactor = 0.34 / density;
     const divisionFactor = 0.34 / density;
 
     // We perform two transforms; one vertical and one horizontal. We do this
@@ -151,7 +150,8 @@ class Griddler {
         return;
       }
       cellDiff.allLines[bucket.dir].lines.forEach(line => {
-        const offset = line.rho % gridSize;
+        let offset = line.rho % gridSize;
+        if (offset < 0) offset += gridSize;
         if (!offsets.has(offset)) {
           offsets.set(offset, {
             size: offset,
@@ -199,5 +199,8 @@ class Griddler {
     lineInfo.cellSize -= expandDividerBy;
     lineInfo.offsetLeft -= before;
     lineInfo.offsetTop -= before;
+    const gridSize = lineInfo.cellSize + lineInfo.dividerSize;
+    if (lineInfo.offsetLeft < 0) lineInfo.offsetLeft += gridSize;
+    if (lineInfo.offsetTop < 0) lineInfo.offsetTop += gridSize;
   }
 }

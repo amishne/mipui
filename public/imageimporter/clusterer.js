@@ -6,6 +6,55 @@ class Clusterer {
     this.topPrimaryClusters_ = [];
     this.topDividerClusters_ = [];
   }
+
+  assign() {
+    this.collectCellInfo_();
+    const clusters = this.cluster_();
+  }
+
+  collectCellInfo_() {
+    this.collectCellColor_();
+  }
+
+  collectCellColor_() {
+    this.cellInfo_.cells.forEach(cell => {
+      if (cell.x < 0 || cell.y < 0 ||
+          cell.x + cell.width > mat.cols || cell.y + cell.height > mat.rows) {
+        cell.meanColor = null;
+        return;
+      }
+      const cellMat =
+          mat.roi(new cv.Rect(cell.x, cell.y, cell.width, cell.height));
+      cell.meanColor = cv.mean(cellMat);
+
+  //    const srcVec = new cv.MatVector();
+  //    srcVec.push_back(cellMat);
+  //    const channels = [0, 1, 2];
+  //    const histSize = [10, 10, 10];
+  //    const ranges = [0, 255, 0, 255, 0, 255];
+  //    const hist = new cv.Mat();
+  //    const mask = new cv.Mat();
+  //    cv.calcHist(srcVec, channels, mask, hist, histSize, ranges);
+  //    srcVec.delete();
+  //    mask.delete();
+  //    hist.delete();
+      cellMat.delete();
+    });
+    // Preview average colors
+    const colored = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
+    cellInfo.cells.forEach(cell => {
+      if (!cell.meanColor) return;
+      cv.rectangle(colored,
+          new cv.Point(cell.x, cell.y),
+          new cv.Point(cell.x + cell.width, cell.y + cell.height),
+          cell.meanColor, cv.FILLED);
+    });
+    cv.imshow(createStackCanvas(image), colored);
+    colored.delete();
+  }
+
+  cluster_() {
+  }
 }
 
 /*
