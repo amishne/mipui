@@ -93,19 +93,13 @@ class Cells {
       const cellMat = this.image_.mat.roi(
           new cv.Rect(cell.x, cell.y, cell.width, cell.height));
       cell.meanColor = cv.mean(cellMat);
-
-  //    const srcVec = new cv.MatVector();
-  //    srcVec.push_back(cellMat);
-  //    const channels = [0, 1, 2];
-  //    const histSize = [10, 10, 10];
-  //    const ranges = [0, 255, 0, 255, 0, 255];
-  //    const hist = new cv.Mat();
-  //    const mask = new cv.Mat();
-  //    cv.calcHist(srcVec, channels, mask, hist, histSize, ranges);
-  //    srcVec.delete();
-  //    mask.delete();
-  //    hist.delete();
+      const greyscaleCellMat = this.image_.greyscale.roi(
+          new cv.Rect(cell.x, cell.y, cell.width, cell.height));
+      const minMax = cv.minMaxLoc(greyscaleCellMat);
+      cell.minIntensity = minMax.minVal;
+      cell.maxIntensity = minMax.maxVal;
       cellMat.delete();
+      greyscaleCellMat.delete();
     });
     // Preview average colors
     const colored =

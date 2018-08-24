@@ -5,10 +5,12 @@ class Griddler {
 
   calculateLineInfo() {
     const src = this.image_.mat;
+    const greyscale = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
+    cv.cvtColor(this.image_.mat, greyscale, cv.COLOR_RGBA2GRAY, 0);
+    this.image_.greyscale = greyscale;
     const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
-    cv.cvtColor(this.image_.mat, mat, cv.COLOR_RGBA2GRAY, 0);
     this.image_.appendMatCanvas(mat);
-    cv.Canny(mat, mat, 100, 300, 3, false);
+    cv.Canny(greyscale, mat, 100, 300, 3, false);
     this.image_.appendMatCanvas(mat);
     const lines = this.houghTransform_(mat);
     this.image_.appendMatCanvas(mat);
