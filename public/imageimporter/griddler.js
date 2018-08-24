@@ -27,7 +27,8 @@ class Griddler {
   houghTransform_(mat) {
     // Get a measure of image "density", to control hough transform threshold.
     const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
-    const divisionFactor = 0.34 / density;
+    //const divisionFactor = 0.34 / density;
+    const divisionFactor = 0.3 / density;
 
     // We perform two transforms; one vertical and one horizontal. We do this
     // because the threshold depends on the size, and our map is not necessarily
@@ -59,13 +60,13 @@ class Griddler {
     let threshold = mapSize / divisionFactor;
     let lines = [];
     const minLineCount = 20;
-    const maxLineCount = mapSize / 5;
+    const maxLineCount = mapSize / 20;
     while (lines.length < minLineCount || lines.length > maxLineCount) {
       const cvLines = new cv.Mat();
       cv.HoughLines(mat, cvLines, 1, Math.PI / 2, threshold, 0, 0, 0, Math.PI);
       lines = this.getLinesFromHoughTransformResult_(cvLines, dir);
       cvLines.delete();
-      threshold *= lines.length < minLineCount ? 0.5 : 1.5;
+      threshold *= lines.length < minLineCount ? 0.8 : 1.2;
       if (threshold < 50 || threshold > 1000) break;
     }
     lines.sort((line1, line2) => line1.rho - line2.rho);

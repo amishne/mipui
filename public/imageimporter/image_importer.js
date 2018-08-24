@@ -9,6 +9,7 @@ const imageSrcs = [
   'hand_drawn_map.jpg',
   'dyson2-map.jpg',
   'gridless-map.jpg',
+  'hand-drawn-griddy-map.png',
 ];
 
 function start() {
