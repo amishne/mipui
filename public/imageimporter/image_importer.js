@@ -15,7 +15,7 @@ const imageSrcs = [
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    //if (index != 0) return;
+    if (index != 0) return;
     const image = new Image(src);
     await image.initialize(parent);
     console.log(`${index}) ${src}`);
@@ -27,7 +27,7 @@ function processImage(image) {
   const lineInfo = new Griddler(image).calculateLineInfo();
   const cells = new Cells(image, lineInfo);
   cells.initialize();
-  //new Clusterer(image, cellInfo).assign();
+  new Clusterer(image, cells).assign();
 }
 
 /*

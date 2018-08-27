@@ -1,123 +1,74 @@
 class Clusterer {
-  constructor(image, cellInfo) {
+  constructor(image, cells) {
     this.image_ = image;
-    this.cellInfo_ = cellInfo;
+    this.cells_ = cells;
     this.idsToClusters_ = new Map();
     this.topPrimaryClusters_ = [];
     this.topDividerClusters_ = [];
+    this.idCounter_ = 0;
   }
 
   assign() {
-    this.collectCellInfo_();
     const clusters = this.cluster_();
   }
 
-  collectCellInfo_() {
-    this.collectCellColor_();
+  cluster_() {
+    const cellsByRole = {
+      corner: [],
+      primary: [],
+      divider: [],
+    };
+    this.cells_.cellList.forEach(cell => {
+      let key = cell.role;
+      if (key == 'horizontal' || key == 'vertical') key = 'divider';
+      cellsByRole[key].push(cell);
+    });
+    const clustersByRole = {};
+    const clusterPreview =
+        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+    Object.keys(cellsByRole).forEach(key => {
+      const clusters = new Cluster(cellsByRole[key], null, parent =>
+        this.assignId_(parent)).getTopClusters(3);
+      clustersByRole[key] = clusters;
+      this.drawClusters_(clusterPreview, clusters);
+    });
+    this.image_.appendMatCanvas(clusterPreview);
+    clusterPreview.delete();
+    return clustersByRole;
   }
 
-  collectCellColor_() {
-    this.cellInfo_.cells.forEach(cell => {
-      if (cell.x < 0 || cell.y < 0 ||
-          cell.x + cell.width > mat.cols || cell.y + cell.height > mat.rows) {
-        cell.meanColor = null;
-        return;
-      }
-      const cellMat =
-          mat.roi(new cv.Rect(cell.x, cell.y, cell.width, cell.height));
-      cell.meanColor = cv.mean(cellMat);
+  assignId_(parentCluster) {
+    if (!parentCluster) {
+      return `C${this.dCounter_++}`;
+    }
+    return `${parentCluster.id}${this.idCounter_++}`;
+  }
 
-  //    const srcVec = new cv.MatVector();
-  //    srcVec.push_back(cellMat);
-  //    const channels = [0, 1, 2];
-  //    const histSize = [10, 10, 10];
-  //    const ranges = [0, 255, 0, 255, 0, 255];
-  //    const hist = new cv.Mat();
-  //    const mask = new cv.Mat();
-  //    cv.calcHist(srcVec, channels, mask, hist, histSize, ranges);
-  //    srcVec.delete();
-  //    mask.delete();
-  //    hist.delete();
-      cellMat.delete();
+  drawClusters_(mat, clusters) {
+    const colors = [
+      [0, 0, 0, 255],
+      [255, 255, 255, 255],
+      [255, 0, 0, 255],
+      [0, 255, 0, 255],
+      [0, 0, 255, 255],
+      [0, 255, 255, 255],
+    ];
+    clusters.slice(0, colors.length).forEach((cluster, index) => {
+      this.drawCluster_(mat, cluster, colors[index]);
     });
-    // Preview average colors
-    const colored = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
-    cellInfo.cells.forEach(cell => {
-      if (!cell.meanColor) return;
-      cv.rectangle(colored,
+  }
+
+  drawCluster_(mat, cluster, color) {
+    cluster.cells.forEach(cell => {
+      cv.rectangle(mat,
           new cv.Point(cell.x, cell.y),
           new cv.Point(cell.x + cell.width, cell.y + cell.height),
-          cell.meanColor, cv.FILLED);
+          color, cv.FILLED);
     });
-    cv.imshow(createStackCanvas(image), colored);
-    colored.delete();
-  }
-
-  cluster_() {
   }
 }
 
 /*
-function clusterColors(image, mat, cellInfo) {
-  // const unknownCells = cellInfo.cells.filter(cell => !cell.meanColor);
-  const primaryCells =
-      cellInfo.cells.filter(cell => cell.meanColor && cell.role == 'primary');
-  const dividerCells =
-      cellInfo.cells.filter(cell => cell.meanColor && cell.role != 'primary');
-//  const verHorCells =
-//      cellInfo.cells.filter(cell => cell.meanColor &&
-//          (cell.role == 'vertical' || cell.role == 'horizontal'));
-//  const cornerCells =
-//      cellInfo.cells.filter(cell => cell.meanColor && cell.role == 'corner');
-  const primaryClusters =
-      new Ichuk(primaryCells, 'meanColor', 'primary_').getTopClusters(2);
-  const dividerClusters =
-      new Ichuk(dividerCells, 'meanColor', 'divider_').getTopClusters(3);
-  primaryCells.forEach(cell => {
-    cell.topCluster = primaryClusters.find(c => c.objects.includes(cell));
-  });
-  dividerCells.forEach(cell => {
-    cell.topCluster = dividerClusters.find(c => c.objects.includes(cell));
-  });
-//  const verHorClusters =
-//      new Ichuk(verHorCells, 'meanColor').getTopClusters(2);
-//  const cornerClusters =
-//      new Ichuk(cornerCells, 'meanColor').getTopClusters(2);
-  const segmented = cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
-  drawTopClusters(segmented, primaryClusters);
-  drawTopClusters(segmented, dividerClusters);
-//  drawTopClusters(segmented, verHorClusters);
-//  drawTopClusters(segmented, cornerClusters);
-  cv.imshow(createStackCanvas(image), segmented);
-  segmented.delete();
-  return {primaryClusters, dividerClusters};
-}
-
-function drawTopClusters(mat, clusters) {
-  drawCluster(mat, clusters[0], [0, 0, 0, 255]);
-  drawCluster(mat, clusters[1], [255, 255, 255, 255]);
-  if (clusters.length > 2) {
-    drawCluster(mat, clusters[2], [255, 0, 0, 255]);
-  }
-  if (clusters.length > 3) {
-    drawCluster(mat, clusters[3], [0, 255, 0, 255]);
-  }
-  if (clusters.length > 4) {
-    drawCluster(mat, clusters[4], [0, 0, 255, 255]);
-  }
-  if (clusters.length > 5) {
-    drawCluster(mat, clusters[4], [0, 255, 255, 255]);
-  }
-}
-
-function drawCluster(mat, cluster, color) {
-  cluster.objects.forEach(cell => {
-    cv.rectangle(mat,
-        new cv.Point(cell.x, cell.y),
-        new cv.Point(cell.x + cell.width, cell.y + cell.height),
-        color, cv.FILLED);
-  });
-}
 
 function assignClusters(image, mat, cellInfo, clusters) {
   applyHueristics(cellInfo, clusters);

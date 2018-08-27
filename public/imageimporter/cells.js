@@ -98,6 +98,7 @@ class Cells {
       const minMax = cv.minMaxLoc(greyscaleCellMat);
       cell.minIntensity = minMax.minVal;
       cell.maxIntensity = minMax.maxVal;
+      cell.data = [...cell.meanColor, cell.minIntensity, cell.maxIntensity];
       cellMat.delete();
       greyscaleCellMat.delete();
     });

@@ -81,7 +81,7 @@ class Cluster {
   }
 
   kmeans_(k, distance) {
-    const points = this.cells.map(obj => obj[this.dataField_]);
+    const points = this.cells.map(obj => obj.data);
     const centroids = this.randomCentroids_(points, k);
     const assignment = new Array(points.length);
     const clusters = new Array(k);
@@ -112,7 +112,7 @@ class Cluster {
         for (let g = 0; g < centroid.length; g++) {
           let sum = 0;
           for (let i = 0; i < assigned.length; i++) {
-            sum += assigned[i][this.dataField_][g];
+            sum += assigned[i].data[g];
           }
           newCentroid[g] = sum / assigned.length;
 
