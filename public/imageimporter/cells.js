@@ -64,6 +64,10 @@ class Cells {
     this.calcCellStats_();
   }
 
+  getCell(col, row) {
+    return this.cellList.find(cell => cell.row == row && cell.col == col);
+  }
+
   createCornerCell_(row, col, x, y, lineInfo) {
     return this.createCell_(
         row, col, x, y, lineInfo.dividerSize, lineInfo.dividerSize, 'corner');

@@ -9,7 +9,8 @@ class Clusterer {
   }
 
   assign() {
-    const clusters = this.cluster_();
+    const clustersByRole = this.cluster_();
+    const clusterGroups = this.mergeClusters_(clustersByRole);
   }
 
   cluster_() {
@@ -32,16 +33,58 @@ class Clusterer {
       clustersByRole[key] = clusters;
       this.drawClusters_(clusterPreview, clusters);
     });
+    this.assignClustersToCells_(clustersByRole);
     this.image_.appendMatCanvas(clusterPreview);
     clusterPreview.delete();
     return clustersByRole;
   }
 
+  assignClustersToCells_(clustersByRole) {
+    // Assign a cluster to each cell.
+    Object.keys(clustersByRole).forEach(key => {
+      const clusters = clustersByRole[key];
+      clusters.forEach(cluster => {
+        cluster.cells.forEach(cell => { cell.cluster = cluster; });
+      });
+    });
+    // Assign neighbors.
+    const clusterOf = (col, row) => {
+      const cell = this.cells_.getCell(col, row);
+      return cell ? cell.cluster : null;
+    };
+    this.cells_.cellList.forEach(cell => {
+      const col = cell.col;
+      const row = cell.row;
+      cell.neighbors = {
+        full: {
+          t: clusterOf(col, row - 1),
+          r: clusterOf(col + 1, row),
+          b: clusterOf(col, row + 1),
+          l: clusterOf(col - 1, row),
+          tr: clusterOf(col + 1, row - 1),
+          br: clusterOf(col + 1, row + 1),
+          bl: clusterOf(col - 1, row + 1),
+          tl: clusterOf(col - 1, row - 1),
+        },
+        half: {
+          t: clusterOf(col, row - 0.5),
+          r: clusterOf(col + 0.5, row),
+          b: clusterOf(col, row + 0.5),
+          l: clusterOf(col - 0.5, row),
+          tr: clusterOf(col + 0.5, row - 0.5),
+          br: clusterOf(col + 0.5, row + 0.5),
+          bl: clusterOf(col - 0.5, row + 0.5),
+          tl: clusterOf(col - 1, row - 0.5),
+        },
+      };
+    });
+  }
+
   assignId_(parentCluster) {
     if (!parentCluster) {
-      return `C${this.dCounter_++}`;
+      return `C${this.idCounter_++}`;
     }
-    return `${parentCluster.id}${this.idCounter_++}`;
+    return `${parentCluster.id}:${this.idCounter_++}`;
   }
 
   drawClusters_(mat, clusters) {
@@ -65,6 +108,36 @@ class Clusterer {
           new cv.Point(cell.x + cell.width, cell.y + cell.height),
           color, cv.FILLED);
     });
+  }
+
+  mergeClusters_(clustersByRole) {
+    const similarityMatrix = new Map();
+    const changeSimilarity = (cluster1, cluster2, by) => {
+      const keys = [cluster1.id, cluster2.id].sort();
+      const key = keys.join(',');
+      if (similarityMatrix.has(key)) {
+        similarityMatrix.set(key, similarityMatrix.get(key) + by);
+      } else {
+        similarityMatrix.set(key, by);
+      }
+    };
+
+    this.cells_.cellList.forEach(cell => {
+      const centerCluster = cell.cluster;
+
+      const sameAsImmediateNeighbors =
+          (cell.role == 'corner' || cell.role == 'primary') &&
+          cell.neighbors.half.t &&
+          centerCluster != cell.neighbors.half.t &&
+          cell.neighbors.half.t == cell.neighbors.half.r &&
+          cell.neighbors.half.r == cell.neighbors.half.b &&
+          cell.neighbors.half.b == cell.neighbors.half.l;
+      if (sameAsImmediateNeighbors) {
+        changeSimilarity(centerCluster, cell.neighbors.half.t, 1);
+      }
+    });
+
+    console.log(similarityMatrix);
   }
 }
 
