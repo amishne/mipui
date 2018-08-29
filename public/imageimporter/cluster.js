@@ -3,7 +3,7 @@ class Cluster {
     this.cells = cells;
     this.parent = parent;
     this.idCallback_ = idCallback;
-    this.id = idCallback(parent);
+    this.id = idCallback(this, parent);
   }
 
   get size() {

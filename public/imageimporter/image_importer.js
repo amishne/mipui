@@ -30,15 +30,6 @@ function processImage(image) {
   new Clusterer(image, cells).assign();
 }
 
-/*
-function assign(image, mat, lineInfo) {
-  const cellInfo = createCells(mat, lineInfo);
-  calcCellStats(image, mat, cellInfo);
-  const clusters = clusterColors(image, mat, cellInfo);
-  assignClusters(image, mat, cellInfo, clusters);
-}
-*/
-
 window.onload = () => {
   start();
 };

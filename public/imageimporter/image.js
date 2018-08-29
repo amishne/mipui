@@ -29,7 +29,11 @@ class Image {
   createElement_(parent, tag, className) {
     const element = document.createElement(tag);
     element.className = className;
-    parent.appendChild(element);
+    if (parent.childElementCount > 0) {
+      parent.insertBefore(element, parent.firstChild);
+    } else {
+      parent.appendChild(element);
+    }
     return element;
   }
 

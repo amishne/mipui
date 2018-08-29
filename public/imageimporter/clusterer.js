@@ -6,6 +6,7 @@ class Clusterer {
     this.topPrimaryClusters_ = [];
     this.topDividerClusters_ = [];
     this.idCounter_ = 0;
+    this.clusterById_ = {};
   }
 
   assign() {
@@ -28,8 +29,8 @@ class Clusterer {
     const clusterPreview =
         cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
     Object.keys(cellsByRole).forEach(key => {
-      const clusters = new Cluster(cellsByRole[key], null, parent =>
-        this.assignId_(parent)).getTopClusters(3);
+      const clusters = new Cluster(cellsByRole[key], null, (cluster, parent) =>
+        this.assignId_(cluster, parent)).getTopClusters(3);
       clustersByRole[key] = clusters;
       this.drawClusters_(clusterPreview, clusters);
     });
@@ -80,11 +81,24 @@ class Clusterer {
     });
   }
 
-  assignId_(parentCluster) {
-    if (!parentCluster) {
-      return `C${this.idCounter_++}`;
+  assignId_(cluster, parentCluster) {
+    let initial = '';
+    switch (cluster.cells[0].role) {
+      case 'primary':
+        initial = 'P';
+        break;
+      case 'horizontal':
+      case 'vertical':
+        initial = 'D';
+        break;
+      case 'corner':
+        initial = 'C';
+        break;
     }
-    return `${parentCluster.id}:${this.idCounter_++}`;
+    const id = parentCluster ? `${parentCluster.id}:${this.idCounter_++}` :
+      `${initial}${this.idCounter_++}`;
+    this.clusterById_[id] = cluster;
+    return id;
   }
 
   drawClusters_(mat, clusters) {
@@ -94,7 +108,16 @@ class Clusterer {
       [255, 0, 0, 255],
       [0, 255, 0, 255],
       [0, 0, 255, 255],
+      [255, 255, 0, 255],
+      [255, 0, 255, 255],
       [0, 255, 255, 255],
+      [150, 0, 0, 255],
+      [0, 150, 0, 255],
+      [0, 0, 150, 255],
+      [150, 150, 0, 255],
+      [150, 0, 150, 255],
+      [0, 150, 150, 255],
+      [150, 150, 150, 255],
     ];
     clusters.slice(0, colors.length).forEach((cluster, index) => {
       this.drawCluster_(mat, cluster, colors[index]);
@@ -137,7 +160,53 @@ class Clusterer {
       }
     });
 
+    const clusterGroups = [];
+
     console.log(similarityMatrix);
+    for (const [key, count] of similarityMatrix.entries()) {
+      const [cluster1, cluster2] =
+          key.split(',').map(id => this.clusterById_[id]);
+      if (count / cluster1.size > 0.2 || count / cluster2.size > 0.2) {
+        // Merge!
+        const existingGroup1 = clusterGroups.find(
+            clusterGroup => clusterGroup.clusters.has(cluster1));
+        const existingGroup2 = clusterGroups.find(
+            clusterGroup => clusterGroup.clusters.has(cluster2));
+        if (!existingGroup1 && !existingGroup2) {
+          clusterGroups.push(new ClusterGroup(cluster1, cluster2));
+        } else if (existingGroup1 && !existingGroup2 ||
+            existingGroup1 == existingGroup2) {
+          existingGroup1.addCluster(cluster1);
+          existingGroup1.addCluster(cluster2);
+        } else if (!existingGroup1 && existingGroup2) {
+          existingGroup2.addCluster(cluster1);
+          existingGroup2.addCluster(cluster2);
+        } else {
+          // Both groups already exist and are different; merge them!
+          clusterGroups.slice(clusterGroups.indexOf(existingGroup1), 1);
+          clusterGroups.slice(clusterGroups.indexOf(existingGroup2), 1);
+          const newGroup = new ClusterGroup(cluster1, cluster2);
+          existingGroup1.clusters.forEach(c => newGroup.addCluster(c));
+          existingGroup2.clusters.forEach(c => newGroup.addCluster(c));
+          clusterGroups.push(newGroup);
+        }
+      }
+    }
+
+    const mergedClusters = [
+      ...clustersByRole.primary,
+      ...clustersByRole.divider,
+      ...clustersByRole.corner,
+    ].filter(c => !clusterGroups.some(cg => cg.clusters.has(c)))
+        .concat(clusterGroups);
+    mergedClusters.sort((c1, c2) => c2.size - c1.size);
+
+    console.log(mergedClusters);
+    const clusterPreview =
+        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+    this.drawClusters_(clusterPreview, mergedClusters);
+    this.image_.appendMatCanvas(clusterPreview);
+    clusterPreview.delete();
   }
 }
 
