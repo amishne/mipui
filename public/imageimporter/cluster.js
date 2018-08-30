@@ -1,6 +1,6 @@
 class Cluster {
   constructor(cells, parent, idCallback) {
-    this.cells = cells;
+    this.cells_ = cells;
     this.parent = parent;
     this.idCallback_ = idCallback;
     this.id = idCallback(this, parent);
@@ -10,10 +10,14 @@ class Cluster {
     return this.cells.length;
   }
 
+  get cells() {
+    return this.cells_;
+  }
+
   getTopClusters(k) {
     const clusters = this.split(k).sort((c1, c2) => c2.size - c1.size);
     // Split the first as long as it's guaranteed to contain a sub-cluster
-    // larger than the last.
+    // larger than the second.
     while (clusters[0].size > 1 && clusters[0].size / k > clusters[1].size) {
       const top = clusters.shift();
       this.insertSorted_(clusters, top.split(k));
@@ -30,8 +34,9 @@ class Cluster {
   }
 
   split(k) {
-    return this.kmeans_(k, Cluster.distances_.euclidean).map((cells, index) =>
-      new Cluster(cells, this, this.idCallback_));
+    return this.kmeans_(k, Cluster.distances_.euclidean)
+        .filter(x => !!x)
+        .map((cells, index) => new Cluster(cells, this, this.idCallback_));
   }
 
   // k-means implementation adapted from https://gist.github.com/tarunc/3141694

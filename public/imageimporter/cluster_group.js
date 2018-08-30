@@ -1,14 +1,26 @@
 class ClusterGroup extends Cluster {
   constructor(cluster1, cluster2) {
     super(
-        [...cluster1.cells, cluster2.cells],
+        [],
         null,
         () => `${cluster1.id}+${cluster2.id}`);
     this.clusters = new Set([cluster1, cluster2]);
   }
 
   addCluster(cluster) {
+    this.id += '+' + cluster.id;
     this.clusters.add(cluster);
-    cluster.cells.forEach(cell => { this.cells.push(cell); });
+  }
+
+  get cells() {
+    return allCells_(this.clusters);
+  }
+}
+
+function * allCells_(clusters) {
+  for (const cluster of clusters) {
+    for (const cell of cluster.cells) {
+      yield cell;
+    }
   }
 }

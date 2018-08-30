@@ -32,6 +32,7 @@ class Clusterer {
       const clusters = new Cluster(cellsByRole[key], null, (cluster, parent) =>
         this.assignId_(cluster, parent)).getTopClusters(3);
       clustersByRole[key] = clusters;
+      console.log('Drawing clusters for role ' + key);
       this.drawClusters_(clusterPreview, clusters);
     });
     this.assignClustersToCells_(clustersByRole);
@@ -49,33 +50,30 @@ class Clusterer {
       });
     });
     // Assign neighbors.
-    const clusterOf = (col, row) => {
-      const cell = this.cells_.getCell(col, row);
-      return cell ? cell.cluster : null;
-    };
+    const getCell = (col, row) => this.cells_.getCell(col, row);
     this.cells_.cellList.forEach(cell => {
       const col = cell.col;
       const row = cell.row;
       cell.neighbors = {
-        full: {
-          t: clusterOf(col, row - 1),
-          r: clusterOf(col + 1, row),
-          b: clusterOf(col, row + 1),
-          l: clusterOf(col - 1, row),
-          tr: clusterOf(col + 1, row - 1),
-          br: clusterOf(col + 1, row + 1),
-          bl: clusterOf(col - 1, row + 1),
-          tl: clusterOf(col - 1, row - 1),
-        },
+//        full: {
+//          t: getCell(col, row - 1),
+//          r: getCell(col + 1, row),
+//          b: getCell(col, row + 1),
+//          l: getCell(col - 1, row),
+//          tr: getCell(col + 1, row - 1),
+//          br: getCell(col + 1, row + 1),
+//          bl: getCell(col - 1, row + 1),
+//          tl: getCell(col - 1, row - 1),
+//        },
         half: {
-          t: clusterOf(col, row - 0.5),
-          r: clusterOf(col + 0.5, row),
-          b: clusterOf(col, row + 0.5),
-          l: clusterOf(col - 0.5, row),
-          tr: clusterOf(col + 0.5, row - 0.5),
-          br: clusterOf(col + 0.5, row + 0.5),
-          bl: clusterOf(col - 0.5, row + 0.5),
-          tl: clusterOf(col - 1, row - 0.5),
+          t: getCell(col, row - 0.5),
+          r: getCell(col + 0.5, row),
+          b: getCell(col, row + 0.5),
+          l: getCell(col - 0.5, row),
+//          tr: getCell(col + 0.5, row - 0.5),
+//          br: getCell(col + 0.5, row + 0.5),
+//          bl: getCell(col - 0.5, row + 0.5),
+//          tl: getCell(col - 1, row - 0.5),
         },
       };
     });
@@ -103,7 +101,6 @@ class Clusterer {
 
   drawClusters_(mat, clusters) {
     const colors = [
-      [0, 0, 0, 255],
       [255, 255, 255, 255],
       [255, 0, 0, 255],
       [0, 255, 0, 255],
@@ -118,19 +115,22 @@ class Clusterer {
       [150, 0, 150, 255],
       [0, 150, 150, 255],
       [150, 150, 150, 255],
+      [0, 0, 0, 255],
     ];
-    clusters.slice(0, colors.length).forEach((cluster, index) => {
-      this.drawCluster_(mat, cluster, colors[index]);
+    clusters.forEach((cluster, index) => {
+      const color = colors[index < colors.length ? index : colors.length - 1];
+      console.log(`Drawing ${cluster.id} with the color ${color}.`);
+      this.drawCluster_(mat, cluster, color);
     });
   }
 
   drawCluster_(mat, cluster, color) {
-    cluster.cells.forEach(cell => {
+    for (const cell of cluster.cells) {
       cv.rectangle(mat,
           new cv.Point(cell.x, cell.y),
           new cv.Point(cell.x + cell.width, cell.y + cell.height),
           color, cv.FILLED);
-    });
+    }
   }
 
   mergeClusters_(clustersByRole) {
@@ -146,17 +146,64 @@ class Clusterer {
     };
 
     this.cells_.cellList.forEach(cell => {
+      if (!cell.neighbors.half.t || !cell.neighbors.half.r ||
+          !cell.neighbors.half.b || !cell.neighbors.half.l) {
+        // Ignore cells on the edge.
+        return;
+      }
       const centerCluster = cell.cluster;
 
-      const sameAsImmediateNeighbors =
+      // A corner or primary entirely surrounded by the same cluster is likely
+      // to also belong to that cluster.
+      const cornerOrPrimarySameAsImmediateNeighbors =
           (cell.role == 'corner' || cell.role == 'primary') &&
-          cell.neighbors.half.t &&
-          centerCluster != cell.neighbors.half.t &&
-          cell.neighbors.half.t == cell.neighbors.half.r &&
-          cell.neighbors.half.r == cell.neighbors.half.b &&
-          cell.neighbors.half.b == cell.neighbors.half.l;
-      if (sameAsImmediateNeighbors) {
-        changeSimilarity(centerCluster, cell.neighbors.half.t, 1);
+          centerCluster != cell.neighbors.half.t.cluster &&
+          cell.neighbors.half.t.cluster == cell.neighbors.half.r.cluster &&
+          cell.neighbors.half.r.cluster == cell.neighbors.half.b.cluster &&
+          cell.neighbors.half.b.cluster == cell.neighbors.half.l.cluster;
+      if (cornerOrPrimarySameAsImmediateNeighbors) {
+        changeSimilarity(centerCluster, cell.neighbors.half.t.cluster, 1);
+      }
+
+      // A divider between different clusters likely belongs to one of them.
+      const dividerBetweenDifferentClustersWeight = 0.1;
+      const horizontalDividerBetweenDifferentClusters =
+          cell.role == 'horizontal' &&
+          cell.neighbors.half.t.cluster != cell.neighbors.half.b.cluster;
+      if (horizontalDividerBetweenDifferentClusters) {
+        changeSimilarity(centerCluster, cell.neighbors.half.t.cluster,
+            dividerBetweenDifferentClustersWeight);
+        changeSimilarity(centerCluster, cell.neighbors.half.b.cluster,
+            dividerBetweenDifferentClustersWeight);
+      }
+      const verticalDividerBetweenDifferentClusters =
+          cell.role == 'vertical' &&
+          cell.neighbors.half.l.cluster != cell.neighbors.half.r.cluster;
+      if (verticalDividerBetweenDifferentClusters) {
+        changeSimilarity(centerCluster, cell.neighbors.half.l.cluster,
+            dividerBetweenDifferentClustersWeight);
+        changeSimilarity(centerCluster, cell.neighbors.half.r.cluster,
+            dividerBetweenDifferentClustersWeight);
+      }
+
+      const sameClusterInOneDirectionButNotTheOtherWeight = 0.2;
+      const hasSameClusterTopAndBottomButNotLeftAndRight =
+          cell.neighbors.half.t.cluster == cell.neighbors.half.b.cluster &&
+          cell.neighbors.half.l.cluster != cell.neighbors.half.r.cluster;
+      if (hasSameClusterTopAndBottomButNotLeftAndRight) {
+        changeSimilarity(centerCluster, cell.neighbors.half.t.cluster,
+            sameClusterInOneDirectionButNotTheOtherWeight);
+        changeSimilarity(centerCluster, cell.neighbors.half.b.cluster,
+            sameClusterInOneDirectionButNotTheOtherWeight);
+      }
+      const hasSameClusterLeftAndRightButNotTopAndBottom =
+          cell.neighbors.half.t.cluster != cell.neighbors.half.b.cluster &&
+          cell.neighbors.half.l.cluster == cell.neighbors.half.r.cluster;
+      if (hasSameClusterLeftAndRightButNotTopAndBottom) {
+        changeSimilarity(centerCluster, cell.neighbors.half.l.cluster,
+            sameClusterInOneDirectionButNotTheOtherWeight);
+        changeSimilarity(centerCluster, cell.neighbors.half.r.cluster,
+            sameClusterInOneDirectionButNotTheOtherWeight);
       }
     });
 
@@ -166,7 +213,9 @@ class Clusterer {
     for (const [key, count] of similarityMatrix.entries()) {
       const [cluster1, cluster2] =
           key.split(',').map(id => this.clusterById_[id]);
-      if (count / cluster1.size > 0.2 || count / cluster2.size > 0.2) {
+      const threshold = 0.25;
+      if (count / cluster1.size > threshold ||
+          count / cluster2.size > threshold) {
         // Merge!
         const existingGroup1 = clusterGroups.find(
             clusterGroup => clusterGroup.clusters.has(cluster1));
@@ -174,14 +223,11 @@ class Clusterer {
             clusterGroup => clusterGroup.clusters.has(cluster2));
         if (!existingGroup1 && !existingGroup2) {
           clusterGroups.push(new ClusterGroup(cluster1, cluster2));
-        } else if (existingGroup1 && !existingGroup2 ||
-            existingGroup1 == existingGroup2) {
-          existingGroup1.addCluster(cluster1);
+        } else if (existingGroup1 && !existingGroup2) {
           existingGroup1.addCluster(cluster2);
         } else if (!existingGroup1 && existingGroup2) {
           existingGroup2.addCluster(cluster1);
-          existingGroup2.addCluster(cluster2);
-        } else {
+        } else if (existingGroup1 != existingGroup2) {
           // Both groups already exist and are different; merge them!
           clusterGroups.slice(clusterGroups.indexOf(existingGroup1), 1);
           clusterGroups.slice(clusterGroups.indexOf(existingGroup2), 1);
@@ -200,6 +246,12 @@ class Clusterer {
     ].filter(c => !clusterGroups.some(cg => cg.clusters.has(c)))
         .concat(clusterGroups);
     mergedClusters.sort((c1, c2) => c2.size - c1.size);
+
+    for (const cluster of mergedClusters) {
+      for (const cell of cluster.cells) {
+        cell.cluster = cluster;
+      }
+    }
 
     console.log(mergedClusters);
     const clusterPreview =
