@@ -1,4 +1,4 @@
-class Cells {
+class CellInfo {
   constructor(image, lineInfo) {
     this.image_ = image;
     this.lineInfo_ = lineInfo;
@@ -97,6 +97,13 @@ class Cells {
       const cellMat = this.image_.mat.roi(
           new cv.Rect(cell.x, cell.y, cell.width, cell.height));
       cell.meanColor = cv.mean(cellMat);
+      const meanColor = new cv.Mat();
+      const meanStdDev = new cv.Mat();
+      cv.meanStdDev(cellMat, meanColor, meanStdDev);
+      cell.meanColor = Array.from(meanColor.data64F);
+      cell.variance = Array.from(meanStdDev.data64F).map(x => Math.pow(x, 2));
+      meanColor.delete();
+      meanStdDev.delete();
       const greyscaleCellMat = this.image_.greyscale.roi(
           new cv.Rect(cell.x, cell.y, cell.width, cell.height));
       const minMax = cv.minMaxLoc(greyscaleCellMat);

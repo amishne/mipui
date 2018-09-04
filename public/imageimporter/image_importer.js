@@ -15,7 +15,7 @@ const imageSrcs = [
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    if (index != 10) return;
+    if (index == 10) return;
     const image = new Image(src);
     await image.initialize(parent);
     console.log(`${index}) ${src}`);
@@ -25,9 +25,11 @@ function start() {
 
 function processImage(image) {
   const lineInfo = new Griddler(image).calculateLineInfo();
-  const cells = new Cells(image, lineInfo);
-  cells.initialize();
-  new Clusterer(image, cells).assign();
+  const cellInfo = new CellInfo(image, lineInfo);
+  cellInfo.initialize();
+  const chunker = new Chunker(image, cellInfo);
+  chunker.assign();
+  chunker.drawChunks();
 }
 
 window.onload = () => {
