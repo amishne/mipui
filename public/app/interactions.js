@@ -579,8 +579,23 @@ function switchToMobileMode() {
 
 function numberRooms(kind, variation) {
   let num = 1;
+  const roomsToNumber = [];
   getRooms().forEach(room => {
-    if (room.centerCell.hasLayerContent(ct.text)) return;
+    const existingContent = room.centerCell.getLayerContent(ct.text);
+    if (existingContent) {
+      if (!existingContent[ck.startCell] && !existingContent[ck.endCell]) {
+        // There's already a single-cell text content at the center. Maybe
+        // that's a previous number?
+        const existingNum = Number.parseInt(existingContent[ck.text]);
+        if (existingNum != NaN) {
+          num = Math.max(num, existingNum + 1);
+        }
+      }
+      return;
+    }
+    roomsToNumber.push(room);
+  });
+  roomsToNumber.forEach(room => {
     room.centerCell.setLayerContent(ct.text, {
       [ck.kind]: kind.id,
       [ck.variation]: variation.id,
@@ -594,6 +609,7 @@ function getRooms() {
   const rooms = [];
   state.theMap.cells.forEach(cell => {
     if (cell.role != 'primary') return;
+    if (cell.hasLayerContent(ct.walls)) return;
     if (rooms.some(room => room.cells.has(cell))) return;
     const newRoom = createRoom(cell);
     if (newRoom) rooms.push(newRoom);
@@ -607,7 +623,7 @@ function getRooms() {
 }
 
 function createRoom(seed) {
-  const cells = new Set();
+  const cells = new Set([seed]);
   let front = new Set([seed]);
   while (front.size > 0) {
     const newFront = new Set();
@@ -638,7 +654,7 @@ function createRoom(seed) {
     });
     front = newFront;
   }
-  if (cells.size == 0) return null;
+  if (cells.size <= 1) return null;
   let minRow = Number.POSITIVE_INFINITY;
   let minCol = Number.POSITIVE_INFINITY;
   let maxRow = Number.NEGATIVE_INFINITY;
@@ -649,9 +665,19 @@ function createRoom(seed) {
     maxRow = Math.max(cell.row, maxRow);
     maxCol = Math.max(cell.column, minCol);
   });
+  // Find the cell closest to the center.
   const centerRow = Math.floor((minRow + maxRow) / 2);
   const centerCol = Math.floor((minCol + maxCol) / 2);
-  const centerCell = state.theMap.getCell(centerRow, centerCol);
-  if (centerCell.hasLayerContent(ct.walls)) return;
+  let centerCell = null;
+  let minDistance = Number.POSITIVE_INFINITY;
+  for (const cell of cells) {
+    const distance = Math.pow(cell.row - centerRow, 2) +
+        Math.pow(cell.column - centerCol, 2);
+    if (distance < minDistance) {
+      minDistance = distance;
+      centerCell = cell;
+      if (distance == 0) break;
+    }
+  }
   return {cells, minRow, minCol, maxRow, maxCol, centerCell};
 }

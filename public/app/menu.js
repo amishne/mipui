@@ -1412,8 +1412,8 @@ class Menu {
             {
               name: 'Number rooms',
               type: 'button',
-              presentation: 'label',
-              text: 'Number rooms',
+              presentation: 'icon',
+              materialIcon: 'filter_4',
               enabledInReadonlyMode: false,
               callback: () => {
                 numberRooms(ct.text.text, ct.text.text.standard);
