@@ -576,3 +576,82 @@ function switchToMobileMode() {
   actionPane.onmousemove = e => e.stopPropagation();
   actionPane.onmouseup = e => e.stopPropagation();
 }
+
+function numberRooms(kind, variation) {
+  let num = 1;
+  getRooms().forEach(room => {
+    if (room.centerCell.hasLayerContent(ct.text)) return;
+    room.centerCell.setLayerContent(ct.text, {
+      [ck.kind]: kind.id,
+      [ck.variation]: variation.id,
+      [ck.text]: num++,
+    }, true);
+  });
+  state.opCenter.recordOperationComplete();
+}
+
+function getRooms() {
+  const rooms = [];
+  state.theMap.cells.forEach(cell => {
+    if (cell.role != 'primary') return;
+    if (rooms.some(room => room.cells.has(cell))) return;
+    const newRoom = createRoom(cell);
+    if (newRoom) rooms.push(newRoom);
+  });
+  // Filter out rooms that contain other rooms.
+  return rooms.filter(room => !rooms.some(otherRoom =>
+    room != otherRoom && room.minCol <= otherRoom.minCol &&
+        room.minRow <= otherRoom.minRow &&
+        room.maxCol >= otherRoom.maxCol &&
+        room.maxRow >= otherRoom.maxRow));
+}
+
+function createRoom(seed) {
+  const cells = new Set();
+  let front = new Set([seed]);
+  while (front.size > 0) {
+    const newFront = new Set();
+    front.forEach(cell => {
+      ['top', 'bottom', 'left', 'right'].forEach(dir => {
+        const neighbors = cell.getNeighbors(dir);
+        if (!neighbors) return;
+        const neighborPrimary = neighbors.cells[0];
+        if (!neighborPrimary ||
+            neighborPrimary.hasLayerContent(ct.walls) ||
+            newFront.has(neighborPrimary) ||
+            cells.has(neighborPrimary)) {
+          return;
+        }
+        const neighborDivider = neighbors.dividerCell;
+        if (neighborPrimary.hasLayerContent(ct.walls)) return;
+        // Check corners
+        const cornerDirs = (dir == 'left' || dir == 'right') ?
+          ['top', 'bottom'] : ['left', 'right'];
+        if (cornerDirs
+            .map(cornerDir => neighborDivider.getNeighbor(cornerDir, true))
+            .every(corner => corner.hasLayerContent(ct.walls))) {
+          return;
+        }
+        cells.add(neighborPrimary);
+        newFront.add(neighborPrimary);
+      });
+    });
+    front = newFront;
+  }
+  if (cells.size == 0) return null;
+  let minRow = Number.POSITIVE_INFINITY;
+  let minCol = Number.POSITIVE_INFINITY;
+  let maxRow = Number.NEGATIVE_INFINITY;
+  let maxCol = Number.NEGATIVE_INFINITY;
+  cells.forEach(cell => {
+    minRow = Math.min(cell.row, minRow);
+    minCol = Math.min(cell.column, minCol);
+    maxRow = Math.max(cell.row, maxRow);
+    maxCol = Math.max(cell.column, minCol);
+  });
+  const centerRow = Math.floor((minRow + maxRow) / 2);
+  const centerCol = Math.floor((minCol + maxCol) / 2);
+  const centerCell = state.theMap.getCell(centerRow, centerCol);
+  if (centerCell.hasLayerContent(ct.walls)) return;
+  return {cells, minRow, minCol, maxRow, maxCol, centerCell};
+}

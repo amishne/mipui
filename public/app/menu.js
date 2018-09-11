@@ -1409,6 +1409,16 @@ class Menu {
           items: [
             this.createTextTool_(
                 ct.text.text, ct.text.text.standard, 'Text', 'Text'),
+            {
+              name: 'Number rooms',
+              type: 'button',
+              presentation: 'label',
+              text: 'Number rooms',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                numberRooms(ct.text.text, ct.text.text.standard);
+              },
+            },
           ],
         },
       },
