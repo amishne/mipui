@@ -15,20 +15,20 @@ const imageSrcs = [
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    if (index == 10) return;
-    const image = new Image(src);
+    if (index > 0) return;
+    const image = new Image('training/' + src);
     await image.initialize(parent);
     console.log(`${index}) ${src}`);
     processImage(image);
   });
 }
 
-function processImage(image) {
+async function processImage(image) {
   const lineInfo = new Griddler(image).calculateLineInfo();
   const cellInfo = new CellInfo(image, lineInfo);
   cellInfo.initialize();
   const chunker = new Chunker(image, cellInfo);
-  chunker.assign();
+  await chunker.assign();
   chunker.drawChunks();
 }
 

@@ -56,6 +56,7 @@ class CellInfo {
       col += 0.5;
       cells.push(this.createHorizontalCell_(row, col, x, y, lineInfo));
       x += lineInfo.cellSize;
+      col += 0.5;
     }
     cells.push(this.createCornerCell_(row, col, x, y, lineInfo));
     this.cellList = cells;
@@ -65,7 +66,13 @@ class CellInfo {
   }
 
   getCell(col, row) {
-    return this.cellList.find(cell => cell.row == row && cell.col == col);
+    if (col < -0.5 || col > this.width || row < -0.5 || col > this.height) {
+      return null;
+    }
+    const x = (col + 0.5) * 2;
+    const y = (row + 0.5) * 2;
+    const elementsPerRow = (this.width + 1) * 2;
+    return this.cellList[x + y * elementsPerRow];
   }
 
   createCornerCell_(row, col, x, y, lineInfo) {
