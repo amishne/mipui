@@ -66,7 +66,7 @@ class CellInfo {
   }
 
   getCell(col, row) {
-    if (col < -0.5 || col > this.width || row < -0.5 || col > this.height) {
+    if (col < -0.5 || col > this.width || row < -0.5 || row > this.height) {
       return null;
     }
     const x = (col + 0.5) * 2;
@@ -108,7 +108,7 @@ class CellInfo {
       const meanStdDev = new cv.Mat();
       cv.meanStdDev(cellMat, meanColor, meanStdDev);
       cell.meanColor = Array.from(meanColor.data64F);
-      cell.variance = Array.from(meanStdDev.data64F).map(x => Math.pow(x, 2));
+      cell.variance = Array.from(meanStdDev.data64F);
       meanColor.delete();
       meanStdDev.delete();
       const greyscaleCellMat = this.image_.greyscale.roi(
@@ -116,7 +116,6 @@ class CellInfo {
       const minMax = cv.minMaxLoc(greyscaleCellMat);
       cell.minIntensity = minMax.minVal;
       cell.maxIntensity = minMax.maxVal;
-      cell.data = [...cell.meanColor, cell.minIntensity, cell.maxIntensity];
       cellMat.delete();
       greyscaleCellMat.delete();
     });
@@ -131,5 +130,28 @@ class CellInfo {
     });
     this.image_.appendMatCanvas(colored);
     colored.delete();
+    // Preview variance
+    const varianced =
+        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+    this.cellList.forEach(cell => {
+      cv.rectangle(varianced,
+          new cv.Point(cell.x, cell.y),
+          new cv.Point(cell.x + cell.width, cell.y + cell.height),
+          cell.variance, cv.FILLED);
+    });
+    this.image_.appendMatCanvas(varianced);
+    varianced.delete();
+    // Preview intensity
+    const intensity =
+        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+    this.cellList.forEach(cell => {
+      const delta = cell.maxIntensity - cell.minIntensity;
+      cv.rectangle(intensity,
+          new cv.Point(cell.x, cell.y),
+          new cv.Point(cell.x + cell.width, cell.y + cell.height),
+          [delta, delta, delta, 255], cv.FILLED);
+    });
+    this.image_.appendMatCanvas(intensity);
+    intensity.delete();
   }
 }

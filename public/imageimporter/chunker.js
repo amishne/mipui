@@ -7,15 +7,15 @@ class Chunker {
 
   async assign() {
     for (const cell of this.cellInfo_.cellList) {
-      const chunk =
-//          this.chunks.find(existingChunk => existingChunk.has(cell)) ||
-          new Chunk(this.cellInfo_);
-      chunk.addSeed(cell);
-      this.chunks.push(chunk);
+      if (this.chunks.some(existingChunk => existingChunk.has(cell))) continue;
+      const newChunk = new Chunk(this.cellInfo_);
+      newChunk.addSeed(cell);
+      this.chunks.push(newChunk);
     }
   }
 
   async drawChunks() {
+    console.log(this.chunks);
     const chunkDisplay =
         cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
     const stops = [0, 50, 100, 150, 200, 250];

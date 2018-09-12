@@ -15,7 +15,7 @@ const imageSrcs = [
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    if (index > 0) return;
+    //if (index > 5) return;
     const image = new Image('training/' + src);
     await image.initialize(parent);
     console.log(`${index}) ${src}`);
