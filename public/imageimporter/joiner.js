@@ -100,7 +100,7 @@ class Joiner {
     for (const [key, count] of similarityMatrix.entries()) {
       const [chunk1, chunk2] =
           key.split(',').map(id => this.chunkById_.get(id));
-      const threshold = 0.25;
+      const threshold = 0.0025;
       console.log(`${count / chunk1.size} ${count / chunk2.size}`);
       if (count / chunk1.size > threshold || count / chunk2.size > threshold) {
         // Merge!

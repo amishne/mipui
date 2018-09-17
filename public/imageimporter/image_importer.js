@@ -16,7 +16,7 @@ const imageSrcs = [
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    if (index > 0) return;
+    if (index > 2) return;
     const image = new Image('training/' + src);
     await image.initialize(parent);
     console.log(`${index}) ${src}`);
@@ -28,10 +28,11 @@ async function processImage(image) {
   const lineInfo = new Griddler(image).calculateLineInfo();
   const cellInfo = new CellInfo(image, lineInfo);
   cellInfo.initialize();
-  const chunker = new Chunker(image, cellInfo);
-  await chunker.assign();
-  chunker.drawChunks();
-  new Joiner(image, cellInfo, chunker).join();
+  //const chunker = new Chunker(image, cellInfo);
+  //await chunker.assign();
+  //chunker.drawChunks();
+  //new Joiner(image, cellInfo, chunker).join();
+  const clusterer = new Clusterer(image, cellInfo).assign();
 }
 
 window.onload = () => {
