@@ -17,7 +17,7 @@ class Griddler {
     const lineInfo = this.calcLineInfo_(lines);
     console.log(lineInfo);
     const withLines = this.image_.mat.clone();
-    this.expandLineInfo_(lineInfo);
+    // this.expandLineInfo_(lineInfo);
     this.drawLines_(withLines, lineInfo);
     mat.delete();
     withLines.delete();

@@ -6,15 +6,16 @@ class Chunker {
   }
 
   async assign() {
+    let id = 0;
     for (const cell of this.cellInfo_.cellList) {
       if (this.chunks.some(existingChunk => existingChunk.has(cell))) continue;
-      const newChunk = new Chunk(this.cellInfo_);
+      const newChunk = new Chunk(this.cellInfo_, `c${id++}`);
       newChunk.addSeed(cell);
       this.chunks.push(newChunk);
     }
   }
 
-  async drawChunks() {
+  drawChunks() {
     console.log(this.chunks);
     const chunkDisplay =
         cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
@@ -28,10 +29,9 @@ class Chunker {
         }
       }
     }
-    // colors.push([0, 0, 0, 255]);
     for (let i = 0; i < this.chunks.length; i++) {
       const color = colors[i % colors.length];
-      await this.chunks[i].draw(chunkDisplay, color);
+      this.chunks[i].draw(chunkDisplay, color);
     }
     this.image_.appendMatCanvas(chunkDisplay);
     chunkDisplay.delete();

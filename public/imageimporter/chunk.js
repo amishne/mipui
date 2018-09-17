@@ -1,5 +1,6 @@
 class Chunk {
-  constructor(cellInfo) {
+  constructor(cellInfo, id) {
+    this.id = id;
     this.cellInfo_ = cellInfo;
     this.cells_ = new Set();
     this.boundaries_ = new Set();
@@ -9,9 +10,14 @@ class Chunk {
     return this.cells_.has(cell);
   }
 
+  get size() {
+    return this.cells_.size;
+  }
+
   addSeed(seed) {
     if (this.cells_.has(seed)) return;
     this.cells_.add(seed);
+    seed.chunk = this;
     // Compose a front from all cells of similar stats.
     let front =
         new Set(this.cellInfo_.cellList.filter(
@@ -26,6 +32,7 @@ class Chunk {
           }
           if (this.areCellsSimilar_(frontCell, neighbor, 'immediate')) {
             this.cells_.add(neighbor);
+            neighbor.chunk = this;
             newFront.add(neighbor);
           } else {
             this.boundaries_.add(neighbor);
@@ -38,6 +45,7 @@ class Chunk {
           }
           if (this.areCellsSimilar_(frontCell, neighbor, 'same')) {
             this.cells_.add(neighbor);
+            neighbor.chunk = this;
             newFront.add(neighbor);
           }
         }
@@ -72,38 +80,45 @@ class Chunk {
 
   areCellsSimilar_(cell1, cell2, tier) {
     if (cell1 == cell2) return true;
-    let colorEpsilon = 0;
-    let varianceEpsilon = 0;
+    let meanColorEpsilon = 0;
+    let centerColorEpsilon = 0;
     switch (tier) {
       case 'immediate':
-        colorEpsilon = 20;
-        varianceEpsilon = 10000;
+        meanColorEpsilon = 100;
+        centerColorEpsilon = 60;
         break;
       case 'same':
-        colorEpsilon = 20;
-        varianceEpsilon = 10000;
+        meanColorEpsilon = 80;
+        centerColorEpsilon = 40;
         break;
       case 'global':
-        colorEpsilon = 10;
-        varianceEpsilon = 100;
+        meanColorEpsilon = 20;
+        centerColorEpsilon = 10;
         break;
     }
     return this.areCellsSimilarToEpsilon_(
-        cell1, cell2, colorEpsilon, varianceEpsilon);
+        cell1, cell2, meanColorEpsilon, centerColorEpsilon);
   }
 
-  areCellsSimilarToEpsilon_(cell1, cell2, colorEpsilon, varianceEpsilon) {
-    for (let i = 0; i < cell1.meanColor.length; i++) {
-      if (Math.abs(cell1.meanColor[i] - cell2.meanColor[i]) > colorEpsilon) {
-        return false;
-      }
+  areCellsSimilarToEpsilon_(
+      cell1, cell2, meanColorEpsilon, centerColorEpsilon) {
+    if (this.colorDistanceSquared_(cell1.meanColor, cell2.meanColor) >
+        Math.pow(meanColorEpsilon, 2)) {
+      return false;
     }
-    for (let i = 0; i < cell1.variance.length; i++) {
-      if (Math.abs(cell1.variance[i] - cell2.variance[i]) > varianceEpsilon) {
-        return false;
-      }
+    if (this.colorDistanceSquared_(cell1.centerColor, cell2.centerColor) >
+        Math.pow(centerColorEpsilon, 2)) {
+      return false;
     }
     return true;
+  }
+
+  colorDistanceSquared_(c1, c2) {
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      sum += Math.pow(c1[i] - c2[i], 2);
+    }
+    return sum;
   }
 
   draw(mat, color) {

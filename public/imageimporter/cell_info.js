@@ -103,6 +103,13 @@ class CellInfo {
     this.cellList.forEach(cell => {
       const cellMat = this.image_.mat.roi(
           new cv.Rect(cell.x, cell.y, cell.width, cell.height));
+      const centerWidth = Math.ceil(cell.width / 10);
+      const centerHeight = Math.ceil(cell.height / 10);
+      const centerMat = cellMat.roi(
+          new cv.Rect(
+              (cell.width - centerWidth) / 2,
+              (cell.height - centerHeight) / 2,
+              centerWidth, centerHeight));
       cell.meanColor = cv.mean(cellMat);
       const meanColor = new cv.Mat();
       const meanStdDev = new cv.Mat();
@@ -116,8 +123,10 @@ class CellInfo {
       const minMax = cv.minMaxLoc(greyscaleCellMat);
       cell.minIntensity = minMax.minVal;
       cell.maxIntensity = minMax.maxVal;
+      cell.centerColor = cv.mean(centerMat);
       cellMat.delete();
       greyscaleCellMat.delete();
+      centerMat.delete();
     });
     // Preview average colors
     const colored =
@@ -130,28 +139,39 @@ class CellInfo {
     });
     this.image_.appendMatCanvas(colored);
     colored.delete();
-    // Preview variance
-    const varianced =
+//    // Preview variance
+//    const varianced =
+//        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+//    this.cellList.forEach(cell => {
+//      cv.rectangle(varianced,
+//          new cv.Point(cell.x, cell.y),
+//          new cv.Point(cell.x + cell.width, cell.y + cell.height),
+//          cell.variance, cv.FILLED);
+//    });
+//    this.image_.appendMatCanvas(varianced);
+//    varianced.delete();
+//    // Preview intensity
+//    const intensity =
+//        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+//    this.cellList.forEach(cell => {
+//      const delta = cell.maxIntensity - cell.minIntensity;
+//      cv.rectangle(intensity,
+//          new cv.Point(cell.x, cell.y),
+//          new cv.Point(cell.x + cell.width, cell.y + cell.height),
+//          [delta, delta, delta, 255], cv.FILLED);
+//    });
+//    this.image_.appendMatCanvas(intensity);
+//    intensity.delete();
+    // Preview center color
+    const centered =
         cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
     this.cellList.forEach(cell => {
-      cv.rectangle(varianced,
+      cv.rectangle(centered,
           new cv.Point(cell.x, cell.y),
           new cv.Point(cell.x + cell.width, cell.y + cell.height),
-          cell.variance, cv.FILLED);
+          cell.centerColor, cv.FILLED);
     });
-    this.image_.appendMatCanvas(varianced);
-    varianced.delete();
-    // Preview intensity
-    const intensity =
-        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
-    this.cellList.forEach(cell => {
-      const delta = cell.maxIntensity - cell.minIntensity;
-      cv.rectangle(intensity,
-          new cv.Point(cell.x, cell.y),
-          new cv.Point(cell.x + cell.width, cell.y + cell.height),
-          [delta, delta, delta, 255], cv.FILLED);
-    });
-    this.image_.appendMatCanvas(intensity);
-    intensity.delete();
+    this.image_.appendMatCanvas(centered);
+    centered.delete();
   }
 }

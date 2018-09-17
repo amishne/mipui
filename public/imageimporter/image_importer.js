@@ -10,12 +10,13 @@ const imageSrcs = [
   'dyson2-map.jpg',
   'gridless-map.jpg',
   'hand-drawn-griddy-map.png',
+  'underground_river_dysonified.jpg',
 ];
 
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    //if (index > 5) return;
+    if (index > 0) return;
     const image = new Image('training/' + src);
     await image.initialize(parent);
     console.log(`${index}) ${src}`);
@@ -30,6 +31,7 @@ async function processImage(image) {
   const chunker = new Chunker(image, cellInfo);
   await chunker.assign();
   chunker.drawChunks();
+  new Joiner(image, cellInfo, chunker).join();
 }
 
 window.onload = () => {
