@@ -19,8 +19,10 @@ class Cluster {
     // Split the first as long as it's guaranteed to contain a sub-cluster
     // larger than the second.
     while (clusters[0].size > 1 && clusters[0].size / k > clusters[1].size) {
+      const numClustersBeforeSplit = clusters.length;
       const top = clusters.shift();
       this.insertSorted_(clusters, top.split(k));
+      if (numClustersBeforeSplit == clusters.length) break;
     }
     return clusters;
   }
