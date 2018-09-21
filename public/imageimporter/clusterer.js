@@ -13,6 +13,7 @@ class Clusterer {
     this.cellInfo_.cellList.forEach(cell => {
       cell.data = [
         ...cell.meanColor,
+        ...cell.meanColor,
         ...cell.centerColor,
         //...cell.centerColor,
         ...cell.variance,

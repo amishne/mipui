@@ -127,9 +127,9 @@ class Griddler {
         diffMap.get(diff1).allLines[bucket.dir].lines.push(line);
         diffMap.get(diff2).allLines[bucket.dir].weight -= 0.25;
         diffMap.get(diff2).allLines[bucket.dir].lines.push(line);
-        diffMap.get(diff3).allLines[bucket.dir].weight += 0.6;
+        diffMap.get(diff3).allLines[bucket.dir].weight += 0.55;
         diffMap.get(diff3).allLines[bucket.dir].lines.push(line);
-        diffMap.get(diff4).allLines[bucket.dir].weight += 0.6;
+        diffMap.get(diff4).allLines[bucket.dir].weight += 0.55;
         diffMap.get(diff4).allLines[bucket.dir].lines.push(line);
       }
     });
