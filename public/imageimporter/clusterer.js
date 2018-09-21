@@ -11,11 +11,16 @@ class Clusterer {
 
   assign() {
     this.cellInfo_.cellList.forEach(cell => {
-      //cell.data = [...cell.meanColor, ...cell.centerColor, cell.row, cell.col];
-      cell.data = [...cell.meanColor, ...cell.centerColor];
+      cell.data = [
+        ...cell.meanColor,
+        ...cell.centerColor,
+        //...cell.centerColor,
+        ...cell.variance,
+      ];
     });
     const clustersByRole = this.cluster_();
     const clusterGroups = this.mergeClusters_(clustersByRole);
+    this.assignClusters_(clusterGroups);
   }
 
   cluster_() {
@@ -33,8 +38,9 @@ class Clusterer {
     const clusterPreview =
         cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
     Object.keys(cellsByRole).forEach(key => {
+      const k = 4;
       const clusters = new Cluster(cellsByRole[key], null, (cluster, parent) =>
-        this.assignId_(cluster, parent)).getTopClusters(3);
+        this.assignId_(cluster, parent)).getTopClusters(k);
       clustersByRole[key] = clusters;
       console.log('Drawing clusters for role ' + key);
       this.drawClusters_(clusterPreview, clusters);
@@ -131,6 +137,12 @@ class Clusterer {
       [150, 0, 150, 255],
       [0, 150, 150, 255],
       [150, 150, 150, 255],
+      [75, 0, 0, 255],
+      [0, 75, 0, 255],
+      [0, 0, 75, 255],
+      [200, 0, 0, 255],
+      [0, 200, 0, 255],
+      [0, 0, 200, 255],
       [0, 0, 0, 255],
     ];
     clusters.forEach((cluster, index) => {
@@ -275,6 +287,200 @@ class Clusterer {
     this.drawClusters_(clusterPreview, mergedClusters);
     this.image_.appendMatCanvas(clusterPreview);
     clusterPreview.delete();
+
+    return mergedClusters;
+  }
+
+  assignClusters_(clusters) {
+    const assignments = new Map();
+    clusters.forEach(c => { assignments.set(c.id, {
+      isWall: 0,
+      isAngular: 0,
+      isFloor: 0,
+      isDoor: 0,
+    }); });
+
+    // Reassign neighbors.
+    const getCluster = (col, row) => {
+      const other = this.cellInfo_.getCell(col, row);
+      return other ? other.cluster : null;
+    };
+    this.cellInfo_.cellList.forEach(cell => {
+      cell.neighbors = {
+        t: getCluster(cell.col, cell.row - 0.5),
+        r: getCluster(cell.col + 0.5, cell.row),
+        b: getCluster(cell.col, cell.row + 0.5),
+        l: getCluster(cell.col - 0.5, cell.row),
+      };
+    });
+
+    // Per cell
+    this.cellInfo_.cellList.forEach(cell => {
+      if (!cell.neighbors.t || !cell.neighbors.r ||
+          !cell.neighbors.b || !cell.neighbors.l) {
+        // Ignore cells on the edge.
+        return;
+      }
+      const centerCluster = cell.cluster;
+
+      // Corners are less likely to be doors.
+      if (cell.role == 'corner') {
+        assignments.get(centerCluster.id).isDoor--;
+      }
+
+      // A divider of cluster A between primaries of cluster B suggests that
+      // B is a floor and A is a wall or a door.
+      const horizontalDividerBetweenAnotherCluster =
+          cell.role == 'horizontal' &&
+          centerCluster != cell.neighbors.t &&
+          cell.neighbors.t == cell.neighbors.b;
+      if (horizontalDividerBetweenAnotherCluster) {
+        assignments.get(cell.neighbors.t.id).isFloor++;
+      }
+      const verticalDividerBetweenAnotherCluster =
+          cell.role == 'vertical' &&
+          centerCluster != cell.neighbors.l &&
+          cell.neighbors.l == cell.neighbors.r;
+      if (verticalDividerBetweenAnotherCluster) {
+        assignments.get(cell.neighbors.l.id).isFloor++;
+      }
+      if (horizontalDividerBetweenAnotherCluster ||
+          verticalDividerBetweenAnotherCluster) {
+        assignments.get(centerCluster.id).isWall++;
+        assignments.get(centerCluster.id).isDoor++;
+      }
+
+      // A divider of cluster A between primaries of cluster A and B suggests
+      // that A is a wall.
+      const horizontalDividerBetweenSameAndAnotherCluster =
+          cell.role == 'horizontal' &&
+          (centerCluster == cell.neighbors.t ||
+           centerCluster == cell.neighbors.b) &&
+          cell.neighbors.t != cell.neighbors.b;
+      const verticalDividerBetweenSameAndAnotherCluster =
+          cell.role == 'vertical' &&
+          (centerCluster == cell.neighbors.l ||
+           centerCluster == cell.neighbors.r) &&
+          cell.neighbors.l != cell.neighbors.r;
+      if (horizontalDividerBetweenSameAndAnotherCluster ||
+          verticalDividerBetweenSameAndAnotherCluster) {
+        assignments.get(centerCluster.id).isWall++;
+      }
+
+      // A divider of cluster A between primaries of cluster B and C suggests
+      // that A is not a door.
+      const horizontalDividerBetweenTwoDifferentClusters =
+          cell.role == 'horizontal' &&
+          cell.neighbors.t != cell.neighbors.b;
+      const verticalDividerBetweenTwoDifferentClusters =
+          cell.role == 'vertical' &&
+          cell.neighbors.l != cell.neighbors.r;
+      if (horizontalDividerBetweenTwoDifferentClusters ||
+          verticalDividerBetweenTwoDifferentClusters) {
+        assignments.get(centerCluster.id).isDoor--;
+      }
+    });
+
+    // Per cluster
+    clusters.forEach(cluster => {
+      // Walls are more likely than floors to be a more balanced separator
+      // between same clusters and different clusters.
+      let dividerBetweenSameCluster = 0;
+      let dividerBetweenDifferentClusters = 0;
+      for (const cell of cluster.cells) {
+        let primary1 = null;
+        let primary2 = null;
+        if (cell.role == 'horizontal') {
+          primary1 = cell.neighbors.t;
+          primary2 = cell.neighbors.b;
+        } else if (cell.role == 'vertical') {
+          primary1 = cell.neighbors.l;
+          primary2 = cell.neighbors.r;
+        } else {
+          continue;
+        }
+        if (cluster == primary1 || cluster == primary2) continue;
+        if (primary1 == primary2) {
+          dividerBetweenSameCluster++;
+        } else {
+          dividerBetweenDifferentClusters++;
+        }
+      }
+      assignments.get(cluster.id).isFloor += Math.abs(
+          dividerBetweenSameCluster - dividerBetweenDifferentClusters);
+
+      const islands = this.getPrimaryIslands_(cluster);
+      if (islands.length == 0) return;
+      const numPrimaries =
+          islands.reduce((sum, island) => sum + island.size, 0);
+      const meanIslandSize = numPrimaries / islands.length;
+      islands.sort((i1, i2) => i2.size - i1.size);
+      const medianIslandSize = islands[Math.floor(islands.length / 2)].size;
+      const ratio = meanIslandSize / medianIslandSize;
+      console.log(`island sizes for ${cluster.id} (${numPrimaries} primaries): ` +
+          `mean = ${meanIslandSize}, median = ${medianIslandSize}`);
+      assignments.get(cluster.id).isFloor += meanIslandSize;
+      assignments.get(cluster.id).isWall += islands.length;
+    });
+    console.log(assignments);
+
+    const assigned =
+        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+    clusters.forEach(cluster => {
+      const assignment = assignments.get(cluster.id);
+      if (assignment.isDoor > 0 &&
+          assignment.isDoor > assignment.isWall * 0.9) {
+        this.drawCluster_(assigned, cluster, [255, 255, 255, 255]);
+        return;
+      }
+      if (assignment.isWall > 0 && assignment.isWall > assignment.isFloor) {
+        this.drawCluster_(assigned, cluster, [222, 184, 135, 255]);
+        return;
+      }
+      if (assignment.isFloor > 0 && assignment.isFloor > assignment.isWall) {
+        this.drawCluster_(assigned, cluster, [245, 245, 220, 255]);
+        return;
+      }
+      this.drawCluster_(assigned, cluster, [0, 0, 0, 255]);
+    });
+    this.image_.appendMatCanvas(assigned);
+    assigned.delete();
+  }
+
+  getPrimaryIslands_(cluster) {
+    const islands = [];
+    for (const cell of cluster.cells) {
+      if (cell.role != 'primary') continue;
+      if (islands.some(island => island.has(cell))) continue;
+      const island = new Set([cell]);
+      let front = new Set([cell]);
+      while (front.size > 0) {
+        const newFront = new Set();
+        for (const frontCell of front) {
+          this.getPrimaryNeighbors_(frontCell)
+              .filter(c => c.cluster == cluster)
+              .filter(c => !front.has(c) && !island.has(c))
+              .forEach(c => { newFront.add(c); island.add(c); });
+        }
+        front = newFront;
+      }
+      islands.push(island);
+    }
+    return islands;
+  }
+
+  getPrimaryNeighbors_(primaryCell) {
+    const neighbors = [];
+    for (let colDiff = -1; colDiff <= 1; colDiff++) {
+      for (let rowDiff = -1; rowDiff <= 1; rowDiff++) {
+        if (colDiff == 0 && rowDiff == 0) continue;
+        const neighbor =
+            this.cellInfo_.getCell(
+                primaryCell.col + colDiff, primaryCell.row + rowDiff);
+        if (neighbor) neighbors.push(neighbor);
+      }
+    }
+    return neighbors;
   }
 }
 

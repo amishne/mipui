@@ -70,7 +70,7 @@ class Cluster {
 
   randomCentroids_(points, k) {
     const centroids = points.slice(0); // copy
-    centroids.sort(() => Math.round(Math.random()) - 0.5);
+    //centroids.sort(() => Math.round(Math.random()) - 0.5);
     return centroids.slice(0, k);
   }
 
