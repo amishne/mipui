@@ -9,12 +9,12 @@ class Griddler {
     cv.cvtColor(this.image_.mat, greyscale, cv.COLOR_RGBA2GRAY, 0);
     this.image_.greyscale = greyscale;
     const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
-    this.image_.appendMatCanvas(mat);
+    //this.image_.appendMatCanvas(greyscale);
     cv.Canny(greyscale, mat, 100, 300, 3, false);
-    this.image_.appendMatCanvas(mat);
+    //this.image_.appendMatCanvas(mat);
     const lines = this.houghTransform_(mat);
     this.image_.appendMatCanvas(mat);
-    const lineInfo = this.calcLineInfo_(lines);
+    const lineInfo = this.calcLineInfo_(lines, mat);
     console.log(lineInfo);
     const withLines = this.image_.mat.clone();
     // this.expandLineInfo_(lineInfo);
@@ -27,8 +27,8 @@ class Griddler {
   houghTransform_(mat) {
     // Get a measure of image "density", to control hough transform threshold.
     const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
-    //const divisionFactor = 0.34 / density;
-    const divisionFactor = 0.3 / density;
+    const divisionFactor = 0.34 / density;
+    //const divisionFactor = 0.3 / density;
 
     // We perform two transforms; one vertical and one horizontal. We do this
     // because the threshold depends on the size, and our map is not necessarily
@@ -59,8 +59,9 @@ class Griddler {
     const mapSize = dir == 'horizontal' ? mat.cols : mat.rows;
     let threshold = mapSize / divisionFactor;
     let lines = [];
-    const minLineCount = 20;
+    const minLineCount = 30;
     const maxLineCount = mapSize / 20;
+    let numIterations = 0;
     while (lines.length < minLineCount || lines.length > maxLineCount) {
       const cvLines = new cv.Mat();
       cv.HoughLines(mat, cvLines, 1, Math.PI / 2, threshold, 0, 0, 0, Math.PI);
@@ -68,6 +69,8 @@ class Griddler {
       cvLines.delete();
       threshold *= lines.length < minLineCount ? 0.8 : 1.2;
       if (threshold < 50 || threshold > 1000) break;
+      numIterations++;
+      if (numIterations > 10) break;
     }
     lines.sort((line1, line2) => line1.rho - line2.rho);
     return lines;
@@ -86,7 +89,7 @@ class Griddler {
     return lines;
   }
 
-  calcLineInfo_(lines) {
+  calcLineInfo_(lines, mat) {
     const buckets = [{
       dir: 'horizontal',
       lines: lines.filter(line => line.dir == 'horizontal'),
@@ -101,7 +104,9 @@ class Griddler {
         const line = bucket.lines[i];
         const diff1 = line.rho - bucket.lines[i - 1].rho;
         const diff2 = line.rho - bucket.lines[i - 2].rho;
-        [diff1, diff2].forEach(diff => {
+        const diff3 = diff1 - 0.5;
+        const diff4 = diff1 + 0.5;
+        [diff1, diff2, diff3, diff4].forEach(diff => {
           if (!diffMap.has(diff)) {
             diffMap.set(diff, {
               size: diff,
@@ -122,6 +127,10 @@ class Griddler {
         diffMap.get(diff1).allLines[bucket.dir].lines.push(line);
         diffMap.get(diff2).allLines[bucket.dir].weight -= 0.25;
         diffMap.get(diff2).allLines[bucket.dir].lines.push(line);
+        diffMap.get(diff3).allLines[bucket.dir].weight += 0.6;
+        diffMap.get(diff3).allLines[bucket.dir].lines.push(line);
+        diffMap.get(diff4).allLines[bucket.dir].weight += 0.6;
+        diffMap.get(diff4).allLines[bucket.dir].lines.push(line);
       }
     });
     // Assign count to each diff.
@@ -137,9 +146,12 @@ class Griddler {
 
     console.log(sortedDiffs);
 
+    const minCellSize = Math.max(Math.max(mat.rows, mat.cols) / 150, 8);
+    console.log(`width: ${mat.cols}, height: ${mat.rows}, minCellSize: ${minCellSize}`);
     const first = sortedDiffs[0] || {size: 1};
     const second = sortedDiffs.slice(1)
-        .find(diff => first.size > 10 || diff.size > 10) || {size: 10};
+        .find(diff => first.size >= minCellSize || diff.size >= minCellSize) ||
+        {size: Math.max(mat.cols, mat.rows) / 40};
     const cellSize = Math.max(first.size, second.size);
     const dividerSize = Math.min(first.size, second.size);
     const gridSize = cellSize + dividerSize;

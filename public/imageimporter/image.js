@@ -1,6 +1,7 @@
 class Image {
-  constructor(src) {
+  constructor(src, index) {
     this.src_ = src;
+    this.index_ = index;
     this.mat = null;
     this.stackElement_ = null;
   }
@@ -8,6 +9,9 @@ class Image {
   initialize(parent) {
     return new Promise((resolve, reject) => {
       this.stackElement_ = this.createElement_(parent, 'div', 'image-stack');
+      const header = this.appendStackElement_('div');
+      header.textContent =
+          `${this.index_}) ${this.src_.slice('training/'.length)}`;
       const sourceImage = this.appendStackElement_('img');
       sourceImage.onload = () => {
         this.mat = this.createSourceMat_(sourceImage);
@@ -29,8 +33,8 @@ class Image {
   createElement_(parent, tag, className) {
     const element = document.createElement(tag);
     element.className = className;
-    if (parent.childElementCount > 0) {
-      parent.insertBefore(element, parent.firstChild);
+    if (parent.childElementCount > 1) {
+      parent.insertBefore(element, parent.children[1]);
     } else {
       parent.appendChild(element);
     }
