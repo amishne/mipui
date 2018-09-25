@@ -1,5 +1,4 @@
 const imageSrcs = [
-  '4828460-26471803-thumbnail.jpg',
   'B1ClassicLook.png',
   'blue_map.png',
   'blue-megadungeon001b.jpg',
@@ -29,7 +28,7 @@ const imageSrcs = [
 function start() {
   const parent = document.getElementById('stackContainer');
   imageSrcs.forEach(async(src, index) => {
-    //if (index > 4) return;
+    //if (index != 7) return;
     const image = new Image('training/' + src, index);
     await image.initialize(parent);
     console.log(`${index}) ${src}`);

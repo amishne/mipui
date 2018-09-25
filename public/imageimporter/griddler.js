@@ -8,13 +8,23 @@ class Griddler {
     const greyscale = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
     cv.cvtColor(this.image_.mat, greyscale, cv.COLOR_RGBA2GRAY, 0);
     this.image_.greyscale = greyscale;
+    const scale = 2;
+    const scaledGreyscale =
+        cv.Mat.zeros(scale * src.rows, scale * src.cols, cv.CV_8UC3);
+    this.image_.appendMatCanvas(greyscale);
+    cv.resize(greyscale, scaledGreyscale, scaledGreyscale.size(),
+        0, 0, cv.INTER_CUBIC);
     const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
-    //this.image_.appendMatCanvas(greyscale);
-    cv.Canny(greyscale, mat, 100, 300, 3, false);
-    //this.image_.appendMatCanvas(mat);
+    this.image_.appendMatCanvas(scaledGreyscale);
+    cv.Canny(scaledGreyscale, mat, 50, 100, 3, true);
+    this.image_.appendMatCanvas(mat);
     const lines = this.houghTransform_(mat);
     this.image_.appendMatCanvas(mat);
     const lineInfo = this.calcLineInfo_(lines, mat);
+    lineInfo.cellSize /= scale;
+    lineInfo.dividerSize /= scale;
+    lineInfo.offsetLeft /= scale;
+    lineInfo.offsetTop /= scale;
     console.log(lineInfo);
     const withLines = this.image_.mat.clone();
     // this.expandLineInfo_(lineInfo);
@@ -28,7 +38,6 @@ class Griddler {
     // Get a measure of image "density", to control hough transform threshold.
     const density = cv.countNonZero(mat) / (mat.cols * mat.rows);
     const divisionFactor = 0.34 / density;
-    //const divisionFactor = 0.3 / density;
 
     // We perform two transforms; one vertical and one horizontal. We do this
     // because the threshold depends on the size, and our map is not necessarily
