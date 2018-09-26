@@ -15,6 +15,10 @@ class ClusterGroup extends Cluster {
   get cells() {
     return allCells_(this.clusters);
   }
+
+  split(k) {
+    return Array.from(this.clusters);
+  }
 }
 
 function * allCells_(clusters) {

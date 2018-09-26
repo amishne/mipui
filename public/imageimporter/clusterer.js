@@ -21,7 +21,7 @@ class Clusterer {
     });
     const clustersByRole = this.cluster_();
     const clusterGroups = this.mergeClusters_(clustersByRole);
-    //this.assignClusters_(clusterGroups);
+    this.assignClusters_(clusterGroups);
   }
 
   cluster_() {
