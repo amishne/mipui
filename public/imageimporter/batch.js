@@ -4,6 +4,7 @@ const imageSrcs = [
   'blue-megadungeon001b.jpg',
   'brown_map.png',
   'bw_map.jpg',
+  'charcoal-map.jpg',
   'donjon_map.png',
   'dungeon-map.jpg',
   'dungeon1map_keyed.png',
