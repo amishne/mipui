@@ -90,7 +90,7 @@ button:active, .button-like:active {
   width: calc(100% - 230px);
   border: dashed 2px crimson;
   overflow: auto;
-  height: 300;
+  height: 600;
 }
 
 #chooser-upload-button {
@@ -101,7 +101,6 @@ button:active, .button-like:active {
 .previewed {
   max-height: calc(100% - 8px);
   max-width: calc(100% - 8px);
-  cursor: zoom-in;
   position: absolute;
   top: 0;
   left: 0;

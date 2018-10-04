@@ -149,6 +149,32 @@ function previewGridLines(lineInfo) {
     ctx.stroke();
     y += lineInfo.cellSize;
   }
+  let clientX = NaN;
+  let clientY = NaN;
+  const primarySizeInput =
+      document.getElementById('griddler-primary-size-input');
+  const dividerSizeInput =
+      document.getElementById('griddler-divider-size-input');
+  const offsetLeftInput = document.getElementById('griddler-offset-left-input');
+  const offsetTopInput = document.getElementById('griddler-offset-top-input');
+  gridCanvas.onmousemove = e => {
+    if ((e.buttons & 1) == 0) return false;
+    if (!isNaN(clientX) && !isNaN(clientY)) {
+      if (clientX - e.clientX == 0 && clientY - e.clientY == 0) return true;
+      const mod =
+          Number(primarySizeInput.value) + Number(dividerSizeInput.value);
+      offsetLeftInput.value =
+          (mod + Number(offsetLeftInput.value) - (clientX - e.clientX)) % mod;
+      offsetTopInput.value =
+          (mod + Number(offsetTopInput.value) - (clientY - e.clientY)) % mod;
+      offsetLeftInput.oninput();
+      offsetTopInput.oninput();
+    }
+    clientX = e.clientX;
+    clientY = e.clientY;
+    e.stopPropagation();
+    return true;
+  };
 }
 
 function previewElements(previewPanel, ...elements) {
