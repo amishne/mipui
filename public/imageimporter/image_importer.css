@@ -106,8 +106,6 @@ button:active, .button-like:active {
   left: 0;
 }
 
-.focused {
-  max-height: unset;
-  max-width: unset;
-  cursor: zoom-out;
+#griddler-grid-canvas {
+  cursor: move;
 }
