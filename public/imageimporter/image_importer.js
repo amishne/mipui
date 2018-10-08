@@ -1,9 +1,11 @@
 let currentStep = -1;
 let sourceMat = null;
+let sourceImage = null;
 
 function stepForward() {
   currentStep++;
   updateStepHeaders();
+  if (currentStep == 2) gridImage();
 }
 
 function stepBackward() {
@@ -35,32 +37,40 @@ function updateStepHeaders() {
       step.classList.add('inactive-step');
     }
   }
+  if (currentStep == 1) {
+    document.getElementById('next-button').disabled = !sourceImage;
+  } else {
+    document.getElementById('next-button').disabled =
+        currentStep >= stepHeaders.length - 1;
+  }
+  document.getElementById('prev-button').disabled = currentStep == 0;
 }
 
 function image2mat(image) {
   return new Promise((resolve, reject) => {
-    image.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = image.naturalWidth;
-      canvas.height = image.naturalHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-      resolve(cv.imread(canvas));
-    };
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    resolve(cv.imread(canvas));
   });
 }
 
 function uploadImage(file) {
   const image = document.createElement('img');
   image.src = window.URL.createObjectURL(file);
-  imageCreated(image);
-}
-
-function imageCreated(image) {
-  const image2matPromise = image2mat(image);
   const preview = document.getElementById('chooser-image-preview');
   document.getElementById('griddler-image-preview').innerHTML = '';
   previewElements(preview, image);
+  image.onload = () => {
+    sourceImage = image;
+    updateStepHeaders();
+  };
+}
+
+function gridImage() {
+  const image2matPromise = image2mat(sourceImage);
   image2matPromise.then(mat => {
     sourceMat = mat;
     const lineInfo = new Griddler({
