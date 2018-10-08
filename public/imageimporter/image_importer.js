@@ -13,6 +13,7 @@ function stepBackward() {
 
 function updateStepHeaders() {
   const stepHeaders = document.getElementsByClassName('step-header');
+  const stepBodies = document.getElementsByClassName('step');
   for (let i = 0; i < stepHeaders.length; i++) {
     const stepHeader = stepHeaders[i];
     stepHeader.classList.remove('active-step-header');
@@ -24,6 +25,14 @@ function updateStepHeaders() {
       stepHeader.classList.add('active-step-header');
     } else {
       stepHeader.classList.add('inactive-step-header');
+    }
+    const step = stepBodies[i];
+    if (i == currentStep) {
+      step.classList.add('active-step');
+      step.classList.remove('inactive-step');
+    } else {
+      step.classList.remove('active-step');
+      step.classList.add('inactive-step');
     }
   }
 }
@@ -100,6 +109,41 @@ function imageCreated(image) {
   });
 }
 
+function createGridCanvas(previewCanvas) {
+  const gridCanvas = document.createElement('canvas');
+  gridCanvas.id = 'griddler-grid-canvas';
+  gridCanvas.className = 'previewed';
+  gridCanvas.width = previewCanvas.width;
+  gridCanvas.height = previewCanvas.height;
+  let clientX = NaN;
+  let clientY = NaN;
+  const primarySizeInput =
+      document.getElementById('griddler-primary-size-input');
+  const dividerSizeInput =
+      document.getElementById('griddler-divider-size-input');
+  const offsetLeftInput = document.getElementById('griddler-offset-left-input');
+  const offsetTopInput = document.getElementById('griddler-offset-top-input');
+  gridCanvas.onmousemove = e => {
+    if ((e.buttons & 1) == 0) return false;
+    if (!isNaN(clientX) && !isNaN(clientY)) {
+      if (clientX - e.clientX == 0 && clientY - e.clientY == 0) return true;
+      const mod =
+          Number(primarySizeInput.value) + Number(dividerSizeInput.value);
+      offsetLeftInput.value =
+          (mod + Number(offsetLeftInput.value) - (clientX - e.clientX)) % mod;
+      offsetTopInput.value =
+          (mod + Number(offsetTopInput.value) - (clientY - e.clientY)) % mod;
+      offsetLeftInput.oninput();
+      offsetTopInput.oninput();
+    }
+    clientX = e.clientX;
+    clientY = e.clientY;
+    e.stopPropagation();
+    return true;
+  };
+  return gridCanvas;
+}
+
 function previewGridLines(lineInfo) {
   const previewPanel = document.getElementById('griddler-image-preview');
   let previewCanvas = document.getElementById('griddler-preview-canvas');
@@ -116,11 +160,7 @@ function previewGridLines(lineInfo) {
 
   let gridCanvas = document.getElementById('griddler-grid-canvas');
   if (!gridCanvas) {
-    gridCanvas = document.createElement('canvas');
-    gridCanvas.id = 'griddler-grid-canvas';
-    gridCanvas.className = 'previewed';
-    gridCanvas.width = previewCanvas.width;
-    gridCanvas.height = previewCanvas.height;
+    gridCanvas = createGridCanvas(previewCanvas);
     previewPanel.appendChild(gridCanvas);
   }
   const ctx = gridCanvas.getContext('2d');
@@ -149,39 +189,12 @@ function previewGridLines(lineInfo) {
     ctx.stroke();
     y += lineInfo.cellSize;
   }
-  let clientX = NaN;
-  let clientY = NaN;
-  const primarySizeInput =
-      document.getElementById('griddler-primary-size-input');
-  const dividerSizeInput =
-      document.getElementById('griddler-divider-size-input');
-  const offsetLeftInput = document.getElementById('griddler-offset-left-input');
-  const offsetTopInput = document.getElementById('griddler-offset-top-input');
-  gridCanvas.onmousemove = e => {
-    if ((e.buttons & 1) == 0) return false;
-    if (!isNaN(clientX) && !isNaN(clientY)) {
-      if (clientX - e.clientX == 0 && clientY - e.clientY == 0) return true;
-      const mod =
-          Number(primarySizeInput.value) + Number(dividerSizeInput.value);
-      offsetLeftInput.value =
-          (mod + Number(offsetLeftInput.value) - (clientX - e.clientX)) % mod;
-      offsetTopInput.value =
-          (mod + Number(offsetTopInput.value) - (clientY - e.clientY)) % mod;
-      offsetLeftInput.oninput();
-      offsetTopInput.oninput();
-    }
-    clientX = e.clientX;
-    clientY = e.clientY;
-    e.stopPropagation();
-    return true;
-  };
 }
 
 function previewElements(previewPanel, ...elements) {
   previewPanel.innerHTML = '';
   for (const element of elements) {
     element.classList.add('previewed');
-    //element.onclick = () => { element.classList.toggle('focused'); };
     previewPanel.appendChild(element);
   }
 }
@@ -192,14 +205,27 @@ function wireInputs() {
   document.getElementById('chooser-upload-button').onchange = () => {
     uploadImage(document.getElementById('chooser-upload-button').files[0]);
   };
-//  document.getElementById('chooser-url-button').onclick = () => {
-//    const image = document.createElement('img');
-//    image.src = document.getElementById('chooser-url-input').value;
-//    imageCreated(image);
-//  };
+}
+
+function wireZoom() {
+  const elements = document.getElementsByClassName('zoom');
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    element.oninput = () => {
+      // Sychronize all zoom sliders.
+      for (let j = 0; j < elements.length; j++) {
+        const otherElement = elements[j];
+        if (element == otherElement) continue;
+        otherElement.value = element.value;
+      }
+      // Zoom.
+      zoom(element.value);
+    };
+  }
 }
 
 window.onload = () => {
   wireInputs();
+  wireZoom();
   stepForward();
 };
