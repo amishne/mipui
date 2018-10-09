@@ -1,4 +1,5 @@
 let currentStep = -1;
+let currentZoom = 1;
 let sourceMat = null;
 let sourceImage = null;
 
@@ -123,6 +124,7 @@ function createGridCanvas(previewCanvas) {
   const gridCanvas = document.createElement('canvas');
   gridCanvas.id = 'griddler-grid-canvas';
   gridCanvas.className = 'previewed';
+  gridCanvas.style.transform = `scale(${currentZoom})`;
   gridCanvas.width = previewCanvas.width;
   gridCanvas.height = previewCanvas.height;
   let clientX = NaN;
@@ -161,6 +163,7 @@ function previewGridLines(lineInfo) {
     previewCanvas = document.createElement('canvas');
     previewCanvas.id = 'griddler-preview-canvas';
     previewCanvas.className = 'previewed';
+    previewCanvas.style.transform = `scale(${currentZoom})`;
     previewCanvas.width = sourceMat.cols;
     previewCanvas.height = sourceMat.rows;
     previewPanel.innerHTML = '';
@@ -205,6 +208,7 @@ function previewElements(previewPanel, ...elements) {
   previewPanel.innerHTML = '';
   for (const element of elements) {
     element.classList.add('previewed');
+    element.style.transform = `scale(${currentZoom})`;
     previewPanel.appendChild(element);
   }
 }
@@ -217,25 +221,68 @@ function wireInputs() {
   };
 }
 
-function wireZoom() {
-  const elements = document.getElementsByClassName('zoom');
-  for (let i = 0; i < elements.length; i++) {
-    const element = elements[i];
-    element.oninput = () => {
+function createZoomControls() {
+  const instrumentPanels = document.getElementsByClassName('instrument-panel');
+  const sliders = [];
+  for (let i = 0; i < instrumentPanels.length; i++) {
+    const instrumentPanel = instrumentPanels[i];
+    const container = document.createElement('div');
+    container.classList.add('zoom-slider-container');
+    instrumentPanel.appendChild(container);
+    const label = document.createElement('div');
+    label.classList.add('zoom-slider-label');
+    label.textContent = 'Zoom';
+    container.appendChild(label);
+    const markContainer = document.createElement('div');
+    markContainer.classList.add('zoom-slider-marks');
+    container.appendChild(markContainer);
+    ['10%', '100%', '1000%'].forEach(markTitle => {
+      const mark = document.createElement('div');
+      mark.classList.add('zoom-slider-mark');
+      mark.textContent = markTitle;
+      markContainer.appendChild(mark);
+    });
+    const slider = document.createElement('input');
+    sliders.push(slider);
+    slider.classList.add('zoom-slider-input');
+    slider.type = 'range';
+    slider.step = 10;
+    slider.setAttribute('list', 'zoom-slider-data');
+    container.appendChild(slider);
+    slider.oninput = () => {
       // Sychronize all zoom sliders.
-      for (let j = 0; j < elements.length; j++) {
-        const otherElement = elements[j];
-        if (element == otherElement) continue;
-        otherElement.value = element.value;
+      for (const otherSlider of sliders) {
+        if (slider == otherSlider) continue;
+        otherSlider.value = slider.value;
       }
       // Zoom.
-      zoom(element.value);
+      zoom(slider.value);
     };
+  }
+}
+
+function zoom(value) {
+  switch (value) {
+    case '0': currentZoom = 0.1; break;
+    case '10': currentZoom = 0.2; break;
+    case '20': currentZoom = 0.4; break;
+    case '30': currentZoom = 0.6; break;
+    case '40': currentZoom = 0.8; break;
+    case '50': currentZoom = 1; break;
+    case '60': currentZoom = 1.5; break;
+    case '70': currentZoom = 2.5; break;
+    case '80': currentZoom = 4; break;
+    case '90': currentZoom = 7; break;
+    case '100': currentZoom = 10; break;
+  }
+  const previews = document.getElementsByClassName('previewed');
+  for (let i = 0; i < previews.length; i++) {
+    previews[i].style.transform = `scale(${currentZoom})`;
   }
 }
 
 window.onload = () => {
   wireInputs();
-  wireZoom();
+  createZoomControls();
   stepForward();
 };
