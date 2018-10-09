@@ -120,13 +120,13 @@ function gridImage() {
   });
 }
 
-function createGridCanvas(previewCanvas) {
+function createGridCanvas(previewCanvas, scale) {
   const gridCanvas = document.createElement('canvas');
   gridCanvas.id = 'griddler-grid-canvas';
   gridCanvas.className = 'previewed';
   gridCanvas.style.transform = `scale(${currentZoom})`;
-  gridCanvas.width = previewCanvas.width;
-  gridCanvas.height = previewCanvas.height;
+  gridCanvas.width = scale * previewCanvas.width;
+  gridCanvas.height = scale * previewCanvas.height;
   let clientX = NaN;
   let clientY = NaN;
   const primarySizeInput =
@@ -141,10 +141,12 @@ function createGridCanvas(previewCanvas) {
       if (clientX - e.clientX == 0 && clientY - e.clientY == 0) return true;
       const mod =
           Number(primarySizeInput.value) + Number(dividerSizeInput.value);
+      const xDistance = round((clientX - e.clientX) / currentZoom);
+      const yDistance = round((clientY - e.clientY) / currentZoom);
       offsetLeftInput.value =
-          (mod + Number(offsetLeftInput.value) - (clientX - e.clientX)) % mod;
+          (mod + Number(offsetLeftInput.value) - xDistance) % mod;
       offsetTopInput.value =
-          (mod + Number(offsetTopInput.value) - (clientY - e.clientY)) % mod;
+          (mod + Number(offsetTopInput.value) - yDistance) % mod;
       offsetLeftInput.oninput();
       offsetTopInput.oninput();
     }
@@ -154,6 +156,10 @@ function createGridCanvas(previewCanvas) {
     return true;
   };
   return gridCanvas;
+}
+
+function round(n) {
+  return Math.round(n * 1000) / 1000;
 }
 
 function previewGridLines(lineInfo) {
@@ -171,34 +177,39 @@ function previewGridLines(lineInfo) {
     cv.imshow(previewCanvas, sourceMat);
   }
 
+  const scale =
+      Math.max(1, 2000 / Math.max(previewCanvas.width, previewCanvas.height));
+
   let gridCanvas = document.getElementById('griddler-grid-canvas');
   if (!gridCanvas) {
-    gridCanvas = createGridCanvas(previewCanvas);
+    gridCanvas = createGridCanvas(previewCanvas, scale);
     previewPanel.appendChild(gridCanvas);
   }
+  if (lineInfo.primarySize <= 6) return;
   const ctx = gridCanvas.getContext('2d');
   ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
   ctx.beginPath();
   ctx.strokeStyle = 'red';
+  ctx.lineWidth = 1;
   let x = Math.round(lineInfo.offsetLeft);
-  while (x < gridCanvas.width) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, gridCanvas.height);
+  while (x < previewCanvas.width) {
+    ctx.moveTo(x * scale, 0);
+    ctx.lineTo(x * scale, gridCanvas.height);
     ctx.stroke();
     x += lineInfo.dividerSize;
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, gridCanvas.height);
+    ctx.moveTo(x * scale, 0);
+    ctx.lineTo(x * scale, gridCanvas.height);
     ctx.stroke();
     x += lineInfo.cellSize;
   }
   let y = Math.round(lineInfo.offsetTop);
-  while (y < gridCanvas.height) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(gridCanvas.width, y);
+  while (y < previewCanvas.height) {
+    ctx.moveTo(0, y * scale);
+    ctx.lineTo(gridCanvas.width, y * scale);
     ctx.stroke();
     y += lineInfo.dividerSize;
-    ctx.moveTo(0, y);
-    ctx.lineTo(gridCanvas.width, y);
+    ctx.moveTo(0, y * scale);
+    ctx.lineTo(gridCanvas.width, y * scale);
     ctx.stroke();
     y += lineInfo.cellSize;
   }
@@ -236,7 +247,7 @@ function createZoomControls() {
     const markContainer = document.createElement('div');
     markContainer.classList.add('zoom-slider-marks');
     container.appendChild(markContainer);
-    ['10%', '100%', '1000%'].forEach(markTitle => {
+    ['100%', '1000%'].forEach(markTitle => {
       const mark = document.createElement('div');
       mark.classList.add('zoom-slider-mark');
       mark.textContent = markTitle;
@@ -246,8 +257,9 @@ function createZoomControls() {
     sliders.push(slider);
     slider.classList.add('zoom-slider-input');
     slider.type = 'range';
-    slider.step = 10;
-    slider.setAttribute('list', 'zoom-slider-data');
+    slider.value = 100;
+    slider.min = 100;
+    slider.max = 1000;
     container.appendChild(slider);
     slider.oninput = () => {
       // Sychronize all zoom sliders.
@@ -262,19 +274,7 @@ function createZoomControls() {
 }
 
 function zoom(value) {
-  switch (value) {
-    case '0': currentZoom = 0.1; break;
-    case '10': currentZoom = 0.2; break;
-    case '20': currentZoom = 0.4; break;
-    case '30': currentZoom = 0.6; break;
-    case '40': currentZoom = 0.8; break;
-    case '50': currentZoom = 1; break;
-    case '60': currentZoom = 1.5; break;
-    case '70': currentZoom = 2.5; break;
-    case '80': currentZoom = 4; break;
-    case '90': currentZoom = 7; break;
-    case '100': currentZoom = 10; break;
-  }
+  currentZoom = Number(value) / 100;
   const previews = document.getElementsByClassName('previewed');
   for (let i = 0; i < previews.length; i++) {
     previews[i].style.transform = `scale(${currentZoom})`;

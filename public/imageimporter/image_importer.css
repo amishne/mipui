@@ -77,7 +77,6 @@ input[type="number"] {
 }
 
 .zoom-slider-container {
-  width: 90%;
   text-align: center;
 }
 
@@ -106,10 +105,11 @@ button:active, .button-like:active {
   border-right: 1px solid blue;
   padding-right: 8px;
   margin-right: 8px;
+  text-align: center;
 }
 
 .instrument-panel > div {
-  margin: 16px 0;
+  margin: 16px 8px;
 }
 
 .preview-panel {
@@ -131,6 +131,8 @@ button:active, .button-like:active {
   position: absolute;
   top: 0;
   left: 0;
+  image-rendering: pixelated;
+  transform-origin: top left;
 }
 
 #griddler-grid-canvas {
