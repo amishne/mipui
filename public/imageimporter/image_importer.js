@@ -2,6 +2,7 @@ let currentStep = -1;
 let currentZoom = 1;
 let sourceMat = null;
 let sourceImage = null;
+let lineInfo = null;
 
 function stepForward() {
   currentStep++;
@@ -74,7 +75,7 @@ function gridImage() {
   const image2matPromise = image2mat(sourceImage);
   image2matPromise.then(mat => {
     sourceMat = mat;
-    const lineInfo = new Griddler({
+    lineInfo = new Griddler({
       mat: sourceMat,
       appendMatCanvas: () => {},
     }).calculateLineInfo();
@@ -85,11 +86,11 @@ function gridImage() {
     const offsetLeftInput =
         document.getElementById('griddler-offset-left-input');
     const offsetTopInput = document.getElementById('griddler-offset-top-input');
-    primarySizeInput.value = lineInfo.cellSize;
-    dividerSizeInput.value = lineInfo.dividerSize;
-    offsetLeftInput.value = lineInfo.offsetLeft;
-    offsetTopInput.value = lineInfo.offsetTop;
-    previewGridLines(lineInfo);
+    primarySizeInput.value = +lineInfo.cellSize.toFixed(3);
+    dividerSizeInput.value = +lineInfo.dividerSize.toFixed(3);
+    offsetLeftInput.value = +lineInfo.offsetLeft.toFixed(3);
+    offsetTopInput.value = +lineInfo.offsetTop.toFixed(3);
+    previewGridLines();
     [
       primarySizeInput,
       dividerSizeInput,
@@ -97,27 +98,37 @@ function gridImage() {
       offsetTopInput,
     ].forEach(element => {
       element.oninput = () => {
-        const oldDividerSize = lineInfo.dividerSize;
-        const newDividerSize = Number(dividerSizeInput.value);
-        if (oldDividerSize != newDividerSize) {
-          const mod = Number(primarySizeInput.value) + newDividerSize;
-          const offsetBy = (inputElement, half) => {
-            inputElement.value =
-              (mod + Number(inputElement.value) -
-               (newDividerSize - oldDividerSize) / (half ? 2 : 1)) % mod;
-          };
-          offsetBy(primarySizeInput);
-          offsetBy(offsetLeftInput, true);
-          offsetBy(offsetTopInput, true);
-        }
-        lineInfo.cellSize = Number(primarySizeInput.value);
-        lineInfo.dividerSize = newDividerSize;
-        lineInfo.offsetLeft = Number(offsetLeftInput.value);
-        lineInfo.offsetTop = Number(offsetTopInput.value);
-        previewGridLines(lineInfo);
+        updateLineInfo();
+        previewGridLines();
       };
     });
   });
+}
+
+function updateLineInfo() {
+  const primarySizeInput =
+        document.getElementById('griddler-primary-size-input');
+  const dividerSizeInput =
+      document.getElementById('griddler-divider-size-input');
+  const offsetLeftInput =
+      document.getElementById('griddler-offset-left-input');
+  const offsetTopInput = document.getElementById('griddler-offset-top-input');
+  const oldDividerSize = lineInfo.dividerSize;
+  const newDividerSize = Number(dividerSizeInput.value);
+  if (oldDividerSize != newDividerSize) {
+    const mod = Number(primarySizeInput.value) + newDividerSize;
+    const offsetBy = (inputElement, half) => {
+      inputElement.value = +((mod + Number(inputElement.value) -
+          (newDividerSize - oldDividerSize) / (half ? 2 : 1)) % mod).toFixed(3);
+    };
+    offsetBy(primarySizeInput);
+    offsetBy(offsetLeftInput, true);
+    offsetBy(offsetTopInput, true);
+  }
+  lineInfo.cellSize = Number(primarySizeInput.value);
+  lineInfo.dividerSize = newDividerSize;
+  lineInfo.offsetLeft = Number(offsetLeftInput.value);
+  lineInfo.offsetTop = Number(offsetTopInput.value);
 }
 
 function createGridCanvas(previewCanvas, scale) {
@@ -136,19 +147,20 @@ function createGridCanvas(previewCanvas, scale) {
   const offsetLeftInput = document.getElementById('griddler-offset-left-input');
   const offsetTopInput = document.getElementById('griddler-offset-top-input');
   gridCanvas.onmousemove = e => {
-    if ((e.buttons & 1) == 0) return false;
+    if ((e.buttons & 1) == 0) return true;
     if (!isNaN(clientX) && !isNaN(clientY)) {
       if (clientX - e.clientX == 0 && clientY - e.clientY == 0) return true;
       const mod =
           Number(primarySizeInput.value) + Number(dividerSizeInput.value);
-      const xDistance = round((clientX - e.clientX) / currentZoom);
-      const yDistance = round((clientY - e.clientY) / currentZoom);
+      const xDistance = round((clientX - e.clientX) / currentZoom, currentZoom);
+      const yDistance = round((clientY - e.clientY) / currentZoom, currentZoom);
+      console.log(`${xDistance}, ${yDistance}`);
       offsetLeftInput.value =
-          (mod + Number(offsetLeftInput.value) - xDistance) % mod;
+          +((mod + Number(offsetLeftInput.value) - xDistance) % mod).toFixed(3);
       offsetTopInput.value =
-          (mod + Number(offsetTopInput.value) - yDistance) % mod;
-      offsetLeftInput.oninput();
-      offsetTopInput.oninput();
+          +((mod + Number(offsetTopInput.value) - yDistance) % mod).toFixed(3);
+      updateLineInfo();
+      previewGridLines();
     }
     clientX = e.clientX;
     clientY = e.clientY;
@@ -158,11 +170,11 @@ function createGridCanvas(previewCanvas, scale) {
   return gridCanvas;
 }
 
-function round(n) {
-  return Math.round(n * 1000) / 1000;
+function round(n, m) {
+  return Number(n.toFixed(Math.ceil(Math.log2(m))));
 }
 
-function previewGridLines(lineInfo) {
+function previewGridLines() {
   const previewPanel = document.getElementById('griddler-image-preview');
   let previewCanvas = document.getElementById('griddler-preview-canvas');
   if (!previewCanvas) {
