@@ -16,7 +16,33 @@ class Griddler {
         0, 0, cv.INTER_CUBIC);
     const mat = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
     this.image_.appendMatCanvas(scaledGreyscale);
-    cv.Canny(scaledGreyscale, mat, 50, 100, 3, true);
+    // cv.Canny(scaledGreyscale, mat, 50, 150, 3, true); // 8/12
+    // cv.Canny(scaledGreyscale, mat, 100, 150, 3, true); // 8/12
+    // cv.Canny(scaledGreyscale, mat, 50, 200, 3, true); // 8/12
+    // cv.Canny(scaledGreyscale, mat, 50, 100, 3, true); // 10/12
+    // cv.Canny(scaledGreyscale, mat, 50, 75, 3, true); // 9/12
+    // cv.Canny(scaledGreyscale, mat, 25, 100, 3, true); // 9/12
+    // cv.Canny(scaledGreyscale, mat, 50, 125, 3, true); // 9/12
+    // cv.Canny(scaledGreyscale, mat, 75, 100, 3, true); // 9/12
+    // cv.Canny(scaledGreyscale, mat, 75, 125, 3, true); // 9/12
+    // cv.Canny(scaledGreyscale, mat, 25, 75, 3, true); // 11/12
+    // cv.Canny(scaledGreyscale, mat, 25, 50, 3, true); // 11/12
+    // cv.Canny(scaledGreyscale, mat, 25, 30, 3, true); // 10/12
+    // cv.Canny(scaledGreyscale, mat, 40, 50, 3, true); // 10/12
+    // cv.Canny(scaledGreyscale, mat, 10, 50, 3, true); // 11/12
+    // cv.Canny(scaledGreyscale, mat, 10, 25, 3, true); // 10/12
+    // cv.Canny(scaledGreyscale, mat, 10, 75, 3, true); // 10/12
+    // cv.Canny(scaledGreyscale, mat, 20, 60, 3, true); // 10/12
+    // cv.Canny(scaledGreyscale, mat, 30, 60, 3, true); // 9/12
+    // cv.Canny(scaledGreyscale, mat, 25, 60, 3, true); // 10/12
+    // cv.Canny(scaledGreyscale, mat, 25, 75, 3, true); // 14/25 no
+    // cv.Canny(scaledGreyscale, mat, 25, 50, 3, true); // 14/25 maybe-
+    // cv.Canny(scaledGreyscale, mat, 10, 50, 3, true); // 15/25 maybe
+    // cv.Canny(scaledGreyscale, mat, 5, 50, 3, true); // 14/25
+    // cv.Canny(scaledGreyscale, mat, 15, 55, 3, true); // 12/25
+    // cv.Canny(scaledGreyscale, mat, 5, 75, 3, true); // 12/25
+    // cv.Canny(scaledGreyscale, mat, 10, 60, 3, true); // 12/25
+    cv.Canny(scaledGreyscale, mat, 10, 50, 3, true);
     this.image_.appendMatCanvas(mat);
     const lines = this.houghTransform_(mat);
     this.image_.appendMatCanvas(mat);

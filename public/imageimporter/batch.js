@@ -1,3 +1,18 @@
+const hqImageSrcs = [
+  'B1ClassicLook.png',
+  'blue_map.png',
+  'brown_map.png',
+  'bw_map.jpg',
+  'charcoal-map.jpg',
+  'donjon_map.png',
+  'dungeon-map.jpg',
+  'dungeons-and-dragons-dungeon-maps_179156.jpg',
+  'embossed_map.jpg',
+  'level1.jpg',
+  'Mega-Level-1.png',
+  'szGzO2AbPWASkqxbKW4oUBoYpbYXlZdmoi2KeSzgt3s.png',
+];
+
 const imageSrcs = [
   'B1ClassicLook.png',
   'blue_map.png',
@@ -40,8 +55,8 @@ function start() {
 async function processImage(image) {
   const lineInfo = new Griddler(image).calculateLineInfo();
   const cellInfo = new CellInfo(image, lineInfo);
-  cellInfo.initialize();
-  new Clusterer(image, cellInfo).assign();
+  //cellInfo.initialize();
+  //new Clusterer(image, cellInfo).assign();
 
   //const chunker = new Chunker(image, cellInfo);
   //await chunker.assign();
