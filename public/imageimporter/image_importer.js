@@ -9,22 +9,37 @@ const steps = [{
   canStepForward: () => true,
   canStepBackward: () => false,
   onStepForwardIntoThis: () => {},
+  reset: () => {},
 }, {
   canStepForward: () => !!sourceImage,
   canStepBackward: () => true,
   onStepForwardIntoThis: () => {},
+  reset: () => {
+    document.getElementById('chooser-image-preview').innerHTML = '';
+    sourceImage = null;
+    sourceMat = null;
+  },
 }, {
   canStepForward: () => true,
   canStepBackward: () => true,
   onStepForwardIntoThis: () => { gridImage(); },
+  reset: () => {
+    document.getElementById('griddler-image-preview').innerHTML = '';
+    lineInfo = null;
+  },
 }, {
   canStepForward: () => !!assignments,
   canStepBackward: () => true,
   onStepForwardIntoThis: () => { assignCells(); },
+  reset: () => {
+    document.getElementById('assigner-map-preview').innerHTML = '';
+    assignments = null;
+  },
 }, {
   canStepForward: () => false,
   canStepBackward: () => true,
   onStepForwardIntoThis: () => {},
+  reset: () => {},
 }];
 
 function stepForward() {
@@ -61,6 +76,7 @@ function updateStepHeaders() {
       stepHeader.classList.add('active-step-header');
     } else {
       stepHeader.classList.add('inactive-step-header');
+      steps[i].reset();
     }
     const step = stepBodies[i];
     if (i == currentStep) {
@@ -296,24 +312,36 @@ function previewAssignments() {
 
 function addAssignment(assignment, tree, ctx) {
   const item = document.createElement('li');
-  item.textContent = assignment.cluster.id;
+  item.textContent = assignment.final || 'unknown';
   tree.appendChild(item);
+  let color = 'black';
+  switch (assignment.final) {
+    case 'door': color = 'white'; break;
+    case 'wall': color = 'rgb(222, 184, 135)'; break;
+    case 'floor': color = 'rgb(245, 245, 220)'; break;
+  }
+  drawAssignment(assignment, ctx, color);
+  item.onmouseenter = () => {
+    drawAssignment(assignment, ctx, 'red');
+  };
+  item.onmouseleave = () => {
+    drawAssignment(assignment, ctx, color);
+  };
+}
+
+function drawAssignment(assignment, ctx, color) {
   for (const cell of assignment.cluster.cells) {
-    let color = 'black';
-    switch (assignment.final) {
-      case 'door': color = 'white'; break;
-      case 'wall': color = 'darkgrey'; break;
-      case 'floor': color = 'lightgrey'; break;
-    }
     ctx.fillStyle = color;
-    ctx.fillRect(cell.x, cell.y, cell.width, cell.height);
+    ctx.fillRect(cell.x, cell.y, cell.width + 1, cell.height + 1);
   }
 }
 
 function createAssignmentCanvas(previewCanvas) {
   const assignmentCanvas = document.createElement('canvas');
   assignmentCanvas.id = 'assigner-assignment-canvas';
-  assignmentCanvas.style.opacity = 0.7;
+
+  assignmentCanvas.style.opacity =
+      document.getElementById('assigner-overlay-opacity').value;
   assignmentCanvas.className = 'previewed';
   assignmentCanvas.style.transform = `scale(${currentZoom})`;
   assignmentCanvas.width = previewCanvas.width;
@@ -340,6 +368,13 @@ function wireInputs() {
   document.getElementById('prev-button').onclick = () => { stepBackward(); };
   document.getElementById('chooser-upload-button').onchange = () => {
     uploadImage(document.getElementById('chooser-upload-button').files[0]);
+  };
+  document.getElementById('assigner-overlay-opacity').oninput = () => {
+    const overlay = document.getElementById('assigner-assignment-canvas');
+    if (overlay) {
+      overlay.style.opacity =
+          document.getElementById('assigner-overlay-opacity').value;
+    }
   };
 }
 
