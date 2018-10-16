@@ -21,7 +21,7 @@ class Clusterer {
     });
     const clustersByRole = this.cluster_();
     const clusterGroups = this.mergeClusters_(clustersByRole);
-    this.assignClusters_(clusterGroups);
+    return this.assignClusters_(clusterGroups);
   }
 
   cluster_() {
@@ -416,36 +416,51 @@ class Clusterer {
           islands.reduce((sum, island) => sum + island.size, 0);
       const meanIslandSize = numPrimaries / islands.length;
       islands.sort((i1, i2) => i2.size - i1.size);
-      const medianIslandSize = islands[Math.floor(islands.length / 2)].size;
-      const ratio = meanIslandSize / medianIslandSize;
-      console.log(`island sizes for ${cluster.id} (${numPrimaries} primaries): ` +
-          `mean = ${meanIslandSize}, median = ${medianIslandSize}`);
       assignments.get(cluster.id).isFloor += meanIslandSize;
       assignments.get(cluster.id).isWall += islands.length;
     });
-    console.log(assignments);
 
-    const assigned =
-        cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
     clusters.forEach(cluster => {
       const assignment = assignments.get(cluster.id);
+      assignment.cluster = cluster;
       if (assignment.isDoor > 0 &&
           assignment.isDoor > assignment.isWall * 0.9) {
-        this.drawCluster_(assigned, cluster, [255, 255, 255, 255]);
+        assignment.final = 'door';
         return;
       }
       if (assignment.isWall > 0 && assignment.isWall > assignment.isFloor) {
-        this.drawCluster_(assigned, cluster, [222, 184, 135, 255]);
+        assignment.final = 'wall';
         return;
       }
       if (assignment.isFloor > 0 && assignment.isFloor > assignment.isWall) {
-        this.drawCluster_(assigned, cluster, [245, 245, 220, 255]);
+        assignment.final = 'floor';
         return;
       }
-      this.drawCluster_(assigned, cluster, [0, 0, 0, 255]);
     });
-    this.image_.appendMatCanvas(assigned);
-    assigned.delete();
+
+    if (this.image_.appendMatCanvas) {
+      const assigned =
+          cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+      clusters.forEach(cluster => {
+        const assignment = assignments.get(cluster.id);
+        if (assignment.final == 'door') {
+          this.drawCluster_(assigned, cluster, [255, 255, 255, 255]);
+          return;
+        }
+        if (assignment.final == 'wall') {
+          this.drawCluster_(assigned, cluster, [222, 184, 135, 255]);
+          return;
+        }
+        if (assignment.final == 'floor') {
+          this.drawCluster_(assigned, cluster, [245, 245, 220, 255]);
+          return;
+        }
+        this.drawCluster_(assigned, cluster, [0, 0, 0, 255]);
+      });
+      this.image_.appendMatCanvas(assigned);
+      assigned.delete();
+    }
+    return assignments;
   }
 
   getPrimaryIslands_(cluster) {

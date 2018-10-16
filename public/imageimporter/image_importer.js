@@ -3,19 +3,51 @@ let currentZoom = 1;
 let sourceMat = null;
 let sourceImage = null;
 let lineInfo = null;
+let assignments = null;
+
+const steps = [{
+  canStepForward: () => true,
+  canStepBackward: () => false,
+  onStepForwardIntoThis: () => {},
+}, {
+  canStepForward: () => !!sourceImage,
+  canStepBackward: () => true,
+  onStepForwardIntoThis: () => {},
+}, {
+  canStepForward: () => true,
+  canStepBackward: () => true,
+  onStepForwardIntoThis: () => { gridImage(); },
+}, {
+  canStepForward: () => !!assignments,
+  canStepBackward: () => true,
+  onStepForwardIntoThis: () => { assignCells(); },
+}, {
+  canStepForward: () => false,
+  canStepBackward: () => true,
+  onStepForwardIntoThis: () => {},
+}];
 
 function stepForward() {
+  const nextButton = document.getElementById('next-button');
+  nextButton.disabled = true;
+  nextButton.textContent = 'Processing';
   currentStep++;
-  updateStepHeaders();
-  if (currentStep == 2) gridImage();
+  setTimeout(() => {
+    steps[currentStep].onStepForwardIntoThis();
+    nextButton.textContent = 'Next Step';
+    updateStepHeaders();
+  }, 0);
 }
 
 function stepBackward() {
+  const prevButton = document.getElementById('prev-button');
+  prevButton.disabled = true;
   currentStep--;
   updateStepHeaders();
 }
 
 function updateStepHeaders() {
+  const step = steps[currentStep];
   const stepHeaders = document.getElementsByClassName('step-header');
   const stepBodies = document.getElementsByClassName('step');
   for (let i = 0; i < stepHeaders.length; i++) {
@@ -39,13 +71,8 @@ function updateStepHeaders() {
       step.classList.add('inactive-step');
     }
   }
-  if (currentStep == 1) {
-    document.getElementById('next-button').disabled = !sourceImage;
-  } else {
-    document.getElementById('next-button').disabled =
-        currentStep >= stepHeaders.length - 1;
-  }
-  document.getElementById('prev-button').disabled = currentStep == 0;
+  document.getElementById('next-button').disabled = !step.canStepForward();
+  document.getElementById('prev-button').disabled = !step.canStepBackward();
 }
 
 function image2mat(image) {
@@ -225,6 +252,78 @@ function previewGridLines() {
     ctx.stroke();
     y += lineInfo.cellSize;
   }
+}
+
+function assignCells() {
+  const image = {
+    mat: sourceMat,
+    appendMatCanvas: () => {},
+  };
+  const cellInfo = new CellInfo(image, lineInfo);
+  cellInfo.initialize();
+  assignments = new Clusterer(image, cellInfo).assign();
+  previewAssignments();
+  console.log(assignments);
+}
+
+function previewAssignments() {
+  const previewPanel = document.getElementById('assigner-map-preview');
+  let previewCanvas = document.getElementById('assigner-preview-canvas');
+  if (!previewCanvas) {
+    previewCanvas = document.createElement('canvas');
+    previewCanvas.id = 'assigner-preview-canvas';
+    previewCanvas.className = 'previewed';
+    previewCanvas.style.transform = `scale(${currentZoom})`;
+    previewCanvas.width = sourceMat.cols;
+    previewCanvas.height = sourceMat.rows;
+    previewPanel.innerHTML = '';
+    previewPanel.appendChild(previewCanvas);
+    cv.imshow(previewCanvas, sourceMat);
+  }
+
+  let assignmentCanvas = document.getElementById('assigner-assignment-canvas');
+  if (!assignmentCanvas) {
+    assignmentCanvas = createAssignmentCanvas(previewCanvas);
+    previewPanel.appendChild(assignmentCanvas);
+  }
+  const ctx = assignmentCanvas.getContext('2d');
+  ctx.clearRect(0, 0, assignmentCanvas.width, assignmentCanvas.height);
+  const tree = document.getElementById('assigner-tree');
+  assignments.forEach(assignment => {
+    addAssignment(assignment, tree, ctx);
+  });
+}
+
+function addAssignment(assignment, tree, ctx) {
+  const item = document.createElement('li');
+  item.textContent = assignment.cluster.id;
+  tree.appendChild(item);
+  for (const cell of assignment.cluster.cells) {
+    let color = 'black';
+    switch (assignment.final) {
+      case 'door': color = 'white'; break;
+      case 'wall': color = 'darkgrey'; break;
+      case 'floor': color = 'lightgrey'; break;
+    }
+    ctx.fillStyle = color;
+    ctx.fillRect(cell.x, cell.y, cell.width, cell.height);
+  }
+}
+
+function createAssignmentCanvas(previewCanvas) {
+  const assignmentCanvas = document.createElement('canvas');
+  assignmentCanvas.id = 'assigner-assignment-canvas';
+  assignmentCanvas.style.opacity = 0.7;
+  assignmentCanvas.className = 'previewed';
+  assignmentCanvas.style.transform = `scale(${currentZoom})`;
+  assignmentCanvas.width = previewCanvas.width;
+  assignmentCanvas.height = previewCanvas.height;
+  assignmentCanvas.onclick = e => {
+    alert('assignment canvas clicked');
+    e.stopPropagation();
+    return true;
+  };
+  return assignmentCanvas;
 }
 
 function previewElements(previewPanel, ...elements) {

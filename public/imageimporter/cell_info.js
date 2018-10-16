@@ -100,6 +100,12 @@ class CellInfo {
   }
 
   calcCellStats_() {
+    let greyscale = this.image_.greyscale;
+    if (!greyscale) {
+      greyscale =
+          cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
+      cv.cvtColor(this.image_.mat, greyscale, cv.COLOR_RGBA2GRAY, 0);
+    }
     this.cellList.forEach(cell => {
       const cellMat = this.image_.mat.roi(
           new cv.Rect(cell.x, cell.y, cell.width, cell.height));
@@ -118,7 +124,7 @@ class CellInfo {
       cell.variance = Array.from(meanStdDev.data64F);
       meanColor.delete();
       meanStdDev.delete();
-      const greyscaleCellMat = this.image_.greyscale.roi(
+      const greyscaleCellMat = greyscale.roi(
           new cv.Rect(cell.x, cell.y, cell.width, cell.height));
       const minMax = cv.minMaxLoc(greyscaleCellMat);
       cell.minIntensity = minMax.minVal;
