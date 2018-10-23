@@ -290,6 +290,7 @@ function assignCells() {
   const cellInfo = new CellInfo(image, lineInfo);
   cellInfo.initialize();
   assignments = new Clusterer(image, cellInfo).assign();
+  assignments.forEach(assignment => assignment.subassignments = []);
   previewAssignments();
   console.log(assignments);
 }
@@ -327,10 +328,10 @@ function previewAssignments() {
 
 function addAssignment(assignment, tree, ctx) {
   const item = document.createElement('li');
-  const prefix = document.createElement('span');
-  prefix.textContent = assignment.cluster.size;
-  prefix.className = 'item-affix-label';
-  item.appendChild(prefix);
+  //const prefix = document.createElement('span');
+  //prefix.textContent = assignment.cluster.size;
+  //prefix.className = 'item-affix-label';
+  //item.appendChild(prefix);
   const combo = document.createElement('select');
   item.appendChild(combo);
   const wallOption = document.createElement('option');
@@ -345,50 +346,77 @@ function addAssignment(assignment, tree, ctx) {
   doorOption.value = 'door';
   doorOption.textContent = 'Door';
   combo.appendChild(doorOption);
+  if (assignment.cluster.size > 1) {
+    const multipleOption = document.createElement('option');
+    multipleOption.value = 'multiple';
+    multipleOption.textContent = 'Multiple assignments';
+    combo.appendChild(multipleOption);
+  }
   combo.setAttribute('list', 'assignment-options');
   combo.value = assignment.final || 'floor';
-  const suffix = document.createElement('span');
-  suffix.textContent = 'cells';
-  suffix.className = 'item-affix-label';
-  item.appendChild(suffix);
+  //const suffix = document.createElement('span');
+  //suffix.textContent = 'cells';
+  //suffix.className = 'item-affix-label';
+  //item.appendChild(suffix);
   tree.appendChild(item);
-  let color;
+  if (assignment.subassignments.length > 0) {
+    const subtree = document.createElement('ul');
+    subtree.className = 'assigner-subtree';
+    item.appendChild(subtree);
+    for (const subassignment of assignment.subassignments) {
+      addAssignment(subassignment, subtree, ctx);
+    }
+  }
   let hovering = false;
   combo.onchange = () => {
+    if (combo.value == 'multiple') {
+      const subclusters = assignment.cluster.split(3);
+      assignment.subassignments = subclusters.map(subcluster => ({
+        cluster: subcluster,
+        final: assignment.final,
+        subassignments: [],
+      }));
+    } else {
+      assignment.subassignments = [];
+    }
     assignment.final = combo.value;
     hovering = false;
     previewAssignments();
   };
-  switch (assignment.final) {
-    case 'door': color = 'white'; break;
-    case 'wall': color = 'rgb(222, 184, 135)'; break;
-    case 'floor': color = 'rgb(245, 245, 220)'; break;
-    default: color = 'black'; break;
-  }
-  drawAssignment(assignment, ctx, color);
-  const startTime = performance.now();
-  const drawAnimationFrame = timestamp => {
-    const colorIntensity = (Math.sin((timestamp - startTime) / 100) + 1) * 50;
-    const frameColor = [
-      105 + colorIntensity,
-      100 - colorIntensity / 2,
-      100 - colorIntensity / 2,
-    ];
-    drawAssignment(assignment, ctx,
-        `rgb(${frameColor[0]}, ${frameColor[1]}, ${frameColor[2]})`);
-    if (hovering) {
-      requestAnimationFrame(drawAnimationFrame);
-    } else {
-      drawAssignment(assignment, ctx, color);
+  if (assignment.subassignments.length == 0) {
+    let color;
+    switch (assignment.final) {
+      case 'door': color = 'white'; break;
+      case 'wall': color = 'rgb(222, 184, 135)'; break;
+      case 'floor': color = 'rgb(245, 245, 220)'; break;
+      default: color = 'black'; break;
     }
-  };
-  item.onmouseover = () => {
-    hovering = true;
-    requestAnimationFrame(drawAnimationFrame);
-  };
-  item.onmouseout = () => {
-    hovering = false;
-  };
+    drawAssignment(assignment, ctx, color);
+    const startTime = performance.now();
+    const drawAnimationFrame = timestamp => {
+      const colorIntensity = (Math.sin((timestamp - startTime) / 100) + 1) * 50;
+      const frameColor = [
+        105 + colorIntensity,
+        100 - colorIntensity / 2,
+        100 - colorIntensity / 2,
+      ];
+      drawAssignment(assignment, ctx,
+          `rgb(${frameColor[0]}, ${frameColor[1]}, ${frameColor[2]})`);
+      if (hovering) {
+        requestAnimationFrame(drawAnimationFrame);
+      } else {
+        drawAssignment(assignment, ctx, color);
+        //previewAssignments();
+      }
+    };
+    item.onmouseover = () => {
+      hovering = true;
+      requestAnimationFrame(drawAnimationFrame);
+    };
+    item.onmouseout = () => {
+      hovering = false;
+    };
+  }
 }
 
 function drawAssignment(assignment, ctx, color) {

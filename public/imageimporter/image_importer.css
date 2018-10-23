@@ -234,8 +234,17 @@ button:active, .button-like:active {
 
 #assigner-tree, #assigner-tree ul {
   list-style-type: none;
-  padding-left: 12px;
   text-align: left;
+}
+
+#assigner-tree {
+  padding-left: 0;
+}
+
+.assigner-subtree {
+  border-left: 1px dashed blue;
+  padding-left: 4px;
+  margin-left: 4px;
 }
 
 .item-affix-label {
