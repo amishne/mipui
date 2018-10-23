@@ -4,6 +4,8 @@ let sourceMat = null;
 let sourceImage = null;
 let lineInfo = null;
 let assignments = null;
+let gridCanvasCtx = null;
+let assignmentCanvasCtx = null;
 
 const steps = [{
   canStepForward: () => true,
@@ -97,6 +99,7 @@ function image2mat(image) {
     canvas.width = image.naturalWidth;
     canvas.height = image.naturalHeight;
     const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     resolve(cv.imread(canvas));
   });
@@ -181,33 +184,39 @@ function createGridCanvas(previewCanvas, scale) {
   gridCanvas.style.transform = `scale(${currentZoom})`;
   gridCanvas.width = scale * previewCanvas.width;
   gridCanvas.height = scale * previewCanvas.height;
-  let clientX = NaN;
-  let clientY = NaN;
   const primarySizeInput =
       document.getElementById('griddler-primary-size-input');
   const dividerSizeInput =
       document.getElementById('griddler-divider-size-input');
   const offsetLeftInput = document.getElementById('griddler-offset-left-input');
   const offsetTopInput = document.getElementById('griddler-offset-top-input');
-  gridCanvas.onmousemove = e => {
-    if ((e.buttons & 1) == 0) return true;
-    if (!isNaN(clientX) && !isNaN(clientY)) {
-      if (clientX - e.clientX == 0 && clientY - e.clientY == 0) return true;
-      const mod =
-          Number(primarySizeInput.value) + Number(dividerSizeInput.value);
-      const xDistance = round((clientX - e.clientX) / currentZoom, currentZoom);
-      const yDistance = round((clientY - e.clientY) / currentZoom, currentZoom);
-      console.log(`${xDistance}, ${yDistance}`);
+  gridCanvas.onmousedown = mouseDownEvent => {
+    const mod = Number(primarySizeInput.value) + Number(dividerSizeInput.value);
+    const startX = mouseDownEvent.clientX;
+    const startY = mouseDownEvent.clientY;
+    const initialOffsetLeftInput = Number(offsetLeftInput.value);
+    const initialOffsetTopInput = Number(offsetTopInput.value);
+    gridCanvas.onmouseup = mouseUpEvent => {
+      gridCanvas.onmousemove = null;
+      gridCanvas.onmouseup = null;
+      mouseUpEvent.stopPropagation();
+      return true;
+    };
+    gridCanvas.onmousemove = mouseMoveEvent => {
+      const xDistance =
+          round((startX - mouseMoveEvent.clientX) / currentZoom, currentZoom);
+      const yDistance =
+          round((startY - mouseMoveEvent.clientY) / currentZoom, currentZoom);
       offsetLeftInput.value =
-          +((mod + Number(offsetLeftInput.value) - xDistance) % mod).toFixed(3);
+          (mod + ((initialOffsetLeftInput - xDistance) % mod) % mod).toFixed(3);
       offsetTopInput.value =
-          +((mod + Number(offsetTopInput.value) - yDistance) % mod).toFixed(3);
+          (mod + ((initialOffsetTopInput - yDistance) % mod) % mod).toFixed(3);
       updateLineInfo();
       previewGridLines();
-    }
-    clientX = e.clientX;
-    clientY = e.clientY;
-    e.stopPropagation();
+      mouseMoveEvent.stopPropagation();
+      return true;
+    };
+    mouseDownEvent.stopPropagation();
     return true;
   };
   return gridCanvas;
@@ -232,40 +241,43 @@ function previewGridLines() {
     cv.imshow(previewCanvas, sourceMat);
   }
 
-  const scale =
-      Math.max(1, 2000 / Math.max(previewCanvas.width, previewCanvas.height));
+  const scale = Math.round(
+      100 *
+        Math.max(1, 2000 / Math.max(previewCanvas.width, previewCanvas.height)))
+        / 100;
 
   let gridCanvas = document.getElementById('griddler-grid-canvas');
   if (!gridCanvas) {
     gridCanvas = createGridCanvas(previewCanvas, scale);
     previewPanel.appendChild(gridCanvas);
+    gridCanvasCtx = gridCanvas.getContext('2d');
+    gridCanvasCtx.translate(-0.5, -0.5);
   }
   if (lineInfo.primarySize <= 6) return;
-  const ctx = gridCanvas.getContext('2d');
-  ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
-  ctx.beginPath();
-  ctx.strokeStyle = 'red';
-  ctx.lineWidth = 1;
+  gridCanvasCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+  gridCanvasCtx.beginPath();
+  gridCanvasCtx.strokeStyle = 'red';
+  gridCanvasCtx.lineWidth = 1;
   let x = Math.round(lineInfo.offsetLeft);
   while (x < previewCanvas.width) {
-    ctx.moveTo(x * scale, 0);
-    ctx.lineTo(x * scale, gridCanvas.height);
-    ctx.stroke();
+    gridCanvasCtx.moveTo(x * scale, 0);
+    gridCanvasCtx.lineTo(x * scale, gridCanvas.height);
+    gridCanvasCtx.stroke();
     x += lineInfo.dividerSize;
-    ctx.moveTo(x * scale, 0);
-    ctx.lineTo(x * scale, gridCanvas.height);
-    ctx.stroke();
+    gridCanvasCtx.moveTo(x * scale, 0);
+    gridCanvasCtx.lineTo(x * scale, gridCanvas.height);
+    gridCanvasCtx.stroke();
     x += lineInfo.cellSize;
   }
   let y = Math.round(lineInfo.offsetTop);
   while (y < previewCanvas.height) {
-    ctx.moveTo(0, y * scale);
-    ctx.lineTo(gridCanvas.width, y * scale);
-    ctx.stroke();
+    gridCanvasCtx.moveTo(0, y * scale);
+    gridCanvasCtx.lineTo(gridCanvas.width, y * scale);
+    gridCanvasCtx.stroke();
     y += lineInfo.dividerSize;
-    ctx.moveTo(0, y * scale);
-    ctx.lineTo(gridCanvas.width, y * scale);
-    ctx.stroke();
+    gridCanvasCtx.moveTo(0, y * scale);
+    gridCanvasCtx.lineTo(gridCanvas.width, y * scale);
+    gridCanvasCtx.stroke();
     y += lineInfo.cellSize;
   }
 }
@@ -301,38 +313,89 @@ function previewAssignments() {
   if (!assignmentCanvas) {
     assignmentCanvas = createAssignmentCanvas(previewCanvas);
     previewPanel.appendChild(assignmentCanvas);
+    assignmentCanvasCtx = assignmentCanvas.getContext('2d');
+    assignmentCanvasCtx.translate(-0.5, -0.5);
   }
-  const ctx = assignmentCanvas.getContext('2d');
-  ctx.clearRect(0, 0, assignmentCanvas.width, assignmentCanvas.height);
+  assignmentCanvasCtx
+      .clearRect(0, 0, assignmentCanvas.width, assignmentCanvas.height);
   const tree = document.getElementById('assigner-tree');
+  tree.innerHTML = '';
   assignments.forEach(assignment => {
-    addAssignment(assignment, tree, ctx);
+    addAssignment(assignment, tree, assignmentCanvasCtx);
   });
 }
 
 function addAssignment(assignment, tree, ctx) {
   const item = document.createElement('li');
-  item.textContent = assignment.final || 'unknown';
+  const prefix = document.createElement('span');
+  prefix.textContent = assignment.cluster.size;
+  prefix.className = 'item-affix-label';
+  item.appendChild(prefix);
+  const combo = document.createElement('select');
+  item.appendChild(combo);
+  const wallOption = document.createElement('option');
+  wallOption.value = 'wall';
+  wallOption.textContent = 'Wall';
+  combo.appendChild(wallOption);
+  const floorOption = document.createElement('option');
+  floorOption.value = 'floor';
+  floorOption.textContent = 'Floor';
+  combo.appendChild(floorOption);
+  const doorOption = document.createElement('option');
+  doorOption.value = 'door';
+  doorOption.textContent = 'Door';
+  combo.appendChild(doorOption);
+  combo.setAttribute('list', 'assignment-options');
+  combo.value = assignment.final || 'floor';
+  const suffix = document.createElement('span');
+  suffix.textContent = 'cells';
+  suffix.className = 'item-affix-label';
+  item.appendChild(suffix);
   tree.appendChild(item);
-  let color = 'black';
+  let color;
+  let hovering = false;
+  combo.onchange = () => {
+    assignment.final = combo.value;
+    hovering = false;
+    previewAssignments();
+  };
   switch (assignment.final) {
     case 'door': color = 'white'; break;
     case 'wall': color = 'rgb(222, 184, 135)'; break;
     case 'floor': color = 'rgb(245, 245, 220)'; break;
+    default: color = 'black'; break;
   }
   drawAssignment(assignment, ctx, color);
-  item.onmouseenter = () => {
-    drawAssignment(assignment, ctx, 'red');
+  const startTime = performance.now();
+  const drawAnimationFrame = timestamp => {
+    const colorIntensity = (Math.sin((timestamp - startTime) / 100) + 1) * 50;
+    const frameColor = [
+      105 + colorIntensity,
+      100 - colorIntensity / 2,
+      100 - colorIntensity / 2,
+    ];
+    drawAssignment(assignment, ctx,
+        `rgb(${frameColor[0]}, ${frameColor[1]}, ${frameColor[2]})`);
+    if (hovering) {
+      requestAnimationFrame(drawAnimationFrame);
+    } else {
+      drawAssignment(assignment, ctx, color);
+    }
   };
-  item.onmouseleave = () => {
-    drawAssignment(assignment, ctx, color);
+  item.onmouseover = () => {
+    hovering = true;
+    requestAnimationFrame(drawAnimationFrame);
+  };
+  item.onmouseout = () => {
+    hovering = false;
   };
 }
 
 function drawAssignment(assignment, ctx, color) {
   for (const cell of assignment.cluster.cells) {
     ctx.fillStyle = color;
-    ctx.fillRect(cell.x, cell.y, cell.width + 1, cell.height + 1);
+    ctx.lineWidth = 0;
+    ctx.fillRect(cell.x - 0, cell.y - 0, cell.width + 1, cell.height + 1);
   }
 }
 

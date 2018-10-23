@@ -179,6 +179,7 @@ input[type=range]:focus::-ms-fill-upper {
   justify-content: space-between;
   font-size: xx-small;
   margin-right: -1.5em;
+  margin-left: -1em;
 }
 
 button:active, .button-like:active {
@@ -224,4 +225,21 @@ button:active, .button-like:active {
 
 #griddler-grid-canvas {
   cursor: move;
+}
+
+#assigner-tree-container {
+  max-height: calc(100% - 40px);
+  overflow: auto;
+}
+
+#assigner-tree, #assigner-tree ul {
+  list-style-type: none;
+  padding-left: 12px;
+  text-align: left;
+}
+
+.item-affix-label {
+  display: inline-block;
+  min-width: 45px;
+  margin: 0 8px;
 }

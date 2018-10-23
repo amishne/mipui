@@ -16,6 +16,14 @@ class ClusterGroup extends Cluster {
     return allCells_(this.clusters);
   }
 
+  get size() {
+    let sum = 0;
+    for (const cluster of this.clusters.values()) {
+      sum += cluster.size;
+    }
+    return sum;
+  }
+
   split(k) {
     return Array.from(this.clusters);
   }

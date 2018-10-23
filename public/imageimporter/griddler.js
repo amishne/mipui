@@ -53,7 +53,7 @@ class Griddler {
     lineInfo.offsetTop /= scale;
     console.log(lineInfo);
     const withLines = this.image_.mat.clone();
-    //this.expandLineInfo_(lineInfo);
+    this.expandLineInfo_(lineInfo);
     this.drawLines_(withLines, lineInfo);
     mat.delete();
     withLines.delete();
@@ -242,13 +242,13 @@ class Griddler {
   }
 
   expandLineInfo_(lineInfo) {
-    if (lineInfo.dividerSize > lineInfo.cellSize / 4) return;
-    const expandDividerBy = lineInfo.dividerSize;
+    if (lineInfo.dividerSize > lineInfo.cellSize / 8) return;
+    const expandDividerBy = lineInfo.dividerSize * 2;
     const before = expandDividerBy / 2;
     lineInfo.dividerSize += expandDividerBy;
     lineInfo.cellSize -= expandDividerBy;
-    lineInfo.offsetLeft += before;
-    lineInfo.offsetTop += before;
+    lineInfo.offsetLeft -= before;
+    lineInfo.offsetTop -= before;
     const gridSize = lineInfo.cellSize + lineInfo.dividerSize;
     if (lineInfo.offsetLeft < 0) lineInfo.offsetLeft += gridSize;
     if (lineInfo.offsetTop < 0) lineInfo.offsetTop += gridSize;

@@ -20,7 +20,16 @@ class Clusterer {
       ];
     });
     const clustersByRole = this.cluster_();
+    console.log(
+        Object.keys(clustersByRole)
+        .map(key => clustersByRole[key])
+        .map(clusters => clusters.reduce((sum, cluster) => sum + cluster.size, 0))
+        .reduce((sum, size) => sum + size, 0));
     const clusterGroups = this.mergeClusters_(clustersByRole);
+    console.log(
+        clusterGroups
+        .map(group => group.size)
+        .reduce((sum, size) => sum + size, 0));
     return this.assignClusters_(clusterGroups);
   }
 
