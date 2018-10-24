@@ -353,7 +353,8 @@ function addAssignment(assignment, tree, ctx) {
     combo.appendChild(multipleOption);
   }
   combo.setAttribute('list', 'assignment-options');
-  combo.value = assignment.final || 'floor';
+  assignment.final = assignment.final || 'floor';
+  combo.value = assignment.final;
   //const suffix = document.createElement('span');
   //suffix.textContent = 'cells';
   //suffix.className = 'item-affix-label';
