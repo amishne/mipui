@@ -315,7 +315,7 @@ function previewAssignments() {
     assignmentCanvas = createAssignmentCanvas(previewCanvas);
     previewPanel.appendChild(assignmentCanvas);
     assignmentCanvasCtx = assignmentCanvas.getContext('2d');
-    assignmentCanvasCtx.translate(-0.5, -0.5);
+    //assignmentCanvasCtx.translate(-0.5, -0.5);
   }
   assignmentCanvasCtx
       .clearRect(0, 0, assignmentCanvas.width, assignmentCanvas.height);
@@ -423,7 +423,7 @@ function drawAssignment(assignment, ctx, color) {
   for (const cell of assignment.cluster.cells) {
     ctx.fillStyle = color;
     ctx.lineWidth = 0;
-    ctx.fillRect(cell.x - 0, cell.y - 0, cell.width + 1, cell.height + 1);
+    ctx.fillRect(Math.floor(cell.x + 0), Math.floor(cell.y + 0), Math.ceil(cell.width - 0), Math.ceil(cell.height - 0));
   }
 }
 
