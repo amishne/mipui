@@ -32,6 +32,7 @@ body {
 
 .completed-step-header {
   background-color: lightblue;
+  cursor: pointer;
 }
 
 .step {

@@ -81,12 +81,19 @@ function updateStepHeaders() {
     stepHeader.classList.remove('inactive-step-header');
     stepHeader.classList.remove('completed-step-header');
     if (i < currentStep) {
+      const prevStepIndex = i;
       stepHeader.classList.add('completed-step-header');
+      stepHeader.onclick = () => {
+        currentStep -= currentStep - prevStepIndex;
+        updateStepHeaders();
+      };
     } else if (i == currentStep) {
       stepHeader.classList.add('active-step-header');
+      stepHeader.onclick = null;
     } else {
       stepHeader.classList.add('inactive-step-header');
       steps[i].reset();
+      stepHeader.onclick = null;
     }
     const step = stepBodies[i];
     if (i == currentStep) {
