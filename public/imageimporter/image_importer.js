@@ -538,7 +538,7 @@ function wireInputs() {
 function createZoomControls() {
   const instrumentPanels = document.getElementsByClassName('instrument-panel');
   const sliders = [];
-  for (let i = 0; i < instrumentPanels.length; i++) {
+  for (let i = 0; i < instrumentPanels.length - 1; i++) {
     const instrumentPanel = instrumentPanels[i];
     const container = document.createElement('div');
     container.classList.add('zoom-slider-container');

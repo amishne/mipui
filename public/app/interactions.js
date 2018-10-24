@@ -515,6 +515,7 @@ function refreshMapResizeButtonLocations() {
     const bottom = top + (theMap.offsetHeight * nav.scale);
     const rect = {left, right, top, bottom};
     mapResizeButtons.forEach(button => {
+      if (!button.element) return;
       let x = clamp(rect.left + 70, getCached(mapContainer, 'scrollLeft') +
           getCached(mapContainer, 'offsetWidth') / 2, rect.right - 70);
       let y = clamp(rect.top + 70, getCached(mapContainer, 'scrollTop') +

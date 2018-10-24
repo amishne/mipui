@@ -79,15 +79,17 @@ function createMapResizeButtons() {
   refreshMapResizeButtonLocations();
 }
 
-function initializeMenuAndStatus() {
-  state.menu = new Menu();
-  state.menu.createMenu();
-  state.menu.descChanged();
-  setStatus(Status.INITIALIZING);
+function initializeMenuAndStatus(includeMenu) {
+  if (includeMenu) {
+    state.menu = new Menu();
+    state.menu.createMenu();
+    state.menu.descChanged();
+    setStatus(Status.INITIALIZING);
+  }
   state.cursorStatusBar = new StatusBar(1);
   state.progressStatusBar = new StatusBar(2);
   state.infoStatusBar = new StatusBar(0);
-  if (state.mode == 'dev') {
+  if (includeMenu && state.mode == 'dev') {
     state.menu.addDebugMenu();
   }
 }
@@ -97,6 +99,7 @@ function start() {
   state.mode =
       window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/) ?
         'prod' : 'dev';
+  const hasUi = params.noui != 'yes';
   if (params.t != 'no' && params.tc != 'no') {
     state.tilingEnabled = true;
   }
@@ -104,11 +107,9 @@ function start() {
     state.tilingCachingEnabled = true;
   }
   mapContainer = document.getElementById('mapContainer');
-  if (params.noui != 'yes') {
-    initializeMenuAndStatus();
-  }
+  initializeMenuAndStatus(hasUi);
   createTheMapAndUpdateElements();
-  createMapResizeButtons();
+  if (hasUi) createMapResizeButtons();
   initializeFirebase(() => {
     const mid = params.mid ? decodeURIComponent(params.mid) : null;
     const secret = params.secret ? decodeURIComponent(params.secret) : null;

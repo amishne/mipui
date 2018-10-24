@@ -284,7 +284,9 @@ class State {
     this.pstate_ = pstate;
     createTheMapAndUpdateElements();
     updateMapTransform(true);
-    this.menu.descChanged();
+    if (this.menu) {
+      this.menu.descChanged();
+    }
     this.reloadTheme();
   }
 

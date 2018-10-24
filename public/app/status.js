@@ -18,11 +18,15 @@ function setStatus(status) {
   const statusIcon = document.getElementById('statusIcon');
   const className = 'status-' + status.type;
   [statusIconParent, statusIcon].forEach(element => {
+    if (!element) return;
     element.classList.remove('status-bad', 'status-unstable', 'status-good');
     element.classList.add(className);
   });
-  statusIcon.title = status.text;
-  statusIcon.innerHTML = `<img src="assets/ic_${status.icon}_white_24px.svg">`;
+  if (statusIcon) {
+    statusIcon.title = status.text;
+    statusIcon.innerHTML =
+        `<img src="assets/ic_${status.icon}_white_24px.svg">`;
+  }
   state.hasUnsavedChanges =
       status === Status.SAVING || status === Status.SAVE_ERROR;
 }
