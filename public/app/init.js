@@ -104,7 +104,9 @@ function start() {
     state.tilingCachingEnabled = true;
   }
   mapContainer = document.getElementById('mapContainer');
-  initializeMenuAndStatus();
+  if (params.noui != 'yes') {
+    initializeMenuAndStatus();
+  }
   createTheMapAndUpdateElements();
   createMapResizeButtons();
   initializeFirebase(() => {
@@ -173,3 +175,9 @@ window.onbeforeunload = () => {
     return 'There are unsaved changes. Leave anyway?';
   }
 };
+
+window.addEventListener('message', event => {
+  if (event.data.pstate) {
+    state.load(event.data.pstate);
+  }
+}); 

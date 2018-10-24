@@ -252,3 +252,8 @@ button:active, .button-like:active {
   min-width: 45px;
   margin: 0 8px;
 }
+
+#iframed-mipui {
+  width: 100%;
+  height: 100%;
+}

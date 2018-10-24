@@ -3,7 +3,7 @@ class State {
     this.pstate_ = {
       ver: '1.0',
       props: {},
-      // cell key -> (layer id -> (content key -> content value))
+      // cell key -> (layer id -> content)
       content: {},
       lastOpNum: 0,
     };

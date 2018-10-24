@@ -3,6 +3,7 @@ let currentZoom = 1;
 let sourceMat = null;
 let sourceImage = null;
 let lineInfo = null;
+let cellInfo = null;
 let assignments = null;
 let gridCanvasCtx = null;
 let assignmentCanvasCtx = null;
@@ -40,7 +41,14 @@ const steps = [{
 }, {
   canStepForward: () => false,
   canStepBackward: () => true,
-  onStepForwardIntoThis: () => {},
+  onStepForwardIntoThis: () => {
+    iframedMipui = document.getElementById('iframed-mipui');
+    iframedMipui.src = '';
+    iframedMipui.onload = () => {
+      iframedMipui.contentWindow.postMessage({pstate: constructPState()}, '*');
+    };
+    iframedMipui.src = '../app/index.html?tc=no&noui=yes';
+  },
   reset: () => {},
 }];
 
@@ -242,9 +250,8 @@ function previewGridLines() {
   }
 
   const scale = Math.round(
-      100 *
-        Math.max(1, 2000 / Math.max(previewCanvas.width, previewCanvas.height)))
-        / 100;
+      100 * Math.max(
+          1, 2000 / Math.max(previewCanvas.width, previewCanvas.height))) / 100;
 
   let gridCanvas = document.getElementById('griddler-grid-canvas');
   if (!gridCanvas) {
@@ -287,10 +294,10 @@ function assignCells() {
     mat: sourceMat,
     appendMatCanvas: () => {},
   };
-  const cellInfo = new CellInfo(image, lineInfo);
+  cellInfo = new CellInfo(image, lineInfo);
   cellInfo.initialize();
   assignments = new Clusterer(image, cellInfo).assign();
-  assignments.forEach(assignment => assignment.subassignments = []);
+  assignments.forEach(assignment => { assignment.subassignments = []; });
   previewAssignments();
   console.log(assignments);
 }
@@ -424,7 +431,8 @@ function drawAssignment(assignment, ctx, color) {
   for (const cell of assignment.cluster.cells) {
     ctx.fillStyle = color;
     ctx.lineWidth = 0;
-    ctx.fillRect(Math.floor(cell.x + 0), Math.floor(cell.y + 0), Math.ceil(cell.width - 0), Math.ceil(cell.height - 0));
+    ctx.fillRect(Math.floor(cell.x + 0), Math.floor(cell.y + 0),
+        Math.ceil(cell.width - 0), Math.ceil(cell.height - 0));
   }
 }
 
@@ -444,6 +452,63 @@ function createAssignmentCanvas(previewCanvas) {
     return true;
   };
   return assignmentCanvas;
+}
+
+function constructPState() {
+  content = {};
+  assignments.forEach(assignment => {
+    populatePStateContentFromAssignment(assignment, content);
+  });
+  return {
+    ver: '1.0',
+    props: {
+      t: 0,
+      b: cellInfo.height,
+      l: 0,
+      r: cellInfo.width,
+    },
+    // cell key -> (layer id -> content)
+    content,
+    lastOpNum: 0,
+  };
+}
+
+function populatePStateContentFromAssignment(assignment, content) {
+  if (assignment.subassignments && assignment.subassignments.length > 0) {
+    for (const subassignment of assignment.subassignments) {
+      populatePStateContentFromAssignment(subassignment, content);
+    }
+  } else {
+    for (const cell of assignment.cluster.cells) {
+      const key = getCellKey(cell);
+      const cellLayersToContent = getCellLayersToContent(assignment.final);
+      if (cellLayersToContent) content[key] = cellLayersToContent;
+    }
+  }
+}
+
+function getCellKey(cell) {
+  if (cell.role == 'primary') {
+    return `${cell.row},${cell.col}`;
+  } else {
+    return `${Math.floor(cell.row)},${Math.floor(cell.col)}:` +
+        `${Math.ceil(cell.row)},${Math.ceil(cell.col)}`;
+  }
+}
+
+function getCellLayersToContent(final) {
+  switch (final) {
+    case 'floor':
+      return null;
+    case 'wall':
+      return {'1': {k: 0, v: 0}};
+    case 'door':
+      return {
+        '1': {k: 0, v: 0},
+        '3': {k: 0, v: 0},
+      };
+  }
+  return null;
 }
 
 function previewElements(previewPanel, ...elements) {
