@@ -20,16 +20,7 @@ class Clusterer {
       ];
     });
     const clustersByRole = this.cluster_();
-    console.log(
-        Object.keys(clustersByRole)
-        .map(key => clustersByRole[key])
-        .map(clusters => clusters.reduce((sum, cluster) => sum + cluster.size, 0))
-        .reduce((sum, size) => sum + size, 0));
     const clusterGroups = this.mergeClusters_(clustersByRole);
-    console.log(
-        clusterGroups
-        .map(group => group.size)
-        .reduce((sum, size) => sum + size, 0));
     return this.assignClusters_(clusterGroups);
   }
 
@@ -267,8 +258,15 @@ class Clusterer {
           existingGroup2.addCluster(cluster1);
         } else if (existingGroup1 != existingGroup2) {
           // Both groups already exist and are different; merge them!
-          clusterGroups.slice(clusterGroups.indexOf(existingGroup1), 1);
-          clusterGroups.slice(clusterGroups.indexOf(existingGroup2), 1);
+          const indexOfGroup1 = clusterGroups.indexOf(existingGroup1);
+          const indexOfGroup2 = clusterGroups.indexOf(existingGroup2);
+          if (indexOfGroup1 > indexOfGroup2) {
+            clusterGroups.splice(indexOfGroup1, 1);
+            clusterGroups.splice(indexOfGroup2, 1);
+          } else {
+            clusterGroups.splice(indexOfGroup2, 1);
+            clusterGroups.splice(indexOfGroup1, 1);
+          }
           const newGroup = new ClusterGroup(cluster1, cluster2);
           existingGroup1.clusters.forEach(c => newGroup.addCluster(c));
           existingGroup2.clusters.forEach(c => newGroup.addCluster(c));
@@ -291,7 +289,6 @@ class Clusterer {
       }
     }
 
-    console.log(mergedClusters);
     const clusterPreview =
         cv.Mat.zeros(this.image_.mat.rows, this.image_.mat.cols, cv.CV_8UC3);
     this.drawClusters_(clusterPreview, mergedClusters);
