@@ -180,5 +180,9 @@ window.onbeforeunload = () => {
 window.addEventListener('message', event => {
   if (event.data.pstate) {
     state.load(event.data.pstate);
+    event.source.postMessage({status: 'load done'}, event.origin);
   }
-}); 
+  if (event.data.fork) {
+    state.opCenter.fork();
+  }
+});

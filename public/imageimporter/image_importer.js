@@ -1,5 +1,7 @@
+const mode = 'dev';
 let currentStep = -1;
 let currentZoom = 1;
+let loadedFile = null;
 let sourceMat = null;
 let sourceImage = null;
 let lineInfo = null;
@@ -45,7 +47,7 @@ const steps = [{
     iframedMipui = document.getElementById('iframed-mipui');
     iframedMipui.src = '';
     iframedMipui.onload = () => {
-      iframedMipui.contentWindow.postMessage({pstate: constructPState()}, '*');
+      sendPStateToMipui();
     };
     iframedMipui.src = '../app/index.html?tc=no&noui=yes';
   },
@@ -121,6 +123,7 @@ function image2mat(image) {
 }
 
 function uploadImage(file) {
+  loadedFile = file;
   const image = document.createElement('img');
   image.src = window.URL.createObjectURL(file);
   const preview = document.getElementById('chooser-image-preview');
@@ -461,11 +464,26 @@ function createAssignmentCanvas(previewCanvas) {
   return assignmentCanvas;
 }
 
+function sendPStateToMipui() {
+  document.getElementById('importer-import-mipui-button').disabled = true;
+  document.getElementById('importer-smooth-walls').disabled = true;
+  iframedMipui.contentWindow.postMessage({pstate: constructPState()}, '*');
+}
+
+window.addEventListener('message', event => {
+  if (event.data.status == 'load done') {
+    document.getElementById('importer-import-mipui-button').disabled = null;
+    document.getElementById('importer-smooth-walls').disabled = null;
+  }
+});
+
 function constructPState() {
-  content = {};
   assignments.forEach(assignment => {
-    populatePStateContentFromAssignment(assignment, content);
+    populateCellFinalFromAssignment(assignment);
   });
+  if (document.getElementById('importer-smooth-walls').checked) {
+    smoothCellFinal();
+  }
   return {
     ver: '1.0',
     props: {
@@ -475,23 +493,69 @@ function constructPState() {
       r: cellInfo.width,
     },
     // cell key -> (layer id -> content)
-    content,
+    content: createContent(),
     lastOpNum: 0,
   };
 }
 
-function populatePStateContentFromAssignment(assignment, content) {
+function populateCellFinalFromAssignment(assignment) {
   if (assignment.subassignments && assignment.subassignments.length > 0) {
     for (const subassignment of assignment.subassignments) {
-      populatePStateContentFromAssignment(subassignment, content);
+      populateCellFinalFromAssignment(subassignment);
     }
   } else {
     for (const cell of assignment.cluster.cells) {
-      const key = getCellKey(cell);
-      const cellLayersToContent = getCellLayersToContent(assignment.final);
-      if (cellLayersToContent) content[key] = cellLayersToContent;
+      cell.final = assignment.final;
     }
   }
+}
+
+function smoothCellFinal() {
+  for (const cell of cellInfo.cellList) {
+    if (cell.role == 'vertical') {
+      // If this is floor but any of the neighboring primaries is wall, so
+      // should this.
+      if (cell.final == 'floor' && [
+        cellInfo.getCell(cell.col - 0.5, cell.row),
+        cellInfo.getCell(cell.col + 0.5, cell.row),
+      ].some(neighbor => neighbor && neighbor.final == 'wall')) {
+        cell.final = 'wall';
+      }
+    }
+    if (cell.role == 'horizontal') {
+      // If this is floor but any of the neighboring primaries is wall, so
+      // should this.
+      if (cell.final == 'floor' && [
+        cellInfo.getCell(cell.col, cell.row - 0.5),
+        cellInfo.getCell(cell.col, cell.row + 0.5),
+      ].some(neighbor => neighbor && neighbor.final == 'wall')) {
+        cell.final = 'wall';
+      }
+    }
+  }
+  for (const cell of cellInfo.cellList) {
+    if (cell.role == 'corner') {
+      // If this is a floor but any divider neighbor is a wall, so should this.
+      if (cell.final == 'floor' && [
+        cellInfo.getCell(cell.col - 0.5, cell.row),
+        cellInfo.getCell(cell.col, cell.row - 0.5),
+        cellInfo.getCell(cell.col + 0.5, cell.row),
+        cellInfo.getCell(cell.col, cell.row + 0.5),
+      ].some(neighbor => neighbor && neighbor.final == 'wall')) {
+        cell.final = 'wall';
+      }
+    }
+  }
+}
+
+function createContent() {
+  const content = {};
+  for (const cell of cellInfo.cellList) {
+    const key = getCellKey(cell);
+    const cellLayersToContent = getCellLayersToContent(cell.final);
+    if (cellLayersToContent) content[key] = cellLayersToContent;
+  }
+  return content;
 }
 
 function getCellKey(cell) {
@@ -539,6 +603,12 @@ function wireInputs() {
       overlay.style.opacity =
           document.getElementById('assigner-overlay-opacity').value;
     }
+  };
+  document.getElementById('importer-import-mipui-button').onclick = () => {
+    importIntoMipui();
+  };
+  document.getElementById('importer-smooth-walls').onchange = () => {
+    sendPStateToMipui();
   };
 }
 
@@ -589,6 +659,26 @@ function zoom(value) {
   for (let i = 0; i < previews.length; i++) {
     previews[i].style.transform = `scale(${currentZoom})`;
   }
+}
+
+function importIntoMipui() {
+  const config = mode == 'prod' ? {
+    apiKey: 'AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ',
+    storageBucket: 'gs://mipui-prod.appspot.com',
+  } : {
+    apiKey: 'AIzaSyAP7CfYeh9_DWmKqTPI_-etKuhYFggaYy4',
+    storageBucket: 'gs://mipui-dev.appspot.com',
+  };
+  firebase.initializeApp(config);
+  const imagesRef = firebase.storage().ref().child('images');
+  const filename = filenameFor(loadedFile);
+  const imageRef = imagesRef.child(filename);
+  //imageRef.put(loadedFile);
+}
+
+function filenameFor(file) {
+  console.log(file);
+  return 'temp';
 }
 
 window.onload = () => {
