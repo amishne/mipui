@@ -44,6 +44,8 @@ const steps = [{
   canStepForward: () => false,
   canStepBackward: () => true,
   onStepForwardIntoThis: () => {
+    document.getElementById('importer-import-mipui-button').disabled = true;
+    document.getElementById('importer-smooth-walls').disabled = true;
     iframedMipui = document.getElementById('iframed-mipui');
     iframedMipui.src = '';
     iframedMipui.onload = () => {
@@ -182,8 +184,10 @@ function updateLineInfo() {
   if (oldDividerSize != newDividerSize) {
     const mod = Number(primarySizeInput.value) + newDividerSize;
     const offsetBy = (inputElement, half) => {
-      inputElement.value = +((mod + Number(inputElement.value) -
-          (newDividerSize - oldDividerSize) / (half ? 2 : 1)) % mod).toFixed(3);
+      let newInputElementValue = +((Number(inputElement.value) -
+          (newDividerSize - oldDividerSize) / (half ? 2 : 1)) % mod);
+      if (newInputElementValue < 0) newInputElementValue += mod;
+      inputElement.value = newInputElementValue.toFixed(3);
     };
     offsetBy(primarySizeInput);
     offsetBy(offsetLeftInput, true);
@@ -225,10 +229,12 @@ function createGridCanvas(previewCanvas, scale) {
           round((startX - mouseMoveEvent.clientX) / currentZoom, currentZoom);
       const yDistance =
           round((startY - mouseMoveEvent.clientY) / currentZoom, currentZoom);
-      offsetLeftInput.value =
-          (mod + ((initialOffsetLeftInput - xDistance) % mod) % mod).toFixed(3);
-      offsetTopInput.value =
-          (mod + ((initialOffsetTopInput - yDistance) % mod) % mod).toFixed(3);
+      let offsetLeftInputValue = (initialOffsetLeftInput - xDistance) % mod;
+      if (offsetLeftInputValue < 0) offsetLeftInputValue += mod;
+      offsetLeftInput.value = offsetLeftInputValue.toFixed(3);
+      let offsetTopInputValue = (initialOffsetTopInput - yDistance) % mod;
+      if (offsetTopInputValue < 0) offsetTopInputValue += mod;
+      offsetTopInput.value = offsetTopInputValue.toFixed(3);
       updateLineInfo();
       previewGridLines();
       mouseMoveEvent.stopPropagation();
@@ -673,12 +679,11 @@ function importIntoMipui() {
   const imagesRef = firebase.storage().ref().child('images');
   const filename = filenameFor(loadedFile);
   const imageRef = imagesRef.child(filename);
-  //imageRef.put(loadedFile);
+  imageRef.put(loadedFile);
 }
 
 function filenameFor(file) {
-  console.log(file);
-  return 'temp';
+  return MD5(file);
 }
 
 window.onload = () => {
