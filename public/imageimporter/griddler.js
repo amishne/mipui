@@ -182,11 +182,14 @@ class Griddler {
     console.log(sortedDiffs);
 
     const minCellSize = Math.max(Math.max(mat.rows, mat.cols) / 150, 8);
-    console.log(`width: ${mat.cols}, height: ${mat.rows}, minCellSize: ${minCellSize}`);
     const first = sortedDiffs[0] || {size: 1};
-    const second = sortedDiffs.slice(1)
-        .find(diff => first.size >= minCellSize || diff.size >= minCellSize) ||
-        {size: Math.max(mat.cols, mat.rows) / 40};
+    const second = sortedDiffs.slice(1).find(diff => {
+      const notTooCloseToEachOther =
+          first.size < diff.size / 2 || diff.size < first.size / 2;
+      const oneIsAboveMinCellSize =
+          first.size >= minCellSize || diff.size >= minCellSize;
+      return notTooCloseToEachOther && oneIsAboveMinCellSize;
+    }) || {size: Math.max(mat.cols, mat.rows) / 40};
     const cellSize = Math.max(first.size, second.size);
     const dividerSize = Math.min(first.size, second.size);
     const gridSize = cellSize + dividerSize;
