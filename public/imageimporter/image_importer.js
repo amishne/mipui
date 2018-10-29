@@ -166,6 +166,9 @@ function gridImage() {
     ].forEach(element => {
       element.oninput = () => {
         updateLineInfo();
+        if (element == primarySizeInput && Number(primarySizeInput.value) < 4) {
+          return;
+        }
         previewGridLines();
       };
     });
@@ -425,12 +428,15 @@ function addAssignment(assignment, tree, ctx) {
         100 - colorIntensity / 2,
         100 - colorIntensity / 2,
       ];
-      drawAssignment(assignment, ctx,
-          `rgb(${frameColor[0]}, ${frameColor[1]}, ${frameColor[2]})`);
+      const frameColorRgb =
+          `rgb(${frameColor[0]}, ${frameColor[1]}, ${frameColor[2]})`;
+      drawAssignment(assignment, ctx, frameColorRgb);
+      item.style.backgroundColor = frameColorRgb;
       if (hovering) {
         requestAnimationFrame(drawAnimationFrame);
       } else {
         drawAssignment(assignment, ctx, color);
+        item.style.backgroundColor = null;
         //previewAssignments();
       }
     };
