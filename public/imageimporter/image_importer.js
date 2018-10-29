@@ -9,6 +9,7 @@ let cellInfo = null;
 let assignments = null;
 let gridCanvasCtx = null;
 let assignmentCanvasCtx = null;
+let imagesRef = null;
 
 const steps = [{
   canStepForward: () => true,
@@ -668,15 +669,17 @@ function zoom(value) {
 }
 
 function importIntoMipui() {
-  const config = mode == 'prod' ? {
-    apiKey: 'AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ',
-    storageBucket: 'gs://mipui-prod.appspot.com',
-  } : {
-    apiKey: 'AIzaSyAP7CfYeh9_DWmKqTPI_-etKuhYFggaYy4',
-    storageBucket: 'gs://mipui-dev.appspot.com',
-  };
-  firebase.initializeApp(config);
-  const imagesRef = firebase.storage().ref().child('images');
+  if (!imagesRef) {
+    const config = mode == 'prod' ? {
+      apiKey: 'AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ',
+      storageBucket: 'gs://mipui-prod.appspot.com',
+    } : {
+      apiKey: 'AIzaSyAP7CfYeh9_DWmKqTPI_-etKuhYFggaYy4',
+      storageBucket: 'gs://mipui-dev.appspot.com',
+    };
+    firebase.initializeApp(config);
+    imagesRef = firebase.storage().ref().child('images');
+  }
   const filename = filenameFor(loadedFile);
   const imageRef = imagesRef.child(filename);
   imageRef.put(loadedFile);
