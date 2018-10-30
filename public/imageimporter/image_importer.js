@@ -282,9 +282,8 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
   const preview = document.getElementById('griddler-image-preview');
   const visualStartX = mouseDownEvent.offsetX;
   const visualStartY = mouseDownEvent.offsetY;
-  const effectiveZoom = currentZoom * baseZoom;
-  const logicalStartX = (visualStartX + preview.scrollLeft) / effectiveZoom;
-  const logicalStartY = (visualStartY + preview.scrollTop) / effectiveZoom;
+  const logicalStartX = (visualStartX + preview.scrollLeft) / baseZoom;
+  const logicalStartY = (visualStartY + preview.scrollTop) / baseZoom;
   gridCanvas.onmouseup = mouseUpEvent => {
     previewGridLines();
     gridCanvas.onmousemove = null;
@@ -294,9 +293,9 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
   };
   gridCanvas.onmousemove = mouseMoveEvent => {
     const logicalDistanceX =
-        Math.abs(visualStartX - mouseMoveEvent.offsetX) / effectiveZoom;
+        Math.abs(visualStartX - mouseMoveEvent.offsetX) / baseZoom;
     const logicalDistanceY =
-        Math.abs(visualStartY - mouseMoveEvent.offsetY) / effectiveZoom;
+        Math.abs(visualStartY - mouseMoveEvent.offsetY) / baseZoom;
     let primarySizeInputValue = Math.max(logicalDistanceX, logicalDistanceY);
     if (primarySizeInputValue < 5) return true;
     const dividerSizeInputValue = primarySizeInputValue / 6;
@@ -305,14 +304,12 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
     dividerSizeInput.value = dividerSizeInputValue.toFixed(3);
     const mod = primarySizeInputValue + dividerSizeInputValue;
     offsetLeftInput.value =
-        ((logicalStartX + (0 / 2)) % mod).toFixed(3);
+        ((mod + logicalStartX - (dividerSizeInputValue / 2)) % mod).toFixed(3);
     offsetTopInput.value =
-        ((logicalStartY + (0 / 2)) % mod).toFixed(3);
+        ((mod + logicalStartY - (dividerSizeInputValue / 2)) % mod).toFixed(3);
     updateLineInfo();
-    previewBox(visualStartX + preview.scrollLeft,
-        visualStartY + preview.scrollTop,
-        mouseMoveEvent.offsetX + preview.scrollLeft,
-        mouseMoveEvent.offsetY + preview.scrollTop);
+    previewBox(visualStartX, visualStartY,
+        mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
     mouseMoveEvent.stopPropagation();
     return true;
   };
@@ -325,13 +322,14 @@ function round(n, m) {
 }
 
 function previewBox(fromX, fromY, toX, toY) {
-  const factor = currentZoom * baseZoom * gridCanvasScale;
+  const factor = 1 / (baseZoom * gridCanvasScale);
+  console.log(factor);
   const gridCanvas = document.getElementById('griddler-grid-canvas');
-  gridCanvasCtx.clearRect(0, 0,
-      gridCanvas.width * gridCanvasScale, gridCanvas.height * gridCanvasScale);
+  gridCanvasCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
   gridCanvasCtx.beginPath();
   gridCanvasCtx.strokeStyle = 'red';
-  gridCanvasCtx.lineWidth = 1;
+  gridCanvasCtx.lineWidth =
+      Math.ceil(1 / (currentZoom * baseZoom * gridCanvasScale));
   const length =
       Math.max(Math.abs(toX - fromX), Math.abs(toY - fromY)) * factor;
   gridCanvasCtx.strokeRect(fromX * factor, fromY * factor, length, length);
