@@ -224,10 +224,6 @@ button:active, .button-like:active {
   transform-origin: top left;
 }
 
-#griddler-grid-canvas {
-  cursor: move;
-}
-
 #assigner-tree-container {
   max-height: calc(100% - 40px);
   overflow: auto;

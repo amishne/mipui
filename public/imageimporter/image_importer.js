@@ -1,5 +1,6 @@
 const mode = 'dev';
 let currentStep = -1;
+let baseZoom = null;
 let currentZoom = 1;
 let loadedFile = null;
 let sourceMat = null;
@@ -7,6 +8,7 @@ let sourceImage = null;
 let lineInfo = null;
 let cellInfo = null;
 let assignments = null;
+let gridCanvasScale = null;
 let gridCanvasCtx = null;
 let assignmentCanvasCtx = null;
 let imagesRef = null;
@@ -134,6 +136,9 @@ function uploadImage(file) {
   previewElements(preview, image);
   image.onload = () => {
     sourceImage = image;
+    baseZoom = Math.min(
+        image.clientWidth / image.naturalWidth,
+        image.clientHeight / image.naturalHeight);
     updateStepHeaders();
   };
 }
@@ -210,48 +215,126 @@ function createGridCanvas(previewCanvas, scale) {
   gridCanvas.style.transform = `scale(${currentZoom})`;
   gridCanvas.width = scale * previewCanvas.width;
   gridCanvas.height = scale * previewCanvas.height;
+  gridCanvas.onmousedown = mouseDownEvent => {
+    if (document.getElementById('grid-drag-moves').checked) {
+      startDraggingGrid(gridCanvas, mouseDownEvent);
+    } else {
+      startRedrawingGrid(gridCanvas, mouseDownEvent);
+    }
+  };
+  gridCanvas.onmouseenter = () => {
+    if (document.getElementById('grid-drag-moves').checked) {
+      gridCanvas.style.cursor = 'move';
+    } else {
+      gridCanvas.style.cursor = 'crosshair';
+    }
+  };
+  return gridCanvas;
+}
+
+function startDraggingGrid(gridCanvas, mouseDownEvent) {
   const primarySizeInput =
       document.getElementById('griddler-primary-size-input');
   const dividerSizeInput =
       document.getElementById('griddler-divider-size-input');
   const offsetLeftInput = document.getElementById('griddler-offset-left-input');
   const offsetTopInput = document.getElementById('griddler-offset-top-input');
-  gridCanvas.onmousedown = mouseDownEvent => {
-    const mod = Number(primarySizeInput.value) + Number(dividerSizeInput.value);
-    const startX = mouseDownEvent.clientX;
-    const startY = mouseDownEvent.clientY;
-    const initialOffsetLeftInput = Number(offsetLeftInput.value);
-    const initialOffsetTopInput = Number(offsetTopInput.value);
-    gridCanvas.onmouseup = mouseUpEvent => {
-      gridCanvas.onmousemove = null;
-      gridCanvas.onmouseup = null;
-      mouseUpEvent.stopPropagation();
-      return true;
-    };
-    gridCanvas.onmousemove = mouseMoveEvent => {
-      const xDistance =
-          round((startX - mouseMoveEvent.clientX) / currentZoom, currentZoom);
-      const yDistance =
-          round((startY - mouseMoveEvent.clientY) / currentZoom, currentZoom);
-      let offsetLeftInputValue = (initialOffsetLeftInput - xDistance) % mod;
-      if (offsetLeftInputValue < 0) offsetLeftInputValue += mod;
-      offsetLeftInput.value = offsetLeftInputValue.toFixed(3);
-      let offsetTopInputValue = (initialOffsetTopInput - yDistance) % mod;
-      if (offsetTopInputValue < 0) offsetTopInputValue += mod;
-      offsetTopInput.value = offsetTopInputValue.toFixed(3);
-      updateLineInfo();
-      previewGridLines();
-      mouseMoveEvent.stopPropagation();
-      return true;
-    };
-    mouseDownEvent.stopPropagation();
+  const mod = Number(primarySizeInput.value) + Number(dividerSizeInput.value);
+  const startX = mouseDownEvent.clientX;
+  const startY = mouseDownEvent.clientY;
+  const initialOffsetLeftInput = Number(offsetLeftInput.value);
+  const initialOffsetTopInput = Number(offsetTopInput.value);
+  const effectiveZoom = currentZoom * baseZoom;
+  gridCanvas.onmouseup = mouseUpEvent => {
+    gridCanvas.onmousemove = null;
+    gridCanvas.onmouseup = null;
+    mouseUpEvent.stopPropagation();
     return true;
   };
-  return gridCanvas;
+  gridCanvas.onmousemove = mouseMoveEvent => {
+    const logicalDistanceX =
+        round((mouseMoveEvent.clientX - startX) / effectiveZoom, effectiveZoom);
+    const logicalDistanceY =
+        round((mouseMoveEvent.clientY - startY) / effectiveZoom, effectiveZoom);
+    let offsetLeftInputValue =
+        (initialOffsetLeftInput + logicalDistanceX) % mod;
+    if (offsetLeftInputValue < 0) offsetLeftInputValue += mod;
+    offsetLeftInput.value = offsetLeftInputValue.toFixed(3);
+    let offsetTopInputValue = (initialOffsetTopInput + logicalDistanceY) % mod;
+    if (offsetTopInputValue < 0) offsetTopInputValue += mod;
+    offsetTopInput.value = offsetTopInputValue.toFixed(3);
+    updateLineInfo();
+    previewGridLines();
+    mouseMoveEvent.stopPropagation();
+    return true;
+  };
+  mouseDownEvent.stopPropagation();
+  return true;
+}
+
+function startRedrawingGrid(gridCanvas, mouseDownEvent) {
+  const primarySizeInput =
+      document.getElementById('griddler-primary-size-input');
+  const dividerSizeInput =
+      document.getElementById('griddler-divider-size-input');
+  const offsetLeftInput = document.getElementById('griddler-offset-left-input');
+  const offsetTopInput = document.getElementById('griddler-offset-top-input');
+  const preview = document.getElementById('griddler-image-preview');
+  const visualStartX = mouseDownEvent.offsetX;
+  const visualStartY = mouseDownEvent.offsetY;
+  const effectiveZoom = currentZoom * baseZoom;
+  const logicalStartX = (visualStartX + preview.scrollLeft) / effectiveZoom;
+  const logicalStartY = (visualStartY + preview.scrollTop) / effectiveZoom;
+  gridCanvas.onmouseup = mouseUpEvent => {
+    previewGridLines();
+    gridCanvas.onmousemove = null;
+    gridCanvas.onmouseup = null;
+    mouseUpEvent.stopPropagation();
+    return true;
+  };
+  gridCanvas.onmousemove = mouseMoveEvent => {
+    const logicalDistanceX =
+        Math.abs(visualStartX - mouseMoveEvent.offsetX) / effectiveZoom;
+    const logicalDistanceY =
+        Math.abs(visualStartY - mouseMoveEvent.offsetY) / effectiveZoom;
+    let primarySizeInputValue = Math.max(logicalDistanceX, logicalDistanceY);
+    if (primarySizeInputValue < 5) return true;
+    const dividerSizeInputValue = primarySizeInputValue / 6;
+    primarySizeInputValue -= dividerSizeInputValue;
+    primarySizeInput.value = primarySizeInputValue.toFixed(3);
+    dividerSizeInput.value = dividerSizeInputValue.toFixed(3);
+    const mod = primarySizeInputValue + dividerSizeInputValue;
+    offsetLeftInput.value =
+        ((logicalStartX + (0 / 2)) % mod).toFixed(3);
+    offsetTopInput.value =
+        ((logicalStartY + (0 / 2)) % mod).toFixed(3);
+    updateLineInfo();
+    previewBox(visualStartX + preview.scrollLeft,
+        visualStartY + preview.scrollTop,
+        mouseMoveEvent.offsetX + preview.scrollLeft,
+        mouseMoveEvent.offsetY + preview.scrollTop);
+    mouseMoveEvent.stopPropagation();
+    return true;
+  };
+  mouseDownEvent.stopPropagation();
+  return true;
 }
 
 function round(n, m) {
-  return Number(n.toFixed(Math.ceil(Math.log2(m))));
+  return Number(n.toFixed(Math.max(0, Math.ceil(Math.log2(m)))));
+}
+
+function previewBox(fromX, fromY, toX, toY) {
+  const factor = currentZoom * baseZoom * gridCanvasScale;
+  const gridCanvas = document.getElementById('griddler-grid-canvas');
+  gridCanvasCtx.clearRect(0, 0,
+      gridCanvas.width * gridCanvasScale, gridCanvas.height * gridCanvasScale);
+  gridCanvasCtx.beginPath();
+  gridCanvasCtx.strokeStyle = 'red';
+  gridCanvasCtx.lineWidth = 1;
+  const length =
+      Math.max(Math.abs(toX - fromX), Math.abs(toY - fromY)) * factor;
+  gridCanvasCtx.strokeRect(fromX * factor, fromY * factor, length, length);
 }
 
 function previewGridLines() {
@@ -269,13 +352,13 @@ function previewGridLines() {
     cv.imshow(previewCanvas, sourceMat);
   }
 
-  const scale = Math.round(
+  gridCanvasScale = Math.round(
       100 * Math.max(
           1, 2000 / Math.max(previewCanvas.width, previewCanvas.height))) / 100;
 
   let gridCanvas = document.getElementById('griddler-grid-canvas');
   if (!gridCanvas) {
-    gridCanvas = createGridCanvas(previewCanvas, scale);
+    gridCanvas = createGridCanvas(previewCanvas, gridCanvasScale);
     previewPanel.appendChild(gridCanvas);
     gridCanvasCtx = gridCanvas.getContext('2d');
     gridCanvasCtx.translate(-0.5, -0.5);
@@ -287,23 +370,23 @@ function previewGridLines() {
   gridCanvasCtx.lineWidth = 1;
   let x = Math.round(lineInfo.offsetLeft);
   while (x < previewCanvas.width) {
-    gridCanvasCtx.moveTo(x * scale, 0);
-    gridCanvasCtx.lineTo(x * scale, gridCanvas.height);
+    gridCanvasCtx.moveTo(x * gridCanvasScale, 0);
+    gridCanvasCtx.lineTo(x * gridCanvasScale, gridCanvas.height);
     gridCanvasCtx.stroke();
     x += lineInfo.dividerSize;
-    gridCanvasCtx.moveTo(x * scale, 0);
-    gridCanvasCtx.lineTo(x * scale, gridCanvas.height);
+    gridCanvasCtx.moveTo(x * gridCanvasScale, 0);
+    gridCanvasCtx.lineTo(x * gridCanvasScale, gridCanvas.height);
     gridCanvasCtx.stroke();
     x += lineInfo.cellSize;
   }
   let y = Math.round(lineInfo.offsetTop);
   while (y < previewCanvas.height) {
-    gridCanvasCtx.moveTo(0, y * scale);
-    gridCanvasCtx.lineTo(gridCanvas.width, y * scale);
+    gridCanvasCtx.moveTo(0, y * gridCanvasScale);
+    gridCanvasCtx.lineTo(gridCanvas.width, y * gridCanvasScale);
     gridCanvasCtx.stroke();
     y += lineInfo.dividerSize;
-    gridCanvasCtx.moveTo(0, y * scale);
-    gridCanvasCtx.lineTo(gridCanvas.width, y * scale);
+    gridCanvasCtx.moveTo(0, y * gridCanvasScale);
+    gridCanvasCtx.lineTo(gridCanvas.width, y * gridCanvasScale);
     gridCanvasCtx.stroke();
     y += lineInfo.cellSize;
   }
@@ -653,6 +736,7 @@ function createZoomControls() {
     slider.value = 100;
     slider.min = 100;
     slider.max = 1000;
+    slider.step = 100;
     container.appendChild(slider);
     slider.oninput = () => {
       // Sychronize all zoom sliders.
