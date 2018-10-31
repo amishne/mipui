@@ -272,6 +272,15 @@ function startDraggingGrid(gridCanvas, mouseDownEvent) {
   return true;
 }
 
+function getMouseCoords(preview, mouseEvent) {
+  const factor = currentZoom * baseZoom;
+  const clientRect = preview.getClientRects()[0];
+  return {
+    x: (preview.scrollLeft + mouseEvent.clientX - clientRect.x) / factor,
+    y: (preview.scrollTop + mouseEvent.clientY - clientRect.y) / factor,
+  };
+}
+
 function startRedrawingGrid(gridCanvas, mouseDownEvent) {
   const primarySizeInput =
       document.getElementById('griddler-primary-size-input');
@@ -280,10 +289,7 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
   const offsetLeftInput = document.getElementById('griddler-offset-left-input');
   const offsetTopInput = document.getElementById('griddler-offset-top-input');
   const preview = document.getElementById('griddler-image-preview');
-  const visualStartX = mouseDownEvent.offsetX;
-  const visualStartY = mouseDownEvent.offsetY;
-  const logicalStartX = (visualStartX + preview.scrollLeft) / baseZoom;
-  const logicalStartY = (visualStartY + preview.scrollTop) / baseZoom;
+  const initialMouse = getMouseCoords(preview, mouseDownEvent);
   gridCanvas.onmouseup = mouseUpEvent => {
     previewGridLines();
     gridCanvas.onmousemove = null;
@@ -292,11 +298,11 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
     return true;
   };
   gridCanvas.onmousemove = mouseMoveEvent => {
-    const logicalDistanceX =
-        Math.abs(visualStartX - mouseMoveEvent.offsetX) / baseZoom;
-    const logicalDistanceY =
-        Math.abs(visualStartY - mouseMoveEvent.offsetY) / baseZoom;
-    let primarySizeInputValue = Math.max(logicalDistanceX, logicalDistanceY);
+    const currentMouse = getMouseCoords(preview, mouseMoveEvent);
+    const maxDistance =
+        Math.max(Math.abs(currentMouse.x - initialMouse.x),
+            Math.abs(currentMouse.y - initialMouse.y));
+    let primarySizeInputValue = maxDistance;
     if (primarySizeInputValue < 5) return true;
     const dividerSizeInputValue = primarySizeInputValue / 6;
     primarySizeInputValue -= dividerSizeInputValue;
@@ -304,12 +310,11 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
     dividerSizeInput.value = dividerSizeInputValue.toFixed(3);
     const mod = primarySizeInputValue + dividerSizeInputValue;
     offsetLeftInput.value =
-        ((mod + logicalStartX - (dividerSizeInputValue / 2)) % mod).toFixed(3);
+        ((mod + initialMouse.x - (dividerSizeInputValue / 2)) % mod).toFixed(3);
     offsetTopInput.value =
-        ((mod + logicalStartY - (dividerSizeInputValue / 2)) % mod).toFixed(3);
+        ((mod + initialMouse.y - (dividerSizeInputValue / 2)) % mod).toFixed(3);
     updateLineInfo();
-    previewBox(visualStartX, visualStartY,
-        mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
+    previewBox(initialMouse, currentMouse);
     mouseMoveEvent.stopPropagation();
     return true;
   };
@@ -321,9 +326,8 @@ function round(n, m) {
   return Number(n.toFixed(Math.max(0, Math.ceil(Math.log2(m)))));
 }
 
-function previewBox(fromX, fromY, toX, toY) {
-  const factor = 1 / (baseZoom * gridCanvasScale);
-  console.log(factor);
+function previewBox(from, to) {
+  const factor = 1 / gridCanvasScale;
   const gridCanvas = document.getElementById('griddler-grid-canvas');
   gridCanvasCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
   gridCanvasCtx.beginPath();
@@ -331,8 +335,9 @@ function previewBox(fromX, fromY, toX, toY) {
   gridCanvasCtx.lineWidth =
       Math.ceil(1 / (currentZoom * baseZoom * gridCanvasScale));
   const length =
-      Math.max(Math.abs(toX - fromX), Math.abs(toY - fromY)) * factor;
-  gridCanvasCtx.strokeRect(fromX * factor, fromY * factor, length, length);
+      Math.max(Math.abs(to.x - from.x), Math.abs(to.y - from.y)) * factor;
+  gridCanvasCtx.strokeRect(from.x * factor, from.y * factor,
+      Math.sign(to.x - from.x) * length, Math.sign(to.y - from.y) * length);
 }
 
 function previewGridLines() {
@@ -359,7 +364,7 @@ function previewGridLines() {
     gridCanvas = createGridCanvas(previewCanvas, gridCanvasScale);
     previewPanel.appendChild(gridCanvas);
     gridCanvasCtx = gridCanvas.getContext('2d');
-    gridCanvasCtx.translate(-0.5, -0.5);
+    //gridCanvasCtx.translate(-0.5, -0.5);
   }
   if (lineInfo.primarySize <= 6) return;
   gridCanvasCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
