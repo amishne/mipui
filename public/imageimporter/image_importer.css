@@ -206,7 +206,7 @@ button:active, .button-like:active {
   display: inline-block;
   width: calc(100% - 230px);
   border: dashed 2px crimson;
-  overflow: auto;
+  overflow: scroll;
 }
 
 #chooser-upload-button {

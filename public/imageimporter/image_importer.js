@@ -276,8 +276,8 @@ function getMouseCoords(preview, mouseEvent) {
   const factor = currentZoom * baseZoom;
   const clientRect = preview.getClientRects()[0];
   return {
-    x: (preview.scrollLeft + mouseEvent.clientX - clientRect.x) / factor,
-    y: (preview.scrollTop + mouseEvent.clientY - clientRect.y) / factor,
+    x: (-1 + preview.scrollLeft + mouseEvent.clientX - clientRect.x) / factor,
+    y: (-1 + preview.scrollTop + mouseEvent.clientY - clientRect.y) / factor,
   };
 }
 
