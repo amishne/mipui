@@ -276,8 +276,8 @@ function getMouseCoords(preview, mouseEvent) {
   const factor = currentZoom * baseZoom;
   const clientRect = preview.getClientRects()[0];
   return {
-    x: (-1 + preview.scrollLeft + mouseEvent.clientX - clientRect.x) / factor,
-    y: (-1 + preview.scrollTop + mouseEvent.clientY - clientRect.y) / factor,
+    x: -1 + (preview.scrollLeft + mouseEvent.clientX - clientRect.x) / factor,
+    y: -1 + (preview.scrollTop + mouseEvent.clientY - clientRect.y) / factor,
   };
 }
 
@@ -299,6 +299,8 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
   };
   gridCanvas.onmousemove = mouseMoveEvent => {
     const currentMouse = getMouseCoords(preview, mouseMoveEvent);
+//    currentMouse.x--;
+//    currentMouse.y--;
     const maxDistance =
         Math.max(Math.abs(currentMouse.x - initialMouse.x),
             Math.abs(currentMouse.y - initialMouse.y));
@@ -327,13 +329,13 @@ function round(n, m) {
 }
 
 function previewBox(from, to) {
-  const factor = 1 / gridCanvasScale;
+  const factor = gridCanvasScale;
   const gridCanvas = document.getElementById('griddler-grid-canvas');
   gridCanvasCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
   gridCanvasCtx.beginPath();
   gridCanvasCtx.strokeStyle = 'red';
   gridCanvasCtx.lineWidth =
-      Math.ceil(1 / (currentZoom * baseZoom * gridCanvasScale));
+      Math.ceil(gridCanvasScale / (currentZoom * baseZoom));
   const length =
       Math.max(Math.abs(to.x - from.x), Math.abs(to.y - from.y)) * factor;
   gridCanvasCtx.strokeRect(from.x * factor, from.y * factor,
