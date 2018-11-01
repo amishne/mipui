@@ -194,7 +194,6 @@ button:active, .button-like:active {
   border-right: 1px solid blue;
   padding-right: 8px;
   margin-right: 8px;
-  text-align: center;
 }
 
 .instrument-panel > div {
