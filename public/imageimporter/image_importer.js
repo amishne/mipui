@@ -47,7 +47,10 @@ const steps = [{
   canStepForward: () => false,
   canStepBackward: () => true,
   onStepForwardIntoThis: () => {
-    document.getElementById('importer-import-mipui-button').disabled = true;
+    const importButton =
+        document.getElementById('importer-import-mipui-button');
+    importButton.disabled = true;
+    importButton.textContent = 'Loading...';
     document.getElementById('importer-smooth-walls').disabled = true;
     iframedMipui = document.getElementById('iframed-mipui');
     iframedMipui.src = '';
@@ -461,6 +464,10 @@ function addAssignment(assignment, tree, ctx) {
   doorOption.value = 'door';
   doorOption.textContent = 'Door';
   combo.appendChild(doorOption);
+  const angledOption = document.createElement('option');
+  angledOption.value = 'angled';
+  angledOption.textContent = 'Angled Wall';
+  combo.appendChild(angledOption);
   if (assignment.cluster.size > 1) {
     const multipleOption = document.createElement('option');
     multipleOption.value = 'multiple';
@@ -505,6 +512,7 @@ function addAssignment(assignment, tree, ctx) {
       case 'door': color = 'white'; break;
       case 'wall': color = 'rgb(222, 184, 135)'; break;
       case 'floor': color = 'rgb(245, 245, 220)'; break;
+      case 'angled': color = 'rgb(236, 214, 177)'; break;
       default: color = 'black'; break;
     }
     drawAssignment(assignment, ctx, color);
@@ -566,15 +574,26 @@ function createAssignmentCanvas(previewCanvas) {
 }
 
 function sendPStateToMipui() {
-  document.getElementById('importer-import-mipui-button').disabled = true;
+  const importButton = document.getElementById('importer-import-mipui-button');
+  importButton.disabled = true;
+  importButton.textContent = 'Updating...';
   document.getElementById('importer-smooth-walls').disabled = true;
   iframedMipui.contentWindow.postMessage({pstate: constructPState()}, '*');
 }
 
 window.addEventListener('message', event => {
-  if (event.data.status == 'load done') {
-    document.getElementById('importer-import-mipui-button').disabled = null;
-    document.getElementById('importer-smooth-walls').disabled = null;
+  switch (event.data.status) {
+    case 'load done':
+      const importButton =
+          document.getElementById('importer-import-mipui-button');
+      importButton.disabled = null;
+      importButton.textContent = 'Looks good, import!';
+      document.getElementById('importer-smooth-walls').disabled = null;
+      break;
+    case 'forks done':
+      const {mid, secret} = event.data;
+      window.open(`../app/index.html?mid=${mid}&secret=${secret}`, '_blank');
+      break;
   }
 });
 
@@ -653,7 +672,7 @@ function createContent() {
   const content = {};
   for (const cell of cellInfo.cellList) {
     const key = getCellKey(cell);
-    const cellLayersToContent = getCellLayersToContent(cell.final);
+    const cellLayersToContent = getCellLayersToContent(cell);
     if (cellLayersToContent) content[key] = cellLayersToContent;
   }
   return content;
@@ -668,8 +687,8 @@ function getCellKey(cell) {
   }
 }
 
-function getCellLayersToContent(final) {
-  switch (final) {
+function getCellLayersToContent(cell) {
+  switch (cell.final) {
     case 'floor':
       return null;
     case 'wall':
@@ -679,8 +698,24 @@ function getCellLayersToContent(final) {
         '1': {k: 0, v: 0},
         '3': {k: 0, v: 0},
       };
+    case 'angled':
+      return {'1': {k: 0, v: 1, c: buildAngledConnections(cell)}};
   }
   return null;
+}
+
+function buildAngledConnections(cell) {
+  let connections = 0;
+  const isWall = (col, row) => cellInfo.getCell(col, row).final == 'wall';
+  if (isWall(cell.col, cell.row - 0.5)) connections |= 1;
+  if (isWall(cell.col + 0.5, cell.row)) connections |= 2;
+  if (isWall(cell.col, cell.row + 0.5)) connections |= 4;
+  if (isWall(cell.col - 0.5, cell.row)) connections |= 8;
+  if (isWall(cell.col + 0.5, cell.row - 0.5)) connections |= 16;
+  if (isWall(cell.col + 0.5, cell.row + 0.5)) connections |= 32;
+  if (isWall(cell.col - 0.5, cell.row + 0.5)) connections |= 64;
+  if (isWall(cell.col - 0.5, cell.row - 0.5)) connections |= 128;
+  return connections;
 }
 
 function previewElements(previewPanel, ...elements) {
@@ -705,7 +740,8 @@ function wireInputs() {
           document.getElementById('assigner-overlay-opacity').value;
     }
   };
-  document.getElementById('importer-import-mipui-button').onclick = () => {
+  document.getElementById('importer-import-mipui-button').onclick = e => {
+    e.disabled = true;
     importIntoMipui();
   };
   document.getElementById('importer-smooth-walls').onchange = () => {
@@ -773,11 +809,13 @@ function importIntoMipui() {
       storageBucket: 'gs://mipui-dev.appspot.com',
     };
     firebase.initializeApp(config);
-    imagesRef = firebase.storage().ref().child('images');
+    imagesRef = firebase.storage().ref().child('images/maps');
   }
   const filename = filenameFor(loadedFile);
   const imageRef = imagesRef.child(filename);
-  imageRef.put(loadedFile);
+  imageRef.put(loadedFile).then(() => {
+    iframedMipui.contentWindow.postMessage({fork: filename}, '*');
+  });
 }
 
 function filenameFor(file) {

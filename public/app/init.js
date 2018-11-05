@@ -183,6 +183,15 @@ window.addEventListener('message', event => {
     event.source.postMessage({status: 'load done'}, event.origin);
   }
   if (event.data.fork) {
+    const imageFileName = event.data.fork;
     state.opCenter.fork();
+    state.setProperty(pk.origin, `ii ${imageFileName}`, true);
+    state.opCenter.fork();
+    state.setProperty(pk.longDescription, null, true);
+    event.source.postMessage({
+      status: 'forks done',
+      mid: state.getMid(),
+      secret: state.getSecret(),
+    }, event.origin);
   }
 });

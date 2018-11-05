@@ -212,6 +212,7 @@ const pk = {
   firstColumn: 'l',
   lastColumn: 'r',
   theme: 'h',
+  origin: 'o',
 };
 
 function sameContent(c1, c2) {
