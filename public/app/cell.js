@@ -312,7 +312,7 @@ class Cell {
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(
         element, layer, content, isHighlight);
-    this.setText_(element, content[ck.text]);
+    this.setText_(element, content);
     this.setImage_(element, content[ck.image], variation);
     this.setImageHash_(element, content[ck.imageHash], variation);
     this.setImageFromVariation_(element, layer, content);
@@ -397,17 +397,24 @@ class Cell {
     }
   }
 
-  setText_(element, text) {
-    if (!element || !text) return;
-    const offsetWidth = element.offsetWidth;
-    const offsetHeight = element.offsetHeight;
+  setText_(element, content) {
+    const stringContent = content[ck.text];
+    if (!element || !stringContent) return;
+    element.innerHTML = '';
+    let vertical = false;
+    if (content[ck.transform]) {
+      vertical = true;
+    }
+    const offsetWidth = vertical ? element.offsetHeight : element.offsetWidth;
+    const offsetHeight = vertical ? element.offsetWidth : element.offsetHeight;
     const theMapElement = document.getElementById('theMap');
     const sizingElement = createAndAppendDivWithClass(
         theMapElement, element.className);
     sizingElement.style.visibility = 'hidden';
     sizingElement.style.display = 'inline-block';
     sizingElement.style.width = offsetWidth;
-    sizingElement.textContent = text;
+    sizingElement.style.height = offsetHeight;
+    sizingElement.textContent = stringContent;
     let fontSize = 14;
     sizingElement.style.fontSize = fontSize + 'pt';
     while (sizingElement.scrollWidth <= offsetWidth &&
@@ -423,8 +430,21 @@ class Cell {
     }
     this.textHeight = sizingElement.scrollHeight;
     theMapElement.removeChild(sizingElement);
-    element.style.fontSize = fontSize + 'pt';
-    element.textContent = text;
+    const inner = createAndAppendDivWithClass(element, 'inner-text-cell');
+    inner.style.width = offsetWidth;
+    inner.style.marginLeft = `${(element.offsetWidth - offsetWidth) / 2}px`;
+    if (content[ck.transform]) {
+      switch (content[ck.transform]) {
+        case 'r90':
+          inner.classList.add('rotated-90');
+          break;
+        case 'r270':
+          inner.classList.add('rotated-270');
+          break;
+      }
+    }
+    inner.style.fontSize = fontSize + 'pt';
+    inner.textContent = stringContent;
   }
 
   setImage_(element, imageUrl, variation) {

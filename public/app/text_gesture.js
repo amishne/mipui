@@ -1,8 +1,9 @@
 class TextGesture extends BoxGesture {
-  constructor(kind, variation) {
+  constructor(kind, variation, rotation) {
     super();
     this.kind_ = kind;
     this.variation_ = variation;
+    this.rotation_ = rotation;
   }
 
   isEditable_() {
@@ -69,5 +70,17 @@ class TextGesture extends BoxGesture {
           startCellElement.scrollHeight - startCell.textHeight;
       inputElement.style.paddingTop = (whitespace / 2 + 1) + 'px';
     }
+  }
+
+  createStartCellContent_() {
+    const content = super.createStartCellContent_();
+    if (this.rotation_) {
+      if (this.rotation_ == 'rotated-90') {
+        content[ck.transform] = 'r90';
+      } else if (this.rotation_ == 'rotated-270') {
+        content[ck.transform] = 'r270';
+      }
+    }
+    return content;
   }
 }

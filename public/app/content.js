@@ -201,6 +201,7 @@ const ck = {
   connections: 'c',
   clipInclude: 'p',
   clipExclude: 'x',
+  transform: 'r',
 };
 
 // Property keys.

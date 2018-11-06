@@ -246,14 +246,19 @@
 
 .text-cell {
   position: absolute;
+  margin: 2px 3px 3px 2px;
+  
   display: flex;
   justify-content: center;
   align-content: center;
   flex-direction: column;
+}
+
+.inner-text-cell {
   text-align: center;
-  margin: 2px 3px 3px 2px;
   white-space: pre-wrap;
   user-select: none;
+  
 }
 
 .primary-cell {
@@ -428,6 +433,10 @@
   display: flex;
 }
 
+.image {
+  transform: rotate(90deg);
+}
+
 .image-cell {
   color: rgb(50, 50, 50);
 }
@@ -514,4 +523,20 @@
   position: absolute;
   background-color: mediumvioletred;
   opacity: 0.4;
+}
+
+.rotated-90 {
+  transform: rotate(90deg);
+}
+
+.rotated-180 {
+  transform: rotate(180deg);
+}
+
+.rotated-270 {
+  transform: rotate(270deg);
+}
+
+.mirrored {
+  transform: scaleX(-1);
 }

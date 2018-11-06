@@ -415,12 +415,13 @@ class Menu {
     }
   }
 
-  createTextTool_(kind, variation, name, text) {
+  createTextTool_(kind, variation, name, text, rotation) {
     const layer = ct.text;
     const classNames =
         (layer.classNames || [])
             .concat(kind.classNames || [])
-            .concat(variation.classNames || []);
+            .concat(variation.classNames || [])
+            .concat(rotation ? [rotation] : []);
     return {
       name,
       type: 'tool',
@@ -429,7 +430,7 @@ class Menu {
       isSelected: true,
       tip: 'Drag when placing to resize.',
       callback: () => {
-        state.gesture = new TextGesture(kind, variation);
+        state.gesture = new TextGesture(kind, variation, rotation);
       },
       cells: [
         {
@@ -1409,6 +1410,10 @@ class Menu {
           items: [
             this.createTextTool_(
                 ct.text.text, ct.text.text.standard, 'Text', 'Text'),
+            this.createTextTool_(ct.text.text, ct.text.text.standard,
+                '90° Text', 'Text', 'rotated-90'),
+            this.createTextTool_(ct.text.text, ct.text.text.standard,
+                '270° Text', 'Text', 'rotated-270'),
             {
               name: 'Number rooms',
               type: 'button',
