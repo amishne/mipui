@@ -478,6 +478,7 @@ class Cell {
         const svgElement = state.lastUsedSvg.svgElement.cloneNode(true);
         svgElement.style.width = width + 'px';
         svgElement.style.height = height + 'px';
+        svgElement.style.transform = transform ? transformStyle : '';
         element.appendChild(svgElement);
       } else {
         const xhr = new XMLHttpRequest();
@@ -489,9 +490,7 @@ class Cell {
           svgElement.classList.add(...classNames);
           svgElement.style.width = width + 'px';
           svgElement.style.height = height + 'px';
-          if (transform) {
-            svgElement.style.transform = transformStyle;
-          }
+          svgElement.style.transform = transform ? transformStyle : '';
           Array.from(svgElement.children)
               .forEach(svgChild => svgChild.removeAttribute('fill'));
           element.innerHTML = '';
