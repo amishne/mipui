@@ -266,6 +266,20 @@
       document.body.appendChild(img);
       testCompleted();
     });
+
+    addTest('Can save transformed svg', async () => {
+      const input = createDomWithInnerClasses('inline-svg-with-transform');
+
+      const svgDataUrl = await gi.node2pngDataUrl(input, 200, 20);
+
+      expectedDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUCAYAAADIpHLKAAABGElEQVRoQ+2Y0Q3CMAwFXzZiFDagmwEbMEo3KooAkY+QGKTYqbj+1oqtez5FStqkTXwQgECVQEIQNgMCnwkgCNsBgQYBBJloPZajlCSdbxMN9eejIMgkC5DluB4ewywrkkwSixBkgiRKOV7jIMkEwUgIEh1DTQ4kiU7l3Z8bJDCLlhxIEhhM0RpBgnKwyIEkQeEgSCz4b+RAktisuEEC+P8iyGmVLjz/uqeFIO7In0+5xbNubwTk6BEa9x9BxrHtnmy5SZCji3FoAYIMxds/vCUJcvT5ja5AkNGEDefXJEEOAziHEgRxgGxpUUqCHBZiPjUI4sPZ1CVLkj9eq0y4XIoQxAUzTfZKAEH2mhxzuxBAEBfMNNkrgTskeFvtCl5XowAAAABJRU5ErkJggg==';
+      assert(svgDataUrl == expectedDataUrl);
+
+      const img = document.createElement('img');
+      img.src = svgDataUrl;
+      document.body.appendChild(img);
+      testCompleted();
+    });
   </script>
 </head>
   <body>

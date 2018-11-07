@@ -29,6 +29,16 @@
   height: 20px;
 }
 
+.inline-svg-with-transform {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><rect x1="90" y1="5" x2="105" y2="15"/></svg>') green;
+  position: relative;
+  width: 10px;
+  height: 10px;
+  top: 5px;
+  left: 95px;
+  transform: rotate(45deg);
+}
+
 .external-svg-background {
   background-image: url("../public/app/assets/wyvern.svg");
   width: 200px;
