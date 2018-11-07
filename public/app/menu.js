@@ -18,6 +18,10 @@ class Menu {
         selectedVariation: ct.images.image.black,
         items: [],
       },
+      imageTransformTools: {
+        selectedTransform: null,
+        items: [],
+      },
     };
     this.tokenSelector_ = null;
     this.tokenSelectedCategory_ = '<all>';
@@ -602,7 +606,7 @@ class Menu {
     return selector;
   }
 
-  updateImageTool_(item, gameIcon, variation) {
+  updateImageTool_(item, gameIcon, variation, transform) {
     const path = gameIcon.path.replace('public/app/', '');
     item.callback = () => {
       this.groups_.imageIconTools.selectedIcon = gameIcon;
@@ -610,21 +614,58 @@ class Menu {
           ct.images,
           ct.images.image,
           variation,
+          transform,
           path,
           gameIcon.hash);
       if (item.group == this.groups_.imageIconTools) {
         this.groups_.imageIconTools.selectedIcon = gameIcon;
         this.groups_.imageVariationTools.items.forEach(variationItem => {
           this.updateImageTool_(
-              variationItem, gameIcon, variationItem.variation);
+              variationItem, gameIcon, variationItem.variation, transform);
         });
-      } else {
+        this.groups_.imageTransformTools.items.forEach(transformItem => {
+          this.updateImageTool_(
+              transformItem, gameIcon, variation, transformItem.transform);
+        });
+      } else if (item.group == this.groups_.imageVariationTools) {
         this.groups_.imageVariationTools.selectedVariation = variation;
         this.groups_.imageIconTools.items.forEach(iconItem => {
-          this.updateImageTool_(iconItem, iconItem.gameIcon, variation);
+          this.updateImageTool_(
+              iconItem, iconItem.gameIcon, variation, transform);
+        });
+        this.groups_.imageTransformTools.items.forEach(transformItem => {
+          this.updateImageTool_(
+              transformItem, gameIcon, variation, transformItem.transform);
+        });
+      } else if (item.group == this.groups_.imageTransformTools) {
+        this.groups_.imageTransformTools.selectedTransform = transform;
+        this.groups_.imageIconTools.items.forEach(iconItem => {
+          this.updateImageTool_(
+              iconItem, iconItem.gameIcon, variation, transform);
+        });
+        this.groups_.imageVariationTools.items.forEach(variationItem => {
+          this.updateImageTool_(
+              variationItem, gameIcon, variationItem.variation, transform);
         });
       }
     };
+    let transformClassNames = [];
+    if (transform) {
+      switch (transform) {
+        case 'r90':
+          transformClassNames = ['rotated-90'];
+          break;
+        case 'r180':
+          transformClassNames = ['rotated-180'];
+          break;
+        case 'r270':
+          transformClassNames = ['rotated-270'];
+          break;
+        case 'm':
+          transformClassNames = ['mirrored'];
+          break;
+      }
+    }
     item.cells = [{
       classNames: [
         'grid-cell',
@@ -640,7 +681,7 @@ class Menu {
     }];
     item.deferredSvg = {
       path,
-      classNames: variation.classNames,
+      classNames: transformClassNames,
       childNum: 1,
     };
     if (item.element) {
@@ -661,7 +702,10 @@ class Menu {
       gameIcon,
     };
     this.updateImageTool_(
-        item, gameIcon, this.groups_.imageVariationTools.selectedVariation);
+        item,
+        gameIcon,
+        this.groups_.imageVariationTools.selectedVariation,
+        this.groups_.imageTransformTools.selectedTransform);
     return item;
   }
 
@@ -707,6 +751,7 @@ class Menu {
 
   createTokenColorTool_(name, variation, isSelected) {
     const gameIcon = this.groups_.imageIconTools.selectedIcon;
+    const transform = this.groups_.imageTransformTools.selectedTransform;
     const item = {
       name,
       type: 'tool',
@@ -717,7 +762,24 @@ class Menu {
       isSelected,
       variation,
     };
-    this.updateImageTool_(item, gameIcon, variation);
+    this.updateImageTool_(item, gameIcon, variation, transform);
+    return item;
+  }
+
+  createTokenTransformTool_(name, transform, isSelected) {
+    const gameIcon = this.groups_.imageIconTools.selectedIcon;
+    const variation = this.groups_.imageVariationTools.selectedVariation;
+    const item = {
+      name,
+      type: 'tool',
+      presentation: 'cells',
+      group: this.groups_.imageTransformTools,
+      classNames: ['menu-tokens'],
+      tip: 'Drag when placing to resize.',
+      isSelected,
+      transform,
+    };
+    this.updateImageTool_(item, gameIcon, variation, transform);
     return item;
   }
 
@@ -1430,7 +1492,6 @@ class Menu {
       {
         name: 'To&kens',
         presentation: 'selected child',
-        tip: 'Drag when placing to stretch across multiple cells.',
         submenu: {
           items: [
             this.createTokenCategoryDropdown_(),
@@ -1440,6 +1501,12 @@ class Menu {
             this.createTokenColorTool_('Brown', ct.images.image.brown),
             this.createTokenColorTool_('Blue', ct.images.image.blue),
             this.createTokenColorTool_('Red', ct.images.image.red),
+            this.createSeparator_(),
+            this.createTokenTransformTool_('Upright', null, true),
+            this.createTokenTransformTool_('Rotated 90°', 'r90'),
+            this.createTokenTransformTool_('Rotated 180°', 'r180'),
+            this.createTokenTransformTool_('Rotated 270°', 'r270'),
+            this.createTokenTransformTool_('Mirrored', 'm'),
           ],
         },
       },

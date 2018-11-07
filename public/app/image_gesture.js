@@ -1,9 +1,10 @@
 class ImageGesture extends StaticBoxGesture {
-  constructor(layer, kind, variation, image, imageHash) {
+  constructor(layer, kind, variation, transform, image, imageHash) {
     super();
     this.layer_ = layer;
     this.kind_ = kind;
     this.variation_ = variation;
+    this.transform_ = transform;
     this.image_ = image;
     this.imageHash_ = null;
     if (imageHash) {
@@ -27,6 +28,7 @@ class ImageGesture extends StaticBoxGesture {
         this.layer_,
         this.kind_,
         this.variation_,
+        this.transform_,
         this.image_,
         this.imageHash_);
   }
@@ -37,5 +39,13 @@ class ImageGesture extends StaticBoxGesture {
 
   getValueKey_() {
     return this.valueKey_;
+  }
+
+  createStartCellContent_() {
+    const content = super.createStartCellContent_();
+    if (content && this.transform_) {
+      content[ck.transform] = this.transform_;
+    }
+    return content;
   }
 }

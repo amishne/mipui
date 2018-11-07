@@ -309,13 +309,14 @@ class Cell {
     if (element) element.className = '';
     const kind = layer.children[content[ck.kind]];
     const variation = kind.children[content[ck.variation]];
+    const transform = content[ck.transform];
     this.modifyElementClasses_(layer, content, element, 'add');
     this.setElementGeometryToGridElementGeometry_(
         element, layer, content, isHighlight);
     this.setText_(element, content);
-    this.setImage_(element, content[ck.image], variation);
-    this.setImageHash_(element, content[ck.imageHash], variation);
-    this.setImageFromVariation_(element, layer, content);
+    this.setImage_(element, content[ck.image], variation, transform);
+    this.setImageHash_(element, content[ck.imageHash], variation, transform);
+    this.setImageFromVariation_(element, layer, content, transform);
     this.setMask_(element, layer, content);
     this.setShape_(element, layer, kind, variation, content[ck.connections]);
   }
@@ -447,13 +448,25 @@ class Cell {
     inner.textContent = stringContent;
   }
 
-  setImage_(element, imageUrl, variation) {
+  setImage_(element, imageUrl, variation, transform) {
     if (!element || !imageUrl) return;
     const width = element.offsetWidth;
     const height = element.offsetHeight;
     const classNames = variation.classNames || [];
-    element.innerHTML = `<img class="image ${classNames.join(' ')}" src=` +
-        `"${imageUrl}" style="width: ${width}px; height: ${height}px; alt="">`;
+    let transformStyle = '';
+    let transformPhrase = '';
+    if (transform) {
+      if (transform.startsWith('r')) {
+        transformStyle = `rotate(${transform.substr(1)}deg)`;
+      } else if (transform == 'm') {
+        transformStyle = 'scaleX(-1)';
+      }
+      transformPhrase = ` transform: ${transformStyle};`;
+    }
+    element.innerHTML =
+        `<img class="image ${classNames.join(' ')}" src="${imageUrl}" ` +
+        `style="width: ${width}px; height: ${height}px;${transformPhrase}" ` +
+        'alt="">';
     if (imageUrl.endsWith('.svg')) {
       // Asynchronously replace <img> with <svg>, which then supports
       // 1. Styling
@@ -476,6 +489,9 @@ class Cell {
           svgElement.classList.add(...classNames);
           svgElement.style.width = width + 'px';
           svgElement.style.height = height + 'px';
+          if (transform) {
+            svgElement.style.transform = transformStyle;
+          }
           Array.from(svgElement.children)
               .forEach(svgChild => svgChild.removeAttribute('fill'));
           element.innerHTML = '';
@@ -487,21 +503,22 @@ class Cell {
     }
   }
 
-  setImageHash_(element, imageHash, variation) {
+  setImageHash_(element, imageHash, variation, transform) {
     if (!element || !imageHash) return;
     const imageUrl =
         gameIcons.find(gameIcon => gameIcon.hash == imageHash).path;
     if (imageUrl) {
-      this.setImage_(element, imageUrl.replace('public/app/', ''), variation);
+      this.setImage_(
+          element, imageUrl.replace('public/app/', ''), variation, transform);
     }
   }
 
-  setImageFromVariation_(element, layer, content) {
+  setImageFromVariation_(element, layer, content, transform) {
     if (!element) return;
     const kind = ct.children[layer.id].children[content[ck.kind]];
     const variation = kind.children[content[ck.variation]];
     if (!variation.imagePath) return;
-    this.setImage_(element, variation.imagePath, variation);
+    this.setImage_(element, variation.imagePath, variation, transform);
   }
 
   getBaseElementAndMaybeCreateAllElements(layer, initialContent, isHighlight) {

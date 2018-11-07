@@ -433,10 +433,6 @@
   display: flex;
 }
 
-.image {
-  transform: rotate(90deg);
-}
-
 .image-cell {
   color: rgb(50, 50, 50);
 }
