@@ -1529,7 +1529,6 @@ class Menu {
       {
         name: 'Ele&vation',
         presentation: 'selected child',
-        tip: 'Drag when placing to stretch across multiple cells.',
         classNames: ['menu-elevation'],
         submenu: {
           items: [
@@ -1564,9 +1563,24 @@ class Menu {
                 ct.elevation.vertical.ascendingBottom,
                 false),
             this.createStairsTool_(
-                'Spiral stairs',
+                'Spiral stairs 1',
                 ct.elevation.spiral,
                 ct.elevation.spiral.generic,
+                false),
+            this.createStairsTool_(
+                'Spiral stairs 2',
+                ct.elevation.spiral,
+                ct.elevation.spiral.rotated90,
+                false),
+            this.createStairsTool_(
+                'Spiral stairs 3',
+                ct.elevation.spiral,
+                ct.elevation.spiral.rotated180,
+                false),
+            this.createStairsTool_(
+                'Spiral stairs 4',
+                ct.elevation.spiral,
+                ct.elevation.spiral.rotated270,
                 false),
             {
               name: 'Pit',

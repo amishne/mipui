@@ -161,6 +161,9 @@ const ct = {
         'stairs-cell-_EDITING_',
       ],
       generic: {classNames: ['stairs-cell-spiral']},
+      rotated90: {classNames: ['stairs-cell-spiral', 'rotated-90']},
+      rotated180: {classNames: ['stairs-cell-spiral', 'rotated-180']},
+      rotated270: {classNames: ['stairs-cell-spiral', 'rotated-270']},
     },
     passage: {
       classNames: [
