@@ -61,17 +61,30 @@ class TextGesture extends BoxGesture {
   }
 
   setInputGeometry_(inputElement, startCell, initialContent) {
-    if (this.rotation_ && !inputElement.style.transform) {
+    let rotationAngle = 0;
+    const existingTransform = startCell.getVal(this.getLayer_(), ck.transform);
+    if (startCell.hasLayerContent(this.getLayer_()) && existingTransform) {
+      switch (existingTransform) {
+        case 'r90': rotationAngle = 90; break;
+        case 'r270': rotationAngle = 270; break;
+      }
+    } else if (!startCell.hasLayerContent(this.getLayer_()) && this.rotation_) {
+      switch (this.rotation_) {
+        case 'rotated-90': rotationAngle = 90; break;
+        case 'rotated-270': rotationAngle = 270; break;
+      }
+    }
+    if (rotationAngle && !inputElement.style.transform) {
       const temp = inputElement.style.width;
       inputElement.style.width = inputElement.style.height;
       inputElement.style.height = temp;
-      let offset = '0px';
-      switch (this.rotation_) {
-        case 'rotated-90':
+      let offset = '0';
+      switch (rotationAngle) {
+        case 90:
           inputElement.style.transform = 'rotate(90deg)';
           offset = inputElement.style.height;
           break;
-        case 'rotated-270':
+        case 270:
           inputElement.style.transform = 'rotate(270deg)';
           offset = inputElement.style.width;
           break;
@@ -84,7 +97,7 @@ class TextGesture extends BoxGesture {
     if (!startCellElement) return;
     inputElement.style.fontSize = startCellElement.children[0].style.fontSize;
     if (startCell.textHeight) {
-      const whitespace = !!this.rotation_ ?
+      const whitespace = rotationAngle ?
         startCellElement.scrollWidth - startCell.textHeight :
         startCellElement.scrollHeight - startCell.textHeight;
       inputElement.style.paddingTop = (whitespace / 2 + 1) + 'px';
@@ -94,11 +107,16 @@ class TextGesture extends BoxGesture {
   createStartCellContent_() {
     const content = super.createStartCellContent_();
     if (!content) return content;
-    if (this.rotation_) {
+    if (this.mode_ == 'adding' && this.rotation_) {
       if (this.rotation_ == 'rotated-90') {
         content[ck.transform] = 'r90';
       } else if (this.rotation_ == 'rotated-270') {
         content[ck.transform] = 'r270';
+      }
+    } else {
+      const transform = this.startCell_.getVal(this.getLayer_(), ck.transform);
+      if (transform) {
+        content[ck.transform] = transform;
       }
     }
     return content;
