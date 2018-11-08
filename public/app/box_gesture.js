@@ -398,8 +398,8 @@ class BoxGesture extends Gesture {
     const layerElement =
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
-    this.hoverWidget_.style.width = layerElement.scrollWidth + 'px';
-    this.hoverWidget_.style.height = layerElement.scrollHeight + 'px';
+    this.hoverWidget_.style.width = (layerElement.clientWidth + 2) + 'px';
+    this.hoverWidget_.style.height = (layerElement.clientHeight + 2) + 'px';
     this.hoverWidget_.onmousedown = e => {
       if (e.button == 0) {
         this.startEditing_();
@@ -425,7 +425,7 @@ class BoxGesture extends Gesture {
     const layerElement =
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
-    this.deleteWidget_.style.left = layerElement.scrollWidth + 'px';
+    this.deleteWidget_.style.left = layerElement.offsetWidth + 'px';
     const deleteGesture = this.createNewGesture_();
     deleteGesture.mode_ = 'removing';
     deleteGesture.startCell_ = this.startCell_;
@@ -433,11 +433,17 @@ class BoxGesture extends Gesture {
     deleteGesture.nonStartCells_ = this.nonStartCells_;
     this.deleteWidget_.onmouseenter = () => {
       deleteGesture.startHover(this.startCell_);
+      if (this.hoverWidget_) {
+        this.hoverWidget_.classList.add('hover-widget-during-delete');
+      }
     };
     this.deleteWidget_.onmouseleave = () => {
       deleteGesture.stopHover();
       this.startCell_.showHighlight(
           this.getLayer_(), this.startCell_.getLayerContent(this.getLayer_()));
+      if (this.hoverWidget_) {
+        this.hoverWidget_.classList.remove('hover-widget-during-delete');
+      }
     };
     this.deleteWidget_.onmousedown = e => {
       //this.finishEditing_();
@@ -469,8 +475,8 @@ class BoxGesture extends Gesture {
     const layerElement =
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
-    this.resizeWidget_.style.left = layerElement.scrollWidth + 'px';
-    this.resizeWidget_.style.top = layerElement.scrollHeight + 'px';
+    this.resizeWidget_.style.left = layerElement.offsetWidth + 'px';
+    this.resizeWidget_.style.top = layerElement.offsetHeight + 'px';
     this.resizeWidget_.onmousedown = e => {
       this.removeHoverWidget_();
       this.removeDeleteWidget_();

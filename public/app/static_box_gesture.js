@@ -58,7 +58,25 @@ class StaticBoxGesture extends BoxGesture {
   }
 
   getHoverWidgetCssClassName_() {
-    return this.isEditable_ ? 'image-hover-widget' : 'fixed-image-hover-widget';
+    const classNames = [];
+    classNames.push(
+        this.isEditable_ ? 'image-hover-widget' : 'fixed-image-hover-widget');
+    if (this.kind_ == ct.elevation.spiral) {
+      switch (this.variation_) {
+        case ct.elevation.spiral.generic:
+          break;
+        case ct.elevation.spiral.rotated90:
+          //classNames.push('rotated-90');
+          break;
+        case ct.elevation.spiral.rotated180:
+          //classNames.push('rotated-180');
+          break;
+        case ct.elevation.spiral.rotated270:
+          //classNames.push('rotated-270');
+          break;
+      }
+    }
+    return classNames.join(' ');
   }
 
   getMoveWidgetCssClassName_() {
