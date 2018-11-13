@@ -49,7 +49,7 @@ class TextGesture extends BoxGesture {
   }
 
   getHoverWidgetCssClassName_() {
-    return 'text-hover-widget';
+    return 'hover-widget text-hover-widget';
   }
 
   getMoveWidgetCssClassName_() {
@@ -57,7 +57,7 @@ class TextGesture extends BoxGesture {
   }
 
   createNewGesture_() {
-    return new TextGesture();
+    return new TextGesture(this.kind_, this.variation_, this.rotation_);
   }
 
   setInputGeometry_(inputElement, startCell, initialContent) {

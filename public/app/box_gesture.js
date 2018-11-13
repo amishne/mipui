@@ -398,8 +398,8 @@ class BoxGesture extends Gesture {
     const layerElement =
         this.startCell_.getBaseElementAndMaybeCreateAllElements(
             this.getLayer_(), this.createStartCellContent_(), true);
-    this.hoverWidget_.style.width = (layerElement.clientWidth + 2) + 'px';
-    this.hoverWidget_.style.height = (layerElement.clientHeight + 2) + 'px';
+    this.hoverWidget_.style.width = (layerElement.clientWidth - 1) + 'px';
+    this.hoverWidget_.style.height = (layerElement.clientHeight - 1) + 'px';
     this.hoverWidget_.onmousedown = e => {
       if (e.button == 0) {
         this.startEditing_();
@@ -431,18 +431,20 @@ class BoxGesture extends Gesture {
     deleteGesture.startCell_ = this.startCell_;
     deleteGesture.endCell_ = this.endCell_;
     deleteGesture.nonStartCells_ = this.nonStartCells_;
+    const hoverWidgetDuringDeleteClassName =
+        this.getHoverWidgetDuringDeleteClassName_();
     this.deleteWidget_.onmouseenter = () => {
       deleteGesture.startHover(this.startCell_);
-      if (this.hoverWidget_) {
-        this.hoverWidget_.classList.add('hover-widget-during-delete');
+      if (hoverWidgetDuringDeleteClassName && this.hoverWidget_) {
+        this.hoverWidget_.classList.add(hoverWidgetDuringDeleteClassName);
       }
     };
     this.deleteWidget_.onmouseleave = () => {
       deleteGesture.stopHover();
       this.startCell_.showHighlight(
           this.getLayer_(), this.startCell_.getLayerContent(this.getLayer_()));
-      if (this.hoverWidget_) {
-        this.hoverWidget_.classList.remove('hover-widget-during-delete');
+      if (hoverWidgetDuringDeleteClassName && this.hoverWidget_) {
+        this.hoverWidget_.classList.remove(hoverWidgetDuringDeleteClassName);
       }
     };
     this.deleteWidget_.onmousedown = e => {
@@ -460,6 +462,8 @@ class BoxGesture extends Gesture {
       }
     };
   }
+
+  getHoverWidgetDuringDeleteClassName_() { return null; }
 
   removeDeleteWidget_() {
     if (this.deleteWidget_) {

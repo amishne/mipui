@@ -413,8 +413,8 @@ class Cell {
         theMapElement, element.className);
     sizingElement.style.visibility = 'hidden';
     sizingElement.style.display = 'inline-block';
-    sizingElement.style.width = offsetWidth;
-    sizingElement.style.height = offsetHeight;
+    sizingElement.style.width = `${offsetWidth}px`;
+    sizingElement.style.maxHeight = `${offsetHeight}px`;
     sizingElement.textContent = stringContent;
     let fontSize = 14;
     sizingElement.style.fontSize = fontSize + 'pt';
@@ -432,7 +432,7 @@ class Cell {
     this.textHeight = sizingElement.scrollHeight;
     theMapElement.removeChild(sizingElement);
     const inner = createAndAppendDivWithClass(element, 'inner-text-cell');
-    inner.style.width = offsetWidth;
+    inner.style.width = `${offsetWidth}px`;
     inner.style.marginLeft = `${(element.offsetWidth - offsetWidth) / 2}px`;
     if (content[ck.transform]) {
       switch (content[ck.transform]) {
