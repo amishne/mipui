@@ -43,8 +43,14 @@ class ImageGesture extends StaticBoxGesture {
 
   createStartCellContent_() {
     const content = super.createStartCellContent_();
-    if (content && this.transform_) {
+    if (!content) return content;
+    if (this.mode_ == 'adding' && this.transform_) {
       content[ck.transform] = this.transform_;
+    } else {
+      const transform = this.startCell_.getVal(this.getLayer_(), ck.transform);
+      if (transform) {
+        content[ck.transform] = transform;
+      }
     }
     return content;
   }
