@@ -1468,6 +1468,8 @@ class Menu {
       {
         name: '&Text',
         presentation: 'selected child',
+        tip: '"Number rooms" will attemt to assign a number ' +
+            'to every room in the map.',
         submenu: {
           items: [
             this.createTextTool_(
