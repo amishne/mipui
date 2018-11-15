@@ -49,6 +49,9 @@ class OperationCenter {
     // are undoed.
     // * This is independent between clients.
     this.latestAppliedOperationIndex_ = -1;
+
+    // A listener to invoke when all current ops are sent.
+    this.pendingLocalsOpsListener = null;
   }
 
   // Records that a cell change has just been performed, as part of a complete
@@ -368,6 +371,9 @@ class OperationCenter {
   // Sends all the pending local ops as long as they are legal.
   startSendingPendingLocalOperations_() {
     if (this.pendingLocalOperations_.length == 0) {
+      if (this.pendingLocalsOpsListener) {
+        this.pendingLocalsOpsListener();
+      }
       // If there are none pending, just stop. The next time a local op will
       // be added this method will be called again.
       this.stopSendingPendingLocalOperations_();
@@ -421,6 +427,7 @@ class OperationCenter {
       state.setSecret(secret, () => {
         this.connectToExistingMap(mid, secret, callback);
       });
+      callback();
       return;
     }
     Array.from(document.getElementsByClassName('disabled-in-read-only-mode'))
@@ -437,7 +444,7 @@ class OperationCenter {
     callback();
   }
 
-  createAndConnectToNewMapOnServer(callback) {
+  createAndConnectToNewMapOnServer(callback, origin) {
     state.setupNewMid(() => {
       const data = {
         payload: {},
@@ -446,10 +453,14 @@ class OperationCenter {
         },
         secret: state.getSecret(),
       };
+      if (origin) {
+        data.metadata.origin = origin;
+      }
       firebase.database().ref(`/maps/${state.getMid()}`).set(data).then(() => {
         this.connectToExistingMap(state.getMid(), state.getSecret(), callback);
       }).catch(error => {
         setStatus(Status.AUTH_ERROR);
+        callback();
       });;
     });
   }
@@ -471,10 +482,14 @@ class OperationCenter {
     }
   }
 
-  fork() {
+  fork(callback, origin) {
+    let forkOrigin = origin;
+    if (!forkOrigin && state.getMid()) {
+      forkOrigin = `mid ${state.getMid()}`;
+    }
     this.createAndConnectToNewMapOnServer(() => {
-      this.rewrite_(state.getLastOpNum());
-    });
+      this.rewrite_(state.getLastOpNum(), callback);
+    }, forkOrigin);
   }
 
   // Sends an operation to the server.
@@ -584,16 +599,22 @@ class OperationCenter {
   }
 
   // Rewrites the full map on the server to be up-to-date to 'num'.
-  rewrite_(num) {
+  rewrite_(num, callback) {
     debug(`Rewriting map to operation ${num}...`);
     const snapshot = JSON.parse(JSON.stringify(state.pstate_));
     const payloadPath = `/maps/${state.getMid()}/payload`;
     firebase.database().ref(payloadPath).transaction(currData => {
       if (currData) {
         // Verify the current fullMap isn't the same or newer.
-        if (currData.fullMap && currData.fullMap.lastOpNum >= num) return;
+        if (currData.fullMap && currData.fullMap.lastOpNum >= num) {
+          console.log('Aborting rewriting map ' +
+              `of op ${currData.fullMap.lastOpNum} to op ${num}.`);
+          if (callback) callback();
+          return;
+        }
         // Verify the latest operation is the current one.
         if (currData.latestOperation && currData.latestOperation.i.n != num) {
+          if (callback) callback();
           return;
         }
       }
@@ -605,6 +626,7 @@ class OperationCenter {
     }, (error, committed) => {
       if (error) {
         debug(`Rewriting map to operation ${num} failed.`);
+        if (callback) callback();
       } else if (committed) {
         debug(`Rewriting map to operation ${num} complete.`);
         this.lastFullMapNum_ = num;
@@ -613,6 +635,7 @@ class OperationCenter {
           // more rewrites required.
           this.lastOpNumThatWantedRewrite_ = -1;
         }
+        if (callback) callback();
       } else {
         debug(`Still rewriting map to operation ${num}...`);
       }

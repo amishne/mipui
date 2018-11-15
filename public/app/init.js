@@ -184,14 +184,20 @@ window.addEventListener('message', event => {
   }
   if (event.data.fork) {
     const imageFileName = event.data.fork;
-    state.opCenter.fork();
-    state.setProperty(pk.origin, `ii ${imageFileName}`, true);
-    state.opCenter.fork();
-    state.setProperty(pk.longDescription, null, true);
-    event.source.postMessage({
-      status: 'forks done',
-      mid: state.getMid(),
-      secret: state.getSecret(),
-    }, event.origin);
+    console.log(`First map ${state.getMid()}`);
+    state.opCenter.fork(() => {
+      state.opCenter.pendingLocalsOpsListener = () => {
+        state.opCenter.pendingLocalsOpsListener = null;
+      };
+      console.log(`Intermediate map ${state.getMid()}`);
+      state.opCenter.fork(() => {
+        console.log(`Final map ${state.getMid()}`);
+        event.source.postMessage({
+          status: 'forks done',
+          mid: state.getMid(),
+          secret: state.getSecret(),
+        }, event.origin);
+      });
+    }, `ii ${imageFileName}`);
   }
 });

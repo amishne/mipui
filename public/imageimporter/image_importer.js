@@ -582,10 +582,9 @@ function sendPStateToMipui() {
 }
 
 window.addEventListener('message', event => {
+  const importButton = document.getElementById('importer-import-mipui-button');
   switch (event.data.status) {
     case 'load done':
-      const importButton =
-          document.getElementById('importer-import-mipui-button');
       importButton.disabled = null;
       importButton.textContent = 'Looks good, import!';
       document.getElementById('importer-smooth-walls').disabled = null;
@@ -593,6 +592,8 @@ window.addEventListener('message', event => {
     case 'forks done':
       const {mid, secret} = event.data;
       window.open(`../app/index.html?mid=${mid}&secret=${secret}`, '_blank');
+      importButton.disabled = null;
+      importButton.textContent = 'Looks good, import!';
       break;
   }
 });
@@ -741,7 +742,8 @@ function wireInputs() {
     }
   };
   document.getElementById('importer-import-mipui-button').onclick = e => {
-    e.disabled = true;
+    e.target.disabled = true;
+    e.target.textContent = 'Importing...';
     importIntoMipui();
   };
   document.getElementById('importer-smooth-walls').onchange = () => {
@@ -813,9 +815,8 @@ function importIntoMipui() {
   }
   const filename = filenameFor(loadedFile);
   const imageRef = imagesRef.child(filename);
-  imageRef.put(loadedFile).then(() => {
-    iframedMipui.contentWindow.postMessage({fork: filename}, '*');
-  });
+  //imageRef.put(loadedFile).then(() => {
+  iframedMipui.contentWindow.postMessage({fork: filename}, '*');
 }
 
 function filenameFor(file) {

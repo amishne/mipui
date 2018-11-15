@@ -244,6 +244,7 @@ class State {
     this.secret_ = secret;
     if (!this.user) {
       setStatus(Status.AUTH_ERROR);
+      callback();
       return;
     }
     firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
