@@ -88,7 +88,7 @@ class Operation {
     if (titleNeedsUpdate) {
       state.nameChanged();
     }
-    if (descNeedsUpdate) {
+    if (descNeedsUpdate && state.menu) {
       state.menu.descChanged();
     }
     if (reloadTheme) {
