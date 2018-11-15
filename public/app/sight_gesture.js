@@ -3,6 +3,7 @@ class SightGesture extends Gesture {
     super();
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
+    this.affectedCells_ = [];
     this.maskContent_ = {
       [ck.kind]: ct.mask.hidden.id,
       [ck.variation]: ct.mask.hidden.black.id,
@@ -20,50 +21,46 @@ class SightGesture extends Gesture {
 
     this.cellsInSight_ = this.calculateCellsInSight_(this.hoveredCell_);
 
-    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden) {
+    this.affectedCells_ = [];
+
+    if (this.cellsInSight_.length == 0) return;
+
+    if (this.shouldMakeOtherCellsHidden) {
       state.theMap.cells.forEach((existingCell, key) => {
-        existingCell.showHighlight(ct.mask, this.maskContent_);
+        if (!cell.hasLayerContent(ct.mask) &&
+            !this.cellsInSight_.includes(existingCell)) {
+          this.affectedCells_.push(existingCell);
+        }
+      });
+    } else {
+      this.cellsInSight_.forEach(cellInSight => {
+        if (cellInSight.hasLayerContent(ct.mask)) {
+          this.affectedCells_.push(cellInSight);
+        }
       });
     }
 
-    this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.hideHighlight(ct.mask);
-      cellInSight.showHighlight(ct.mask, null);
-    });
-    // Ensure all tiles remain locked.
-    this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.tile.showHighlight();
+    this.affectedCells_.forEach(affectedCell => {
+      affectedCell.showHighlight(
+          ct.mask, this.shouldMakeOtherCellsHidden ? this.maskContent_ : null);
     });
   }
 
   stopHover() {
-    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden) {
-      state.theMap.cells.forEach((existingCell, key) => {
-        existingCell.hideHighlight(ct.mask);
-      });
-    } else {
-      this.cellsInSight_.forEach(cellInSight => {
-        cellInSight.hideHighlight(ct.mask);
-      });
-    }
+    this.affectedCells_.forEach(affectedCell => {
+      affectedCell.hideHighlight(ct.mask);
+    });
     this.hoveredCell_ = null;
     this.cellsInSight_ = [];
   }
 
   startGesture() {
     super.startGesture();
-    if (this.cellsInSight_.length > 0 && this.shouldMakeOtherCellsHidden) {
-      state.theMap.cells.forEach((existingCell, key) => {
-        existingCell.hideHighlight(ct.mask);
-        existingCell.setLayerContent(ct.mask, this.maskContent_, true);
-      });
-    }
-
-    this.cellsInSight_.forEach(cellInSight => {
-      cellInSight.hideHighlight(ct.mask);
-      cellInSight.setLayerContent(ct.mask, null, true);
+    this.affectedCells_.forEach(affectedCell => {
+      affectedCell.hideHighlight(ct.mask);
+      affectedCell.setLayerContent(
+          ct.mask, this.shouldMakeOtherCellsHidden ? this.maskContent_ : null);
     });
-
     if (this.shouldMakeOtherCellsHidden) {
       state.opCenter.recordOperationComplete(true);
       this.shouldMakeOtherCellsHidden = false;
