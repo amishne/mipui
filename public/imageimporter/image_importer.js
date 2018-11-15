@@ -815,8 +815,15 @@ function importIntoMipui() {
   }
   const filename = filenameFor(loadedFile);
   const imageRef = imagesRef.child(filename);
-  //imageRef.put(loadedFile).then(() => {
-  iframedMipui.contentWindow.postMessage({fork: filename}, '*');
+  imageRef.put(loadedFile).then(() => {
+    iframedMipui.contentWindow.postMessage({fork: filename}, '*');
+  }).catch(err => {
+    alert(`Import failed: ${err.message ? err.message : JSON.stringify(err)}`);
+    const button = document.getElementById('importer-import-mipui-button');
+    button.disabled = null;
+    button.textContent = 'Looks good, import!';
+    document.getElementById('importer-smooth-walls').disabled = null;
+  });
 }
 
 function filenameFor(file) {
