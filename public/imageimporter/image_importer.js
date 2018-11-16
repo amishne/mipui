@@ -813,7 +813,7 @@ function importIntoMipui() {
     firebase.initializeApp(config);
     imagesRef = firebase.storage().ref().child('images/maps');
   }
-  const filename = filenameFor(loadedFile);
+  const filename = filenameFor(sourceImage.src);
   const imageRef = imagesRef.child(filename);
   imageRef.put(loadedFile).then(() => {
     iframedMipui.contentWindow.postMessage({fork: filename}, '*');
