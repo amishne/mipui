@@ -818,11 +818,10 @@ function importIntoMipui() {
   imageRef.put(loadedFile).then(() => {
     iframedMipui.contentWindow.postMessage({fork: filename}, '*');
   }).catch(err => {
-    alert(`Import failed: ${err.message ? err.message : JSON.stringify(err)}`);
-    const button = document.getElementById('importer-import-mipui-button');
-    button.disabled = null;
-    button.textContent = 'Looks good, import!';
-    document.getElementById('importer-smooth-walls').disabled = null;
+    console.log('Image upload failed: ' +
+        (err.message ? err.message : JSON.stringify(err)));
+    // But proceed anyway.
+    iframedMipui.contentWindow.postMessage({fork: filename}, '*');
   });
 }
 
