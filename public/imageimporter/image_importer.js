@@ -615,7 +615,7 @@ function constructPState() {
     },
     // cell key -> (layer id -> content)
     content: createContent(),
-    lastOpNum: 0,
+    lastOpNum: 1,
   };
 }
 
@@ -813,20 +813,25 @@ function importIntoMipui() {
     firebase.initializeApp(config);
     imagesRef = firebase.storage().ref().child('images/maps');
   }
-  const filename = filenameFor(sourceImage.src);
+  const filename = MD5(loadedFile);
   const imageRef = imagesRef.child(filename);
-  imageRef.put(loadedFile).then(() => {
-    iframedMipui.contentWindow.postMessage({fork: filename}, '*');
-  }).catch(err => {
-    console.log('Image upload failed: ' +
-        (err.message ? err.message : JSON.stringify(err)));
-    // But proceed anyway.
-    iframedMipui.contentWindow.postMessage({fork: filename}, '*');
-  });
-}
-
-function filenameFor(file) {
-  return MD5(file);
+  const afterImageUpload = () => {
+    const data = {
+      image: filename,
+      lineInfo,
+    };
+    iframedMipui.contentWindow.postMessage({
+      fork: `ii ${JSON.stringify(data)}`,
+    }, '*');
+  };
+  imageRef.put(loadedFile)
+      .then(() => { afterImageUpload(); })
+      .catch(err => {
+        console.log('Image upload failed: ' +
+            (err.message ? err.message : JSON.stringify(err)));
+        // But proceed anyway.
+        afterImageUpload();
+      });
 }
 
 window.onload = () => {

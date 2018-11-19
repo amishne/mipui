@@ -183,7 +183,7 @@ window.addEventListener('message', event => {
     event.source.postMessage({status: 'load done'}, event.origin);
   }
   if (event.data.fork) {
-    const imageFileName = event.data.fork;
+    const forkData = event.data.fork;
     console.log(`First map ${state.getMid()}`);
     state.opCenter.fork(() => {
       state.opCenter.pendingLocalsOpsListener = () => {
@@ -198,6 +198,6 @@ window.addEventListener('message', event => {
           secret: state.getSecret(),
         }, event.origin);
       });
-    }, `ii ${imageFileName}`);
+    }, forkData);
   }
 });

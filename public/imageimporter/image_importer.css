@@ -267,3 +267,7 @@ button:active, .button-like:active {
   top: 45%;
   z-index: -1;
 }
+
+#importer-import-mipui-button {
+  margin: 8px;
+}
