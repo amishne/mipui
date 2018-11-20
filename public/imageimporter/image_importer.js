@@ -750,7 +750,7 @@ function wireInputs() {
   };
   document.getElementById('importer-import-mipui-button').onclick = e => {
     e.target.disabled = true;
-    e.target.textContent = 'Importing...';
+    e.target.textContent = 'Converting...';
     document.getElementById('importer-open-map-button').disabled = true;
     importIntoMipui();
   };
