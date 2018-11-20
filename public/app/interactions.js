@@ -646,6 +646,7 @@ function createRoom(seed) {
           ['top', 'bottom'] : ['left', 'right'];
         if (cornerDirs
             .map(cornerDir => neighborDivider.getNeighbor(cornerDir, true))
+            .filter(corner => !!corner)
             .every(corner => corner.hasLayerContent(ct.walls))) {
           return;
         }
