@@ -7,7 +7,7 @@
   <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-storage.js"></script>
   <!-- lib -->
   <script src="opencv.js" type="text/javascript"></script>
-  <script src="md5.min.js" type="text/javascript"></script>
+  <script src="spark-md5.min.js" type="text/javascript"></script>
   <!-- src -->
   <script src="image.js" type="text/javascript"></script>
   <script src="griddler.js" type="text/javascript"></script>
@@ -37,7 +37,6 @@
     <div id="intro-step" class="step">
       <div>
         <h2>Welcome to the Mipui Image Importer</h2>
-        <div style="color: red">Currently under development! Please don't use yet. I'm not sure how you even got to this page.</div>
         <p>
           This tool will allow you to create a new Mipui map from an image of a map.
           It will attempt to automatically infer the underlying grid, group cells by similary, and assign roles to each group.
@@ -66,10 +65,11 @@
     </div>
     <div id="griddler-step" class="step">
       <div class="instrument-panel">
-        <div>Primary cell size:<br /><input id="griddler-primary-size-input" type="number" step="0.5" min="1"></div>
-        <div>Divider cell size:<br /><input id="griddler-divider-size-input" type="number" step="0.5" min="1"></div>
-        <div>Primary cell left offset:<br /><input id="griddler-offset-left-input" type="number" step="0.5" min="0"></div>
-        <div>Primary cell top offset:<br /><input id="griddler-offset-top-input" type="number" step="0.5" min="0"></div>
+        <div>To tweak the grid, modify the numbers below or drag the grid to the right.</div>
+        <div>Primary cell size:<br /><input id="griddler-primary-size-input" type="number" step="0.5" min="1"> pixels</div>
+        <div>Divider cell size:<br /><input id="griddler-divider-size-input" type="number" step="0.5" min="1"> pixels</div>
+        <div>Primary cell left offset:<br /><input id="griddler-offset-left-input" type="number" step="0.5" min="0"> pixels</div>
+        <div>Primary cell top offset:<br /><input id="griddler-offset-top-input" type="number" step="0.5" min="0"> pixels</div>
         <input type="radio" name="grid-drag-option" id="grid-drag-moves" value="grid-drag-moves" checked>
         <label for="grid-drag-moves">Dragging the grid moves its offset</label>
         <br />
@@ -84,6 +84,7 @@
           <div class="zoom-slider-label">Overlay Opacity</div>
           <input type="range" id="assigner-overlay-opacity" min="0" max="1" step="0.25" value="0.75">
         </div>
+        <div>Choose a role for each cluster of cells. Choose "multiple assignments" if the cluster represents multiple different roles.</div>
         <div id="assigner-tree-container">
           <ul id="assigner-tree"></ul>
         </div>
@@ -94,8 +95,8 @@
       <div id="importer-instrument-panel" class="instrument-panel">
         <input type="checkbox" id="importer-smooth-walls" checked>
         <label for="importer-smooth-walls" disabled>Smooth Walls</label>
-        <button id="importer-import-mipui-button" disabled>Looks good, import!</button>
-        <div>Importing will take a few moments, and then the link to a Mipui map will open in a new tab. Be sure to <b>allow pop-ups</b> from this browser tab for this new tab to show.</div>
+        <button id="importer-import-mipui-button" disabled>Looks good, convert!</button>
+        <button id="importer-open-map-button" disabled>Open converted map in Mipui</button>
       </div>
       <div id="importer-map-preview" class="preview-panel">
         <div class="loading-banner">Loading...</div>
