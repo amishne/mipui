@@ -12,6 +12,8 @@ let gridCanvasScale = null;
 let gridCanvasCtx = null;
 let assignmentCanvasCtx = null;
 let imagesRef = null;
+let finalMapMid = null;
+let finalMapSecret = null;
 
 const steps = [{
   canStepForward: () => true,
@@ -58,6 +60,9 @@ const steps = [{
       sendPStateToMipui();
     };
     iframedMipui.src = '../app/index.html?tc=no&noui=yes';
+    finalMapMid = null;
+    finalMapSecret = null;
+    document.getElementById('importer-open-map-button').disabled = true;
   },
   reset: () => {},
 }];
@@ -586,14 +591,16 @@ window.addEventListener('message', event => {
   switch (event.data.status) {
     case 'load done':
       importButton.disabled = null;
-      importButton.textContent = 'Looks good, import!';
+      importButton.textContent = 'Looks good, convert!';
       document.getElementById('importer-smooth-walls').disabled = null;
       break;
     case 'forks done':
       const {mid, secret} = event.data;
-      window.open(`../app/index.html?mid=${mid}&secret=${secret}`, '_blank');
+      finalMapMid = mid;
+      finalMapSecret = secret;
       importButton.disabled = null;
-      importButton.textContent = 'Looks good, import!';
+      importButton.textContent = 'Looks good, convert!';
+      document.getElementById('importer-open-map-button').disabled = null;
       break;
   }
 });
@@ -744,10 +751,18 @@ function wireInputs() {
   document.getElementById('importer-import-mipui-button').onclick = e => {
     e.target.disabled = true;
     e.target.textContent = 'Importing...';
+    document.getElementById('importer-open-map-button').disabled = true;
     importIntoMipui();
   };
   document.getElementById('importer-smooth-walls').onchange = () => {
     sendPStateToMipui();
+  };
+  document.getElementById('importer-open-map-button').onclick = e => {
+    if (finalMapMid && finalMapSecret) {
+      window.open(
+          `../app/index.html?mid=${finalMapMid}&secret=${finalMapSecret}`,
+          '_blank');
+    }
   };
 }
 
@@ -813,25 +828,36 @@ function importIntoMipui() {
     firebase.initializeApp(config);
     imagesRef = firebase.storage().ref().child('images/maps');
   }
-  const filename = MD5(loadedFile);
-  const imageRef = imagesRef.child(filename);
-  const afterImageUpload = () => {
-    const data = {
-      image: filename,
-      lineInfo,
+  hash(loadedFile).then(hashValue => {
+    const imageRef = imagesRef.child(hashValue);
+    const afterImageUpload = () => {
+      const data = {
+        image: hashValue,
+        lineInfo,
+      };
+      iframedMipui.contentWindow.postMessage({
+        fork: `ii ${JSON.stringify(data)}`,
+      }, '*');
     };
-    iframedMipui.contentWindow.postMessage({
-      fork: `ii ${JSON.stringify(data)}`,
-    }, '*');
-  };
-  imageRef.put(loadedFile)
-      .then(() => { afterImageUpload(); })
-      .catch(err => {
-        console.log('Image upload failed: ' +
-            (err.message ? err.message : JSON.stringify(err)));
-        // But proceed anyway.
-        afterImageUpload();
-      });
+    imageRef.put(loadedFile)
+        .then(() => { afterImageUpload(); })
+        .catch(err => {
+          console.log('Image upload failed: ' +
+              (err.message ? err.message : JSON.stringify(err)));
+          // But proceed anyway.
+          afterImageUpload();
+        });
+  });
+}
+
+function hash(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onloadend = e => {
+      resolve(SparkMD5.ArrayBuffer.hash(e.target.result));
+    };
+    reader.readAsArrayBuffer(file);
+  });
 }
 
 window.onload = () => {
