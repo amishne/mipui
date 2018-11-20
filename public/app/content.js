@@ -94,6 +94,14 @@ const ct = {
       ],
       generic: {},
     },
+    archway: {
+      classNames: [
+        'archway-cell',
+        'archway-cell-_ROLE_',
+        'archway-cell-_ADDING-REMOVING_',
+      ],
+      generic: {},
+    },
   },
   text: {
     classNames: [
