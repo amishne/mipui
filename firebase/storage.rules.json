@@ -1,0 +1,11 @@
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /images/maps/{map_name} {
+      // Writes are only allowed if the resource does not already exists,
+      // and the file is under 20MB.
+      allow write: if resource == null &&
+          request.resource.size < 20 * 1024 * 1024;
+      // Reads are not allowed.
+    }
+  }
+}
