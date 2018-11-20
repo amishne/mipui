@@ -30,9 +30,8 @@ class ImportDialog extends Dialog {
     addRadioButton('donjon', 'Import a TSV file exported by ' +
         '<a href="https://donjon.bin.sh/fantasy/dungeon/index.cgi" ' +
         'target="_blank">donjon Random Dungeon Generator</a>.');
-    if (state.mode == 'dev') {
-      addRadioButton('Image', 'Import a map from an arbitrary image.');
-    }
+    addRadioButton('Image', '<span style="color: yellow">Experimental</span>:' +
+        ' Convert an image of a map into a new map.');
   }
 
   async act_() {
@@ -190,5 +189,6 @@ class ImportDialog extends Dialog {
   }
 
   importFromImage_() {
+    window.open('../imageimporter/image_importer.html', '_blank');
   }
 }
