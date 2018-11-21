@@ -309,8 +309,6 @@ function startRedrawingGrid(gridCanvas, mouseDownEvent) {
   };
   gridCanvas.onmousemove = mouseMoveEvent => {
     const currentMouse = getMouseCoords(preview, mouseMoveEvent);
-//    currentMouse.x--;
-//    currentMouse.y--;
     const maxDistance =
         Math.max(Math.abs(currentMouse.x - initialMouse.x),
             Math.abs(currentMouse.y - initialMouse.y));
@@ -376,7 +374,6 @@ function previewGridLines() {
     gridCanvas = createGridCanvas(previewCanvas, gridCanvasScale);
     previewPanel.appendChild(gridCanvas);
     gridCanvasCtx = gridCanvas.getContext('2d');
-    //gridCanvasCtx.translate(-0.5, -0.5);
   }
   if (lineInfo.primarySize <= 6) return;
   gridCanvasCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
@@ -453,10 +450,6 @@ function previewAssignments() {
 
 function addAssignment(assignment, tree, ctx) {
   const item = document.createElement('li');
-  //const prefix = document.createElement('span');
-  //prefix.textContent = assignment.cluster.size;
-  //prefix.className = 'item-affix-label';
-  //item.appendChild(prefix);
   const combo = document.createElement('select');
   item.appendChild(combo);
   const wallOption = document.createElement('option');
@@ -467,10 +460,12 @@ function addAssignment(assignment, tree, ctx) {
   floorOption.value = 'floor';
   floorOption.textContent = 'Floor';
   combo.appendChild(floorOption);
-  const doorOption = document.createElement('option');
-  doorOption.value = 'door';
-  doorOption.textContent = 'Door';
-  combo.appendChild(doorOption);
+  if (assignmentContainsOnlyRoles(assignment, ['horizontal', 'vertical'])) {
+    const doorOption = document.createElement('option');
+    doorOption.value = 'door';
+    doorOption.textContent = 'Door';
+    combo.appendChild(doorOption);
+  }
   const angledOption = document.createElement('option');
   angledOption.value = 'angled';
   angledOption.textContent = 'Angled Wall';
@@ -551,6 +546,13 @@ function addAssignment(assignment, tree, ctx) {
       hovering = false;
     };
   }
+}
+
+function assignmentContainsOnlyRoles(assignment, roles) {
+  for (const cell of assignment.cluster.cells) {
+    if (!roles.includes(cell.role)) return false;
+  }
+  return true;
 }
 
 function drawAssignment(assignment, ctx, color) {
