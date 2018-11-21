@@ -471,10 +471,12 @@ function addAssignment(assignment, tree, ctx) {
     doorOption.textContent = 'Door';
     combo.appendChild(doorOption);
   }
-  const angledOption = document.createElement('option');
-  angledOption.value = 'angled';
-  angledOption.textContent = 'Angled Wall';
-  combo.appendChild(angledOption);
+  if (assignmentContainsOnlyRoles(assignment, ['primary'])) {
+    const angledOption = document.createElement('option');
+    angledOption.value = 'angled';
+    angledOption.textContent = 'Angled Wall';
+    combo.appendChild(angledOption);
+  }
   if (assignment.cluster.size > 1) {
     const multipleOption = document.createElement('option');
     multipleOption.value = 'multiple';
@@ -484,10 +486,6 @@ function addAssignment(assignment, tree, ctx) {
   combo.setAttribute('list', 'assignment-options');
   assignment.final = assignment.final || 'floor';
   combo.value = assignment.final;
-  //const suffix = document.createElement('span');
-  //suffix.textContent = 'cells';
-  //suffix.className = 'item-affix-label';
-  //item.appendChild(suffix);
   tree.appendChild(item);
   if (assignment.subassignments.length > 0) {
     const subtree = document.createElement('ul');
