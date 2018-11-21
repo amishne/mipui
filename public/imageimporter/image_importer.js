@@ -622,10 +622,8 @@ function constructPState() {
   return {
     ver: '1.0',
     props: {
-      t: 0,
-      b: cellInfo.height,
-      l: 0,
-      r: cellInfo.width,
+      b: cellInfo.height + 0.5,
+      r: cellInfo.width + 0.5,
     },
     // cell key -> (layer id -> content)
     content: createContent(),
