@@ -35,6 +35,10 @@ const steps = [{
   onStepForwardIntoThis: () => { gridImage(); },
   reset: () => {
     document.getElementById('griddler-image-preview').innerHTML = '';
+    const gridCanvas = document.getElementById('griddler-grid-canvas');
+    if (gridCanvas) {
+      gridCanvas.parentElement.removeChild(gridCanvas);
+    }
     lineInfo = null;
   },
 }, {
@@ -223,7 +227,8 @@ function createGridCanvas(previewCanvas, scale) {
   gridCanvas.style.transform = `scale(${currentZoom})`;
   gridCanvas.width = scale * previewCanvas.width;
   gridCanvas.height = scale * previewCanvas.height;
-  gridCanvas.style.width = previewCanvas.width;
+  gridCanvas.style.width = previewCanvas.clientWidth;
+  gridCanvas.style.height = previewCanvas.clientHeight;
   gridCanvas.onmousedown = mouseDownEvent => {
     if (document.getElementById('grid-drag-moves').checked) {
       startDraggingGrid(gridCanvas, mouseDownEvent);
@@ -367,6 +372,7 @@ function previewGridLines() {
   gridCanvasScale = Math.round(
       100 * Math.max(
           1, 2000 / Math.max(previewCanvas.width, previewCanvas.height))) / 100;
+  gridCanvasScale = Math.min(gridCanvasScale, 4);
 
   let gridCanvas = document.getElementById('griddler-grid-canvas');
   if (!gridCanvas) {
