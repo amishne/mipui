@@ -223,6 +223,8 @@ function createGridCanvas(previewCanvas, scale) {
   gridCanvas.style.transform = `scale(${currentZoom})`;
   gridCanvas.width = scale * previewCanvas.width;
   gridCanvas.height = scale * previewCanvas.height;
+  gridCanvas.style.width = previewCanvas.width;
+  gridCanvas.style.height = previewCanvas.height;
   gridCanvas.onmousedown = mouseDownEvent => {
     if (document.getElementById('grid-drag-moves').checked) {
       startDraggingGrid(gridCanvas, mouseDownEvent);
