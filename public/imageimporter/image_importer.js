@@ -1,4 +1,5 @@
-const mode = 'dev';
+const mode = window.location.href.match(/^https?:\/\/(www\.)?mipui.net\/.*/) ?
+  'prod' : 'dev';
 let currentStep = -1;
 let baseZoom = null;
 let currentZoom = 1;
