@@ -69,7 +69,7 @@ class State {
         this.stripText_(
             '<div class="layer-container"',
             '<div class="layer ',
-            this.stripText_('transform: scale', '">', xml)),
+            this.stripText_('transform: scale(', '">', xml)),
     });
 
     this.cursorStatusBar = null;
