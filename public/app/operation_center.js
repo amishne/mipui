@@ -487,7 +487,13 @@ class OperationCenter {
     if (!forkOrigin && state.getMid()) {
       forkOrigin = `mid ${state.getMid()}`;
     }
+    const wasReadOnly = state.isReadOnly();
     this.createAndConnectToNewMapOnServer(() => {
+      // If the state switched from view-only to editor, we need to invalidate
+      // all tiles.
+      if (wasReadOnly && !state.isReadOnly()) {
+        state.theMap.invalidateTiles();
+      }
       this.rewrite_(state.getLastOpNum(), callback);
     }, forkOrigin);
   }
