@@ -1228,6 +1228,25 @@ class Menu {
               },
             },
             {
+              name: 'Eraser',
+              type: 'tool',
+              presentation: 'icon',
+              materialIcon: 'backspace',
+              enabledInReadonlyMode: false,
+              callback: () => {
+                state.gesture = new EraseGesture([
+                  ct.floors,
+                  ct.walls,
+                  ct.images,
+                  ct.separators,
+                  ct.text,
+                  ct.shapes,
+                  ct.elevation,
+                  ct.gmoverlay,
+                ]);
+              },
+            },
+            {
               name: 'Clear map',
               type: 'button',
               presentation: 'icon',
