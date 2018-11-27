@@ -147,11 +147,13 @@ here. */
   border-color: rgba(100, 100, 100, 0.8);
 }
 
-.bars-cell-adding, .fence-cell-adding, .curtain-cell-adding {
+.bars-cell-adding, .fence-cell-adding,
+.curtain-cell-adding, .archway-cell-adding {
   opacity: 0.7;
 }
 
-.bars-cell-removing, .fence-cell-removing, .curtain-cell-removing {
+.bars-cell-removing, .fence-cell-removing,
+.curtain-cell-removing, .archway-cell-removing {
   opacity: 0.3;
 }
 

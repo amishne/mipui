@@ -1462,15 +1462,14 @@ class Menu {
                     false);
               },
             },
-            /*
             {
               name: 'Archway',
               type: 'tool',
               presentation: 'icon_map',
               tip: 'Drag when placing to resize.',
               iconMapRect: {
-                x: 244,
-                y: 132,
+                x: 212,
+                y: 196,
                 size: 30,
               },
               callback: () => {
@@ -1479,7 +1478,6 @@ class Menu {
                     false);
               },
             },
-            */
           ],
         },
       },

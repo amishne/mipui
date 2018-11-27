@@ -62,40 +62,41 @@ class ExportDialog extends Dialog {
     const selectedButton = this.exportButtons_.find(button => button.checked);
     switch (selectedButton.value) {
       case '1:1':
-        await this.downloadPng_(1, 0, 0);
+        await downloadPng(1, 0, 0);
         break;
       case '2:1':
-        await this.downloadPng_(2, 0, 0);
+        await downloadPng(2, 0, 0);
         break;
       case 'Quick':
-        await this.downloadPng_(192 / 32, 0, 0, true);
+        await downloadPng(192 / 32, 0, 0, true);
         break;
       case 'Battlemap':
-        await this.downloadPng_(300 / 32, 0, 0);
+        await downloadPng(300 / 32, 0, 0);
         break;
       case 'Cropped':
-        await this.downloadPng_(70 / 32, 4, 4);
+        await downloadPng(70 / 32, 4, 4);
         break;
     }
     state.theMap.unlockTiles();
   }
+}
 
-  async downloadPng_(scale, startOffset, endOffset, useCachedTiles, name) {
-    const gridImager = state.tileGridImager.clone({
-      scale,
-      cropLeft: startOffset,
-      cropTop: startOffset,
-      cropRight: endOffset,
-      cropBottom: endOffset,
-      margins: 0,
-      disableSmoothing: true,
-    });
-    if (!useCachedTiles) {
-      state.theMap.invalidateTiles();
-    }
-    const theMapElement = document.getElementById('theMap');
-    const blob = await gridImager.node2blob(theMapElement,
-        theMapElement.clientWidth, theMapElement.clientHeight);
-    saveAs(blob, name || state.getTitle() || 'mipui.png');
+async function downloadPng(
+    scale, startOffset, endOffset, useCachedTiles, name) {
+  const gridImager = state.tileGridImager.clone({
+    scale,
+    cropLeft: startOffset,
+    cropTop: startOffset,
+    cropRight: endOffset,
+    cropBottom: endOffset,
+    margins: 0,
+    disableSmoothing: true,
+  });
+  if (!useCachedTiles) {
+    state.theMap.invalidateTiles();
   }
+  const theMapElement = document.getElementById('theMap');
+  const blob = await gridImager.node2blob(theMapElement,
+      theMapElement.clientWidth, theMapElement.clientHeight);
+  saveAs(blob, name || state.getTitle() || 'mipui.png');
 }
