@@ -181,8 +181,11 @@ class Cell {
       // neighboring tiles as replicas.
       // This applies to walls not immediately on the tile edge if those are
       // angled walls, since they overflow.
-      const maxDistanceFromEdgeForReplication =
+      let maxDistanceFromEdgeForReplication =
           content[ck.variation] == ct.walls.smooth.angled.id ? 7 : 0;
+      if (state.shouldApplyCoverEffect()) {
+        maxDistanceFromEdgeForReplication = 15;
+      }
       [
         {name: 'left', edges: ['offsetLeft'], x: -1, y: 0},
         {name: 'right', edges: ['offsetRight'], x: 1, y: 0},
@@ -584,9 +587,13 @@ class Cell {
         diff = 1;
       }
       if (diff != 0) {
-        for (let row = this.row - 1; row <= this.row + 1; row += 0.5) {
-          for (let column = this.column - 1;
-            column <= this.column + 1; column += 0.5) {
+        for (let row = this.row - 1.5; row <= this.row + 1.5; row += 0.5) {
+          for (let column = this.column - 1.5;
+            column <= this.column + 1.5; column += 0.5) {
+            if (Math.abs(row - this.row) + Math.abs(column - this.column) >=
+                2.9) {
+              continue;
+            }
             if (row == this.row && column == this.column) continue;
             const cell = state.theMap.getCell(row, column);
             if (cell) cell.changeNumNeighboringWalls(diff);

@@ -203,10 +203,15 @@ class CellMap {
 
   calcNumNeighboringCells_(row, column) {
     let result = 0;
-    for (let neighborRow = row - 1; neighborRow <= row + 1;
+    for (let neighborRow = row - 1.5; neighborRow <= row + 1.5;
       neighborRow += 0.5) {
-      for (let neighborColumn = column - 1; neighborColumn <= column + 1;
+      for (let neighborColumn = column - 1.5; neighborColumn <= column + 1.5;
         neighborColumn += 0.5) {
+        if (Math.abs(neighborRow - row) + Math.abs(neighborColumn - column) >=
+            2.9) {
+          // Skip far corners.
+          continue;
+        }
         if (neighborRow >= this.minRow && neighborRow <= this.maxRow &&
             neighborColumn >= this.minColumn &&
             neighborColumn <= this.maxColumn) {
