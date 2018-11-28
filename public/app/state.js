@@ -305,6 +305,6 @@ class State {
   }
 
   shouldApplyCoverEffect() {
-    return true;
+    return this.currentTheme.hasCoverEffect;
   }
 }

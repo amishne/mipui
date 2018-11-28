@@ -575,7 +575,7 @@ class Cell {
   }
 
   updateElements_(layer, oldContent, newContent, isHighlight) {
-    if (!isHighlight && state.shouldApplyCoverEffect() && layer == ct.walls) {
+    if (!isHighlight && layer == ct.walls) {
       const wasSolidWall =
           oldContent && oldContent[ck.variation] == ct.walls.smooth.square.id;
       const isSolidWall =
