@@ -304,47 +304,7 @@ class State {
     return (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   }
 
-  getAppliedEffects() {
-    if (this.mode != 'dev') {
-      return [];
-    }
-    const areAllNeighborsWalls = cell => {
-      for (let row = cell.row - 1; row <= cell.row + 1; row += 0.5) {
-        for (let column = cell.column - 1; column <= cell.column + 1; column += 0.5) {
-          const neighbor = state.theMap.getCell(row, column);
-          if (!neighbor || neighbor == cell) continue;
-          if (!neighbor.hasLayerContent(ct.walls)) return false;
-        }
-      }
-      return true;
-    }
-    return [{
-      apply: tile => {
-        for (const cell of tile.cells) {
-          if (!cell.hasLayerContent(ct.walls)) continue;
-          if (areAllNeighborsWalls(cell)) {
-            const {elements, tiles} = cell.getLayerElementsAndTiles(ct.walls);
-            for (const element of elements) {
-              createAndAppendDivWithClass(element, 'wall-cover');
-            }
-            for (const replicaTiles of tiles) {
-              replicaTiles.invalidate(true);
-            }
-          }
-        }
-      },
-      remove: tile => {
-        for (const cell of tile.cells) {
-          if (!cell.hasLayerContent(ct.walls)) continue;
-          const {elements, tiles} = cell.getLayerElementsAndTiles(ct.walls);
-          for (const element of elements) {
-            element.innerHTML = '';
-          }
-          for (const replicaTiles of tiles) {
-            replicaTiles.invalidate(true);
-          }
-        }
-      },
-    }];
+  shouldApplyCoverEffect() {
+    return true;
   }
 }

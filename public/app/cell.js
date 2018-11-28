@@ -24,6 +24,10 @@ class Cell {
     // Exposed to be used by text gestures.
     this.textHeight = null;
 
+    // Counts neighboring walls for cover effect.
+    this.numNeighboringWalls_ = 0;
+    this.maxNumNeighboringWalls = 8;  // Bare minimum
+
     // Initialization.
     this.neighborKeys_ = new Map();
     this.wireInteractions_();
@@ -316,6 +320,16 @@ class Cell {
     this.setImageFromVariation_(element, layer, content, transform);
     this.setMask_(element, layer, content);
     this.setShape_(element, layer, kind, variation, content[ck.connections]);
+    this.setCover_(element, layer, isHighlight);
+  }
+
+  setCover_(element, layer, isHighlight) {
+    if (isHighlight) return;
+    if (layer != ct.walls) return;
+    element.innerHTML = '';
+    if (this.numNeighboringWalls_ == this.maxNumNeighboringWalls) {
+      createAndAppendDivWithClass(element, 'wall-cover');
+    }
   }
 
   setShape_(element, layer, kind, variation, connections) {
@@ -532,19 +546,6 @@ class Cell {
         Array.from(this.replicatedElements_.get(layer).values()));
   }
 
-  getLayerElementsAndTiles(layer) {
-    const result = {elements: [], tiles: []};
-    const element = this.elements_.get(layer);
-    if (element) {
-      result.elements.push(element);
-      for (const [key, value] of this.replicatedElements_.get(layer)) {
-        result.elements.push(value);
-        result.tiles.push(key);
-      }
-    }
-    return result;
-  }
-
   removeElements(layer, isHighlight) {
     const element = this.elements_.get(layer);
     if (!element) return;
@@ -560,7 +561,34 @@ class Cell {
     return content && !content[ck.startCell];
   }
 
-  updateElements_(layer, oldContent, newContent, isHighlight) {
+  changeNumNeighboringWalls(diff) {
+    const wasMax = this.numNeighboringWalls_ == this.maxNumNeighboringWalls;
+    this.numNeighboringWalls_ += diff;
+    const isMax = this.numNeighboringWalls_ == this.maxNumNeighboringWalls;
+    if (wasMax != isMax && this.hasLayerContent(ct.walls)) {
+      this.populateElementFromContent_(element, ct.walls, this.getLayerContent(ct.walls), false);
+    }
+  }
+
+  updateElementsAndEffects_(layer, oldContent, newContent, isHighlight) {
+    if (!isHighlight && state.shouldApplyCoverEffect() && layer == ct.walls) {
+      let diff = 0;
+      if (oldContent && !newContent) {
+        diff = -1;
+      } else if (!oldContent && newContent) {
+        diff = 1;
+      }
+      if (diff != 0) {
+        for (let row = this.row - 1; row <= this.row + 1; row += 0.5) {
+          for (let column = this.column - 1;
+            column <= this.column + 1; column += 0.5) {
+            if (row == this.row && column == this.column) continue;
+            const cell = state.theMap.getCell(row, column);
+            if (cell) cell.changeNumNeighboringWalls(diff);
+          }
+        }
+      }
+    }
     if (!this.contentShouldHaveElement_(newContent)) {
       this.removeElements(layer, isHighlight);
       return [];
@@ -597,6 +625,7 @@ class Cell {
     ct.children.forEach(layer => {
       this.setLayerContent(layer, null, true);
     });
+    this.numNeighboringWalls_ = 0;
   }
 
   onMouseEnter(e) {

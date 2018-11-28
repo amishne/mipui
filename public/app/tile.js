@@ -113,18 +113,10 @@ class Tile {
 
   // Called when an element that this tile contains (directly or as a replica)
   // has changed.
-  invalidate(fromReplica = false) {
+  invalidate() {
     this.interrupted_ = true;
     this.imageIsValid_ = false;
-    if (!fromReplica) this.renderEffects_();
     this.activate_();
-  }
-
-  renderEffects_() {
-    for (const effect of state.getAppliedEffects()) {
-      effect.remove(this);
-      effect.apply(this);
-    }
   }
 
   // Called when we want to prevent this tile from being cached.

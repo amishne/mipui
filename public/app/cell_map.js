@@ -10,6 +10,10 @@ class CellMap {
     this.dividerWidth = null;
     this.currX = null;
     this.currY = null;
+    this.minColumn = null;
+    this.minRow = null;
+    this.maxColumn = null;
+    this.maxRow = null;
 
     // For later use.
     this.mapWidth = null;
@@ -55,6 +59,10 @@ class CellMap {
 
   create(mapElement, minX, minY, maxX, maxY) {
     this.clearMap_();
+    this.minColumn = minX - 0.5;
+    this.minRow = minY - 0.5;
+    this.maxColumn = maxX + 0.5;
+    this.maxRow = maxY + 0.5;
     this.currX = 0;
     this.currY = 0;
     this.tileIndex = 0;
@@ -185,11 +193,28 @@ class CellMap {
     tile.cells.push(cell);
     cell.offsetLeft = this.currX;
     cell.offsetTop = this.currY;
+    cell.maxNumNeighboringWalls = this.calcNumNeighboringCells_(row, column);
     this.cells.set(key, cell);
     element.style.left = (cell.offsetLeft - tile.left) + 'px';
     element.style.top = (cell.offsetTop - tile.top) + 'px';
     this.updateTileFirstAndLastCells_(tile, cell);
     return cell;
+  }
+
+  calcNumNeighboringCells_(row, column) {
+    let result = 0;
+    for (let neighborRow = row - 1; neighborRow <= row + 1;
+      neighborRow += 0.5) {
+      for (let neighborColumn = column - 1; neighborColumn <= column + 1;
+        neighborColumn += 0.5) {
+        if (neighborRow >= this.minRow && neighborRow <= this.maxRow &&
+            neighborColumn >= this.minColumn &&
+            neighborColumn <= this.maxColumn) {
+          result++;
+        }
+      }
+    }
+    return result - 1;  // Discount center cell.
   }
 
   updateTileFirstAndLastCells_(tile, cell) {
