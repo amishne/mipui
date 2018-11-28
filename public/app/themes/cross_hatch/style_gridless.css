@@ -152,3 +152,10 @@
 .passage-cell-dashed-over-floor, .passage-cell-dashed-over-wall {
   stroke: black;
 }
+
+.wall-cover {
+  background-color: white;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}

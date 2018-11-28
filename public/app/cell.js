@@ -532,6 +532,19 @@ class Cell {
         Array.from(this.replicatedElements_.get(layer).values()));
   }
 
+  getLayerElementsAndTiles(layer) {
+    const result = {elements: [], tiles: []};
+    const element = this.elements_.get(layer);
+    if (element) {
+      result.elements.push(element);
+      for (const [key, value] of this.replicatedElements_.get(layer)) {
+        result.elements.push(value);
+        result.tiles.push(key);
+      }
+    }
+    return result;
+  }
+
   removeElements(layer, isHighlight) {
     const element = this.elements_.get(layer);
     if (!element) return;
