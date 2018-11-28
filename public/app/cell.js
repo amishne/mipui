@@ -30,9 +30,6 @@ class Cell {
   }
 
   getLayerContent(layer) {
-    if (layer.getShadowingLayer) {
-      return this.getLayerContent(layer.getShadowingLayer());
-    }
     return state.getLayerContent(this.key, layer);
   }
 
