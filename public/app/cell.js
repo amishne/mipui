@@ -566,16 +566,21 @@ class Cell {
     this.numNeighboringWalls_ += diff;
     const isMax = this.numNeighboringWalls_ == this.maxNumNeighboringWalls;
     if (wasMax != isMax && this.hasLayerContent(ct.walls)) {
-      this.populateElementFromContent_(element, ct.walls, this.getLayerContent(ct.walls), false);
+      const content = this.getLayerContent(ct.walls);
+      this.updateElementsWithoutEffects_(ct.walls, content, content, false);
     }
   }
 
-  updateElementsAndEffects_(layer, oldContent, newContent, isHighlight) {
+  updateElements_(layer, oldContent, newContent, isHighlight) {
     if (!isHighlight && state.shouldApplyCoverEffect() && layer == ct.walls) {
+      const wasSolidWall =
+          oldContent && oldContent[ck.variation] == ct.walls.smooth.square.id;
+      const isSolidWall =
+          newContent && newContent[ck.variation] == ct.walls.smooth.square.id;
       let diff = 0;
-      if (oldContent && !newContent) {
+      if (wasSolidWall && !isSolidWall) {
         diff = -1;
-      } else if (!oldContent && newContent) {
+      } else if (!wasSolidWall && isSolidWall) {
         diff = 1;
       }
       if (diff != 0) {
@@ -589,6 +594,11 @@ class Cell {
         }
       }
     }
+    return this.updateElementsWithoutEffects_(
+        layer, oldContent, newContent, isHighlight);
+  }
+
+  updateElementsWithoutEffects_(layer, oldContent, newContent, isHighlight) {
     if (!this.contentShouldHaveElement_(newContent)) {
       this.removeElements(layer, isHighlight);
       return [];

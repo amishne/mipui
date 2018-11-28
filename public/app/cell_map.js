@@ -61,8 +61,8 @@ class CellMap {
     this.clearMap_();
     this.minColumn = minX - 0.5;
     this.minRow = minY - 0.5;
-    this.maxColumn = maxX + 0.5;
-    this.maxRow = maxY + 0.5;
+    this.maxColumn = maxX - 0.5;
+    this.maxRow = maxY - 0.5;
     this.currX = 0;
     this.currY = 0;
     this.tileIndex = 0;

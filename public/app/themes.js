@@ -94,6 +94,7 @@ const themes = [
     menuIconFile: 'themes/cross_hatch/menu_icons_grid.png',
     emptyTile5Src: 'themes/cross_hatch/empty_tile5_grid.png',
     emptyTile10Src: 'themes/cross_hatch/empty_tile10_grid.png',
+    hasCoverEffect: true,
   },
   {
     name: 'Cross Hatch (gridless)',
@@ -105,5 +106,6 @@ const themes = [
     menuIconFile: 'themes/cross_hatch/menu_icons_gridless.png',
     emptyTile5Src: 'themes/white_tile5.png',
     emptyTile10Src: 'themes/white_tile10.png',
+    hasCoverEffect: true,
   },
 ].sort((a, b) => a.displayIndex - b.displayIndex);
