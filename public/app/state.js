@@ -303,8 +303,4 @@ class State {
     // From http://stackoverflow.com/a/19964557
     return (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   }
-
-  shouldApplyCoverEffect() {
-    return this.currentTheme.hasCoverEffect;
-  }
 }
