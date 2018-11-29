@@ -68,6 +68,7 @@ class GridImager {
   }
 
   async addCssStyleSheet(index, cssStyleSheet) {
+    if (cssStyleSheet == null) return;
     let cssStr = '';
     const path = cssStyleSheet.href;
     const pathFolder = path.substring(0, path.lastIndexOf('/') + 1);
