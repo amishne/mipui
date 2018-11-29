@@ -88,6 +88,7 @@ const themes = [
     propertyIndex: 7,
     displayIndex: 7,
     files: [
+      'themes/cross_hatch/wall.css',
       'themes/cross_hatch/style_gridless.css',
       'themes/cross_hatch/grid.css',
     ],
@@ -101,6 +102,7 @@ const themes = [
     propertyIndex: 8,
     displayIndex: 8,
     files: [
+      'themes/cross_hatch/wall.css',
       'themes/cross_hatch/style_gridless.css',
     ],
     menuIconFile: 'themes/cross_hatch/menu_icons_gridless.png',

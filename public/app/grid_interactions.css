@@ -3,6 +3,7 @@ here. */
 
 .wall-cell-adding, .wall-cell-editing {
   background-color: rgb(215, 215, 190);
+  z-index: 2;
 }
 
 .wall-cell-removing {
@@ -10,7 +11,7 @@ here. */
   z-index: 2;
 }
 
-.wall-cell-removing > .wall-cover {
+.wall-cell-removing > .wall-cover, .wall-cell-editing > .wall-cover {
   display: none;
 }
 
