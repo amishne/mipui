@@ -212,11 +212,14 @@ class CellMap {
             neighborColumn <= this.maxColumn) {
           // That neighbor is a real cell.
           const distance =
-              Math.abs(neighborRow - row) + Math.abs(neighborColumn - column)
-          if (distance == 0.5) result += 1000;  // Max 4*1000  = 4000
-          if (distance == 1) result += 100;     // Max 8*100   =  800    < 1000
-          if (distance == 1.5) result += 1;     // Max 12*1    =   12    < 100
-          if (distance == 2) result += 0.01;    // Max 16*0.01 =    0.16 < 1
+              Math.sqrt(
+                  Math.pow(neighborRow - row, 2) +
+                  Math.pow(neighborColumn - column, 2));
+          if (distance < 0.001) continue;
+          if (distance <= 0.5) result += 1000;    // Max 4*1000  = 4000
+          else if (distance <= 1) result += 100;  // Max 8*100   =  800   < 1000
+          else if (distance <= 1.5) result += 1;  // Max 12*1    =   12    < 100
+          else if (distance <= 2) result += 0.01; // Max 16*0.01 =    0.16 < 1
         }
       }
     }

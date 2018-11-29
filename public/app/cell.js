@@ -606,13 +606,15 @@ class Cell {
           for (let column = this.column - 2;
             column <= this.column + 2; column += 0.5) {
             const distance =
-                Math.abs(row - this.row) + Math.abs(column - this.column);
-            if (distance == 0 || distance > 2) continue;
+                Math.sqrt(
+                    Math.pow(this.row - row, 2) +
+                    Math.pow(this.column - column, 2));
+            if (distance < 0.001 || distance > 2) continue;
             let factor = 0;
-            if (distance == 0.5) factor = 1000;
-            if (distance == 1) factor = 100;
-            if (distance == 1.5) factor = 1;
-            if (distance == 2) factor = 0.01;
+            if (distance <= 0.5) factor = 1000;
+            else if (distance <= 1) factor = 100;
+            else if (distance <= 1.5) factor = 1;
+            else if (distance <= 2) factor = 0.01;
             const cell = state.theMap.getCell(row, column);
             if (!cell) continue;
             cell.changeNumNeighboringWalls(diff * factor);

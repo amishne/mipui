@@ -147,6 +147,7 @@
 
 .wall-cover {
   background-color: white;
+  margin: -3px;
 }
 
 .wall-cover-boundary {
