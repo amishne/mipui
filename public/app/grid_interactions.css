@@ -7,7 +7,11 @@ here. */
 
 .wall-cell-removing {
   background-color: rgb(232, 221, 182);
-  z-index: 1;
+  z-index: 2;
+}
+
+.wall-cell-removing > .wall-cover {
+  display: none;
 }
 
 .text-cell-adding, .text-cell-editing {
