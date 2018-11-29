@@ -203,23 +203,24 @@ class CellMap {
 
   calcNumNeighboringCells_(row, column) {
     let result = 0;
-    for (let neighborRow = row - 1.5; neighborRow <= row + 1.5;
+    for (let neighborRow = row - 2; neighborRow <= row + 2;
       neighborRow += 0.5) {
-      for (let neighborColumn = column - 1.5; neighborColumn <= column + 1.5;
+      for (let neighborColumn = column - 2; neighborColumn <= column + 2;
         neighborColumn += 0.5) {
-        if (Math.abs(neighborRow - row) + Math.abs(neighborColumn - column) >=
-            2.9) {
-          // Skip far corners.
-          continue;
-        }
         if (neighborRow >= this.minRow && neighborRow <= this.maxRow &&
             neighborColumn >= this.minColumn &&
             neighborColumn <= this.maxColumn) {
-          result++;
+          // That neighbor is a real cell.
+          const distance =
+              Math.abs(neighborRow - row) + Math.abs(neighborColumn - column)
+          if (distance == 0.5) result += 1000;  // Max 4*1000  = 4000
+          if (distance == 1) result += 100;     // Max 8*100   =  800    < 1000
+          if (distance == 1.5) result += 1;     // Max 12*1    =   12    < 100
+          if (distance == 2) result += 0.01;    // Max 16*0.01 =    0.16 < 1
         }
       }
     }
-    return result - 1;  // Discount center cell.
+    return result;
   }
 
   updateTileFirstAndLastCells_(tile, cell) {

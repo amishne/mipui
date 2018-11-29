@@ -26,7 +26,7 @@ class Cell {
 
     // Counts neighboring walls for cover effect.
     this.numNeighboringWalls_ = 0;
-    this.maxNumNeighboringWalls = 8;  // Bare minimum
+    this.maxNumNeighboringWalls = 0;
 
     // Initialization.
     this.neighborKeys_ = new Map();
@@ -183,7 +183,7 @@ class Cell {
       // angled walls, since they overflow.
       let maxDistanceFromEdgeForReplication =
           content[ck.variation] == ct.walls.smooth.angled.id ? 7 : 0;
-      if (this.numNeighboringWalls_ == this.maxNumNeighboringWalls) {
+      if (this.getNeighboringWallsStatus_() == 'max-boundary') {
         maxDistanceFromEdgeForReplication = 15;
       }
       [
@@ -330,8 +330,13 @@ class Cell {
     if (isHighlight) return;
     if (layer != ct.walls) return;
     element.innerHTML = '';
-    if (this.numNeighboringWalls_ == this.maxNumNeighboringWalls) {
-      createAndAppendDivWithClass(element, 'wall-cover');
+    switch (this.getNeighboringWallsStatus_()) {
+      case 'max':
+        createAndAppendDivWithClass(element, 'wall-cover');
+        break;
+      case 'max-boundary':
+        createAndAppendDivWithClass(element, 'wall-cover wall-cover-boundary');
+        break;
     }
   }
 
@@ -565,13 +570,23 @@ class Cell {
   }
 
   changeNumNeighboringWalls(diff) {
-    const wasMax = this.numNeighboringWalls_ == this.maxNumNeighboringWalls;
+    const before = this.getNeighboringWallsStatus_();
     this.numNeighboringWalls_ += diff;
-    const isMax = this.numNeighboringWalls_ == this.maxNumNeighboringWalls;
-    if (wasMax != isMax && this.hasLayerContent(ct.walls)) {
+    const after = this.getNeighboringWallsStatus_();
+    if (before != after && this.hasLayerContent(ct.walls)) {
       const content = this.getLayerContent(ct.walls);
       this.updateElementsWithoutEffects_(ct.walls, content, content, false);
     }
+  }
+
+  getNeighboringWallsStatus_() {
+    if (this.numNeighboringWalls_ == this.maxNumNeighboringWalls) {
+      return 'max';
+    }
+    if (this.numNeighboringWalls_ >= Math.floor(this.maxNumNeighboringWalls)) {
+      return 'max-boundary';
+    }
+    return 'not-max';
   }
 
   updateElements_(layer, oldContent, newContent, isHighlight) {
@@ -587,16 +602,20 @@ class Cell {
         diff = 1;
       }
       if (diff != 0) {
-        for (let row = this.row - 1.5; row <= this.row + 1.5; row += 0.5) {
-          for (let column = this.column - 1.5;
-            column <= this.column + 1.5; column += 0.5) {
-            if (Math.abs(row - this.row) + Math.abs(column - this.column) >=
-                2.9) {
-              continue;
-            }
-            if (row == this.row && column == this.column) continue;
+        for (let row = this.row - 2; row <= this.row + 2; row += 0.5) {
+          for (let column = this.column - 2;
+            column <= this.column + 2; column += 0.5) {
+            const distance =
+                Math.abs(row - this.row) + Math.abs(column - this.column);
+            if (distance == 0 || distance > 2) continue;
+            let factor = 0;
+            if (distance == 0.5) factor = 1000;
+            if (distance == 1) factor = 100;
+            if (distance == 1.5) factor = 1;
+            if (distance == 2) factor = 0.01;
             const cell = state.theMap.getCell(row, column);
-            if (cell) cell.changeNumNeighboringWalls(diff);
+            if (!cell) continue;
+            cell.changeNumNeighboringWalls(diff * factor);
           }
         }
       }
