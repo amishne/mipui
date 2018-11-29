@@ -183,6 +183,7 @@ class State {
     return new Promise((resolve, reject) => {
       const newPropertyIndex = this.getProperty(pk.theme);
       if (this.currentTheme.propertyIndex == newPropertyIndex) resolve();
+      const appliedCoverEffect = state.shouldApplyCoverEffect();
       this.currentTheme =
           themes.find(theme => theme.propertyIndex == newPropertyIndex);
 
@@ -219,6 +220,9 @@ class State {
         menuIconFromMap.style.backgroundImage =
             `url("${this.currentTheme.menuIconFile}")`;
       });
+      if (appliedCoverEffect != this.shouldApplyCoverEffect()) {
+        this.theMap.updateAllCells();
+      }
       if (gridImagerPromises) {
         Promise.all(gridImagerPromises).then(() => {
           this.tileGridImager.recalculateStyleString();
@@ -302,5 +306,9 @@ class State {
   generateRandomString_() {
     // From http://stackoverflow.com/a/19964557
     return (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+  }
+
+  shouldApplyCoverEffect() {
+    return !!this.currentTheme.hasCoverEffect;
   }
 }

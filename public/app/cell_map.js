@@ -53,6 +53,9 @@ class CellMap {
 
   updateAllCells() {
     this.cells.forEach(cell => {
+      cell.numNeighboringWalls_ = 0;
+    });
+    this.cells.forEach(cell => {
       cell.updateAllElementsToCurrentContent();
     });
   }

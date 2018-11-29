@@ -183,8 +183,9 @@ class Cell {
       // angled walls, since they overflow.
       let maxDistanceFromEdgeForReplication =
           content[ck.variation] == ct.walls.smooth.angled.id ? 7 : 0;
-      if (this.getNeighboringWallsStatus_() == 'max-boundary') {
-        maxDistanceFromEdgeForReplication = 15;
+      if (state.shouldApplyCoverEffect() &&
+          this.getNeighboringWallsStatus_() == 'max-boundary') {
+        maxDistanceFromEdgeForReplication = 20;
       }
       [
         {name: 'left', edges: ['offsetLeft'], x: -1, y: 0},
@@ -327,20 +328,22 @@ class Cell {
   }
 
   setCover_(element, layer, isHighlight) {
+    if (!state.shouldApplyCoverEffect()) return;
     if (isHighlight) return;
     if (layer != ct.walls) return;
     element.innerHTML = '';
-    let cover = null;
+    let classes = null;
     switch (this.getNeighboringWallsStatus_()) {
       case 'max':
-        cover = createAndAppendDivWithClass(element, 'wall-cover');
+        classes = 'wall-cover wall-cover-inner';
         break;
       case 'max-boundary':
-        cover = createAndAppendDivWithClass(
-            element, 'wall-cover wall-cover-boundary');
+        classes = 'wall-cover wall-cover-boundary';
         break;
     }
-    element.classList[cover ? 'add' : 'remove']('has-wall-cover');
+    element.classList[classes ? 'add' : 'remove']('has-wall-cover');
+    element.innerHTML = '';
+    createAndAppendDivWithClass(element, classes);
   }
 
   setShape_(element, layer, kind, variation, connections) {

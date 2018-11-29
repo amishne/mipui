@@ -151,7 +151,11 @@
 
 .wall-cover-boundary {
   border-radius: 50%;
-  box-shadow: 0 0 15px 15px white;
+  box-shadow: 0 0 15px 20px white;
+}
+
+.wall-cover-inner {
+  border: 5px solid white;
 }
 
 .has-wall-cover {
