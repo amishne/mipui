@@ -12,7 +12,7 @@ here. */
 }
 
 .wall-cell-removing > .wall-cover, .wall-cell-editing > .wall-cover {
-  display: none;
+  visibility: hidden;
 }
 
 .text-cell-adding, .text-cell-editing {
