@@ -181,9 +181,11 @@ class Cell {
       // neighboring tiles as replicas.
       // This applies to walls not immediately on the tile edge if those are
       // angled walls, since they overflow.
-      // let maxDistanceFromEdgeForReplication =
-      //     content[ck.variation] == ct.walls.smooth.angled.id ? 7 : 0;
-      const maxDistanceFromEdgeForReplication = 15;
+      let maxDistanceFromEdgeForReplication =
+          content[ck.variation] == ct.walls.smooth.angled.id ? 7 : 0;
+      if (this.numNeighboringWalls_ == this.maxNumNeighboringWalls) {
+        maxDistanceFromEdgeForReplication = 15;
+      }
       [
         {name: 'left', edges: ['offsetLeft'], x: -1, y: 0},
         {name: 'right', edges: ['offsetRight'], x: 1, y: 0},
