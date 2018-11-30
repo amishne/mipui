@@ -183,8 +183,7 @@ class Cell {
       // angled walls, since they overflow.
       let maxDistanceFromEdgeForReplication =
           content[ck.variation] == ct.walls.smooth.angled.id ? 7 : 0;
-      if (state.shouldApplyCoverEffect() &&
-          this.getNeighboringWallsStatus_() == 'max-boundary') {
+      if (state.shouldApplyCoverEffect()) {
         maxDistanceFromEdgeForReplication = 20;
       }
       [
