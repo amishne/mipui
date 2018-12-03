@@ -50,6 +50,8 @@ class State {
     this.user = null;
 
     this.menu = null;
+    // Icon hash -> use count in the map
+    this.usedIcons_ = new Map();
 
     this.clipboard = null;
 
@@ -120,6 +122,23 @@ class State {
       this.pstate_.content = {};
     }
     let cellContent = this.pstate_.content[cellKey];
+    if (layer == ct.images) {
+      if (cellContent && cellContent[ct.images.id] &&
+          cellContent[ct.images.id][ck.imageHash]) {
+        const hash = 'h' + cellContent[ct.images.id][ck.imageHash];
+        const currentCounter = this.usedIcons_.get(hash);
+        if (currentCounter == 1) {
+          this.usedIcons_.delete(hash);
+        } else {
+          this.usedIcons_.put(hash, currentCounter - 1);
+        }
+      }
+      if (content && content[ck.imageHash]) {
+        const hash = 'h' + content[ck.imageHash];
+        this.usedIcons_.set(hash,
+            this.usedIcons_.has(hash) ? this.usedIcons_.get(hash) + 1 : 1);
+      }
+    }
     if (!cellContent) {
       if (!content) return;
       cellContent = {};
@@ -291,6 +310,15 @@ class State {
     this.pstate_ = pstate;
     createTheMapAndUpdateElements();
     updateMapTransform(true);
+    this.usedIcons_.clear();
+    for (const cell of this.theMap.cells) {
+      if (cell.hasLayerContent(ct.images) &&
+          cell.getVal(ct.images, ck.imageHash)) {
+        const hash = 'h' + cell.getVal(ct.images, ck.imageHash);
+        this.usedIcons_.set(hash,
+            this.usedIcons_.has(hash) ? this.usedIcons_.get(hash) + 1 : 1);
+      }
+    }
     if (this.menu) {
       this.menu.descChanged();
     }
@@ -310,5 +338,9 @@ class State {
 
   shouldApplyCoverEffect() {
     return !!this.currentTheme.hasCoverEffect;
+  }
+
+  isIconUsed(iconHash) {
+    return this.usedIcons_.get(iconHash);
   }
 }

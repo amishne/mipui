@@ -569,7 +569,7 @@ class Menu {
     this.gameIcons_.forEach(gameIcon => {
       gameIcon.tags.forEach(tag => valueSet.add(tag));
     });
-    const values = Array.from(valueSet).concat('<all>');
+    const values = Array.from(valueSet).concat(['<all>', '<used>']);
     values.sort();
     return {
       name: 'Category',
@@ -726,6 +726,10 @@ class Menu {
 
     selector.submenu.element.innerHTML = '';
     let matchingIcons = this.gameIcons_.filter(gameIcon => {
+      if (category == '<used>') {
+        return state.isIconUsed('h' + gameIcon.hash) &&
+            gameIcon.name.includes(text);
+      }
       if (category != '<all>' && !gameIcon.tags.includes(category)) {
         // Not in current category.
         return false;
