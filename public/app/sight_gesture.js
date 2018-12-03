@@ -59,7 +59,8 @@ class SightGesture extends Gesture {
     this.affectedCells_.forEach(affectedCell => {
       affectedCell.hideHighlight(ct.mask);
       affectedCell.setLayerContent(
-          ct.mask, this.shouldMakeOtherCellsHidden ? this.maskContent_ : null, true);
+          ct.mask,
+          this.shouldMakeOtherCellsHidden ? this.maskContent_ : null, true);
     });
     if (this.shouldMakeOtherCellsHidden) {
       state.opCenter.recordOperationComplete(true);
