@@ -130,7 +130,7 @@ class State {
         if (currentCounter == 1) {
           this.usedIcons_.delete(hash);
         } else {
-          this.usedIcons_.put(hash, currentCounter - 1);
+          this.usedIcons_.set(hash, currentCounter - 1);
         }
       }
       if (content && content[ck.imageHash]) {
