@@ -98,6 +98,7 @@ class Operation {
 
   undoOrRedoCells_(contentToUse) {
     if (!this.data) return;
+    const cellsToMark = [];
     if (this.data.c) {
       Object.keys(this.data.c).forEach(key => {
         const cell = state.theMap.cells.get(key);
@@ -107,10 +108,53 @@ class Operation {
           const layer = ct.children[layerId];
           let content = cellLayerChange[contentToUse];
           if (content === undefined) content = null;
+          if (this.changeShouldShowMark_(cell, layer, content)) {
+            cellsToMark.push(cell);
+          };
           cell.setLayerContent(layer, content, false);
         });
       });
     }
+
+    for (const cell of cellsToMark) {
+      cell.gridElement.classList.add('recently-changed');
+    }
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        for (const cell of cellsToMark) {
+          cell.gridElement.classList.remove('recently-changed');
+        }
+      });
+    });
+  }
+
+  changeShouldShowMark_(cell, layer, newContent) {
+    if (!state.isReadOnly()) return true;
+    if (cell.hasLayerContent(ct.mask)) return false;
+    if (layer == ct.gmoverlay) return false;
+    const oldContent = cell.getLayerContent(layer);
+    if (layer == ct.separators &&
+        (cell.contentIsVariation_(
+            oldContent, ct.separators.door, ct.separators.door.hiddenSecret) ||
+        cell.contentIsVariation_(
+            newContent, ct.separators.door, ct.separators.door.hiddenSecret))) {
+      return false;
+    }
+    if (layer == ct.text &&
+        (cell.contentIsVariation_(
+            oldContent, ct.text.gmNote, ct.text.gmNote.standard) ||
+        cell.contentIsVariation_(
+            newContent, ct.text.gmNote, ct.text.gmNote.standard))) {
+      return false;
+    }
+    if (layer == ct.elevation &&
+        (cell.contentIsVariation_(
+            oldContent, ct.elevation.passage, ct.elevation.passage.hidden) ||
+        cell.contentIsVariation_(
+            newContent, ct.elevation.passage, ct.elevation.passage.hidden))) {
+      return false;
+    }
+    return true;
   }
 
   undoOrRedoProperties_(contentToUse) {

@@ -135,6 +135,10 @@
   display: inline-block;
   border-right: 1px solid rgba(0, 0, 0, 0);
   border-bottom: 1px solid rgba(0, 0, 0, 0);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-color: transparent;
+  transition: outline-color 2s;
 }
 
 .wall-cell {
