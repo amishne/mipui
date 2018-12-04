@@ -311,7 +311,7 @@ class State {
     createTheMapAndUpdateElements();
     updateMapTransform(true);
     this.usedIcons_.clear();
-    for (const cell of this.theMap.cells) {
+    for (const cell of this.theMap.cells.values()) {
       if (cell.hasLayerContent(ct.images) &&
           cell.getVal(ct.images, ck.imageHash)) {
         const hash = 'h' + cell.getVal(ct.images, ck.imageHash);
