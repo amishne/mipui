@@ -204,6 +204,7 @@ class BoxGesture extends Gesture {
           this.startEditing_();
         } else {
           this.apply_();
+          state.opCenter.recordOperationComplete();
           this.anchorCell_ = null;
           this.originalEndCell_ = null;
           this.targetCell_ = null;
