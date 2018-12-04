@@ -434,11 +434,12 @@ class BoxGesture extends Gesture {
     deleteGesture.nonStartCells_ = this.nonStartCells_;
     const hoverWidgetDuringDeleteClassName =
         this.getHoverWidgetDuringDeleteClassName_();
-    this.deleteWidget_.onmouseenter = () => {
+    this.deleteWidget_.onmouseenter = e => {
       deleteGesture.startHover(this.startCell_);
       if (hoverWidgetDuringDeleteClassName && this.hoverWidget_) {
         this.hoverWidget_.classList.add(hoverWidgetDuringDeleteClassName);
       }
+      e.stopPropagation();
     };
     this.deleteWidget_.onmouseleave = () => {
       deleteGesture.stopHover();
