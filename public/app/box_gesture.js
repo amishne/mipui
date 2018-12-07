@@ -439,7 +439,6 @@ class BoxGesture extends Gesture {
       if (hoverWidgetDuringDeleteClassName && this.hoverWidget_) {
         this.hoverWidget_.classList.add(hoverWidgetDuringDeleteClassName);
       }
-      e.stopPropagation();
     };
     this.deleteWidget_.onmouseleave = () => {
       deleteGesture.stopHover();

@@ -50,11 +50,19 @@ class StaticBoxGesture extends BoxGesture {
   }
 
   getDeleteWidgetCssClassName_() {
-    return 'image-delete-widget';
+    switch (this.layer_) {
+      case ct.elevation: return 'delete-widget stairs-delete-widget';
+      case ct.images: return 'delete-widget image-delete-widget';
+      case ct.text: return 'delete-widget text-delete-widget';
+    }
   }
 
   getResizeWidgetCssClassName_() {
-    return 'image-resize-widget';
+    switch (this.layer_) {
+      case ct.elevation: return 'resize-widget stairs-resize-widget';
+      case ct.images: return 'resize-widget image-resize-widget';
+      case ct.text: return 'resize-widget text-resize-widget';
+    }
   }
 
   getHoverWidgetCssClassName_() {
@@ -74,7 +82,11 @@ class StaticBoxGesture extends BoxGesture {
   }
 
   getMoveWidgetCssClassName_() {
-    return 'box-move-widget';
+    switch (this.layer_) {
+      case ct.elevation: return 'move-widget stairs-move-widget';
+      case ct.images: return 'move-widget image-move-widget';
+      case ct.text: return 'move-widget text-move-widget';
+    }
   }
 
   setInputGeometry_(inputElement, startCell, initialContent) {

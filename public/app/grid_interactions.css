@@ -85,46 +85,63 @@ here. */
   margin: 1px 0 0 1px;
 }
 
-.text-delete-widget, .image-delete-widget {
+.delete-widget {
   position: absolute;
   width: 10px;
   height: 10px;
   cursor: pointer;
-  margin-left: -2px;
-  margin-top: -6px;
   z-index: 12;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><line x1='0' y1='0' x2='10' y2='10' stroke='red' stroke-width='2' /><line x1='10' y1='0' x2='0' y2='10' stroke='red' stroke-width='2' /></svg>");
 }
 
-.image-delete-widget {
-  margin-left: -5px;
+.text-delete-widget {
+  margin-left: -4px;
+  margin-top: -4px;
 }
 
-.text-resize-widget, .image-resize-widget {
+.image-delete-widget {
+  margin-top: -4px;
+  margin-left: -7px;
+}
+
+.stairs-delete-widget {
+  margin-top: -4px;
+  margin-left: -6px;
+}
+
+.resize-widget {
   position: absolute;
   width: 10px;
   height: 10px;
   cursor: se-resize;
-  margin-left: -2px;
-  margin-top: -2px;
   z-index: 12;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><polygon points='0,10 10,10 10,0'/></svg>");
 }
 
-.image-resize-widget {
-  margin-left: -5px;
-  margin-top: -5px;
+.text-resize-widget {
+  margin-left: -4px;
+  margin-top: -4px;
 }
 
-.box-move-widget {
+.image-resize-widget {
+  margin-left: -7px;
+  margin-top: -7px;
+}
+
+.stairs-resize-widget {
+  margin-top: -5px;
+  margin-left: -6px;
+}
+
+.move-widget {
   position: absolute;
   background-color: yellow;
   width: 10px;
   height: 10px;
   cursor: move;
   z-index: 12;
-  margin-top: -6px;
-  margin-left: -6px;
+  margin-top: -4px;
+  margin-left: -4px;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect x='0' y='0' width='10' height='10' stroke-width='1' fill='none' stroke='black'/></svg>");
 }
 

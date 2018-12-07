@@ -41,11 +41,11 @@ class TextGesture extends BoxGesture {
   }
 
   getDeleteWidgetCssClassName_() {
-    return 'text-delete-widget';
+    return 'delete-widget text-delete-widget';
   }
 
   getResizeWidgetCssClassName_() {
-    return 'text-resize-widget';
+    return 'resize-widget text-resize-widget';
   }
 
   getHoverWidgetCssClassName_() {
@@ -53,7 +53,7 @@ class TextGesture extends BoxGesture {
   }
 
   getMoveWidgetCssClassName_() {
-    return 'box-move-widget';
+    return 'move-widget text-move-widget';
   }
 
   createNewGesture_() {
