@@ -14,7 +14,8 @@ class Tile {
   constructor(parent, key, x, y, index) {
     // Elements
     this.containerElement_ = createAndAppendDivWithClass(parent, 'tile');
-    this.containerElement_.style.zIndex = 1000000 - index;
+    this.zIndex = 100000 - index;
+    this.containerElement_.style.zIndex = this.zIndex;
     this.mapElement =
         createAndAppendDivWithClass(this.containerElement_, 'tile-map');
     this.imageContainerElement_ = createAndAppendDivWithClass(
@@ -51,6 +52,14 @@ class Tile {
     this.timer_ = null;
     this.timerStartTime_ = null;
     this.locks_ = new Set();
+  }
+
+  boostZindex() {
+    this.containerElement_.style.zIndex = this.zIndex + 100000;
+  }
+
+  unboostZindex() {
+    this.containerElement_.style.zIndex = this.zIndex;
   }
 
   initializeDimensions(left, top) {

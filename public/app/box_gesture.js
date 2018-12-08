@@ -392,6 +392,7 @@ class BoxGesture extends Gesture {
     if (this.hoverWidget_) return;
     this.hoverWidget_ = createAndAppendDivWithClass(
         this.startCell_.gridElement, this.getHoverWidgetCssClassName_());
+    this.startCell_.tile.boostZindex();
     this.hoverWidget_.style.left =
         (this.startCell_.offsetLeft - this.startCell_.offsetLeft) + 'px';
     this.hoverWidget_.style.top =
@@ -416,6 +417,7 @@ class BoxGesture extends Gesture {
     if (this.hoverWidget_) {
       this.hoverWidget_.parentElement.removeChild(this.hoverWidget_);
       this.hoverWidget_ = null;
+      this.startCell_.tile.unboostZindex();
     }
   }
 
