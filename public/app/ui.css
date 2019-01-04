@@ -15,7 +15,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: calc(100% - 15px);
   max-height: 75%;
   overflow-x: auto;
   z-index: 3;
@@ -49,7 +49,8 @@ body {
 }
 
 @media screen and (any-hover: none) {
-  #mapContainer{ overflow: auto; }
+  #mapContainer { overflow: auto; }
+  #menuContainer { width: 100%; }
 }
 
 @media (any-hover: none) {
