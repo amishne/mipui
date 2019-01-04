@@ -551,9 +551,7 @@ function switchToMobileMode() {
   const actionPane =
       createAndAppendDivWithClass(
           document.body, 'action-pane');
-  actionPane.textContent = 'Tap here to Apply. ' +
-      'WARNING: Mobile/touch support is experimental and work-in-progress, ' +
-      'and it might even permanently corrupt your map.';
+  actionPane.textContent = 'Tap here to Apply.';
   actionPane.addEventListener('touchstart', e => {
     e.stopPropagation();
     if (state.gesture) {
