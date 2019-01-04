@@ -337,3 +337,7 @@
   cursor: auto;
   padding: 0 4px;
 }
+
+.user-menu {
+  border-radius: 50%;
+}

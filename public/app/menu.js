@@ -71,10 +71,12 @@ class Menu {
   }
 
   addDebugMenu() {
-    this.menuItems_.push(this.debugMenuItem_);
-    this.createMenuItem_(this.debugMenuItem_,
-        document.getElementsByClassName('menu-top')[0],
-        document.getElementsByClassName('menu-bottom')[0]);
+    this.menuItems_.splice(this.menuItems_.length - 1, 0, this.debugMenuItem_);
+    const topElement = document.getElementsByClassName('menu-top')[0];
+    const bottomElement = document.getElementsByClassName('menu-bottom')[0];
+    topElement.innerHTML = '';
+    bottomElement.innerHTML = '';
+    this.createMenuItems_(topElement, bottomElement);
   }
 
   createMenuItems_(topElement, bottomElement) {
@@ -1905,6 +1907,37 @@ class Menu {
               enabledInReadonlyMode: true,
               callback: () => {
                 window.open('https://twitter.com/MipuiMapEditor', '_blank');
+              },
+            },
+          ],
+        },
+      },
+      {
+        name: '&User',
+        presentation: 'icon',
+        materialIcon: 'person_outline',
+        tip: '',
+        enabledInReadonlyMode: true,
+        classNames: ['user-menu'],
+        submenu: {
+          items: [
+            {
+              name: 'Status',
+              type: 'label',
+              id: 'userStatus',
+              presentation: 'label',
+              enabledInReadonlyMode: true,
+              text: 'Logged out',
+            },
+            {
+              name: 'Log in',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'how_to_reg',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                new UserDialog().show();
+                login();
               },
             },
           ],

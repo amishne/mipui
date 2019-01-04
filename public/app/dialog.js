@@ -13,12 +13,15 @@ class Dialog {
     this.showDialogContent_();
     const dialogButtons =
       createAndAppendDivWithClass(this.dialogElement_, 'modal-dialog-line');
-    this.acceptButton_ = document.createElement('button');
-    this.acceptButton_.className =
-        'modal-dialog-button modal-dialog-accept-button';
-    dialogButtons.appendChild(this.acceptButton_);
-    this.acceptButton_.textContent = this.getAcceptButtonText_();
-    this.acceptButton_.onclick = () => this.accept();
+    const acceptButtonText = this.getAcceptButtonText_();
+    if (acceptButtonText) {
+      this.acceptButton_ = document.createElement('button');
+      this.acceptButton_.className =
+          'modal-dialog-button modal-dialog-accept-button';
+      dialogButtons.appendChild(this.acceptButton_);
+      this.acceptButton_.textContent = this.getAcceptButtonText_();
+      this.acceptButton_.onclick = () => this.accept();
+    }
     const cancelButton = document.createElement('button');
     dialogButtons.appendChild(cancelButton);
     cancelButton.className = 'modal-dialog-button modal-dialog-cancel-button';

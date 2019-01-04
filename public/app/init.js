@@ -48,14 +48,10 @@ function initializeFirebase(callback) {
   };
   firebase.initializeApp(config);
   firebase.database.enableLogging(false);
-  firebase.auth().signInAnonymously()
-      .then(user => { state.user = user; callback(); })
-      .catch(() => setStatus(Status.AUTH_ERROR));
   firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      state.user = user;
-    }
+    userChanged(user);
   });
+  initAuth(callback);
 }
 
 function createMapResizeButtons() {
