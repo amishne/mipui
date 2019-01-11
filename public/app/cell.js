@@ -216,8 +216,7 @@ class Cell {
     if ((layer == ct.shapes && this.role != 'primary') ||
         (layer == ct.floors && this.role != 'primary' &&
          content[ck.kind] == ct.floors.pit.id) ||
-        (layer == ct.mask) ||
-        (layer == ct.separators)) {
+        (layer == ct.mask)) {
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
           if (x == 0 && y == 0) continue;
@@ -226,6 +225,53 @@ class Cell {
           if (!neighborCell) continue;
           if (neighborCell.tile == this.tile) continue;
           tilesWithReplicas.add(neighborCell.tile);
+        }
+      }
+    }
+
+    if (layer == ct.separators) {
+      // Add all tiles touching one of the cells containing the separator.
+      const endCellKey = content[ck.endCell];
+      const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
+      const tilesToConsider = new Set(tilesWithReplicas);
+      tilesToConsider.add(this.tile);
+
+      const neighborLeft = state.theMap.getCell(this.row, this.column - 0.5);
+      if (neighborLeft && neighborLeft.tile != this.tile) {
+        for (const tile of tilesToConsider) {
+          if (tile.x == this.tile.x) {
+            tilesWithReplicas.add(
+                state.theMap.tiles.get(`${tile.x - 1},${tile.y}`));
+          }
+        }
+      }
+      const neighborTop = state.theMap.getCell(this.row - 0.5, this.column);
+      if (neighborTop && neighborTop.tile != this.tile) {
+        for (const tile of tilesToConsider) {
+          if (tile.y == this.tile.y) {
+            tilesWithReplicas.add(
+                state.theMap.tiles.get(`${tile.x},${tile.y - 1}`));
+          }
+        }
+      }
+      const neighborRight =
+          state.theMap.getCell(endCell.row, endCell.column + 0.5);
+      if (neighborRight && neighborRight.tile != endCell.tile) {
+        for (const tile of tilesToConsider) {
+          if (tile.x == endCell.tile.x) {
+            tilesWithReplicas.add(
+                state.theMap.tiles.get(`${tile.x + 1},${tile.y}`));
+          }
+        }
+      }
+      const neighborBottom =
+          state.theMap.getCell(endCell.row + 0.5, endCell.column);
+      if (neighborBottom && neighborBottom.tile != endCell.tile) {
+        for (const tile of tilesToConsider) {
+          if (tile.y == endCell.tile.y) {
+            tilesWithReplicas.add(
+                state.theMap.tiles.get(`${tile.x},${tile.y + 1}`));
+          }
         }
       }
     }
