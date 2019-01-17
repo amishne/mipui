@@ -91,6 +91,7 @@ class State {
 
   isReadOnly() {
     return this.mid_ && !this.secret_;
+    // TODO or the user knows about it
   }
 
   set gesture(newGesture) {
@@ -263,21 +264,31 @@ class State {
     window.history.replaceState(null, '', newUrl);
   }
 
-  setSecret(secret, callback) {
+  setSecret(secret, writeSecret, callback) {
     this.secret_ = secret;
     if (!this.user) {
       setStatus(Status.AUTH_ERROR);
       callback();
       return;
     }
-    firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
-        .set(secret).then(() => { callback(); })
-        .catch(error => { setStatus(Status.AUTH_ERROR); });
     let newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
         `&secret=${encodeURIComponent(secret)}`;
     if (!this.tilingCachingEnabled) newUrl += '&tc=no';
     window.history.replaceState(null, '', newUrl);
     document.getElementById('theMap').classList.add('editor-view');
+    if (writeSecret) {
+      if (!secret) {
+        debug('secret is missing');
+        callback();
+        return;
+      }
+      debug('writing secret ' + secret);
+      firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
+          .set(secret).then(() => { callback(); })
+          .catch(error => { setStatus(Status.AUTH_ERROR); });
+    } else {
+      callback();
+    }
   }
 
   getMid() {
@@ -327,7 +338,7 @@ class State {
 
   setupNewMid(callback) {
     this.setMid('m' + this.generateRandomString_());
-    this.setSecret('s' + this.generateRandomString_(), callback);
+    this.setSecret('s' + this.generateRandomString_(), true, callback);
   }
 
   // Create a random 10-character string with characters belonging to [a-z0-9].

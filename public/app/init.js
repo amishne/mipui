@@ -48,9 +48,9 @@ function initializeFirebase(callback) {
   };
   firebase.initializeApp(config);
   firebase.database.enableLogging(false);
-  firebase.auth().onAuthStateChanged(user => {
-    userChanged(user);
-  });
+//  firebase.auth().onAuthStateChanged(user => {
+//    userChanged(user);
+//  });
   initAuth(callback);
 }
 
@@ -86,6 +86,7 @@ function initializeMenuAndStatus(includeMenu) {
   state.progressStatusBar = new StatusBar(2);
   state.infoStatusBar = new StatusBar(0);
   if (includeMenu && state.mode == 'dev') {
+    state.menu.addUserMenu();
     state.menu.addDebugMenu();
   }
 }
@@ -111,11 +112,12 @@ function start() {
     const secret = params.secret ? decodeURIComponent(params.secret) : null;
     if (mid) {
       setStatus(Status.LOADING);
-      state.opCenter.connectToExistingMap(mid, secret, () => {
-        if (secret) state.menu.setToInitialSelection();
-        resetView();
-        setStatus(Status.READY);
-      });
+      state.opCenter.connectToExistingMap(
+          mid, secret, true, !!secret, secretIsKnown => {
+            if (secretIsKnown) state.menu.setToInitialSelection();
+            resetView();
+            setStatus(Status.READY);
+          });
     } else {
       state.menu.setToInitialSelection();
       document.getElementById('theMap').classList.add('editor-view');

@@ -1,13 +1,44 @@
+let firebaseUi = null;
+let uiConfig = null;
+
 function login() {
+  //if (ui.isPendingRedirect()) {
+  firebaseUi.start('.firebaseui-auth-container', uiConfig);
+  //}
+}
+
+function userChanged(user) {
+  document.getElementById('userStatus').textContent =
+      user.isAnonymous ? 'Logged out' : user.uid;
+  if (state.dialog) state.dialog.cancel();
+  if (state.user == user) return;
+  state.user = user;
+  if (state.getMid() && !state.getSecret()) {
+    // Populate secret from the user, if it's there.
+    const secretPath = `/users/${user.uid}/secrets/${state.getMid()}`;
+    firebase.database().ref(secretPath).once('value').then(data => {
+      const secret = data.val();
+      debug('secret = ' + secret);
+      if (secret) state.setSecret(secret, false, () => {});
+    }).catch(err => {
+      // Do nothing.
+    });
+  } else if (state.getMid() && state.getSecret()) {
+    // Copy the secret into the new user.
+    state.setSecret(state.getSecret(), true, () => {});
+  }
+}
+
+function initAuth(callback) {
   let data = null;
   // FirebaseUI config.
-  const uiConfig = {
+  uiConfig = {
     callbacks: {
       signInSuccessWithAuthResult: (authResult, redirectUrl) => {
         userChanged(firebase.auth().currentUser.uid);
         return false;
       },
-      signInFailure: () => {
+      signInFailure: error => {
         // For merge conflicts, the error.code will be
         // 'firebaseui/anonymous-upgrade-merge-conflict'.
         if (error.code != 'firebaseui/anonymous-upgrade-merge-conflict') {
@@ -19,10 +50,13 @@ function login() {
         // be copied to the non-anonymous user.
         const app = firebase.app();
         // Save anonymous user data first.
+        const anonymousUser = firebase.auth().currentUser;
         return app.database().ref('users/' + firebase.auth().currentUser.uid)
             .once('value')
             .then(snapshot => {
               data = snapshot.val();
+              debug('saving data:');
+              debug(data);
               // This will trigger onAuthStateChanged listener which
               // could trigger a redirect to another page.
               // Ensure the upgrade flow is not interrupted by that callback
@@ -30,14 +64,11 @@ function login() {
               // redirection.
               return firebase.auth().signInWithCredential(cred);
             })
-            .then(user => {
-              // Original Anonymous Auth instance now has the new user.
-              return app.database().ref('users/' + user.uid).set(data);
-            })
+            // Original Anonymous Auth instance now has the new user.
+            .then(user => app.database().ref('users/' + user.uid).set(data))
+            // Delete anonymous user.
+            .then(() => anonymousUser.delete())
             .then(() => {
-              // Delete anonymnous user.
-              return anonymousUser.delete();
-            }).then(() => {
               // Clear data in case a new user signs in, and the state change
               // triggers.
               data = null;
@@ -66,20 +97,7 @@ function login() {
   };
 
   // Initialize the FirebaseUI Widget using Firebase.
-  const ui = new firebaseui.auth.AuthUI(firebase.auth());
-  //if (ui.isPendingRedirect()) {
-  ui.start('.firebaseui-auth-container', uiConfig);
-  //}
-}
-
-function userChanged(user) {
-  if (state.user == user) return;
-  state.user = user;
-  document.getElementById('userStatus').textContent =
-      user.isAnonymous ? 'Logged out' : user.uid;
-}
-
-function initAuth(callback) {
+  firebaseUi = new firebaseui.auth.AuthUI(firebase.auth());
   if (firebase.auth().currentUser) {
     userChanged(firebase.auth().currentUser);
     return;

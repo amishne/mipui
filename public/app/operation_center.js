@@ -419,15 +419,25 @@ class OperationCenter {
     this.isCurrentlyProcessingPendingOperations_ = false;
   }
 
-  connectToExistingMap(mid, secret, callback) {
+  connectToExistingMap(mid, secret, tryToLoadSecretFromUser,
+      writeSecret, callback) {
     if (!mid) return;
     if (state.getMid() != mid) state.setMid(mid);
+    if (!secret && tryToLoadSecretFromUser) {
+      const secretPath = `/users/${state.user.uid}/secrets/${mid}`;
+      firebase.database().ref(secretPath).once('value').then(data => {
+        this.connectToExistingMap(mid, data.val(), false, false, callback);
+      }).catch(err => {
+        this.connectToExistingMap(mid, null, false, false, callback);
+      });
+      return;
+    }
     if (!secret) state.gesture = null;
     if (secret && state.getSecret() != secret) {
-      state.setSecret(secret, () => {
-        this.connectToExistingMap(mid, secret, callback);
+      state.setSecret(secret, writeSecret, () => {
+        this.connectToExistingMap(mid, secret, false, false, callback);
       });
-      callback();
+      callback(true);
       return;
     }
     Array.from(document.getElementsByClassName('disabled-in-read-only-mode'))
@@ -441,7 +451,7 @@ class OperationCenter {
     this.startListeningForMap();
     this.startListeningForOperations();
     this.readMetadata_();
-    callback();
+    callback(!!secret);
   }
 
   createAndConnectToNewMapOnServer(callback, origin) {
@@ -457,7 +467,8 @@ class OperationCenter {
         data.metadata.origin = origin;
       }
       firebase.database().ref(`/maps/${state.getMid()}`).set(data).then(() => {
-        this.connectToExistingMap(state.getMid(), state.getSecret(), callback);
+        this.connectToExistingMap(
+            state.getMid(), state.getSecret(), false, callback);
       }).catch(error => {
         setStatus(Status.AUTH_ERROR);
         callback();
