@@ -11,11 +11,6 @@ class OvalRoomGesture extends RoomGesture {
     };
   }
 
-  startHover(cell) {
-    super.startHover(cell);
-    if (this.hollow_) this.mode_ = 'hollow';
-  }
-
   process_() {
     if (this.mode_ == 'toWall' || this.mode_ == 'hollow') {
       this.mapCellsToValues_(true, 'w');
@@ -140,5 +135,9 @@ class OvalRoomGesture extends RoomGesture {
     const existingContent = cell.getLayerContent(ct.walls);
     const existingClip = (existingContent || {})[key];
     return existingClip ? existingClip + '|' + newEllipse : newEllipse;
+  }
+
+  calculateMode_() {
+    return this.hollow_ ? 'hollow' : super.calculateMode_();
   }
 }

@@ -9,11 +9,6 @@ class SquareRoomGesture extends RoomGesture {
     };
   }
 
-  startHover(cell) {
-    super.startHover(cell);
-    if (this.hollow_) this.mode_ = 'hollow';
-  }
-
   process_() {
     this.borders_ = new Set();
     if (this.mode_ == 'toWall') return;
@@ -34,5 +29,9 @@ class SquareRoomGesture extends RoomGesture {
   calculateContent_(cell) {
     return (this.mode_ == 'toWall' || this.borders_.has(cell)) ?
       this.wallContent_ : null;
+  }
+
+  calculateMode_() {
+    return this.hollow_ ? 'hollow' : super.calculateMode_();
   }
 }

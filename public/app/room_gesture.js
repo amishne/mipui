@@ -16,7 +16,10 @@ class RoomGesture extends Gesture {
     }
     this.anchorCell_ = cell;
     this.clearCells_();
-    this.mode_ = cell.hasLayerContent(ct.walls) ? 'toFloor' : 'toWall';
+    this.mode_ = this.calculateMode_();
+    this.addCell_(this.anchorCell_);
+    this.process_();
+    this.showHighlight_();
   }
 
   startGesture() {
@@ -28,7 +31,9 @@ class RoomGesture extends Gesture {
     this.showHighlight_();
   }
 
-  stopHover() {}
+  stopHover() {
+    this.clearHighlight_();
+  }
 
   continueGesture(cell) {
     if (!this.anchorCell_ || !cell || cell.role != 'primary') {
@@ -74,6 +79,12 @@ class RoomGesture extends Gesture {
     this.apply_(true);
   }
 
+  clearHighlight_() {
+    this.cells_.forEach(cell => {
+      cell.hideHighlight(ct.walls);
+    });
+  }
+
   calculateMinMaxCellPositions_(includeDividers) {
     let [minX, minY, maxX, maxY] = [null, null, null, null];
     this.cells_.forEach(cell => {
@@ -109,5 +120,9 @@ class RoomGesture extends Gesture {
 
   calculateContent_() {
     return null;
+  }
+  
+  calculateMode_() {
+    return this.anchorCell_.hasLayerContent(ct.walls) ? 'toFloor' : 'toWall';
   }
 }
