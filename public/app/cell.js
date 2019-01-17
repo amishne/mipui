@@ -377,18 +377,19 @@ class Cell {
     if (isHighlight) return;
     if (layer != ct.walls) return;
     element.innerHTML = '';
-    let classes = null;
     switch (this.getNeighboringWallsStatus_()) {
       case 'max':
-        classes = 'wall-cover wall-cover-inner';
+        element.classList.add('has-wall-cover');
+        createAndAppendDivWithClass(element, 'wall-cover wall-cover-inner');
         break;
       case 'max-boundary':
-        classes = 'wall-cover wall-cover-boundary';
+        element.classList.add('has-wall-cover');
+        createAndAppendDivWithClass(element, 'wall-cover wall-cover-boundary');
+        break;
+      default:
+        element.classList.remove('has-wall-cover');
         break;
     }
-    element.classList[classes ? 'add' : 'remove']('has-wall-cover');
-    element.innerHTML = '';
-    createAndAppendDivWithClass(element, classes);
   }
 
   setShape_(element, layer, kind, variation, connections) {
