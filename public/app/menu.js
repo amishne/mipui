@@ -28,6 +28,7 @@ class Menu {
     this.tokenSelectedText_ = '';
     this.menuItems_ = this.setupMenuItems_();
     this.debugMenuItem_ = this.setupDebugMenuItem_();
+    this.userMenuItem_ = this.setupUserMenuItem_();
     this.shortcuts_ = new Map();
   }
 
@@ -72,6 +73,15 @@ class Menu {
 
   addDebugMenu() {
     this.menuItems_.splice(this.menuItems_.length - 1, 0, this.debugMenuItem_);
+    const topElement = document.getElementsByClassName('menu-top')[0];
+    const bottomElement = document.getElementsByClassName('menu-bottom')[0];
+    topElement.innerHTML = '';
+    bottomElement.innerHTML = '';
+    this.createMenuItems_(topElement, bottomElement);
+  }
+  
+  addUserMenu() {
+    this.menuItems_.push(this.userMenuItem_);
     const topElement = document.getElementsByClassName('menu-top')[0];
     const bottomElement = document.getElementsByClassName('menu-bottom')[0];
     topElement.innerHTML = '';
@@ -1912,37 +1922,6 @@ class Menu {
           ],
         },
       },
-      {
-        name: '&User',
-        presentation: 'icon',
-        materialIcon: 'person_outline',
-        tip: '',
-        enabledInReadonlyMode: true,
-        classNames: ['user-menu'],
-        submenu: {
-          items: [
-            {
-              name: 'Status',
-              type: 'label',
-              id: 'userStatus',
-              presentation: 'label',
-              enabledInReadonlyMode: true,
-              text: 'Logged out',
-            },
-            {
-              name: 'Log in',
-              type: 'button',
-              presentation: 'icon',
-              materialIcon: 'how_to_reg',
-              enabledInReadonlyMode: true,
-              callback: () => {
-                new UserDialog().show();
-                login();
-              },
-            },
-          ],
-        },
-      },
       // {
       //   name: 'Survey',
       //   type: 'button',
@@ -2081,6 +2060,40 @@ class Menu {
                 await state.reloadTheme();
                 state.theMap.unlockTiles();
               });
+            },
+          },
+        ],
+      },
+    };
+  }
+
+  setupUserMenuItem_() {
+    return {
+      name: '&User',
+      presentation: 'icon',
+      materialIcon: 'person_outline',
+      tip: '',
+      enabledInReadonlyMode: true,
+      classNames: ['user-menu'],
+      submenu: {
+        items: [
+          {
+            name: 'Status',
+            type: 'label',
+            id: 'userStatus',
+            presentation: 'label',
+            enabledInReadonlyMode: true,
+            text: 'Logged out',
+          },
+          {
+            name: 'Log in',
+            type: 'button',
+            presentation: 'icon',
+            materialIcon: 'how_to_reg',
+            enabledInReadonlyMode: true,
+            callback: () => {
+              new UserDialog().show();
+              login();
             },
           },
         ],
