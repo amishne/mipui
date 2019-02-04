@@ -59,6 +59,7 @@
 .layer-container {
   position: absolute;
   clip-path: inset(-0.1px);
+  -webkit-clip-path: inset(-0.1px);
   left: 0;
   top: 0;
   width: 100%;
@@ -69,6 +70,7 @@
 .widget-layer {
   z-index: 10;
   clip-path: unset;
+  -webkit-clip-path: unset;
 }
 
 .grid-layer {
@@ -77,15 +79,18 @@
   z-index: 10;
   pointer-events: auto;
   clip-path: unset;
+  -webkit-clip-path: unset;
 }
 
 .mask-layer-container {
   z-index: 9;
   clip-path: inset(-1px);
+  -webkit-clip-path: inset(-1px);
 }
 
 .editor-view .mask-layer-container {
   clip-path: inset(0px);
+  -webkit-clip-path: inset(0px);
 }
 
 .gmoverlay-layer-container {
@@ -116,6 +121,7 @@
 .elevation-layer-container {
   z-index: 3;
   clip-path: inset(-1px);
+  -webkit-clip-path: inset(-1px);
 }
 
 .walls-layer-container {
@@ -480,10 +486,12 @@
 
 .stairs-cell-ascending-left {
   clip-path: polygon(0 0, 100% 9px, 100% calc(100% - 9px), 0 100%);
+  -webkit-clip-path: polygon(0 0, 100% 9px, 100% calc(100% - 9px), 0 100%);
 }
 
 .stairs-cell-ascending-right {
   clip-path: polygon(0 9px, 100% 0, 100% 100%, 0 calc(100% - 9px));
+  -webkit-clip-path: polygon(0 9px, 100% 0, 100% 100%, 0 calc(100% - 9px));
 }
 
 .stairs-cell-vertical {
@@ -492,10 +500,12 @@
 
 .stairs-cell-ascending-top {
   clip-path: polygon(0 0, 100% 0, calc(100% - 9px) 100%, 9px 100%);
+  -webkit-clip-path: polygon(0 0, 100% 0, calc(100% - 9px) 100%, 9px 100%);
 }
 
 .stairs-cell-ascending-bottom {
   clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 100%, 0 100%);
+  -webkit-clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 100%, 0 100%);
 }
 
 .stairs-cell-spiral {

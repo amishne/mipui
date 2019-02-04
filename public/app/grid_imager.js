@@ -105,7 +105,11 @@ class GridImager {
         resolve(value);
         return;
       }
-      const src = pathFolder + match[3];
+      const relativePath = match[3];
+      // In Safari the value will be converted to a full path, so we check for
+      // that first.
+      const src = relativePath.startsWith(pathFolder) ?
+        relativePath : (pathFolder + relativePath);
       this.url2imageElement_(src).then(imageElement => {
         imageElement.addEventListener('load', () => {
           const width = imageElement.naturalWidth;
