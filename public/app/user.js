@@ -8,10 +8,11 @@ function login() {
 }
 
 function userChanged(user) {
-  document.getElementById('userStatus').textContent =
-      /*user.isAnonymous ? 'Logged out' : */user.uid;
-  if (state.dialog) state.dialog.cancel();
-  if (state.user == user) return;
+  state.user = user;
+//  document.getElementById('userStatus').textContent =
+//      /*user.isAnonymous ? 'Logged out' : */user.uid;
+//  if (state.dialog) state.dialog.cancel();
+//  if (state.user == user) return;
   state.user = user;
   if (state.getMid() && !state.getSecret()) {
     // Populate secret from the user, if it's there.
