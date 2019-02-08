@@ -374,68 +374,22 @@ class Cell {
 
   setCover_(element, layer, isHighlight) {
     if (!state.shouldApplyCoverEffect()) return;
-    if (isHighlight) return;
-    //if (isHighlight) return;
     if (layer != ct.walls) return;
     element.innerHTML = '';
     switch (this.getNeighboringWallsStatus_()) {
       case 'max':
         element.classList.add('has-wall-cover');
         createAndAppendDivWithClass(element, 'wall-cover wall-cover-inner');
-        //createAndAppendDivWithClass(element, 'wall-cover wall-cover-inner');
         break;
       case 'max-boundary':
         element.classList.add('has-wall-cover');
         createAndAppendDivWithClass(element, 'wall-cover wall-cover-boundary');
-//        const coverElement = createAndAppendDivWithClass(
-//            element, 'wall-cover wall-cover-boundary');
-//        coverElement.style.margin = '-20px';
-//        coverElement.style.width = `${this.width + 40}px`;
-//        coverElement.style.height = `${this.height + 40}px`;
-//        coverElement.style.background = this.createCoverSvg_();
-//        const scale = (137 * this.row + 177 * this.column) % 100;
-//        coverElement.style.transform = `rotate(${137 * this.row + 177 * this.column}deg) scale(1.2)`;
         break;
       default:
         element.classList.remove('has-wall-cover');
         break;
     }
   }
-
-//  createCoverSvg_() {
-//    const path = "<path d='M46 44 L58 30 L46 14 L22 20 L10 36 L8 47 L18 49.5 L32 40 Z' fill='white' />";
-//    //return 'white';
-//    const width = this.width + 40;
-//    const height = this.height + 40;
-//    const offset = 20;
-//    const points = [
-//      // Hexagon
-////      {x: width / 2, y: 0},
-////      {x: width, y: 15},
-////      {x: width, y: height - 15},
-////      {x: width / 2, y: height},
-////      {x: 0, y: height - 15},
-////      {x: 0, y: 15},
-//      // Fat cross
-//      {x: offset, y: 0},
-//      {x: width - offset, y: 0},
-//      {x: width - offset, y: offset},
-//      {x: width, y: offset},
-//      {x: width, y: height - offset},
-//      {x: width - offset, y: height - offset},
-//      {x: width - offset, y: height},
-//      {x: offset, y: height},
-//      {x: offset, y: height - offset},
-//      {x: 0, y: height - offset},
-//      {x: 0, y: offset},
-//      {x: offset, y: offset},
-//    ].map(point => `${point.x},${point.y}`).join(' ');
-//    const polygon = `<polygon points='${points}' fill='white' />`;
-//    return 'url("data:image/svg+xml;utf8,' +
-//        "<svg xmlns='http://www.w3.org/2000/svg'>" +
-//        path +
-//        '</svg>")';
-//  }
 
   setShape_(element, layer, kind, variation, connections) {
     if (!element ||
