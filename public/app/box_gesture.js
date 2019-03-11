@@ -451,11 +451,11 @@ class BoxGesture extends Gesture {
       }
     };
     this.deleteWidget_.onmousedown = e => {
-      //this.finishEditing_();
       e.stopPropagation();
     };
     this.deleteWidget_.onmouseup = e => {
       if (e.buttons == 0) {
+        this.finishEditing_();
         deleteGesture.startGesture();
         deleteGesture.stopGesture();
         state.opCenter.recordOperationComplete();
