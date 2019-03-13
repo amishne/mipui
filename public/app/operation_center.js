@@ -275,41 +275,43 @@ class OperationCenter {
   // Applies a remote operation locally.
   // This might cancel some of the pending local ops.
   applyRemoteOperation_(num, op) {
-    debug(`Applying remote operation ${num}...`);
-    // Stop the current operation.
-    this.recordOperationComplete();
-    // A remote operation is ready and loaded. Since it's remote, it hasn't
-    // been locally applied yet nor added to the undo stack, but since it may
-    // invalidate pending operations, before we add and apply it we temporarily
-    // undo and then try to re-apply the pending local ops.
-    this.stopSendingPendingLocalOperations_();
-    this.undoPendingOperations_();
-    this.addOperation_(op);
-    op.redo();
-    state.setLastOpNum(num);
-    debug(`Remote operation ${num} applied:`);
-    debug(op);
-    delete this.incomingRemoteOperations_[num];
-    // If there's another remote operation waiting, apply it; otherwise redo
-    // pending ops that were undoed.
-    const nextRemoteOperation = this.incomingRemoteOperations_[num + 1];
-    if (nextRemoteOperation) {
-      // A remote operation is next up again, and it was already loaded.
-      this.applyRemoteOperation_(num + 1, nextRemoteOperation);
-    } else {
-      this.redoPendingOperations_();
-      if (num >= this.lastFullMapNum_) {
-        // This means we applied all the remote ops that we know of. Mark the
-        // status as ready and resume sending local pending ops.
-        this.setStatus_(Status.READY);
-        // But first flush out the first pending operation, if it was accepted.
-        if (this.opBeingSentWasAccepted_ &&
-            this.pendingLocalOperations_.length > 0) {
-          this.pendingLocalOperations_.shift();
+    setTimeout(() => {
+      debug(`Applying remote operation ${num}...`);
+      // Stop the current operation.
+      this.recordOperationComplete();
+      // A remote operation is ready and loaded. Since it's remote, it hasn't
+      // been locally applied yet nor added to the undo stack, but since it may
+      // invalidate pending operations, before we add and apply it we temporarily
+      // undo and then try to re-apply the pending local ops.
+      this.stopSendingPendingLocalOperations_();
+      this.undoPendingOperations_();
+      this.addOperation_(op);
+      op.redo();
+      state.setLastOpNum(num);
+      debug(`Remote operation ${num} applied:`);
+      debug(op);
+      delete this.incomingRemoteOperations_[num];
+      // If there's another remote operation waiting, apply it; otherwise redo
+      // pending ops that were undoed.
+      const nextRemoteOperation = this.incomingRemoteOperations_[num + 1];
+      if (nextRemoteOperation) {
+        // A remote operation is next up again, and it was already loaded.
+        this.applyRemoteOperation_(num + 1, nextRemoteOperation);
+      } else {
+        this.redoPendingOperations_();
+        if (num >= this.lastFullMapNum_) {
+          // This means we applied all the remote ops that we know of. Mark the
+          // status as ready and resume sending local pending ops.
+          this.setStatus_(Status.READY);
+          // But first flush out the first pending operation, if it was accepted.
+          if (this.opBeingSentWasAccepted_ &&
+              this.pendingLocalOperations_.length > 0) {
+            this.pendingLocalOperations_.shift();
+          }
+          this.startSendingPendingLocalOperations_();
         }
-        this.startSendingPendingLocalOperations_();
       }
-    }
+    }, 1);
   }
 
   // Undoes all the current pending local ops.
