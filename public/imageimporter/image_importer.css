@@ -271,3 +271,20 @@ button:active, .button-like:active {
 #importer-import-mipui-button {
   margin: 8px 0;
 }
+
+.example-row {
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.example-row-label {
+  align-self: center;
+  flex-grow: 10;
+}
+
+.example {
+  max-height: 100px;
+  margin: 4px;
+  border: 1px solid grey;
+}
