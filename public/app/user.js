@@ -1,3 +1,100 @@
+/*function isLoggedIn() {
+  return state.user && !state.user.isAnonymous;
+}
+
+async function logInOnPageLoad() {
+  const user = await tryToLogInWithExistingCredentials();
+  if (user) {
+    await loginCompleted(user);
+  }
+}
+
+async function logInOnMapCreation() {
+  if (!isLoggedIn()) {
+    await logInAsAnonymousUser();
+  }
+  await updateUserMapData();
+}
+
+async function updateUserDataAndMaybeSetSecret() {
+  const secret = await updateUserMapData();
+  if (!state.getSecret() && secret) {
+    state.setSecret(secret);
+  }
+}
+
+async function loginCompleted(user) {
+  await changeCurrentUser(user);
+  if (state.getMid()) {
+    await updateUserDataAndMaybeSetSecret();
+  }
+  updateUserMenu();
+}
+
+async function updateUserMapData() {
+  return new Promise((resolve, reject) => {
+    const mapPath = `/users/${state.user.uid}/maps/${state.getMid()}`;
+    firebase.database()
+        .ref(mapPath + '/lastVisit')
+        .set(firebase.database.ServerValue.TIMESTAMP);
+    firebase.database().ref(mapPath + '/secret').once('value').then(data => {
+      let secret = data.val();
+      if (!secret && state.getSecret()) {
+        secret = state.getSecret();
+        firebase.database().ref(mapPath + '/secret').set(secret);
+      }
+      resolve(secret);
+    });
+  });
+}
+
+async function logOut() {
+  await logInAsAnonymousUser();
+}
+
+async function logInAsAnonymousUser() {
+  const user = await createAnonymousUser();
+  loginCompleted(user);
+}
+
+async function tryToLogInWithExistingCredentials() {
+  // TODO
+  return user;
+}
+
+async function changeCurrentUser(newUser) {
+  await copyUserData(state.user, newUser);
+  if (!isLoggedIn() && state.user) {
+    // Moving from anonymous to logged in, so delete anonymous user.
+    await deleteUser(state.user);
+  }
+  state.user = newUser;
+}
+
+async function copyUserData(from, to) {
+  // TODO copy /users/<from.uid>/ to /users/<to.uid>/
+}
+
+function deleteUser(user) {
+  return new Promise((resolve, reject) => {
+    // TODO delete /users/<user.uid>
+    user.delete().then(() => {
+      resolve();
+    });
+  });
+}
+
+async function createAnonymousUser() {
+}
+
+function updateUserMenu() {
+  // TODO
+}
+
+
+
+*/
+
 let firebaseUi = null;
 let uiConfig = null;
 
