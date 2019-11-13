@@ -67,8 +67,8 @@ class Menu {
     document.querySelector('#mapLongDesc textarea').value =
         state.getProperty(pk.longDescription);
     document.querySelector('#mapTheme select').selectedIndex =
-        themes.find(theme => theme.propertyIndex == state.getProperty(pk.theme))
-            .displayIndex;
+        themes.find(theme => theme.propertyIndex ===
+            state.getProperty(pk.theme)).displayIndex;
   }
 
   addDebugMenu() {
