@@ -270,12 +270,12 @@ class ImportDialog extends Dialog {
     for (const door of data.doors) {
       const cell =
           state.theMap.getCell(
-              door.y + (door.dir.y / 2),
-              door.x + (door.dir.x / 2));
-      const oppositeCell =
-          state.theMap.getCell(
               door.y - (door.dir.y / 2),
               door.x - (door.dir.x / 2));
+      const oppositeCell =
+          state.theMap.getCell(
+              door.y + (door.dir.y / 2),
+              door.x + (door.dir.x / 2));
       oppositeCell.setLayerContent(ct.walls, null, true);
       switch (door.type) {
         case 1:
@@ -284,6 +284,14 @@ class ImportDialog extends Dialog {
           cell.setLayerContent(ct.separators, {
             [ck.kind]: ct.separators.door.id,
             [ck.variation]: ct.separators.door.single.id,
+          }, true);
+          break;
+        case 2:
+          // Archway
+          cell.setLayerContent(ct.walls, null, true);
+          cell.setLayerContent(ct.separators, {
+            [ck.kind]: ct.separators.archway.id,
+            [ck.variation]: ct.separators.archway.generic.id,
           }, true);
           break;
         case 3:
@@ -322,6 +330,14 @@ class ImportDialog extends Dialog {
           cell.setLayerContent(ct.separators, {
             [ck.kind]: ct.separators.door.id,
             [ck.variation]: ct.separators.door.double.id,
+          }, true);
+          break;
+        case 6:
+          // Secret door
+          cell.setLayerContent(ct.walls, wall, true);
+          cell.setLayerContent(ct.separators, {
+            [ck.kind]: ct.separators.door.id,
+            [ck.variation]: ct.separators.door.secret.id,
           }, true);
           break;
         default:
