@@ -203,14 +203,9 @@ class ImportDialog extends Dialog {
         const files = inputElement.files;
         if (files && files.length > 0) {
           const fr = new FileReader();
-          fr.addEventListener('load', async() => {
-            const numOpsToUndo =
-                await this.applyOnePageDungeonFile_(
-                    inputElement.value, fr.result);
-            state.opCenter.recordOperationComplete();
-            for (let i = 0; i < numOpsToUndo; i++) {
-              state.opCenter.undo();
-            }
+          fr.addEventListener('load', () => {
+            new OnePageDungeonImporter()
+                .importMap(inputElement.value, fr.result);
             accept();
           });
           fr.readAsText(files[0]);
@@ -218,147 +213,6 @@ class ImportDialog extends Dialog {
       });
       inputElement.click();
     });
-  }
-
-  applyOnePageDungeonFile_(filename, input) {
-    const data = JSON.parse(input);
-
-    // Basic map metadata.
-    state.setProperty(
-        pk.theme,
-        themes.find(theme => theme.name === 'Cross Hatch (with grid)')
-            .propertyIndex,
-        true);
-    state.setProperty(pk.title, data.title, true);
-    state.setProperty(pk.longDescription, data.story, true);
-
-    // Map size.
-    let minRow = 0;
-    let minCol = 0;
-    let maxRow = 0;
-    let maxCol = 0;
-    for (const rect of data.rects) {
-      minCol = Math.min(minCol, rect.x);
-      minRow = Math.min(minRow, rect.y);
-      maxCol = Math.max(maxCol, rect.x + rect.w);
-      maxRow = Math.max(maxRow, rect.y + rect.h);
-    }
-    const margin = 2;
-    state.setProperty(pk.firstColumn, minCol - margin, true);
-    state.setProperty(pk.firstRow, minRow - margin, true);
-    state.setProperty(pk.lastColumn, maxCol + margin, true);
-    state.setProperty(pk.lastRow, maxRow + margin, true);
-    state.opCenter.recordOperationComplete();
-
-    // Initialize everything to walls.
-    const wall = {
-      [ck.kind]: ct.walls.smooth.id,
-      [ck.variation]: ct.walls.smooth.square.id,
-    };
-    this.drawRoom_(
-        minCol - margin - 0.5,
-        minRow - margin - 0.5,
-        2 * margin + maxCol - minCol,
-        2 * margin + maxRow - minRow,
-        wall);
-    // And then curve out non-wall rooms.
-    for (const rect of data.rects) {
-      this.drawRoom_(rect.x, rect.y, rect.w - 1, rect.h - 1, null);
-    }
-
-    // Doors and other separators.
-    for (const door of data.doors) {
-      const cell =
-          state.theMap.getCell(
-              door.y - (door.dir.y / 2),
-              door.x - (door.dir.x / 2));
-      const oppositeCell =
-          state.theMap.getCell(
-              door.y + (door.dir.y / 2),
-              door.x + (door.dir.x / 2));
-      oppositeCell.setLayerContent(ct.walls, null, true);
-      switch (door.type) {
-        case 1:
-          // Single door
-          cell.setLayerContent(ct.walls, wall, true);
-          cell.setLayerContent(ct.separators, {
-            [ck.kind]: ct.separators.door.id,
-            [ck.variation]: ct.separators.door.single.id,
-          }, true);
-          break;
-        case 2:
-          // Archway
-          cell.setLayerContent(ct.walls, null, true);
-          cell.setLayerContent(ct.separators, {
-            [ck.kind]: ct.separators.archway.id,
-            [ck.variation]: ct.separators.archway.generic.id,
-          }, true);
-          break;
-        case 3:
-          // Stairs
-          cell.setLayerContent(ct.walls, null, true);
-          const stairsCell = state.theMap.getCell(door.y, door.x);
-          let stairsKind;
-          let stairsVariation;
-          if (door.dir.x !== 0) {
-            stairsKind = ct.elevation.horizontal;
-            stairsVariation = door.dir.x > 0 ? 
-                ct.elevation.horizontal.ascendingLeft :
-                ct.elevation.horizontal.ascendingRight;
-          } else {
-            stairsKind = ct.elevation.vertical;
-            stairsVariation = door.dir.y > 0 ? 
-                ct.elevation.vertical.ascendingTop :
-                ct.elevation.vertical.ascendingBottom;
-          }
-          stairsCell.setLayerContent(ct.elevation, {
-            [ck.kind]: stairsKind.id,
-            [ck.variation]: stairsVariation.id,
-          }, true);
-          break;
-        case 4:
-          // Bars
-          cell.setLayerContent(ct.walls, null, true);
-          cell.setLayerContent(ct.separators, {
-            [ck.kind]: ct.separators.bars.id,
-            [ck.variation]: ct.separators.bars.generic.id,
-          }, true);
-          break;
-        case 5:
-          // Double door
-          cell.setLayerContent(ct.walls, wall, true);
-          cell.setLayerContent(ct.separators, {
-            [ck.kind]: ct.separators.door.id,
-            [ck.variation]: ct.separators.door.double.id,
-          }, true);
-          break;
-        case 6:
-          // Secret door
-          cell.setLayerContent(ct.walls, wall, true);
-          cell.setLayerContent(ct.separators, {
-            [ck.kind]: ct.separators.door.id,
-            [ck.variation]: ct.separators.door.secret.id,
-          }, true);
-          break;
-        default:
-          // Unknown.
-          cell.setLayerContent(ct.walls, null, true);
-          break;
-      }
-    }
-
-    state.opCenter.recordOperationComplete();
-  }
-
-  drawRoom_(startCol, startRow, width, height, content) {
-    const endCol = startCol + width;
-    const endRow = startRow + height;
-    for (let col = startCol; col <= endCol; col += 0.5) {
-      for (let row = startRow; row <= endRow; row += 0.5) {
-        const cell = state.theMap.getCell(row, col);
-        cell.setLayerContent(ct.walls, content, true);
-      }
-    }
   }
 
   importFromImage_() {
