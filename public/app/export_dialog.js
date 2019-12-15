@@ -12,7 +12,7 @@ class ExportDialog extends Dialog {
         state.getProperty(pk.lastColumn) - state.getProperty(pk.firstColumn);
     const currentHeight =
         state.getProperty(pk.lastRow) - state.getProperty(pk.firstRow);
-    const addRadioButton = (name, size, ...descriptions) => {
+    const addRadioButton = (name, size, extraBoundary, ...descriptions) => {
       const container =
           createAndAppendDivWithClass(this.dialogElement_, 'menu-radio-group');
       const button = document.createElement('input');
@@ -25,8 +25,8 @@ class ExportDialog extends Dialog {
       this.exportButtons_.push(button);
       if (this.exportButtons_.length == 1) button.checked = true;
       const label = document.createElement('label');
-      const x = size * currentWidth;
-      const y = size * currentHeight;
+      const x = size * currentWidth + (extraBoundary ? size / 4 : 0);
+      const y = size * currentHeight + (extraBoundary ? size / 4 : 0);
       const lines = [`${size} pixels per cell (final size ${x}x${y}).`]
           .concat(descriptions);
       if (x > 14000 || y > 14000) {
@@ -40,18 +40,18 @@ class ExportDialog extends Dialog {
       container.appendChild(label);
     };
 
-    addRadioButton('1:1', 32,
+    addRadioButton('1:1', 32, true,
         'This looks like the app looks at default zoom level.');
-    addRadioButton('2:1', 64,
+    addRadioButton('2:1', 64, true,
         'This looks like the app looks at default zoom level ' +
         'on high-DPI displays.');
     if (state.tilingCachingEnabled) {
-      addRadioButton('Quick', 192,
+      addRadioButton('Quick', 192, true,
           'This is generated faster than the other options.');
     }
-    addRadioButton('Battlemap', 300,
+    addRadioButton('Battlemap', 300, true,
         'When printing in 300 DPI, this will result in 1 inch per cell.');
-    addRadioButton('Cropped', 70,
+    addRadioButton('Cropped', 70, false,
         'Cropped to align with grid.',
         'This is the most convenient option when importing the image in ' +
         'other apps, such as virtual tabletops.');
