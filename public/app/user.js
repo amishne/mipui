@@ -110,21 +110,20 @@ function userChanged(user) {
 //      /*user.isAnonymous ? 'Logged out' : */user.uid;
 //  if (state.dialog) state.dialog.cancel();
 //  if (state.user == user) return;
-  state.user = user;
-  if (state.getMid() && !state.getSecret()) {
-    // Populate secret from the user, if it's there.
-    const secretPath = `/users/${user.uid}/secrets/${state.getMid()}`;
-    firebase.database().ref(secretPath).once('value').then(data => {
-      const secret = data.val();
-      debug('secret = ' + secret);
-      if (secret) state.setSecret(secret, false, () => {});
-    }).catch(err => {
-      // Do nothing.
-    });
-  } else if (state.getMid() && state.getSecret()) {
-    // Copy the secret into the new user.
-    state.setSecret(state.getSecret(), true, () => {});
-  }
+//  if (state.getMid() && !state.getSecret()) {
+//    // Populate secret from the user, if it's there.
+//    const secretPath = `/users/${user.uid}/secrets/${state.getMid()}`;
+//    firebase.database().ref(secretPath).once('value').then(data => {
+//      const secret = data.val();
+//      debug('secret = ' + secret);
+//      if (secret) state.setSecret(secret, false, () => {});
+//    }).catch(err => {
+//      // Do nothing.
+//    });
+//  } else if (state.getMid() && state.getSecret()) {
+//    // Copy the secret into the new user.
+//    state.setSecret(state.getSecret(), true, () => {});
+//  }
 }
 
 function initAuth(callback) {

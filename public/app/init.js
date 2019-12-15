@@ -113,7 +113,7 @@ function start() {
     if (mid) {
       setStatus(Status.LOADING);
       state.opCenter.connectToExistingMap(
-          mid, secret, true, !!secret, secretIsKnown => {
+          mid, secret, false, !!secret, secretIsKnown => {
             if (secretIsKnown) state.menu.setToInitialSelection();
             resetView();
             setStatus(Status.READY);
