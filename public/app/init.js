@@ -138,7 +138,7 @@ function start() {
   let gridStyleSheet = null;
   for (let i = 0; i < document.styleSheets.length; i++) {
     const styleSheet = document.styleSheets[i];
-    if (styleSheet.href.endsWith('app/grid.css')) {
+    if (styleSheet.href && styleSheet.href.endsWith('app/grid.css')) {
       gridStyleSheet = styleSheet;
       break;
     }
