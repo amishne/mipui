@@ -1172,7 +1172,7 @@ class Menu {
                     theme => theme.displayIndex == newChoiceNum).propertyIndex;
                 state.setProperty(pk.theme, themeNum, true);
                 state.reloadTheme();
-                state.opCenter.recordOperationComplete();
+                state.opCenter.recordOperationComplete(true);
               },
             },
             {
