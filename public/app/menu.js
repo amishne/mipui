@@ -888,6 +888,45 @@ class Menu {
               },
             },
             {
+              name: 'Save map locally',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'save',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const filename =
+                    sanitizeFilename(state.getTitleOrMid().toLowerCase());
+                const blob =
+                    new Blob([JSON.stringify(state.pstate_)],
+                      {type: 'application/json'});
+                saveAs(blob, `${filename}.mipui`);
+              },
+            },
+            {
+              name: 'Load local map',
+              type: 'button',
+              presentation: 'icon',
+              materialIcon: 'unarchive',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                const inputElement = document.createElement('input');
+                inputElement.type = 'file';
+                inputElement.accept = '.json,.mipui';
+                inputElement.addEventListener('change', () => {
+                  const files = inputElement.files;
+                  if (files && files.length > 0) {
+                    const fr = new FileReader();
+                    fr.addEventListener('load', () => {
+                      state.load(JSON.parse(fr.result));
+                      state.opCenter.fork();
+                    });
+                    fr.readAsText(files[0]);
+                  }
+                });
+                inputElement.click();
+              },
+            },
+            {
               name: 'Fork',
               type: 'button',
               presentation: 'icon',
@@ -1950,45 +1989,6 @@ class Menu {
             materialIcon: 'create_new_folder',
             enabledInReadonlyMode: true,
             callback: () => { window.open('.', '_self'); },
-          },
-          {
-            name: 'Save map locally',
-            type: 'button',
-            presentation: 'icon',
-            materialIcon: 'save',
-            enabledInReadonlyMode: true,
-            callback: () => {
-              const filename =
-                  sanitizeFilename(state.getTitleOrMid().toLowerCase());
-              const blob =
-                  new Blob([JSON.stringify(state.pstate_)],
-                    {type: 'application/json'});
-              saveAs(blob, `${filename}.mipui`);
-            },
-          },
-          {
-            name: 'Load local map',
-            type: 'button',
-            presentation: 'icon',
-            materialIcon: 'unarchive',
-            enabledInReadonlyMode: true,
-            callback: () => {
-              const inputElement = document.createElement('input');
-              inputElement.type = 'file';
-              inputElement.accept = '.json,.mipui';
-              inputElement.addEventListener('change', () => {
-                const files = inputElement.files;
-                if (files && files.length > 0) {
-                  const fr = new FileReader();
-                  fr.addEventListener('load', () => {
-                    state.load(JSON.parse(fr.result));
-                    state.opCenter.fork();
-                  });
-                  fr.readAsText(files[0]);
-                }
-              });
-              inputElement.click();
-            },
           },
           {
             name: 'Image for tile (1,1)',
