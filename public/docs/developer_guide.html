@@ -50,15 +50,18 @@
       <li>mipui-test is used for running unit tests. Please immediately clean any information you create there.</li>
     </ul>
 
-    <h3>Local Storage</h3>
+    <h3><a id="programmatic-map-manipulation">Programmatic map manipulation</a></h3>
     <p>
-      Currently, downloading and uploading the map file is intentionally not formally supported, primarily because it means I can no longer do non-backward-compatible changes. However there is a way to download and upload files, so if you want to experiment with running scripts / random generation / anything else, you can.
+      Maps can be saved and loaded in .mipui format, which is a JSON that encodes <code>state._pstate</code> (see <code>state.js</code>). To understand its format, go over <code>content.js</code>.
+      <ul>
+        <li><code>props</code> maps keys of type <code>pk</code> to various map property values, such as map name and dimensions.</li>
+        <li><code>content</code> encodes cell keys to cell values; cell values are a mapping of layer index to layer values; layer values are a mapping of content keys to content values, with the keys listed in <code>ck</code>.</li>
+        <li>All content maps always contain the <code>kind</code> and <code>variation</code> keys; their values are indices in the <code>ct</code> structure.</li>
+        <li>Entities that span multiple cells (e.g. text area) have their content stored in the top-left cell only. The top-left cell will also contain the key of the bottom-right cell. All other cells contain the key of the top-left cell.</li>
+      </ul>
     </p>
     <p>
-      These options are exposed via the debug menu, which is automatically visible when developing locally, and can be made visible in the production version by entering "state.menu.addDebugMenu()" in the console.
-    </p>
-    <p>
-      Be warned, though: the server is not hardened against malformed files, so playing with a map can make it invalid and bring it to a state in which it could no longer be succesfully loaded. Don't do that on maps you care about (unless you fork first).
+      <strong>Warning:</strong> the server is not hardened against malformed files, so manipulating a map can make it invalid and bring it to a state in which it could no longer be succesfully loaded. Don't do that on maps you care about (unless you fork first).
     </p>
 
     <h2>License</h2>
