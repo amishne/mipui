@@ -489,7 +489,8 @@ function resetGrid() {
     state.setProperty(property, null, true);
   });
   resetView();
-  state.opCenter.recordOperationComplete();
+  // Force a map rewrite with the operation.
+  state.opCenter.recordOperationComplete(true);
 }
 
 function refreshMapResizeButtonLocations() {
