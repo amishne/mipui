@@ -64,29 +64,42 @@ function handleKeyDownEvent(keyDownEvent) {
       case 'z':
         state.opCenter.undo();
         state.opCenter.recordOperationComplete();
+        keyDownEvent.preventDefault();
         break;
       case 'y':
         state.opCenter.redo();
         state.opCenter.recordOperationComplete();
+        keyDownEvent.preventDefault();
         break;
       case 'x':
         if (state.gesture instanceof SelectGesture) {
           state.gesture.cut();
+          keyDownEvent.preventDefault();
         }
         break;
       case 'c':
         if (state.gesture instanceof SelectGesture) {
           state.gesture.copy();
+          keyDownEvent.preventDefault();
         }
         break;
-      case 'v': state.gesture = new PasteGesture(); break;
+      case 'v': {
+        state.gesture = new PasteGesture();
+        keyDownEvent.preventDefault();
+        break;
+      }
     }
   } else {
     switch (keyDownEvent.key) {
-      case 'Escape': state.menu.setToInitialSelection(); break;
+      case 'Escape': {
+        state.menu.setToInitialSelection();
+        keyDownEvent.preventDefault();
+        break;
+      }
       case 'Delete':
         if (state.gesture instanceof SelectGesture) {
           state.gesture.deleteSelection();
+          keyDownEvent.preventDefault();
         }
         break;
       default:
