@@ -120,8 +120,8 @@ class ShapeGesture extends Gesture {
         }
       }
       result.set(cell, {
-        [ck.kind]: this.kind_.id,
-        [ck.variation]: this.variation_.id,
+        [ck.kind]: existingContent[ck.kind],
+        [ck.variation]: existingContent[ck.variation],
         [ck.connections]: finalValue,
       });
     });
