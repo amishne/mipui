@@ -454,7 +454,7 @@ class BoxGesture extends Gesture {
       e.stopPropagation();
     };
     this.deleteWidget_.onmouseup = e => {
-      if (e.buttons == 0) {
+      if (e.buttons == 0 && e.which != 2) {
         this.finishEditing_();
         deleteGesture.startGesture();
         deleteGesture.stopGesture();

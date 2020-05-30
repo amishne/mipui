@@ -1,3 +1,9 @@
+// There's an issue where mouseenter during panning (which can happen when the
+// mouse is being moved quickly) registers as a mouseevent with buttons == 1,
+// which is a left click - incorrect! So this global state is here to ensure
+// no clicks correctly register in this case.
+let panning = false;
+
 class Cell {
   constructor(key, role, gridElement, tile) {
     this.key = key;
@@ -724,7 +730,7 @@ class Cell {
     this.tile.enter();
     if (e.buttons == 0) {
       state.gesture.startHover(this);
-    } else if (e.buttons == 1) {
+    } else if (!panning && e.buttons == 1) {
       state.gesture.continueGesture(this);
     }
     e.stopPropagation();
@@ -748,11 +754,15 @@ class Cell {
     if (e.buttons == 1) {
       state.gesture.startGesture();
     }
+    if (e.buttons == 4) {
+      panning = true;
+    }
     e.preventDefault();
     e.stopPropagation();
   }
 
   onMouseUp(e) {
+    panning = false;
     if (!state.gesture) return;
     if (e.button == 0) {
       state.gesture.stopGesture();
