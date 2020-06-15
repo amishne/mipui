@@ -1958,6 +1958,16 @@ class Menu {
                 window.open('https://twitter.com/MipuiMapEditor', '_blank');
               },
             },
+            {
+              name: 'Donate',
+              type: 'button',
+              presentation: 'icon',
+              icon: 'assets/ko-fi.png',
+              enabledInReadonlyMode: true,
+              callback: () => {
+                window.open('https://ko-fi.com/mipui', '_blank');
+              },
+            },
           ],
         },
       },
