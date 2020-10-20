@@ -85,6 +85,10 @@
   stroke: #4592be;
 }
 
+.marked-door-cell {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><circle cx='50%' cy='50%' r='2' stroke-width='1' stroke='%234592be' fill='%234592be' /></svg>") white;
+}
+
 .secret-door-cell, .hidden-secret-door-cell {
   border-style: none;
 }

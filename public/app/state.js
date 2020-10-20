@@ -240,7 +240,7 @@ class State {
         menuIconFromMap.style.backgroundImage =
             `url("${this.currentTheme.menuIconFile}")`;
       });
-      if (appliedCoverEffect != this.shouldApplyCoverEffect()) {
+      if (appliedCoverEffect !== this.shouldApplyCoverEffect()) {
         this.theMap.updateAllCells();
       }
       if (gridImagerPromises) {

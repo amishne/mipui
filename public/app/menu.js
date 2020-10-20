@@ -485,11 +485,25 @@ class Menu {
     };
     item.kind = kind;
     item.variationName = variationName;
-    const horizontalOffset = kind.children.indexOf(variation);
-    const verticalOffset = kind == ct.shapes.circle ? 1 : 0;
+    let horizontalOffset = 0;
+    switch (variationName) {
+      case 'green': horizontalOffset = 0; break;
+      case 'brown': horizontalOffset = 1; break;
+      case 'blue': horizontalOffset = 2; break;
+      case 'red': horizontalOffset = 3; break;
+      case 'orange': horizontalOffset = 4; break;
+      case 'white': horizontalOffset = 5; break;
+      case 'black': horizontalOffset = 6; break;
+    };
+    let verticalOffset = 0;
+    switch (kind) {
+      case ct.shapes.square: verticalOffset = 0; break;
+      case ct.shapes.circle: verticalOffset = 1; break;
+      case ct.shapes.diamond: verticalOffset = 2; break;
+    }
     item.iconMapRect = {
       x: 32 * (8 + 2 * horizontalOffset) + 3,
-      y: 32 * (4 + 2 * verticalOffset) + 3,
+      y: 32 * (4 + verticalOffset) + 3,
       size: 32,
     };
     if (item.element) {
@@ -1461,6 +1475,21 @@ class Menu {
               },
             },
             {
+              name: 'Marked door',
+              type: 'tool',
+              presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
+              iconMapRect: {
+                x: 180,
+                y: 196,
+                size: 30,
+              },
+              callback: () => {
+                state.gesture = new SeparatorGesture(
+                    ct.separators.door, ct.separators.door.marked, true);
+              },
+            },
+            {
               name: 'Secret door',
               type: 'tool',
               presentation: 'icon_map',
@@ -1609,12 +1638,15 @@ class Menu {
           items: [
             this.createShapeKindTool_('Square', ct.shapes.square, true),
             this.createShapeKindTool_('Circle', ct.shapes.circle),
+            this.createShapeKindTool_('Diamond', ct.shapes.diamond),
             this.createSeparator_(),
             this.createShapeVariationTool_('Green', 'green', true),
             this.createShapeVariationTool_('Brown', 'brown'),
             this.createShapeVariationTool_('Blue', 'blue'),
             this.createShapeVariationTool_('Red', 'red'),
+            this.createShapeVariationTool_('Orange', 'orange'),
             this.createShapeVariationTool_('White', 'white'),
+            this.createShapeVariationTool_('Black', 'black'),
           ],
         },
       },

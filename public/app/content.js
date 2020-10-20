@@ -61,6 +61,7 @@ const ct = {
         'hidden-secret-door-cell',
         'hidden-secret-door-cell-_ROLE_',
       ]},
+      marked: {classNames: ['marked-door-cell']},
     },
     window: {
       classNames: [
@@ -130,6 +131,8 @@ const ct = {
       blue: {classNames: ['shape-blue']},
       red: {classNames: ['shape-red']},
       white: {classNames: ['shape-white']},
+      orange: {classNames: ['shape-orange']},
+      black: {classNames: ['shape-black']},
     },
     circle: {
       green: {classNames: ['shape-green']},
@@ -137,6 +140,17 @@ const ct = {
       blue: {classNames: ['shape-blue']},
       red: {classNames: ['shape-red']},
       white: {classNames: ['shape-white']},
+      orange: {classNames: ['shape-orange']},
+      black: {classNames: ['shape-black']},
+    },
+    diamond: {
+      green: {classNames: ['shape-green']},
+      brown: {classNames: ['shape-brown']},
+      blue: {classNames: ['shape-blue']},
+      red: {classNames: ['shape-red']},
+      white: {classNames: ['shape-white']},
+      orange: {classNames: ['shape-orange']},
+      black: {classNames: ['shape-black']},
     },
   },
   elevation: {
