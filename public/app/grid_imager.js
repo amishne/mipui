@@ -207,9 +207,7 @@ class GridImager {
   async xml2foreignObjectString_(xml, includeStyle) {
     return ('<foreignObject x="0" y="0" width="100%" height="100%">' +
       '<html xmlns="http://www.w3.org/1999/xhtml" style="display: inline;">' +
-      (includeStyle ? this.styleString_ : '') + xml + '</html></foreignObject>')
-        .replace(/\n/g, ' ')
-        .replace(/ +/g, ' ');
+      (includeStyle ? this.styleString_ : '') + xml + '</html></foreignObject>');
   }
 
   async foreignObjectString2svgElement_(foreignObjectString) {

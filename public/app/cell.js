@@ -486,7 +486,7 @@ class Cell {
     const offsetHeight = vertical ? element.offsetWidth : element.offsetHeight;
     const theMapElement = document.getElementById('theMap');
     const sizingElement = createAndAppendDivWithClass(
-        theMapElement, element.className);
+        theMapElement, element.className + ' inner-text-cell');
     sizingElement.style.visibility = 'hidden';
     sizingElement.style.display = 'inline-block';
     sizingElement.style.width = `${offsetWidth}px`;

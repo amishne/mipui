@@ -257,7 +257,6 @@
 .text-cell {
   position: absolute;
   margin: 2px 3px 3px 2px;
-  
   display: flex;
   justify-content: center;
   align-content: center;
@@ -268,7 +267,6 @@
   text-align: center;
   white-space: pre-wrap;
   user-select: none;
-  
 }
 
 .primary-cell {
