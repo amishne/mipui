@@ -380,7 +380,7 @@ class Cell {
 
   setCover_(element, layer, isHighlight) {
     if (!state.shouldApplyCoverEffect()) return;
-    if (layer != ct.walls) return;
+    if (!element || layer != ct.walls) return;
     element.innerHTML = '';
     switch (this.getNeighboringWallsStatus_()) {
       case 'max':
@@ -621,8 +621,8 @@ class Cell {
   }
 
   contentShouldHaveElement_(content) {
-    // Either there's no content, or the content has a start cell, signalling
-    // it should be rendered in another cell.
+    // There should be an element if there's content, unless if the content has
+    // a start cell, indicating it should be rendered from another cell.
     return content && !content[ck.startCell];
   }
 

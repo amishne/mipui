@@ -240,20 +240,21 @@ class State {
         menuIconFromMap.style.backgroundImage =
             `url("${this.currentTheme.menuIconFile}")`;
       });
-      if (appliedCoverEffect !== this.shouldApplyCoverEffect()) {
-        this.theMap.updateAllCells();
-      }
-      if (gridImagerPromises) {
-        Promise.all(gridImagerPromises).then(() => {
-          this.tileGridImager.recalculateStyleString();
-          this.theMap.invalidateTiles();
-          resolve();
-        });
-      } else {
+
+      Promise.all(gridImagerPromises).then(() => {
         this.tileGridImager.recalculateStyleString();
         this.theMap.invalidateTiles();
+        if (appliedCoverEffect !== this.shouldApplyCoverEffect()) {
+          // When the cover effect toggles, cells need to redraw themselves.
+          // Do so asynchronously, probably to ensure doms are up-to-date with
+          // the new css files.
+          setTimeout(() => {
+            this.theMap.updateAllCells();
+            this.theMap.invalidateTiles();
+          }, 0);
+        }
         resolve();
-      }
+      });
     });
   }
 

@@ -1224,7 +1224,7 @@ class Menu {
                 const themeNum = themes.find(
                     theme => theme.displayIndex == newChoiceNum).propertyIndex;
                 state.setProperty(pk.theme, themeNum, true);
-                state.reloadTheme();
+                // This will force state.reloadTheme():
                 state.opCenter.recordOperationComplete(true);
               },
             },
