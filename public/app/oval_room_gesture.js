@@ -11,6 +11,11 @@ class OvalRoomGesture extends RoomGesture {
     };
   }
 
+  startHover(cell) {
+    this.cellValues_ = new Map();
+    super.startHover(cell);
+  }
+
   process_() {
     if (this.mode_ == 'toWall' || this.mode_ == 'hollow') {
       this.mapCellsToValues_(true, 'w');
@@ -69,7 +74,7 @@ class OvalRoomGesture extends RoomGesture {
       if ((this.mode_ == 'toWall' &&
            this.hasWallContentWithoutClipping_(cell)) ||
           (this.mode_ == 'toFloor' &&
-           !this.hasWallContentWithoutClipping_(cell))) {
+           !cell.getLayerContent(ct.walls))) {
         keyedValue.pos = 'outside';
         return;
       }
@@ -114,10 +119,19 @@ class OvalRoomGesture extends RoomGesture {
         (!val.f || val.f.pos == 'inside')) {
       return this.mode_ == 'toWall' ? this.wallContent_ : null;
     }
+
     const result = {
       [ck.kind]: ct.walls.smooth.id,
       [ck.variation]: ct.walls.smooth.oval.id,
     };
+    const existingContent = cell.getLayerContent(ct.walls);
+    if (existingContent && existingContent[ck.clipInclude]) {
+      result[ck.clipInclude] = existingContent[ck.clipInclude];
+    }
+    if (existingContent && existingContent[ck.clipExclude]) {
+      result[ck.clipExclude] = existingContent[ck.clipExclude];
+    }
+
     if (val.w && val.w.cx) {
       result[ck.clipInclude] =
           this.calculateEllipse_(val.w, cell, ck.clipInclude);
