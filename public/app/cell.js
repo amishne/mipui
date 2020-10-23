@@ -37,6 +37,9 @@ class Cell {
     // Initialization.
     this.neighborKeys_ = new Map();
     this.wireInteractions_();
+
+    // Caching font size to prevent recalculation.
+    this.cachedFontSize_ = {content: null, size: null};
   }
 
   getLayerContent(layer) {
@@ -484,29 +487,40 @@ class Cell {
     }
     const offsetWidth = vertical ? element.offsetHeight : element.offsetWidth;
     const offsetHeight = vertical ? element.offsetWidth : element.offsetHeight;
-    const theMapElement = document.getElementById('theMap');
-    const sizingElement = createAndAppendDivWithClass(
-        theMapElement, element.className + ' inner-text-cell');
-    sizingElement.style.visibility = 'hidden';
-    sizingElement.style.display = 'inline-block';
-    sizingElement.style.width = `${offsetWidth}px`;
-    sizingElement.style.maxHeight = `${offsetHeight}px`;
-    sizingElement.textContent = stringContent;
-    let fontSize = 14;
-    sizingElement.style.fontSize = fontSize + 'pt';
-    while (sizingElement.scrollWidth <= offsetWidth &&
-        sizingElement.scrollHeight <= offsetHeight) {
-      fontSize++;
+    let fontSize = this.cachedFontSize_.size;
+    if (this.cachedFontSize_.content != stringContent ||
+        this.cachedFontSize_.width != offsetWidth ||
+        this.cachedFontSize_.height != offsetHeight) {
+      const theMapElement = document.getElementById('theMap');
+      const sizingElement = createAndAppendDivWithClass(
+          theMapElement, element.className + ' inner-text-cell');
+      sizingElement.style.visibility = 'hidden';
+      sizingElement.style.display = 'inline-block';
+      sizingElement.style.width = `${offsetWidth}px`;
+      sizingElement.style.maxHeight = `${offsetHeight}px`;
+      sizingElement.textContent = stringContent;
+      fontSize = 14;
       sizingElement.style.fontSize = fontSize + 'pt';
+      while (sizingElement.scrollWidth <= offsetWidth &&
+          sizingElement.scrollHeight <= offsetHeight) {
+        fontSize++;
+        sizingElement.style.fontSize = fontSize + 'pt';
+      }
+      while (fontSize > 1 &&
+          (sizingElement.scrollWidth > offsetWidth ||
+           sizingElement.scrollHeight > offsetHeight)) {
+        fontSize--;
+        sizingElement.style.fontSize = fontSize + 'pt';
+      }
+      this.textHeight = sizingElement.scrollHeight;
+      theMapElement.removeChild(sizingElement);
+      this.cachedFontSize_ = {
+        content: stringContent,
+        size: fontSize,
+        width: offsetWidth,
+        height: offsetHeight,
+      };
     }
-    while (fontSize > 1 &&
-        (sizingElement.scrollWidth > offsetWidth ||
-         sizingElement.scrollHeight > offsetHeight)) {
-      fontSize--;
-      sizingElement.style.fontSize = fontSize + 'pt';
-    }
-    this.textHeight = sizingElement.scrollHeight;
-    theMapElement.removeChild(sizingElement);
     const inner = createAndAppendDivWithClass(element, 'inner-text-cell');
     inner.style.width = `${offsetWidth}px`;
     inner.style.marginLeft = `${(element.offsetWidth - offsetWidth) / 2}px`;
