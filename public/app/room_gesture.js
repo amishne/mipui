@@ -121,7 +121,7 @@ class RoomGesture extends Gesture {
   calculateContent_() {
     return null;
   }
-  
+
   calculateMode_() {
     return this.anchorCell_.hasLayerContent(ct.walls) ? 'toFloor' : 'toWall';
   }

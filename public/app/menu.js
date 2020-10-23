@@ -79,7 +79,7 @@ class Menu {
     bottomElement.innerHTML = '';
     this.createMenuItems_(topElement, bottomElement);
   }
-  
+
   addUserMenu() {
     this.menuItems_.push(this.userMenuItem_);
     const topElement = document.getElementsByClassName('menu-top')[0];
@@ -751,6 +751,7 @@ class Menu {
     }
 
     selector.submenu.element.innerHTML = '';
+    this.groups_.imageIconTools.items = [];
     let matchingIcons = this.gameIcons_.filter(gameIcon => {
       if (category == '<used>') {
         return state.isIconUsed('h' + gameIcon.hash) &&
@@ -2031,6 +2032,19 @@ class Menu {
             materialIcon: 'create_new_folder',
             enabledInReadonlyMode: true,
             callback: () => { window.open('.', '_self'); },
+          },
+          {
+            name: 'Line',
+            type: 'tool',
+            presentation: 'icon_map',
+            tip: 'Drag when placing to resize.',
+            iconMapRect: {
+              x: 416,
+              y: 32,
+              size: 72,
+            },
+            enabledInReadonlyMode: false,
+            callback: () => { state.gesture = new LineGesture(); },
           },
           {
             name: 'Image for tile (1,1)',
