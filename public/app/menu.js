@@ -305,7 +305,7 @@ class Menu {
         `url("${state.currentTheme.menuIconFile}")`;
     item.element.style.backgroundPosition =
         `-${x * 2 * scale}px -${y * 2 * scale}px`;
-    item.element.style.backgroundSize = `${1424 * scale}px ${784 * scale}px`;
+    item.element.style.backgroundSize = `${1424 * scale}px ${848 * scale}px`;
   }
 
   updateCellsItem_(item, cells, deferredSvg) {
@@ -1374,6 +1374,19 @@ class Menu {
                   ct.walls, ct.walls.smooth, ct.walls.smooth.angled); },
             },
             {
+              name: 'Line',
+              type: 'tool',
+              presentation: 'icon_map',
+              tip: 'Drag when placing to resize.',
+              iconMapRect: {
+                x: 272,
+                y: 319,
+                size: 72,
+              },
+              enabledInReadonlyMode: false,
+              callback: () => { state.gesture = new LineGesture(); },
+            },
+            {
               name: 'Rectangle',
               type: 'tool',
               presentation: 'icon_map',
@@ -2032,19 +2045,6 @@ class Menu {
             materialIcon: 'create_new_folder',
             enabledInReadonlyMode: true,
             callback: () => { window.open('.', '_self'); },
-          },
-          {
-            name: 'Line',
-            type: 'tool',
-            presentation: 'icon_map',
-            tip: 'Drag when placing to resize.',
-            iconMapRect: {
-              x: 416,
-              y: 32,
-              size: 72,
-            },
-            enabledInReadonlyMode: false,
-            callback: () => { state.gesture = new LineGesture(); },
           },
           {
             name: 'Image for tile (1,1)',

@@ -33,6 +33,10 @@ class LineGesture extends OvalRoomGesture {
     super.startHover(primaryCell);
   }
 
+  calculateMode_() {
+    return 'toWall';
+  }
+
   continueGesture(cell) {
     if (!this.anchorCell_ || !cell || cell.role != 'corner') {
       return;
@@ -45,124 +49,178 @@ class LineGesture extends OvalRoomGesture {
   addFullCell_(column, row) {
     const cell = state.theMap.getCell(row, column);
     const cellValue = this.cellValues_.get(cell) || {};
-    this.cellValues_.set(cell, cellValue);
-    const keyedValue = {};
-    const mapKey = this.mode_ == 'toWall' ? 'w' : 'f';
-    cellValue[mapKey] = keyedValue;
-    keyedValue.pos = 'full';
+    this.cellValues_.set(cell, {pos: 'full'});
   }
 
   process_() {
-    // Outline:
-    // 1. Prepare a special case for completely vertical or horizontal lines.
-    //    Otherwise, continue to the next step.
-    // 2. There are 4 imaginary lines - from each corner of startCorner to each
-    //    corresponding corner of endCorner.
-    //    Isolate the 2 external lines among these 4, using the relation between
-    //    end and start corners.
-    // 3. For each boundary line of each cell, find its intersection with the
-    //    first line and then the second line. If there are exactly two in-
-    //    bound intersections, the line passes through the cell. If both lines
-    //    don't pass through the cell, skip the cell.
-    // 3. Four each boundary line, among the 4 intersection points, find the
-    //    two at the greatest extent.
-    // 4. If both are not on the line itself, skip the cell.
-    // 5. 
+    this.cellValues_.clear();
+
+    // Add start and end corners as full cells.
     this.addFullCell_(this.startCorner_.column, this.startCorner_.row);
-    if (this.startCorner === this.endCorner) return;
+    if (this.startCorner_ === this.endCorner_) return;
     this.addFullCell_(this.endCorner_.column, this.endCorner_.row);
 
+    // Corner-case for vertical or horizontal lines.
     if (this.startCorner_.row === this.endCorner_.row) {
-      for (let column = this.startCorner_.column + 0.5;
-          column < this.endCorner_.column; column += 0.5) {
+      const step =
+          this.startCorner_.column < this.endCorner_.column ? 0.5 : -0.5;
+      for (let column = this.startCorner_.column + step;
+          column != this.endCorner_.column; column += step) {
         this.addFullCell_(column, this.startCorner_.row);
       }
       return;
     }
     if (this.startCorner_.column === this.endCorner_.column) {
-      for (let row = this.startCorner_.row + 0.5;
-          row < this.endCorner_.row; row += 0.5) {
+      const step = this.startCorner_.row < this.endCorner_.row ? 0.5 : -0.5;
+      for (let row = this.startCorner_.row + step;
+          row != this.endCorner_.row; row += step) {
         this.addFullCell_(this.startCorner_.column, row);
       }
       return;
     }
-/*
-    // This is in rows/cols, not pixels.
-    const {minX, minY, maxX, maxY} =
-        this.calculateMinMaxCellPositions_(includeBoundaries);
-    const [centerX, centerY] =
-        [minX + (maxX - minX) / 2, minY + (maxY - minY) / 2];
 
-    const topLeftCell = state.theMap.cells.get(CellMap.cellKey(minY, minX));
-    const bottomRightCell = state.theMap.cells.get(CellMap.cellKey(maxY, maxX));
-    const topLeftPoint = {
-      x: topLeftCell.offsetLeft,
-      y: topLeftCell.offsetTop,
+    this.processAngledLine_();
+  }
+
+  verticalLineIntersection_(verticalLineX, minY, maxY, x1, y1, x2, y2) {
+    // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+    const [x3, y3] = [verticalLineX, minY];
+    const [x4, y4] = [verticalLineX, maxY];
+    const intersectionY =
+        ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) /
+        ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+    return (intersectionY < minY || intersectionY > maxY) ?
+        null : {x: verticalLineX, y: intersectionY};
+  }
+
+  horizontalLineIntersection_(horizontalLineY, minX, maxX, x1, y1, x2, y2) {
+    // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+    const [x3, y3] = [minX, horizontalLineY];
+    const [x4, y4] = [maxX, horizontalLineY];
+    const intersectionX =
+        ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) /
+        ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+    return (intersectionX < minX || intersectionX > maxX) ?
+        null : {x: intersectionX, y: horizontalLineY};
+  }
+
+  calculateExternalLines_() {
+    const rowBefore = this.startCorner_.row < this.endCorner_.row;
+    const columnBefore = this.startCorner_.column < this.endCorner_.column;
+    const [start, end] = [this.startCorner_, this.endCorner_].map(cell => ({
+      left: cell.offsetLeft,
+      right: cell.offsetLeft + cell.width,
+      top: cell.offsetTop,
+      bottom: cell.offsetTop + cell.height,
+    }));
+    return {
+      line1: {
+        x1: rowBefore ? start.left : start.right,
+        y1: columnBefore ? start.bottom : start.top,
+        x2: rowBefore ? end.left : end.right,
+        y2: columnBefore ? end.bottom : end.top,
+      },
+      line2: {
+        x1: rowBefore ? start.right : start.left,
+        y1: columnBefore ? start.top : start.bottom,
+        x2: rowBefore ? end.right : end.left,
+        y2: columnBefore ? end.top : end.bottom,
+      },
     };
-    const bottomRightPoint = {
-      x: bottomRightCell.offsetLeft + bottomRightCell.width,
-      y: bottomRightCell.offsetTop + bottomRightCell.height,
-    };
-    const centerPoint = {
-      x: topLeftPoint.x + (bottomRightPoint.x - topLeftPoint.x) / 2,
-      y: topLeftPoint.y + (bottomRightPoint.y - topLeftPoint.y) / 2,
-    };
-    const axes = {
-      x: bottomRightPoint.x - topLeftPoint.x,
-      y: bottomRightPoint.y - topLeftPoint.y,
-    };
-    const check = (x, y) => this.ellipseEquation_(
-        x, y, centerPoint.x, centerPoint.y, axes.x / 2, axes.y / 2);
+  }
+
+  processAngledLine_() {
+    // Outline:
+    // 1. There are 4 imaginary lines - from each corner of startCorner to each
+    //    corresponding corner of endCorner.
+    //    Isolate the 2 external lines among these 4, using the relation between
+    //    end and start corners.
+    // 2. For each one of the four boundary line of each cell, find its
+    //    intersection with the first line and then the second line. If there's
+    //    at least one intersection, add a clip to the cell of a polygon using
+    //    the 4 endpoints of the two external lines.
+    const externalLines = this.calculateExternalLines_();
+
     this.cells_.forEach(cell => {
-      const cellValue = this.cellValues_.get(cell) || {};
-      this.cellValues_.set(cell, cellValue);
-      const keyedValue = {};
-      cellValue[mapKey] = keyedValue;
-      if ((this.mode_ == 'toWall' &&
-           this.hasWallContentWithoutClipping_(cell)) ||
-          (this.mode_ == 'toFloor' &&
-           !this.hasWallContentWithoutClipping_(cell))) {
-        keyedValue.pos = 'outside';
+      // Skip the endpoint corners.
+      if (cell == this.startCorner_ || cell == this.endCorner_) return;
+      // Skip any full walls in-between.
+      if (cell.hasLayerContent(ct.walls) &&
+          !cell.getLayerContent(ct.walls)[ck.clipExclude] &&
+          !cell.getLayerContent(ct.walls)[ck.clipInclude]) {
         return;
       }
-      const closestPixel = {
-        x: clamp(cell.offsetLeft, centerPoint.x, cell.offsetLeft + cell.width),
-        y: clamp(cell.offsetTop, centerPoint.y, cell.offsetTop + cell.height),
-      };
-      if (check(closestPixel.x, closestPixel.y) > 1) {
-        keyedValue.pos = 'outside';
-        return;
+      const [left, right, top, bottom] = [
+        cell.offsetLeft,
+        cell.offsetLeft + cell.width,
+        cell.offsetTop,
+        cell.offsetTop + cell.height,
+      ];
+      let hasIntersections = false;
+      [externalLines.line1, externalLines.line2].forEach(
+          (externalLine, index) => {
+            if (hasIntersections) return;
+            [top, bottom].forEach(horizontalLineY => {
+              if (hasIntersections) return;
+              const intersection = this.horizontalLineIntersection_(
+                  horizontalLineY,
+                  left,
+                  right,
+                  externalLine.x1, externalLine.y1,
+                  externalLine.x2, externalLine.y2);
+              if (intersection) hasIntersections = true;
+            });
+            [left, right].forEach(verticalLineX => {
+              if (hasIntersections) return;
+              const intersection = this.verticalLineIntersection_(
+                  verticalLineX,
+                  top,
+                  bottom,
+                  externalLine.x1, externalLine.y1,
+                  externalLine.x2, externalLine.y2);
+              if (intersection) hasIntersections = true;
+            });
+      });
+      if (hasIntersections) {
+        const cellValue = this.cellValues_.get(cell) || {};
+        this.cellValues_.set(cell, {
+          pos : 'intersects',
+          polygon: [
+            `${externalLines.line1.x1 - left},${externalLines.line1.y1 - top}`,
+            `${externalLines.line1.x2 - left},${externalLines.line1.y2 - top}`,
+            `${externalLines.line2.x2 - left},${externalLines.line2.y2 - top}`,
+            `${externalLines.line2.x1 - left},${externalLines.line2.y1 - top}`,
+          ].join(';'),
+        });
       }
-      const furthestPixel = {
-        x: cell.offsetLeft + (cell.column >= centerX ? cell.width : 0),
-        y: cell.offsetTop + (cell.row >= centerY ? cell.height : 0),
-      };
-      if (check(furthestPixel.x, furthestPixel.y) < 1) {
-        keyedValue.pos = 'inside';
-        return;
-      }
-      keyedValue.rx = axes.x / 2;
-      keyedValue.ry = axes.y / 2;
-      keyedValue.cx = centerPoint.x;
-      keyedValue.cy = centerPoint.y;
     });
-    */
   }
 
   calculateContent_(cell) {
     const val = this.cellValues_.get(cell);
-    if (val.w && val.w.pos == 'full') {
+    if (val.pos == 'full') {
       return this.wallContent_;
     }
-    if (val.f && val.f.pos == 'full') {
-      return null;
+    if (val.pos == 'intersects') {
+      const result = {
+        [ck.kind]: ct.walls.smooth.id,
+        [ck.variation]: ct.walls.smooth.oval.id,
+      };
+      let resultString = ''
+      const existingContent = cell.getLayerContent(ct.walls);
+      if (existingContent && existingContent[ck.clipInclude]) {
+        resultString += existingContent[ck.clipInclude] + '|';
+      }
+      if (existingContent && existingContent[ck.clipExclude]) {
+        result[ck.clipExclude] = existingContent[ck.clipExclude];
+      }
+      resultString += 'p:' + val.polygon;
+      result[ck.clipInclude] = resultString;
+      return result;
     }
   }
 
   shouldApplyContentTo_(cell) {
-    const val = this.cellValues_.get(cell);
-    return val &&
-        ((val.w && val.w.pos == 'full') ||
-        (val.f && val.f.pos == 'full'));
+    return this.cellValues_.has(cell);
   }
 }

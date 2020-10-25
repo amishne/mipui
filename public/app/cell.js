@@ -474,6 +474,9 @@ class Cell {
             clipShape.substr(2).split(',').map(s => Number.parseFloat(s));
         return `<ellipse rx='${rx}' ry='${ry}' cx='${cx}' cy='${cy}' ` +
             `fill='${color}' />`;
+      case 'p':
+        const points = clipShape.substr(2).replace(/;/g, ' ');
+        return `<polygon points='${points}' fill='${color}' />`;
     }
   }
 
