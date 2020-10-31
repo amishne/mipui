@@ -1,7 +1,3 @@
-// Two strategies to make this faster:
-// 1. Incremental updates
-// 2. Do not disable hover immediately when moving to a new cell
-
 class PaintBucketGesture extends Gesture {
   constructor() {
     super();
@@ -42,7 +38,6 @@ class PaintBucketGesture extends Gesture {
   startGesture() {
     // Immediately stop processing additional cells.
     this.anchorCell_ = null;
-    clearTimeout(this.iterativeCalculationTimeout_);
 
     this.hideHighlights_();
     this.anchorCell_ = null;
@@ -58,13 +53,14 @@ class PaintBucketGesture extends Gesture {
 
   stopGesture() {
     super.stopGesture();
+    this.anchorCell_ = null;
   }
 
-  showHighlights_() {
-    for (const [cell, contents] of this.cellsToSet_.entries()) {
-      for (const [layer, content] of contents.entries()) {
-        cell.showHighlight(layer, content);
-      }
+  refreshHighlights_(cell) {
+    const contents = this.cellsToSet_.get(cell);
+    if (!contents) return;
+    for (const [layer, content] of contents.entries()) {
+      cell.showHighlight(layer, content);
     }
   }
 
@@ -79,6 +75,7 @@ class PaintBucketGesture extends Gesture {
   recalculateCellsToSet_(originCell) {
     this.cellsToSet_.clear();
     this.calculateNewContent_(originCell, 0, 0);
+    this.refreshHighlights_(originCell);
     this.calculateBatch_(originCell, new Set([originCell]));
   }
 
@@ -103,15 +100,15 @@ class PaintBucketGesture extends Gesture {
         }
         const modifiedCells = this.addNeighbors_(currentWaveCell);
         count += modifiedCells.length;
-        modifiedCells.forEach(modifiedCell => nextWave.add(modifiedCell));
+        modifiedCells.forEach(modifiedCell => {
+          nextWave.add(modifiedCell);
+          this.refreshHighlights_(modifiedCell);
+        });
       }
       currWave = nextWave;
     }
-    this.hideHighlights_();
-    //if (this.anchorCell_ == null) return;
     state.cursorStatusBar.showMessage(
         `Painting ${this.cellsToSet_.size} cells`);
-    this.showHighlights_();
     if (currWave.size > 0 &&
         this.cellsToSet_.size < constants.paintBucketMaxSize) {
       this.iterativeCalculationTimeout_ = setTimeout(() => {
