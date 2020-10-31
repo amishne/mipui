@@ -101,8 +101,8 @@ class PaintBucketGesture extends Gesture {
         const modifiedCells = this.addNeighbors_(currentWaveCell);
         count += modifiedCells.length;
         modifiedCells.forEach(modifiedCell => {
-          nextWave.add(modifiedCell);
-          this.refreshHighlights_(modifiedCell);
+          if (modifiedCell.isPropagating) nextWave.add(modifiedCell.cell);
+          this.refreshHighlights_(modifiedCell.cell);
         });
       }
       currWave = nextWave;
@@ -127,9 +127,9 @@ class PaintBucketGesture extends Gesture {
               originCell.row + rowDiff, originCell.column + columnDiff);
       if (!neighbor) continue;
 
-      const isModified =
+      const {isModified, isPropagating} =
           this.calculateNewContent_(neighbor, -columnDiff, -rowDiff);
-      if (isModified) modifiedCells.push(neighbor);
+      if (isModified) modifiedCells.push({cell: neighbor, isPropagating});
     }
     return modifiedCells;
   }
@@ -141,32 +141,49 @@ class PaintBucketGesture extends Gesture {
     if (this.mode_ == 'toFloor') {
       if (!existingWallContent) {
         // We're converting to floor and there's already floor there.
-        return false;
+        return {isModified: false};
       }
       if (existingCellsToSetContents &&
           existingCellsToSetContents.has(ct.walls)) {
         // We already processed this.
-        return false;
+        return {isModified: false};
       }
-      return this.setNewCellsToSetContent_(cell, ct.walls, null);
+      return {
+        isModified: this.setNewCellsToSetContent_(cell, ct.walls, null),
+        isPropagating: true,
+      };
     }
     if (this.mode_ == 'toWall') {
       if (existingWallContent) {
-        if (existingWallContent.hasOwnProperty(ck.clipExclude) ||
-            existingWallContent.hasOwnProperty(ck.clipInclude)) {
+        if (existingWallContent[ck.variation] == ct.walls.smooth.angled.id) {
+          return this.setAngledWallContent_(cell, columnDiff, rowDiff);
+        }
+        if (existingWallContent[ck.variation] == ct.walls.smooth.oval.id) {
+          const isModified =
+              this.setOvalWallContent_(cell, columnDiff, rowDiff);
+          // Oval walls only propagate fills if the fill filled the entire cell,
+          // turning it into square.
+          const isPropagating =
+              isModified &&
+              this.cellsToSet_.get(cell).get(ct.walls)[ck.variation] ==
+                  ct.walls.smooth.square.id;
+          return {isModified, isPropagating};
         }
         // We're converting to wall and there's already wall there.
-        return false;
+        return {isModified: false};
       }
       if (existingCellsToSetContents &&
           existingCellsToSetContents.has(ct.walls)) {
         // We already processed this.
-        return false;
+        return {isModified: false};
       }
-      return this.setNewCellsToSetContent_(cell, ct.walls, {
-        [ck.kind]: ct.walls.smooth.id,
-        [ck.variation]: ct.walls.smooth.square.id,
-      });
+      return {
+        isModified: this.setNewCellsToSetContent_(cell, ct.walls, {
+          [ck.kind]: ct.walls.smooth.id,
+          [ck.variation]: ct.walls.smooth.square.id,
+        }),
+        isPropagating: true,
+      };
     }
   }
 
@@ -182,165 +199,178 @@ class PaintBucketGesture extends Gesture {
     contents.set(layer, content);
     return true;
   }
-}
-/*
-class OldPaintBucketGesture extends Gesture {
-  constructor() {
-    super();
-    this.magicWandGesture_ = new NoopMagicWandSelectGesture();
-    this.wallGesture_ = new WallGesture(1, true);
-    this.cellsToSet_ = new Set();
-    this.lastOp_ = state.getLastOpNum();
-    this.targetCell_ = null;
-    this.timer_ = null;
+
+  setAngledWallContent_(cell, columnDiff, rowDiff) {
+    return false;
   }
 
-  startHover(cell) {
-    this.stopHover();
-    if (cell == this.targetCell_) {
-      return;
+  setOvalWallContent_(cell, columnDiff, rowDiff) {
+    let existingWallContent = cell.getLayerContent(ct.walls);
+    const contents = this.cellsToSet_.get(cell);
+    if (contents && contents.has(ct.walls)) {
+      existingWallContent = contents.get(ct.walls);
     }
-    this.targetCell_ = cell;
-    if (this.timer_) {
-      clearTimeout(this.timer_);
-    }
-    this.timer_ = setTimeout(() => {
-      this.timer_ = null;
-      if (this.cellsToSet_.has(cell) && this.lastOp_ == state.getLastOpNum()) {
-        this.wallGesture_.startHoverAfterAllFieldsAreSet_();
-        return;
-      }
-      const toWall = !cell.isKind(ct.walls, ct.walls.smooth);
-      this.magicWandGesture_.partialCellsConsideredFloor = toWall;
-      this.magicWandGesture_.hoveredCell_ = cell;
-      this.magicWandGesture_.anchorCell_ = null;
-      this.magicWandGesture_.startGesture(cell);
-      this.cellsToSet_ = this.magicWandGesture_.selectedCells_;
-      this.lastOp_ = state.getLastOpNum();
-      if (this.cellsToSet_.size == 0) {
-        this.wallGesture_.cellsToSet = [];
-        return;
-      }
-      this.wallGesture_.toWall = toWall;
-      this.wallGesture_.cellsToSet = this.cellsToSet_;
-      this.wallGesture_.startHoverAfterAllFieldsAreSet_();
-    }, 30);
-  }
-
-  stopHover() {
-    if (this.timer_) {
-      clearTimeout(this.timer_);
-      this.timer_ = null;
-    } else {
-      this.wallGesture_.stopHover();
-    }
-  }
-
-  startGesture() {
-    super.startGesture();
-    this.wallGesture_.startGesture();
-    this.wallGesture_.stopGesture();
-    state.opCenter.recordOperationComplete(false);
-  }
-
-  continueGesture(cell) {}
-
-  stopGesture() {
-    this.cellsToSet_ = new Set();
-    super.stopGesture();
-  }
-}
-
-class NoopMagicWandSelectGesture extends MagicWandSelectGesture {
-  addSelectedCell_(cell) {
-    if (!cell) return;
-    this.selectedCells_.add(cell);
-  }
-}
-
-class What {
-  constructor() {
-    super();
-  }
-
-  startGesture() {
-    super.startGesture();
-    if (!this.anchorCell_) return;
-    const anchorIsWall = this.anchorCell_.isKind(ct.walls, ct.walls.smooth);
-    this.includePredicate_ = cell => {
-      const isWall = cell.isKind(ct.walls, ct.walls.smooth);
-      if (isWall && anchorIsWall) return true;
-      if (!isWall && !anchorIsWall) return true;
-      if (anchorIsWall || !this.partialCellsConsideredFloor) return false;
-      const isPartialWall =
-          cell.isVariation(ct.walls, ct.walls.smooth, ct.walls.smooth.angled) ||
-          cell.isVariation(ct.walls, ct.walls.smooth, ct.walls.smooth.oval);
-      return anchorIsWall != isPartialWall;
-    };
-    this.advancePredicate_ =
-        cell => anchorIsWall == cell.isKind(ct.walls, ct.walls.smooth);
-    this.addCellsLinkedTo_(this.anchorCell_);
-  }
-
-  continueGesture(cell) {
-    this.addCellsLinkedTo_(cell);
-  }
-
-  addCellsLinkedTo_(cell) {
-    let front = new Set();
-    front.add(cell);
-    this.addSelectedCell_(cell);
-    while (front.size > 0) {
-      const newFront = new Set();
-      const newCells = new Set();
-      for (const cell of front.values()) {
-        this.getImmediateNeighborCells(cell).forEach(neighborCell => {
-          if (neighborCell &&
-              this.includePredicate_(neighborCell) &&
-              !this.selectedCells_.has(neighborCell) &&
-              !front.has(neighborCell)) {
-            newCells.add(neighborCell);
-            if (this.advancePredicate_(neighborCell)) {
-              newFront.add(neighborCell);
-            }
-          }
+    const existingInclusions =
+        (existingWallContent[ck.clipInclude] || '').split('|');
+    const existingExclusions =
+        (existingWallContent[ck.clipExclude] || '').split('|');
+    const newInclusions = [];
+    const newExclusions = [];
+    for (const inclusion of existingInclusions) {
+      if (inclusion.startsWith('p')) {
+        // Polygon.
+        // 1. Find the two points closest to the direction we're coming from.
+        // 2. For each point at or beyond corresponding cell corner, do nothing.
+        // 3. Otherwise add points for each cell corner.
+        // 4. Now look at two further points. If both are at or beyond
+        //    corresponding corners, it means we've achieved full coverage; omit
+        //    the polygon.
+        const allPoints = inclusion.substr(2).split(';').map(point => {
+          const [x, y] = point.split(',');
+          return {x: Number(x), y: Number(y)};
         });
+        const {closestPoints, furthestPoints} =
+            this.analyzePolygonPoints_(cell, columnDiff, rowDiff, allPoints);
+        if (furthestPoints.every(point => point.isBeyondCorner)) {
+          // Omit this polygon.
+          continue;
+        }
+        closestPoints.forEach(point => {
+          if (point.isBeyondCorner) return;
+          allPoints.splice(point.insertionIndex, 0, point.correspondingCorner);
+        });
+        newInclusions.push(
+            `p:${allPoints.map(point => `${point.x},${point.y}`).join(';')}`);
       }
-      newCells.forEach(cell => this.addSelectedCell_(cell));
-      if (this.selectedCells_.size > constants.maxNumSelectedCells) return;
-      front = newFront;
     }
+
+    let newContent = null;
+    if (newInclusions.length == 0 && newExclusions.length == 0) {
+      // If all polygons and ellipses are omitted, just use square content.
+      newContent = {
+        [ck.kind]: ct.walls.smooth.id,
+        [ck.variation]: ct.walls.smooth.square.id,
+      };
+    } else {
+      newContent = {
+        [ck.kind]: ct.walls.smooth.id,
+        [ck.variation]: ct.walls.smooth.oval.id,
+      };
+      if (newInclusions.length > 0) {
+        newContent[ck.clipInclude] = newInclusions.join('|');
+      }
+      if (newInclusions.length > 0) {
+        newContent[ck.clipExclude] = newExclusions.join('|');
+      }
+    }
+    return this.setNewCellsToSetContent_(cell, ct.walls, newContent);
   }
 
-  getImmediateNeighborCells(cell) {
-    const result = [];
-    if (!cell) return result;
-    switch (cell.role) {
-      case 'corner':
-      case 'primary':
-        result.push(cell.getNeighbor('top', true));
-        result.push(cell.getNeighbor('right', true));
-        result.push(cell.getNeighbor('bottom', true));
-        result.push(cell.getNeighbor('left', true));
-        result.push(cell.getNeighbor('top-right', cell.role == 'primary'));
-        result.push(cell.getNeighbor('bottom-right', cell.role == 'primary'));
-        result.push(cell.getNeighbor('bottom-left', cell.role == 'primary'));
-        result.push(cell.getNeighbor('top-left', cell.role == 'primary'));
-        break;
-      case 'horizontal':
-        result.push(cell.getNeighbor('top', false));
-        result.push(cell.getNeighbor('right', true));
-        result.push(cell.getNeighbor('bottom', false));
-        result.push(cell.getNeighbor('left', true));
-        break;
-      case 'vertical':
-        result.push(cell.getNeighbor('top', true));
-        result.push(cell.getNeighbor('right', false));
-        result.push(cell.getNeighbor('bottom', true));
-        result.push(cell.getNeighbor('left', false));
-        break;
+  analyzePolygonPoints_(cell, columnDiff, rowDiff, points) {
+    // Closest and furthest depend on approach direction.
+    const [rightMostTop, rightMostBottom] =
+        this.findExtremePoints_(points, 1, 0, cell.height);
+    const [leftMostTop, leftMostBottom] =
+        this.findExtremePoints_(points, -1, 0, cell.height);
+    const [topMostLeft, topMostRight] =
+        this.findExtremePoints_(points, 0, -1, cell.width);
+    const [bottomMostLeft, bottomMostRight] =
+        this.findExtremePoints_(points, 0, 1, cell.width);
+    if (!rightMostTop || !rightMostBottom || !leftMostTop || !leftMostBottom ||
+        !topMostLeft || !topMostRight || !bottomMostLeft || !bottomMostRight) {
+      // This shouldn't happen.
+      debug(
+          `Encountered cell (${cell.column},${cell.row}) with invalid polygon`);
+      return {closestPoints: [], furthestPoints: []};
     }
-    return result;
+
+    let closestPoints = [];
+    let furthestPoints = [];
+    if (columnDiff != 0 && rowDiff == 0) {
+      // Coming from the right or left.
+      const rightMostPoints = [{
+        isBeyondCorner: rightMostTop.x >= cell.width && rightMostTop.y <= 0,
+        correspondingCorner: {x: cell.width, y: 0},
+        insertionIndex: rightMostTop.insertionIndex,
+      }, {
+        isBeyondCorner:
+            rightMostBottom.x >= cell.width && rightMostBottom.y >= cell.height,
+        correspondingCorner: {x: cell.width, y: cell.height},
+        insertionIndex: rightMostBottom.insertionIndex,
+      }];
+      const leftMostPoints = [{
+        isBeyondCorner: leftMostTop.x <= 0 && leftMostTop.y <= 0,
+        correspondingCorner: {x: 0, y: 0},
+        insertionIndex: leftMostTop.insertionIndex,
+      }, {
+        isBeyondCorner:
+            leftMostBottom.x <= 0 && leftMostBottom.y >= cell.height,
+        correspondingCorner: {x: 0, y: cell.height},
+        insertionIndex: leftMostBottom.insertionIndex,
+      }];
+      closestPoints = columnDiff > 0 ? rightMostPoints : leftMostPoints;
+      furthestPoints = columnDiff > 0 ? leftMostPoints : rightMostPoints;
+    } else if (columnDiff == 0 && rowDiff != 0) {
+      // Coming from the bottom or top.
+      const bottomMostPoints = [{
+        isBeyondCorner:
+            bottomMostRight.x >= cell.width && bottomMostRight.y >= cell.height,
+        correspondingCorner: {x: cell.width, y: cell.height},
+        insertionIndex: bottomMostRight.insertionIndex,
+      }, {
+        isBeyondCorner:
+            bottomMostLeft.x <= 0 && bottomMostLeft.y >= cell.height,
+        correspondingCorner: {x: 0, y: cell.height},
+        insertionIndex: bottomMostLeft.insertionIndex,
+      }];
+      const topMostPoints = [{
+        isBeyondCorner: topMostRight.x >= cell.width && topMostRight.y <= 0,
+        correspondingCorner: {x: cell.width, y: 0},
+        insertionIndex: topMostRight.insertionIndex,
+      }, {
+        isBeyondCorner: topMostLeft.x <= 0 && topMostLeft.y <= 0,
+        correspondingCorner: {x: 0, y: 0},
+        insertionIndex: topMostLeft.insertionIndex,
+      }];
+      closestPoints = rowDiff > 0 ? bottomMostPoints : topMostPoints;
+      furthestPoints = rowDiff > 0 ? topMostPoints : bottomMostPoints;
+    }
+
+    return {closestPoints, furthestPoints};
+  }
+
+  findExtremePoints_(points, xDirection, yDirection, minOrthogonalValue) {
+    // We're looking for the two points with the most extreme (x,y) in
+    // xDirection and yDirection, as long as their orthogonal dimension is <= 0
+    // for the first point and >= minOrthogonalValue for the second point.
+    // For example, findExtremePoints_(..., 1, 0, 10) will return the rightmost
+    // point that has y <= 0 and the rightmost point that has y >= 10.
+    let first = null;
+    let second = null;
+    const isMoreExtreme = (p1, p2) => {
+      if (!p2) return true;
+      if (xDirection > 0) {
+        return p1.x > p2.x;
+      } else if (xDirection < 0) {
+        return p1.x < p2.x;
+      } else if (yDirection > 0) {
+        return p1.y > p2.y;
+      } else if (yDirection < 0) {
+        return p1.y < p2.y;
+      }
+      throw `Could not find extreme point with +(${xDirection}, ${yDirection})`;
+    }
+    const orthogonalDimension = xDirection == 0 ? 'x' : 'y';
+    for (let i = 0; i < points.length; i++) {
+      const point = points[i];
+      if (point[orthogonalDimension] <= 0 && isMoreExtreme(point, first)) {
+        first = {x: point.x, y: point.y, insertionIndex: i};
+      }
+      if (point[orthogonalDimension] >= minOrthogonalValue &&
+          isMoreExtreme(point, second)) {
+        second = {x: point.x, y: point.y, insertionIndex: i};
+      }
+    }
+    return [first, second];
   }
 }
-*/
