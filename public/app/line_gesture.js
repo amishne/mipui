@@ -89,8 +89,15 @@ class LineGesture extends OvalRoomGesture {
     const intersectionY =
         ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) /
         ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
-    return (intersectionY < minY || intersectionY > maxY) ?
-        null : {x: verticalLineX, y: intersectionY};
+    if (intersectionY < Math.min(y1, y2) || intersectionY > Math.max(y1, y2)) {
+      // The intersection is not actually on the angled line.
+      return null;
+    }
+    if (intersectionY < minY || intersectionY > maxY) {
+      // The intersection is not actually on the vertical line.
+      return null;
+    }
+    return  {x: verticalLineX, y: intersectionY};
   }
 
   horizontalLineIntersection_(horizontalLineY, minX, maxX, x1, y1, x2, y2) {
@@ -100,8 +107,15 @@ class LineGesture extends OvalRoomGesture {
     const intersectionX =
         ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) /
         ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
-    return (intersectionX < minX || intersectionX > maxX) ?
-        null : {x: intersectionX, y: horizontalLineY};
+    if (intersectionX < Math.min(x1, x2) || intersectionX > Math.max(x1, x2)) {
+      // The intersection is not actually on the angled line.
+      return null;
+    }
+    if (intersectionX < minX || intersectionX > maxX) {
+      // The intersection is not actually on the horizontal line.
+      return null;
+    }
+    return {x: intersectionX, y: horizontalLineY};
   }
 
   calculateExternalLines_() {
@@ -136,9 +150,11 @@ class LineGesture extends OvalRoomGesture {
     //    Isolate the 2 external lines among these 4, using the relation between
     //    end and start corners.
     // 2. For each one of the four boundary line of each cell, find its
-    //    intersection with the first line and then the second line. If there's
-    //    at least one intersection, add a clip to the cell of a polygon using
-    //    the 4 endpoints of the two external lines.
+    //    intersection with the first line and then the second line. If there
+    //    are at least two distinct intersections, add a clip to the cell of a
+    //    polygon using the 4 endpoints of the two external lines.
+    //    We require at least two distinct intersections to skip cases where
+    //    only the external point of a line intersects the cell, at its corner.
     const externalLines = this.calculateExternalLines_();
 
     this.cells_.forEach(cell => {
@@ -157,6 +173,7 @@ class LineGesture extends OvalRoomGesture {
         cell.offsetTop + cell.height,
       ];
       let hasIntersections = false;
+      let intersection1 = null;
       [externalLines.line1, externalLines.line2].forEach(
           (externalLine, index) => {
             if (hasIntersections) return;
@@ -168,7 +185,14 @@ class LineGesture extends OvalRoomGesture {
                   right,
                   externalLine.x1, externalLine.y1,
                   externalLine.x2, externalLine.y2);
-              if (intersection) hasIntersections = true;
+              if (intersection) {
+                if (!intersection1) {
+                  intersection1 = intersection;
+                } else if (intersection1.x != intersection.x ||
+                    intersection1.y != intersection.y) {
+                  hasIntersections = true;
+                }
+              }
             });
             [left, right].forEach(verticalLineX => {
               if (hasIntersections) return;
@@ -178,7 +202,14 @@ class LineGesture extends OvalRoomGesture {
                   bottom,
                   externalLine.x1, externalLine.y1,
                   externalLine.x2, externalLine.y2);
-              if (intersection) hasIntersections = true;
+              if (intersection) {
+                if (!intersection1) {
+                  intersection1 = intersection;
+                } else if (intersection1.x != intersection.x ||
+                    intersection1.y != intersection.y) {
+                  hasIntersections = true;
+                }
+              }
             });
       });
       if (hasIntersections) {
