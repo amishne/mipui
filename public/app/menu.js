@@ -1056,8 +1056,8 @@ class Menu {
               type: 'tool',
               presentation: 'icon',
               materialIcon: 'flare',
-              tip: 'Note: affects up to ' + constants.maxNumSelectedCells +
-                  ' cells at a time.',
+              tip: 'Note: affects up to roughly ' +
+                  constants.maxNumSelectedCells + ' cells at a time.',
               callback: () => {
                 state.gesture = new MagicWandSelectGesture();
               },
@@ -1444,8 +1444,8 @@ class Menu {
               presentation: 'icon',
               materialIcon: 'format_color_fill',
               enabledInReadonlyMode: false,
-              tip: 'Note: affects up to ' + constants.maxNumSelectedCells +
-                  ' cells at a time.',
+              tip: 'Note: affects up to roughly ' +
+                  constants.paintBucketMaxSize + ' cells at a time.',
               callback: () => { state.gesture = new PaintBucketGesture(); },
             },
           ],
