@@ -259,7 +259,7 @@ class PaintBucketGesture extends Gesture {
       if (newInclusions.length > 0) {
         newContent[ck.clipInclude] = newInclusions.join('|');
       }
-      if (newInclusions.length > 0) {
+      if (newExclusions.length > 0) {
         newContent[ck.clipExclude] = newExclusions.join('|');
       }
     }
@@ -370,6 +370,11 @@ class PaintBucketGesture extends Gesture {
           isMoreExtreme(point, second)) {
         second = {x: point.x, y: point.y, insertionIndex: i};
       }
+    }
+    if (first.insertionIndex < second.insertionIndex) {
+      first.insertionIndex++;
+    } else {
+      second.insertionIndex++;
     }
     return [first, second];
   }
