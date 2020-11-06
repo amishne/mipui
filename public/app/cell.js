@@ -447,20 +447,29 @@ class Cell {
 
   createMaskSvgFromClip_(element, clipInclude, clipExclude) {
     const shapes = [];
+    const includeEllipses = [];
+    const includePolygons = [];
     if (clipInclude) {
       clipInclude.split('|').forEach(clipShape => {
-        shapes.push(this.clipToSvgShape_(clipShape, 'white'));
+        const shape = this.clipToSvgShape_(clipShape, 'white');
+        if (shape.startsWith('<ellipse')) includeEllipses.push(shape);
+        if (shape.startsWith('<polygon')) includePolygons.push(shape);
       });
-    } else {
-      // If there are no inclusions, include the whole element.
+    }
+    if (includeEllipses.length == 0 && clipExclude) {
+      // If there are no inclusions ellipse inclusions and yet there are
+      // exclusions (which are currently always eclipses), include the whole
+      // element.
       shapes
           .push("<rect x='0' y='0' width='100%' height='100%' fill='white'/>");
     }
+    includeEllipses.forEach(ellipse => shapes.push(ellipse));
     if (clipExclude) {
       clipExclude.split('|').forEach(clipShape => {
         shapes.push(this.clipToSvgShape_(clipShape, 'black'));
       });
     }
+    includePolygons.forEach(ellipse => shapes.push(ellipse));
     return 'url("data:image/svg+xml;utf8,' +
         "<svg xmlns='http://www.w3.org/2000/svg'>" +
         `<defs><mask id='m'>${shapes.join('')}</mask></defs>` +
