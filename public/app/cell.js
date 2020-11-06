@@ -40,6 +40,9 @@ class Cell {
 
     // Caching font size to prevent recalculation.
     this.cachedFontSize_ = {content: null, size: null};
+
+    // Status bar message request to avoid over-messaging.
+    this.statusBarMessageRequest_ = 0;
   }
 
   getLayerContent(layer) {
@@ -417,13 +420,11 @@ class Cell {
       svgContent = createPassageSvgContent(this.role, connections);
     }
     if (svgContent) {
-      const svgElement =
-          document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svgElement.setAttribute('width', element.offsetWidth);
-      svgElement.setAttribute('height', element.offsetHeight);
-      svgElement.style.position = 'absolute';
-      svgElement.innerHTML = svgContent;
-      element.appendChild(svgElement);
+      element.innerHTML =
+          '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
+          'xmlns:xlink="http://www.w3.org/1999/xlink ' +
+          `width="${element.offsetWidth}" height="${element.offsetHeight}" ` +
+          `style="position: absolute">${svgContent}</svg>`;
     }
   }
 
@@ -742,7 +743,21 @@ class Cell {
   }
 
   onMouseEnter(e) {
+    const isContinuingGesture = !!state.gesture && !panning && e.buttons == 1;
+    if (isContinuingGesture) {
+      this.processMouseEnter_(e);
+    } else {
+      // If we're not mid-gesture, defer reaction until the next frame.
+      this.mouseEnterRequest_ = requestAnimationFrame(() => {
+        this.processMouseEnter_(e);
+      });
+    }
+    e.stopPropagation();
+  }
+
+  processMouseEnter_(e) {
     state.cursorStatusBar.showMessage(`x: ${this.column} y: ${this.row}`);
+    this.mouseEnterRequest_ = 0;
     if (!state.gesture) return;
     this.tile.enter();
     if (e.buttons == 0) {
@@ -750,18 +765,28 @@ class Cell {
     } else if (!panning && e.buttons == 1) {
       state.gesture.continueGesture(this);
     }
-    e.stopPropagation();
   }
 
   onMouseLeave(e) {
-    this.tile.exit();
-    if (!state.gesture) {
-      state.cursorStatusBar.hideMessage();
-      return;
-    }
-    if (e.buttons == 0) {
-      state.gesture.stopHover();
-      state.cursorStatusBar.hideMessage();
+    if (this.mouseEnterRequest_ != 0) {
+      // This means we haven't had time to process the enter event, so no need
+      // to process the leave event.
+      cancelAnimationFrame(this.mouseEnterRequest_);
+      this.mouseEnterRequest_ = 0;
+      //state.cursorStatusBar.hideMessage();
+    } else {
+      requestAnimationFrame(() => {
+        state.cursorStatusBar.hideMessage();
+        this.tile.exit();
+        if (!state.gesture) {
+          state.cursorStatusBar.hideMessage();
+          return;
+        }
+        if (e.buttons == 0) {
+          state.gesture.stopHover();
+          state.cursorStatusBar.hideMessage();
+        }
+      });
     }
     e.stopPropagation();
   }
@@ -790,10 +815,10 @@ class Cell {
 
   wireInteractions_() {
     // All grid element interactions stop the event from bubbling up.
-    this.gridElement.onmouseenter = e => this.onMouseEnter(e);
-    this.gridElement.onmouseleave = e => this.onMouseLeave(e);
-    this.gridElement.onmousedown = e => this.onMouseDown(e);
-    this.gridElement.onmouseup = e => this.onMouseUp(e);
+    this.gridElement.addEventListener('mouseenter', e => this.onMouseEnter(e), false);
+    this.gridElement.addEventListener('mouseleave', e => this.onMouseLeave(e), false);
+    this.gridElement.addEventListener('mousedown', e => this.onMouseDown(e), false);
+    this.gridElement.addEventListener('mouseup', e => this.onMouseUp(e), false);
   }
 
   setElementGeometryToGridElementGeometry_(

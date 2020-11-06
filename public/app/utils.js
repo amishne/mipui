@@ -3,6 +3,9 @@ function createAndAppendDivWithClass(parent, className) {
   if (className) result.className = className;
   parent.appendChild(result);
   return result;
+//  parent.insertAdjacentHTML(
+//      'beforeend', `<div${className? ` class="${className}"` : ''}></div>`);
+//  return parent.lastChild;
 }
 
 function hashString(s) {
