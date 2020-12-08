@@ -39,9 +39,9 @@ class Operation {
   }
 
   redo() {
-    this.undoOrRedoCells_('n');
     this.undoOrRedoProperties_('n');
     this.refreshMapSizeIfRequired();
+    this.undoOrRedoCells_('n');
     this.markComplete();
   }
 
@@ -102,6 +102,10 @@ class Operation {
     if (this.data.c) {
       Object.keys(this.data.c).forEach(key => {
         const cell = state.theMap.cells.get(key);
+        if (!cell) {
+          debug('Operation includes obsolete changes.');
+          return;
+        }
         const cellChange = this.data.c[key];
         Object.keys(cellChange).forEach(layerId => {
           const cellLayerChange = cellChange[layerId];
