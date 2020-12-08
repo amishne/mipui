@@ -1374,19 +1374,6 @@ class Menu {
                   ct.walls, ct.walls.smooth, ct.walls.smooth.angled); },
             },
             {
-              name: 'Line',
-              type: 'tool',
-              presentation: 'icon_map',
-              tip: 'Drag when placing to resize.',
-              iconMapRect: {
-                x: 272,
-                y: 319,
-                size: 72,
-              },
-              enabledInReadonlyMode: false,
-              callback: () => { state.gesture = new LineGesture(); },
-            },
-            {
               name: 'Rectangle',
               type: 'tool',
               presentation: 'icon_map',
@@ -2038,6 +2025,29 @@ class Menu {
       enabledInReadonlyMode: true,
       submenu: {
         items: [
+          {
+            name: 'Line',
+            type: 'tool',
+            presentation: 'icon_map',
+            tip: 'Drag when placing to resize.',
+            iconMapRect: {
+              x: 272,
+              y: 319,
+              size: 72,
+            },
+            enabledInReadonlyMode: false,
+            callback: () => { state.gesture = new LineGesture(); },
+          },
+          {
+            name: 'New Paint Bucket',
+            type: 'tool',
+            presentation: 'icon',
+            materialIcon: 'format_color_fill',
+            enabledInReadonlyMode: false,
+            tip: 'Note: affects up to roughly ' +
+                constants.paintBucketMaxSize + ' cells at a time.',
+            callback: () => { state.gesture = new NewPaintBucketGesture(); },
+          },
           {
             name: 'New in-place',
             type: 'button',
