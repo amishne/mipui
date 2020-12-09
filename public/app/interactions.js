@@ -421,7 +421,7 @@ function resizeGridBy(
         (state.theMap.cellHeight + state.theMap.dividerHeight));
   }
   updateMapTransform(false);
-  state.opCenter.recordOperationComplete();
+  state.opCenter.recordOperationComplete(true);
 }
 
 function cellIsOutsideBoundaries(
