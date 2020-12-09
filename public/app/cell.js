@@ -782,10 +782,8 @@ class Cell {
       // to process the leave event.
       cancelAnimationFrame(this.mouseEnterRequest_);
       this.mouseEnterRequest_ = 0;
-      //state.cursorStatusBar.hideMessage();
     } else {
       requestAnimationFrame(() => {
-        state.cursorStatusBar.hideMessage();
         this.tile.exit();
         if (!state.gesture) {
           state.cursorStatusBar.hideMessage();

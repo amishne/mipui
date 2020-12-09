@@ -57,6 +57,5 @@ class StatusBar {
     this.showMessage_ = false;
     this.element_.style.visibility = 'hidden';
     this.element_.innerHTML = '';
-    //this.showMessage(null);
   }
 }
