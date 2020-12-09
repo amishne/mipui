@@ -422,7 +422,7 @@ class Cell {
     if (svgContent) {
       element.innerHTML =
           '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
-          'xmlns:xlink="http://www.w3.org/1999/xlink ' +
+          'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
           `width="${element.offsetWidth}" height="${element.offsetHeight}" ` +
           `style="position: absolute">${svgContent}</svg>`;
     }
@@ -735,6 +735,21 @@ class Cell {
 
   updateLayerElementsToCurrentContent_(layer, isHighlight) {
     const content = this.getLayerContent(layer);
+    if (content) {
+      // This method can be called during an update, just before applying
+      // additional operations, and thus might include outdated elements. It's
+      // fine unless those elements refer to nonexisting ones, so we verify that
+      // first.
+      const endCellKey = content[ck.endCell];
+      const endCell = endCellKey ? state.theMap.cells.get(endCellKey) : this;
+      const startCellKey = content[ck.startCell];
+      const startCell =
+          startCellKey ? state.theMap.cells.get(startCellKey) : this;
+      if (!endCell || !startCell) {
+        debug('Updating layer to nonexisting content');
+        return;
+      }
+    }
     this.updateElements_(layer, null, content, isHighlight);
   }
 
