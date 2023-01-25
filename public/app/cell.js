@@ -438,7 +438,7 @@ class Cell {
       const clipInclude = content[ck.clipInclude];
       const clipExclude = content[ck.clipExclude];
       if (clipInclude || clipExclude) {
-        mask = this.createMaskSvgFromClip_(content, clipInclude, clipExclude);
+        mask = this.createMaskSvgFromClip_(element, clipInclude, clipExclude);
       }
     }
     element.style.mask = mask;
@@ -457,11 +457,12 @@ class Cell {
       });
     }
     if (includeEllipses.length == 0 && clipExclude) {
-      // If there are no inclusions ellipse inclusions and yet there are
+      // If there are no ellipse inclusions and yet there are
       // exclusions (which are currently always eclipses), include the whole
       // element.
-      shapes
-          .push("<rect x='0' y='0' width='100%' height='100%' fill='white'/>");
+      shapes.push("<rect x='0' y='0' " +
+          `width='${element.offsetWidth}' height='${element.offsetHeight}' ` +
+          "fill='white'/>");
     }
     includeEllipses.forEach(ellipse => shapes.push(ellipse));
     if (clipExclude) {
