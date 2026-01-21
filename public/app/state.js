@@ -1,7 +1,7 @@
 class State {
   constructor() {
     this.pstate_ = {
-      ver: '1.0',
+      ver: '2.0',
       props: {},
       // cell key -> (layer id -> content)
       content: {},
@@ -69,9 +69,9 @@ class State {
       disableSmoothing: true,
       xmlPreProcessor: xml =>
         this.stripText_(
-            '<div class="layer-container"',
-            '<div class="layer ',
-            this.stripText_('transform: scale(', '">', xml)),
+          '<div class="layer-container"',
+          '<div class="layer ',
+          this.stripText_('transform: scale(', '">', xml)),
     });
 
     this.cursorStatusBar = null;
@@ -125,7 +125,7 @@ class State {
     let cellContent = this.pstate_.content[cellKey];
     if (layer == ct.images) {
       if (cellContent && cellContent[ct.images.id] &&
-          cellContent[ct.images.id][ck.imageHash]) {
+        cellContent[ct.images.id][ck.imageHash]) {
         const hash = 'h' + cellContent[ct.images.id][ck.imageHash];
         const currentCounter = this.usedIcons_.get(hash);
         if (currentCounter == 1) {
@@ -137,7 +137,7 @@ class State {
       if (content && content[ck.imageHash]) {
         const hash = 'h' + content[ck.imageHash];
         this.usedIcons_.set(hash,
-            this.usedIcons_.has(hash) ? this.usedIcons_.get(hash) + 1 : 1);
+          this.usedIcons_.has(hash) ? this.usedIcons_.get(hash) + 1 : 1);
       }
     }
     if (!cellContent) {
@@ -149,9 +149,9 @@ class State {
       return;
     }
     if (layer == ct.floors &&
-        Object.keys(content).length == 2 &&
-        content[ck.kind] == this.defaultFloorContent_[ck.kind] &&
-        content[ck.variation] == this.defaultFloorContent_[ck.variation]) {
+      Object.keys(content).length == 2 &&
+      content[ck.kind] == this.defaultFloorContent_[ck.kind] &&
+      content[ck.variation] == this.defaultFloorContent_[ck.variation]) {
       // If it's the floor layer with a content equivalent to the default
       // floor, it can be deleted.
       delete cellContent[layer.id];
@@ -205,7 +205,7 @@ class State {
       if (this.currentTheme.propertyIndex == newPropertyIndex) resolve();
       const appliedCoverEffect = state.shouldApplyCoverEffect();
       this.currentTheme =
-          themes.find(theme => theme.propertyIndex == newPropertyIndex);
+        themes.find(theme => theme.propertyIndex == newPropertyIndex);
 
       this.appliedThemeElements_.forEach((element, path) => {
         element.parentNode.removeChild(element);
@@ -221,7 +221,7 @@ class State {
         const gridImagerPromise = new Promise((innerResolve, innerReject) => {
           const addSheet = sheet => {
             this.tileGridImager.addCssStyleSheet(index + 1, sheet).then(
-                () => { innerResolve(); }).catch(err => { debug(err); });
+              () => { innerResolve(); }).catch(err => { debug(err); });
           };
           if (this.isStylesheetLoaded_(css)) {
             addSheet(css.sheet);
@@ -235,10 +235,10 @@ class State {
         head.appendChild(css);
       });
       const menuIconsFromMap =
-          Array.from(document.getElementsByClassName('menu-icon-from-map'));
+        Array.from(document.getElementsByClassName('menu-icon-from-map'));
       menuIconsFromMap.forEach(menuIconFromMap => {
         menuIconFromMap.style.backgroundImage =
-            `url("${this.currentTheme.menuIconFile}")`;
+          `url("${this.currentTheme.menuIconFile}")`;
       });
 
       Promise.all(gridImagerPromises).then(() => {
@@ -273,7 +273,7 @@ class State {
       return;
     }
     let newUrl = `index.html?mid=${encodeURIComponent(this.mid_)}` +
-        `&secret=${encodeURIComponent(secret)}`;
+      `&secret=${encodeURIComponent(secret)}`;
     if (!this.tilingCachingEnabled) newUrl += '&tc=no';
     window.history.replaceState(null, '', newUrl);
     document.getElementById('theMap').classList.add('editor-view');
@@ -285,8 +285,8 @@ class State {
       }
       debug('writing secret ' + secret);
       firebase.database().ref(`/users/${this.user.uid}/secrets/${this.mid_}`)
-          .set(secret).then(() => { callback(); })
-          .catch(error => { setStatus(Status.AUTH_ERROR); });
+        .set(secret).then(() => { callback(); })
+        .catch(error => { setStatus(Status.AUTH_ERROR); });
     } else {
       callback();
     }
@@ -320,15 +320,19 @@ class State {
 
   load(pstate) {
     this.pstate_ = pstate;
+    if (this.pstate_.ver !== '2.0') {
+      this.pstate_.ver = '2.0';
+      // Future backward compatibility logic goes here.
+    }
     createTheMapAndUpdateElements();
     updateMapTransform(true);
     this.usedIcons_.clear();
     for (const cell of this.theMap.cells.values()) {
       if (cell.hasLayerContent(ct.images) &&
-          cell.getVal(ct.images, ck.imageHash)) {
+        cell.getVal(ct.images, ck.imageHash)) {
         const hash = 'h' + cell.getVal(ct.images, ck.imageHash);
         this.usedIcons_.set(hash,
-            this.usedIcons_.has(hash) ? this.usedIcons_.get(hash) + 1 : 1);
+          this.usedIcons_.has(hash) ? this.usedIcons_.get(hash) + 1 : 1);
       }
     }
     if (this.menu) {

@@ -238,6 +238,7 @@ const pk = {
   firstColumn: 'l',
   lastColumn: 'r',
   theme: 'h',
+  lastModified: 'm',
 };
 
 function sameContent(c1, c2) {

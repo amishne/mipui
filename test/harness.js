@@ -174,6 +174,8 @@ function mockFunc_(parent, part, name, child, args) {
     }
     return child;
   };
+  // Preserve static properties (like ServerValue on firebase.database)
+  Object.assign(func, existingFunc);
 
   const currentTest = suiteTests_[currentTestIndex_];
   const fullPath =
@@ -196,7 +198,7 @@ function mockFunc_(parent, part, name, child, args) {
 
 function revertMocks_(test) {
   test.mocked.forEach(({path, obj}) => {
-    console.log(`reverting by mock(${path}, ${obj})`);
+
     mock(path, obj);
   });
 }

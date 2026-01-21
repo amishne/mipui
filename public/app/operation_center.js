@@ -128,6 +128,13 @@ class OperationCenter {
   // This updates the undo stack and sends the op to the server.
   recordOperationComplete(forceMapRewrite = false) {
     if (this.currentOperation_.length == 0) return;
+    // Add lastModified timestamp to every operation.
+    const timestamp = (firebase.database.ServerValue || {}).TIMESTAMP || 'TIMESTAMP_MOCK';
+    this.currentOperation_.addPropertyChange(
+      pk.lastModified,
+      state.getProperty(pk.lastModified),
+      timestamp);
+
     this.currentOperation_.refreshMapSizeIfRequired();
     this.currentOperation_.markComplete();
     this.currentOperation_.alwaysRewrite = forceMapRewrite;
@@ -178,7 +185,7 @@ class OperationCenter {
     // Listening for latestOperation/i is sufficient to detect any ops on the
     // server.
     const latestOpIdentityPath =
-        `/maps/${state.getMid()}/payload/latestOperation/i`;
+      `/maps/${state.getMid()}/payload/latestOperation/i`;
     firebase.database().ref(latestOpIdentityPath).on('value', identityRef => {
       if (!identityRef) return;
       const identity = identityRef.val();
@@ -196,8 +203,8 @@ class OperationCenter {
         this.setStatus_(Status.UPDATE_ERROR);
       } else if (
         this.opBeingSent_ &&
-            this.opBeingSent_.num == num &&
-            this.opBeingSent_.fingerprint == fingerprint) {
+        this.opBeingSent_.num == num &&
+        this.opBeingSent_.fingerprint == fingerprint) {
         // This is caused by our own incomplete sendOp_().
         this.opBeingSentWasAccepted_ = true;
         state.setLastOpNum(num);
@@ -305,7 +312,7 @@ class OperationCenter {
           this.setStatus_(Status.READY);
           // But first flush out the first pending operation, if it was accepted.
           if (this.opBeingSentWasAccepted_ &&
-              this.pendingLocalOperations_.length > 0) {
+            this.pendingLocalOperations_.length > 0) {
             this.pendingLocalOperations_.shift();
           }
           this.startSendingPendingLocalOperations_();
@@ -360,9 +367,9 @@ class OperationCenter {
     }
 
     this.appliedOperations_ =
-        this.appliedOperations_
-            .slice(0, this.latestAppliedOperationIndex_ + 1)
-            .concat(op);
+      this.appliedOperations_
+        .slice(0, this.latestAppliedOperationIndex_ + 1)
+        .concat(op);
     this.latestAppliedOperationIndex_ = this.appliedOperations_.length - 1;
     if (this.appliedOperations_.length > constants.maxUndoStackSize) {
       this.appliedOperations_.shift();
@@ -422,7 +429,7 @@ class OperationCenter {
   }
 
   connectToExistingMap(mid, secret, tryToLoadSecretFromUser,
-      writeSecret, callback) {
+    writeSecret, callback) {
     if (!mid) return;
     if (state.getMid() != mid) state.setMid(mid);
     if (!secret && tryToLoadSecretFromUser) {
@@ -443,13 +450,13 @@ class OperationCenter {
       return;
     }
     Array.from(document.getElementsByClassName('disabled-in-read-only-mode'))
-        .forEach(element => {
-          element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
-        });
+      .forEach(element => {
+        element.classList[secret ? 'remove' : 'add']('disabled-menu-item');
+      });
     Array.from(document.querySelector('.disabled-in-read-only-mode textarea'))
-        .forEach(element => {
-          element.readonly = !secret;
-        });
+      .forEach(element => {
+        element.readonly = !secret;
+      });
     this.startListeningForMap();
     this.startListeningForOperations();
     this.readMetadata_();
@@ -470,7 +477,7 @@ class OperationCenter {
       }
       firebase.database().ref(`/maps/${state.getMid()}`).set(data).then(() => {
         this.connectToExistingMap(
-            state.getMid(), state.getSecret(), false, callback);
+          state.getMid(), state.getSecret(), false, callback);
       }).catch(error => {
         setStatus(Status.AUTH_ERROR);
         callback();
@@ -481,17 +488,17 @@ class OperationCenter {
   readMetadata_() {
     const mid = state.getMid();
     firebase.database().ref(`/maps/${mid}/metadata`).once('value')
-        .then(data => {
-          state.metadata = data.val();
-          this.updateMetadata_();
-        });
+      .then(data => {
+        state.metadata = data.val();
+        this.updateMetadata_();
+      });
   }
 
   updateMetadata_() {
     if (!state.metadata) return;
     if (state.metadata.created) {
       document.getElementById('createdOn').textContent =
-          new Date(state.metadata.created).toUTCString();
+        new Date(state.metadata.created).toUTCString();
     }
   }
 
@@ -531,7 +538,7 @@ class OperationCenter {
     this.opBeingSentWasAccepted_ = false;
 
     const latestOperationPath =
-        `/maps/${state.getMid()}/payload/latestOperation`;
+      `/maps/${state.getMid()}/payload/latestOperation`;
     firebase.database().ref(latestOperationPath).transaction(currData => {
       // This condition enforces the linear constraint on operations.
       if (!currData || !currData.i || currData.i.n + 1 == op.num) {
@@ -627,7 +634,7 @@ class OperationCenter {
         // Verify the current fullMap isn't the same or newer.
         if (currData.fullMap && currData.fullMap.lastOpNum >= num) {
           console.log('Aborting rewriting map ' +
-              `of op ${currData.fullMap.lastOpNum} to op ${num}.`);
+            `of op ${currData.fullMap.lastOpNum} to op ${num}.`);
           if (callback) callback();
           return;
         }

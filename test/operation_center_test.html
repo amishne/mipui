@@ -1,26 +1,65 @@
 <html>
 <head>
+  <script src="../public/app/constants.js" type="text/javascript"></script>
   <script src="../public/app/content.js" type="text/javascript"></script>
   <script src="../public/app/operation.js" type="text/javascript"></script>
   <script src="../public/app/operation_center.js" type="text/javascript"></script>
   <script src="harness.js" type="text/javascript"></script>
   <script type="text/javascript">
     debug = _ => _; // Hackish fix to test env
+    function successfulPromise(value) {
+      return {
+        then: (callback) => {
+          callback(value);
+          return successfulPromise(value);
+        },
+        catch: () => successfulPromise(value)
+      };
+    }
+
     beforeSuite = () => {
       mock('state.getMid()', 'mid');
+      const statusObj = (type, text) => ({type, text});
       mock('Status', {
-        SAVING: 'saving',
-        SAVED: 'saved',
-        READY: 'ready',
-        UPDATING: 'updating',
+        SAVING: statusObj('unstable', 'Saving...'),
+        SAVED: statusObj('good', 'Saved'),
+        READY: statusObj('good', 'Ready'),
+        UPDATING: statusObj('unstable', 'Updating...'),
+        SAVE_ERROR: statusObj('bad', 'Save error'),
+        UPDATE_ERROR: statusObj('bad', 'Update error'),
+        AUTH_ERROR: statusObj('bad', 'Auth error'),
       });
       mock('setStatus', s => status = s);
-      mock(getOpMockPath(1) + '.set("$all")', {});
-      mock(getOpMockPath(2) + '.set("$all")', {});
-      mock(getOpMockPath(3) + '.set("$all")', {});
+
+      // FIREBASE MOCKS
+      // We set up a base mock that handles database() calls and has ServerValue.
+      const dbMock = () => ({
+        ref: () => ({
+          on: () => {},
+          off: () => {},
+          set: () => successfulPromise(),
+          transaction: (code, cb) => { if (cb) cb(null, true, null); }
+        })
+      });
+      dbMock.ServerValue = { TIMESTAMP: 'TIMESTAMP_MOCK' };
+      mock('firebase.database', dbMock);
+
+      mock(getOpMockPath(1) + '.set("$all")', successfulPromise());
+      mock(getOpMockPath(2) + '.set("$all")', successfulPromise());
+      mock(getOpMockPath(3) + '.set("$all")', successfulPromise());
       mock(getOpMockPath(1) + '.off("$all")', {});
       mock(getOpMockPath(2) + '.off("$all")', {});
       mock(getOpMockPath(3) + '.off("$all")', {});
+
+      // Mock setTimeout to be synchronous for short delays, to fix async issues in tests.
+      const realSetTimeout = window.setTimeout;
+      mock('setTimeout', (fn, delay) => {
+        if (delay <= 10) {
+          fn();
+          return 0;
+        }
+        return realSetTimeout(fn, delay);
+      });
     };
 
     beforeTest = (complete) => {
@@ -28,6 +67,34 @@
       lastOpNum = 0;
       mock('state.getLastOpNum', () => lastOpNum);
       mock('state.setLastOpNum', num => lastOpNum = num);
+      mock('state.getProperty', () => null);
+      mock('state.setProperty', () => {});
+      mock('state.isReadOnly', () => false);
+      mock('state.nameChanged', () => {});
+      mock('state.reloadTheme', () => {});
+      mock('state.menu.descChanged', () => {});
+      mock('state.setupNewMid', (cb) => cb());
+      mock('createTheMapAndUpdateElements', () => {});
+      mock('updateMapTransform', () => {});
+      mock('state.theMap', {
+        cells: {
+          get: () => ({
+            getLayerContent: () => null,
+            setLayerContent: () => {},
+            gridElement: { classList: { add: () => {}, remove: () => {} } },
+            hasLayerContent: () => false,
+            contentIsVariation_: () => false,
+          }),
+        },
+        invalidateTiles: () => {},
+      });
+
+      // Ensure ServerValue is present for every test. 
+      // We re-mock it here because tests might overwrite firebase.database.
+      if (typeof firebase !== 'undefined' && firebase.database) {
+        firebase.database.ServerValue = { TIMESTAMP: 'TIMESTAMP_MOCK' };
+      }
+      
       opc = new OperationCenter();
       complete();
     };
@@ -55,7 +122,7 @@
     }
 
     addTest('successful local operation -> op is saved', () => {
-      mock(getOpMockPath(1) + '.set("$all")', {});
+      mock(getOpMockPath(1) + '.set("$all")', successfulPromise());
       mock(getLatestOpTransactionMockPath(), (code, callback) => {
         callback(null, !!code(createIdentity(0)), null);
         assert(status == Status.SAVED);
@@ -125,7 +192,7 @@
       });
       mock('state.theMap.cells.get("$any").getLayerContent',
           (_) => layerContent);
-      mock(getOpMockPath(1) + '.set("$all")', {});
+      mock(getOpMockPath(1) + '.set("$all")', successfulPromise());
       mock(getOpMockPath(1) + '.off("$all")', {});
 
       mock(getLatestOpTransactionMockPath(), (code, callback) => {
@@ -139,9 +206,11 @@
       mock(getOpMockPath(1) + '.on', (_, opCallback) => {
         assert(status == Status.UPDATING);
         opCallback({val: () => remoteOp.data});
-        assert(status == Status.READY);
-        assert(lastOpNum == 1);
-        testCompleted();
+        setTimeout(() => {
+          assert(status == Status.READY);
+          assert(lastOpNum == 1);
+          testCompleted();
+        }, 10);
       });
 
       localOp.redo();
@@ -186,6 +255,7 @@
         return {
           getLayerContent: _ => cells[key],
           setLayerContent: (_1, content, _2) => { cells[key] = content; },
+          gridElement: { classList: { add: _ => {}, remove: _ => {} } },
         };
       });
 
@@ -268,6 +338,7 @@
         return {
           getLayerContent: _ => cells[key],
           setLayerContent: (_1, content, _2) => { cells[key] = content; },
+          gridElement: { classList: { add: _ => {}, remove: _ => {} } },
         };
       });
 
@@ -345,6 +416,9 @@
         return {
           getLayerContent: _ => cell,
           setLayerContent: (_1, content, _2) => { cell = content; },
+          gridElement: { classList: { add: _ => {}, remove: _ => {} } },
+          hasLayerContent: () => false,
+          contentIsVariation_: () => false,
         };
       });
 
@@ -387,6 +461,23 @@
       });
 
       opc.startListeningForOperations();
+    });
+    addTest('recordOperationComplete adds lastModified', () => {
+      mock(getOpMockPath(1) + '.set("$all")', successfulPromise());
+      mock(getLatestOpTransactionMockPath(), (code, callback) => {
+        callback(null, !!code(createIdentity(0)), null);
+      });
+      
+      const op = new Operation();
+      op.addCellChange('cell', 0, {}, {});
+      opc.currentOperation_ = op;
+      opc.recordOperationComplete();
+      
+      const props = op.data.p;
+      assert(props && props[pk.lastModified]); 
+      assert(firebase.database && firebase.database.ServerValue && 
+             props[pk.lastModified].n === firebase.database.ServerValue.TIMESTAMP);
+      testCompleted();
     });
   </script>
 </head>
