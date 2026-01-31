@@ -274,3 +274,5 @@ function initializeContentTypes(obj) {
 }
 
 initializeContentTypes(ct);
+
+if (typeof module !== 'undefined') module.exports = {ct, ck, pk};

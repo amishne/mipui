@@ -147,6 +147,7 @@ class OperationCenter {
   }
 
   setStatus_(status) {
+    console.log('OpCenter: setStatus_ called with', status);
     this.status_ = status;
     setStatus(status);
   }
@@ -160,7 +161,29 @@ class OperationCenter {
     firebase.database().ref(mapPath).on('value', fullMapRef => {
       if (!fullMapRef) return;
       const fullMap = fullMapRef.val();
-      if (!fullMap) return;
+      console.log('TestDebug: fullMap value:', fullMap);
+      if (!fullMap) {
+        console.log('TestDebug: Map not found, calling restoreMap');
+        // Map not found in RTDB. Could be cold storage.
+        this.setStatus_(Status.UPDATING);
+        const restoreMap = firebase.functions().httpsCallable('restoreMap');
+        restoreMap({mid: state.getMid()}).then(result => {
+          if (!result.data.success) {
+            // Map really doesn't exist.
+            this.setStatus_(Status.LOADING_FAILED);
+            // This is a terminal state for existing-mid flow.
+          } else {
+            // Success! The map was restored to RTDB.
+            // Do nothing; the listener is still active and will fire again
+            // when the data appears in RTDB.
+            console.log('Map restored from cold storage.');
+          }
+        }).catch(error => {
+          console.error(error);
+          this.setStatus_(Status.UPDATE_ERROR);
+        });
+        return;
+      }
       // Check if our map is the same (or newer!)
       if (fullMap.lastOpNum <= state.getLastOpNum()) return;
 
