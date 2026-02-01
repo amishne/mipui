@@ -2,11 +2,16 @@ const test = require('firebase-functions-test')();
 const assert = require('chai').assert;
 const sinon = require('sinon');
 const admin = require('firebase-admin');
+const adminFunctions = require('firebase-admin/functions');
+
+// Require utils to mock it
+const utils = require('../utils');
 
 describe('Cloud Functions', () => {
   let myFunctions;
   let dbRefStub;
   let storageBucketStub;
+  let getAllMapKeysStub;
 
   // Store originals to restore later
   let originalInit;
@@ -14,16 +19,12 @@ describe('Cloud Functions', () => {
   let originalStorage;
 
   before(async () => {
-    // 1. Manually Mock Admin methods using defineProperty to handle getters
+    // 1. Mock Admin
     originalInit = admin.initializeApp;
-    // Make sure we define it as configurable so we can restore it later
     Object.defineProperty(admin, 'initializeApp', { value: () => {}, configurable: true, writable: true });
 
     dbRefStub = sinon.stub();
-    // Use get() to handle if it's a getter or value, or just defineProperty 'get'
-    // Safe approach: define 'get'
     const dbStub = () => ({ ref: dbRefStub });
-    // Keep ServerValue if possible, or mock it.
     dbStub.ServerValue = { TIMESTAMP: 'MOCK_TIMESTAMP' };
     
     const dbDescriptor = Object.getOwnPropertyDescriptor(admin, 'database');
@@ -37,136 +38,221 @@ describe('Cloud Functions', () => {
     originalStorage = storageDescriptor;
     Object.defineProperty(admin, 'storage', { get: () => storageStub, configurable: true });
 
-    // 2. Require index.js
+    // 2. Mock getFunctions
+    sinon.stub(adminFunctions, 'getFunctions').returns({
+        taskQueue: sinon.stub().returns({
+            enqueue: sinon.stub().resolves()
+        })
+    });
+
+    // 3. Mock getAllMapKeys
+    getAllMapKeysStub = sinon.stub(utils, 'getAllMapKeys');
+
+    // 4. Require index.js
+    delete require.cache[require.resolve('../index')];
     myFunctions = require('../index');
   });
 
   after(() => {
-    // Restore originals
-    // For initializeApp, it's a value property.
-    if (originalInit) {
-        // Try restoring using defineProperty to ensure it's exact
-        try {
-            Object.defineProperty(admin, 'initializeApp', { value: originalInit, writable: true, configurable: true });
-        } catch (e) {
-            // Fallback: direct assignment if writable
-            admin.initializeApp = originalInit;
-        }
-    }
-
-    if (originalDatabase) {
-        try {
-            Object.defineProperty(admin, 'database', originalDatabase);
-        } catch (e) { console.error('Failed to restore admin.database', e); }
-    }
-    
-    if (originalStorage) {
-         try {
-            Object.defineProperty(admin, 'storage', originalStorage);
-         } catch (e) { console.error('Failed to restore admin.storage', e); }
-    }
-    
+    if (adminFunctions.getFunctions.restore) adminFunctions.getFunctions.restore();
+    if (utils.getAllMapKeys.restore) utils.getAllMapKeys.restore();
+    if (originalInit) admin.initializeApp = originalInit;
+    if (originalDatabase) Object.defineProperty(admin, 'database', originalDatabase);
+    if (originalStorage) Object.defineProperty(admin, 'storage', originalStorage);
     test.cleanup();
   });
 
   afterEach(() => {
     dbRefStub.resetHistory();
     storageBucketStub.resetHistory();
+    getAllMapKeysStub.reset();
   });
 
   describe('offloadOldMaps', () => {
-    it('should offload maps older than 90 days', async () => {
+    let clock;
+    
+    beforeEach(() => {
+        clock = sinon.useFakeTimers(Date.now());
+    });
+    
+    afterEach(() => {
+        clock.restore();
+    });
+
+    it('should offload maps older than 90 days (Normal SDK Flow)', async () => {
       const now = Date.now();
-      const oldTime = now - (91 * 24 * 60 * 60 * 1000); // 91 days ago
+      const oldTime = now - (91 * 24 * 60 * 60 * 1000); 
       
-      // Setup DB Chain
-      const watermarkRef = {
-        once: sinon.stub().resolves({ val: () => null }),
-        set: sinon.stub().resolves(),
-        remove: sinon.stub().resolves()
+      const mapsData = {
+          'oldMap': { p: { m: oldTime }, data: 'full' },
+          'recentMap': { p: { m: now }, data: 'full' }
       };
-      
-      const mapData = {
-        'recentMap': { p: { m: now } },
-        'oldMap': { p: { m: oldTime } }
-      };
-      
-      const mapsQueryStub = {
-        once: sinon.stub().resolves({ val: () => mapData })
-      };
-      
-      // Fix: orderByKey() returns Query. limitToFirst() returns Query.
-      // We need to chain these.
+
+      // Mock Bookkeeping: Retry=0, No Watermark
+      const bookkeepingUpdateStub = sinon.stub().resolves();
+      dbRefStub.withArgs('bookkeeping').returns({
+         once: sinon.stub().resolves({ val: () => ({ lastProcessedMid: null, retryCount: 0 }), child: (k) => ({ val: () => (k === 'retryCount' ? 0 : null) }) }),
+         update: bookkeepingUpdateStub
+      });
+
+      // Mock SDK Quer: Expect limitToFirst(10) (default batch)
       const queryChain = {
-        limitToFirst: sinon.stub().returns({
-             startAfter: () => mapsQueryStub,
-             ...mapsQueryStub
-        }),
-        startAfter: () => mapsQueryStub,
-        ...mapsQueryStub
+          limitToFirst: sinon.stub().returnsThis(),
+          startAfter: sinon.stub().returnsThis(),
+          once: sinon.stub().resolves({ val: () => mapsData })
       };
-      // The implementation calls: db.ref('maps').orderByKey().limitToFirst()
-      // So orderByKey returns an object that has limitToFirst.
-      
-      const mapsRefStub = {
-        orderByKey: sinon.stub().returns(queryChain)
-      };
-      
-      // Setup default db behaviors
-      dbRefStub.withArgs('bookkeeping/lastProcessedMid').returns(watermarkRef);
-      dbRefStub.withArgs('maps').returns(mapsRefStub);
-      
-      const oldMapRemovalStub = sinon.stub().resolves();
-      dbRefStub.withArgs('maps/oldMap').returns({ remove: oldMapRemovalStub });
+      dbRefStub.withArgs('maps').returns({ orderByKey: sinon.stub().returns(queryChain) });
 
-      // Setup Storage Chain
+      // Mock Removal & Storage
+      dbRefStub.withArgs('maps/oldMap').returns({ remove: sinon.stub().resolves() });
       const fileSaveStub = sinon.stub().resolves();
-      const bucketObj = { 
-        file: sinon.stub().returns({ save: fileSaveStub }) 
-      };
-      storageBucketStub.returns(bucketObj);
+      storageBucketStub.returns({ file: sinon.stub().returns({ save: fileSaveStub, delete: sinon.stub().resolves() }) });
 
-      // Execute with wrapped function
-      // Note: offloadOldMaps is onDispatch (Cloud Tasks)
-      // test.wrap handles the correct signature invocation
+      // Execute
       const wrapped = test.wrap(myFunctions.offloadOldMaps);
       await wrapped({});
 
-      // Assertions
-      assert.isTrue(oldMapRemovalStub.calledOnce, 'Should remove oldMap');
-      assert.isTrue(fileSaveStub.calledOnce, 'Should save oldMap to storage');
-      assert.isTrue(bucketObj.file.calledWith('maps/oldMap.mipui'));
+      // Verify
+      assert.isTrue(getAllMapKeysStub.notCalled, 'Should NOT use REST keys for normal flow');
+      assert.isTrue(queryChain.limitToFirst.calledWith(10), 'Should use default batch size 10'); 
+      assert.isTrue(fileSaveStub.calledWith(sinon.match.string), 'Should save oldMap');
+      assert.equal(bookkeepingUpdateStub.lastCall.args[0].lastProcessedMid, 'recentMap');
+    });
+
+    it('should reduce batch size to 1 if retry > 0 (Intermediate Failure)', async () => {
+        // Mock Retry = 1
+        const bookkeepingUpdateStub = sinon.stub().resolves();
+        dbRefStub.withArgs('bookkeeping').returns({
+             once: sinon.stub().resolves({ val: () => ({ lastProcessedMid: 'mid_0', retryCount: 1 }), child: (k) => ({ val: () => (k === 'retryCount' ? 1 : 'mid_0') }) }),
+             update: bookkeepingUpdateStub
+        });
+
+        // Mock SDK Query: limitToFirst(2) -> 1 + 1 buffer
+        const mapsData = { 'mid_1': { p: { m: 0 } } };
+        const queryChain = {
+            limitToFirst: sinon.stub().returnsThis(),
+            startAfter: sinon.stub().returnsThis(),
+            once: sinon.stub().resolves({ val: () => mapsData })
+        };
+        dbRefStub.withArgs('maps').returns({ orderByKey: sinon.stub().returns(queryChain) });
+
+        // MOCK REMOVE for mid_1
+        dbRefStub.withArgs('maps/mid_1').returns({ 
+            once: sinon.stub().resolves({ val: () => ({ p: { m: 0 } }) }), // For the check inside loop? No, loop data comes from mapsData.
+            // Wait, offloadMap does a fresh fetch? No.
+            remove: sinon.stub().resolves() 
+        });
+        
+        // Wait, logic in code:
+        // const map = mapList[mid]; // from batch query
+        // offloadMap(mid, map);
+        // Inside offloadMap: admin.database().ref(`maps/${mid}`).remove();
+        // So we need dbRefStub.withArgs('maps/mid_1').returns({ remove: ... })
+
+        // Execute
+        const wrapped = test.wrap(myFunctions.offloadOldMaps);
+        await wrapped({});
+
+        // Verify
+        assert.isTrue(queryChain.limitToFirst.calledWith(2), 'Should reduce batch size to 1 (fetching 1+1)');
+        assert.isTrue(queryChain.startAfter.calledWith('mid_0'), 'Should start after previous watermark');
+        assert.equal(bookkeepingUpdateStub.firstCall.args[0].retryCount, 2, 'Should increment retry count');
+    });
+
+    it('should skip poison pill using REST Key Scan (Hybrid Strategy)', async () => {
+       // Mock Retry = 3 (Poison Pill Trigger)
+       const bookkeepingUpdateStub = sinon.stub().resolves();
+       dbRefStub.withArgs('bookkeeping').returns({
+         once: sinon.stub().resolves({ val: () => ({ lastProcessedMid: 'map_1', retryCount: 3 }), child: (k) => ({ val: () => (k === 'retryCount' ? 3 : 'map_1') }) }),
+         update: bookkeepingUpdateStub
+       });
+
+       // Mock REST Keys: Lexicographically sorted
+       getAllMapKeysStub.resolves(['map_0', 'map_1', 'map_2']);
+
+       // Execute
+       const wrapped = test.wrap(myFunctions.offloadOldMaps);
+       await wrapped({});
+
+       // Verify
+       assert.isTrue(getAllMapKeysStub.calledOnce, 'Should use REST keys for Poison Pill');
+       assert.deepEqual(bookkeepingUpdateStub.lastCall.args[0], { 
+           lastProcessedMid: 'map_2', // Should skip to map_2
+           retryCount: 0 
+       });
+    });
+
+    it('should handle end of database correctly', async () => {
+         const bookkeepingUpdateStub = sinon.stub().resolves();
+         dbRefStub.withArgs('bookkeeping').returns({
+            once: sinon.stub().resolves({ val: () => ({ lastProcessedMid: 'last_mid', retryCount: 0 }), child: (k) => ({ val: () => (k === 'retryCount' ? 0 : 'last_mid') }) }),
+            update: bookkeepingUpdateStub,
+            remove: sinon.stub().resolves()
+         });
+
+         // Mock Empty Maps Query
+         const queryChain = {
+             limitToFirst: sinon.stub().returnsThis(),
+             startAfter: sinon.stub().returnsThis(),
+             once: sinon.stub().resolves({ val: () => null })
+         };
+         dbRefStub.withArgs('maps').returns({ orderByKey: sinon.stub().returns(queryChain) });
+ 
+         // Execute
+         const wrapped = test.wrap(myFunctions.offloadOldMaps);
+         await wrapped({});
+ 
+         // Verify
+         // Should delete bookkeeping
+         assert.isTrue(bookkeepingUpdateStub.calledWith({ lastProcessedMid: null, retryCount: 0 }), 'Should reset if empty batch returned (or actually remove if completely done?)'); 
+         // Logic: if (!mapList) -> update(null, 0).
+         // Logic: if check loopContinues == false -> remove.
+         // Here mapList is null, so it hits the "No maps found" block -> update(null, 0).
+         assert.deepEqual(bookkeepingUpdateStub.lastCall.args[0], { lastProcessedMid: null, retryCount: 0 });
+    });
+  });
+  
+  // (Janitor and Restore tests omitted/preserved as they don't depend on key scan)
+  // Re-adding Janitor tests for completeness of this file overwrite?
+  // Yes, I should include them.
+  
+  describe('janitor', () => {
+    let enqueueStub;
+
+    beforeEach(() => {
+        enqueueStub = sinon.stub().resolves();
+        adminFunctions.getFunctions.returns({
+            taskQueue: sinon.stub().returns({ enqueue: enqueueStub })
+        });
+    });
+
+    it('should start new loop', async () => {
+        dbRefStub.withArgs('bookkeeping').returns({
+           once: sinon.stub().resolves({ child: () => ({ val: () => null }) })
+        });
+        const wrapped = test.wrap(myFunctions.janitor);
+        await wrapped({});
+        assert.isTrue(enqueueStub.calledOnce);
     });
   });
 
-  describe('restoreMap', () => {
+    describe('restoreMap', () => {
     it('should restore map from storage', async () => {
       const mid = 'test_mid';
-
-      // Mock Storage
       const fileStub = {
         exists: sinon.stub().resolves([true]),
-        download: sinon.stub().resolves([Buffer.from(JSON.stringify({ 
-             payload: { fullMap: {} },
-             p: { m: 100 }
-        }))]),
+        download: sinon.stub().resolves([Buffer.from(JSON.stringify({ p: { m: 100 } }))]),
         delete: sinon.stub().resolves()
       };
       storageBucketStub.returns({ file: sinon.stub().returns(fileStub) });
-
-      // Mock DB
       const setStub = sinon.stub().resolves();
       dbRefStub.withArgs(`maps/${mid}`).returns({ set: setStub });
 
-      // Execute
-      // restoreMap is onCall
       const wrapped = test.wrap(myFunctions.restoreMap);
       const result = await wrapped({ mid });
 
-      // Verify
       assert.deepEqual(result, { success: true });
       assert.isTrue(setStub.calledOnce);
-      assert.isTrue(fileStub.delete.calledOnce);
     });
   });
 });

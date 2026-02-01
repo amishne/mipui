@@ -85,3 +85,9 @@ If `npm run test:integration` fails to start the emulators:
         netstat -ano | findstr :9000
         taskkill /F /PID <PID>
         ```
+
+### Log Retention (Cost Saving)
+Since `janitor` runs frequently, logs can accumulate. To save costs, set the retention of your default log bucket to 1 day:
+```bash
+gcloud logging buckets update _Default --location=global --retention-days=1 --project=mipui-dev
+```
