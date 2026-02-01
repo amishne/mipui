@@ -8,10 +8,11 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "test": "mocha test/index.test.js",
-    "test:integration": "firebase emulators:exec --project test \"mocha test/integration.test.js\""
+    "test:integration": "firebase emulators:exec --project test \"mocha test/integration.test.js\"",
+    "build": "node -e \"require('fs').copyFileSync('../public/app/content.js', './content.js')\""
   },
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "main": "index.js",
   "dependencies": {

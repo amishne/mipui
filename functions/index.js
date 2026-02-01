@@ -1,7 +1,7 @@
 const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 const { getFunctions } = require('firebase-admin/functions');
-const { pk, ck } = require('../public/app/content');
+const { pk, ck } = require('./content');
 
 
 if (!admin.apps.length) {
@@ -10,8 +10,8 @@ if (!admin.apps.length) {
 
 // Configuration (Exported for testing overrides)
 exports.config = {
-  BATCH_SIZE: 500,
-  SCHEDULE_DELAY: 3600, // 1 hour
+  BATCH_SIZE: 50,
+  SCHEDULE_DELAY: 300, // 5 minutes
   CUTOFF_DAYS: 90
 };
 
@@ -114,7 +114,7 @@ exports.janitor = functions.pubsub.schedule('every 168 hours').onRun(async (cont
   }
   
   console.log('Janitor starting new offload loop.');
-  const queue = functions.tasks.taskQueue('offloadOldMaps');
+  const queue = getFunctions().taskQueue('offloadOldMaps');
   await queue.enqueue({});
   return null;
 });

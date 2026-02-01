@@ -41,10 +41,12 @@ function initializeFirebase(callback) {
     apiKey: 'AIzaSyA7tcZVmhwYyV4ygmEEuB1RKwgBZZC7HsQ',
     authDomain: 'mipui-prod.firebaseapp.com',
     databaseURL: 'https://mipui-prod.firebaseio.com',
+    projectId: 'mipui-prod',
   } : {
     apiKey: 'AIzaSyAP7CfYeh9_DWmKqTPI_-etKuhYFggaYy4',
     authDomain: 'mipui-dev.firebaseapp.com',
     databaseURL: 'https://mipui-dev.firebaseio.com',
+    projectId: 'mipui-dev',
   };
   firebase.initializeApp(config);
   firebase.database.enableLogging(false);

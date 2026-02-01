@@ -6,7 +6,7 @@ This system implements "Cold Storage" for the Mipui mapping application. It auto
 ## Architecture
 
 *   **Source**: Firebase Realtime Database (`maps/`)
-*   **Destination**: Google Cloud Storage (`maps/`)
+  *   **Predeploy Hook**: `firebase.json` is configured to copy `../public/app/content.js` to `functions/content.js` before deployment. This ensures code sharing without repo duplication.
 *   **Metadata**: `bookkeeping/lastProcessedMid` (Watermark for batch processing)
 
 ## Functions
@@ -64,3 +64,24 @@ Run against the Firebase Emulator Suite (Java 21+ required):
 npm run test:integration
 ```
 Note: Ensure `JAVA_HOME` is set if Java is not in your global PATH.
+
+### Troubleshooting Tests
+
+If `npm run test:integration` fails to start the emulators:
+
+1.  **Java Version**: The Firebase Emulator Suite requires **Java 21 or higher**.
+    *   Verify with `java -version`.
+2.  **Environment Variables**:
+    *   Ensure `JAVA_HOME` points to your JDK installation (e.g., `C:\Program Files\Java\jdk-21...`).
+    *   Ensure `%JAVA_HOME%\bin` is in your system `PATH`.
+    *   *PowerShell Example*:
+        ```powershell
+        $env:JAVA_HOME="C:\Path\To\Jdk"; $env:PATH="$env:JAVA_HOME\bin;$env:PATH"; npm run test:integration
+        ```
+3.  **Port Conflicts**:
+    *   If you see "Port 9000 is not open" or "Address already in use", a zombie Java process might be holding the port.
+    *   **Fix**: Find and kill the process.
+        ```powershell
+        netstat -ano | findstr :9000
+        taskkill /F /PID <PID>
+        ```
