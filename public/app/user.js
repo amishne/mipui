@@ -132,7 +132,7 @@ function initAuth(callback) {
   uiConfig = {
     callbacks: {
       signInSuccessWithAuthResult: (authResult, redirectUrl) => {
-        userChanged(firebase.auth().currentUser.uid);
+        userChanged(firebase.auth().currentUser);
         return false;
       },
       signInFailure: error => {
@@ -200,6 +200,6 @@ function initAuth(callback) {
     return;
   }
   firebase.auth().signInAnonymously()
-      .then(user => { userChanged(user); callback(); })
+      .then(userCredential => { userChanged(userCredential.user); callback(); })
       .catch(() => setStatus(Status.AUTH_ERROR));
 }

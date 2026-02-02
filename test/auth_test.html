@@ -1,0 +1,119 @@
+<html>
+<head>
+  <!-- Mock dependencies before user.js loads -->
+  <script type="text/javascript">
+    // Minimal global mocks
+    var firebase = {
+        auth: function() {},
+        app: function() {}
+    };
+    // Mock static properties required by user.js
+    firebase.auth.GoogleAuthProvider = { PROVIDER_ID: 'google' };
+    firebase.auth.EmailAuthProvider = { PROVIDER_ID: 'email' };
+    
+    var firebaseui = {
+        auth: {
+            AuthUI: function() {},
+            AnonymousAuthProvider: { PROVIDER_ID: 'anon' }
+        }
+    };
+    var state = { user: null };
+    var Status = { AUTH_ERROR: 'AUTH_ERROR' };
+    function setStatus() {}
+    function debug() {}
+  </script>
+  
+  <script src="harness.js" type="text/javascript"></script>
+  <script src="../public/app/user.js" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+    beforeSuite = () => {
+       // Setup global state mock
+       mock('state', { user: null });
+       mock('setStatus', () => {});
+       mock('debug', () => {});
+       
+       // Ensure static mocks are present if mocking firebase.auth function replaces them?
+       // harness.js mock() might replace the function.
+       // The global var definition above handles initial load.
+       // We should ensure they persist if we mock firebase.auth.
+    };
+
+    beforeTest = (complete) => {
+       state.user = null;
+       complete();
+    };
+
+    function successfulPromise(value) {
+      return {
+        then: (callback) => {
+          const result = callback(value);
+          return successfulPromise(result); 
+        },
+        catch: () => successfulPromise(value)
+      };
+    }
+
+    addTest('signInSuccessWithAuthResult passes User object', () => {
+      const mockUser = { uid: 'uid_123' };
+      
+      // Preserve static properties when mocking
+      const authMock = () => ({
+         currentUser: { uid: 'pre_existing' }, // satisfy check in initAuth
+         signInAnonymously: () => successfulPromise({user: {uid: 'anon'}})
+      });
+      authMock.GoogleAuthProvider = { PROVIDER_ID: 'google' };
+      authMock.EmailAuthProvider = { PROVIDER_ID: 'email' };
+      
+      mock('firebase.auth', authMock);
+
+      mock('firebaseui.auth.AuthUI', function() { return { start: () => {} }; });
+      
+      // Populate uiConfig
+      initAuth(() => {});
+      
+      // Re-mock for the callback execution to see the correct user
+      const authMockSuccess = () => ({ currentUser: mockUser });
+      // Restore statics just in case
+      authMockSuccess.GoogleAuthProvider = { PROVIDER_ID: 'google' };
+      authMockSuccess.EmailAuthProvider = { PROVIDER_ID: 'email' };
+      mock('firebase.auth', authMockSuccess);
+      
+      // Execute
+      const result = uiConfig.callbacks.signInSuccessWithAuthResult({}, '');
+      
+      assert(result === false);
+      assert(state.user === mockUser);
+      assert(state.user.uid === 'uid_123');
+      testCompleted();
+    });
+
+    addTest('signInAnonymously handles UserCredential (v8)', () => {
+      const mockUser = { uid: 'anon_v8' };
+      const mockCredential = { user: mockUser };
+      
+      const authMock = () => ({
+         signInAnonymously: () => successfulPromise(mockCredential),
+         currentUser: null
+      });
+      authMock.GoogleAuthProvider = { PROVIDER_ID: 'google' };
+      authMock.EmailAuthProvider = { PROVIDER_ID: 'email' };
+      
+      mock('firebase.auth', authMock);
+      
+      let callbackCalled = false;
+      
+      initAuth(() => {
+         callbackCalled = true;
+         assert(state.user === mockUser);
+         assert(state.user.uid === 'anon_v8');
+         testCompleted();
+      });
+      
+      assert(callbackCalled);
+    });
+    
+  </script>
+</head>
+<body></body>
+</html>

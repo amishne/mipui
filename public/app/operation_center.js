@@ -163,25 +163,6 @@ class OperationCenter {
       const fullMap = fullMapRef.val();
       console.log('TestDebug: fullMap value:', fullMap);
       if (!fullMap) {
-        console.log('TestDebug: Map not found, calling restoreMap');
-        // Map not found in RTDB. Could be cold storage.
-        this.setStatus_(Status.UPDATING);
-        const restoreMap = firebase.functions().httpsCallable('restoreMap');
-        restoreMap({mid: state.getMid()}).then(result => {
-          if (!result.data.success) {
-            // Map really doesn't exist.
-            this.setStatus_(Status.LOADING_FAILED);
-            // This is a terminal state for existing-mid flow.
-          } else {
-            // Success! The map was restored to RTDB.
-            // Do nothing; the listener is still active and will fire again
-            // when the data appears in RTDB.
-            console.log('Map restored from cold storage.');
-          }
-        }).catch(error => {
-          console.error(error);
-          this.setStatus_(Status.UPDATE_ERROR);
-        });
         return;
       }
       // Check if our map is the same (or newer!)
@@ -480,9 +461,38 @@ class OperationCenter {
       .forEach(element => {
         element.readonly = !secret;
       });
-    this.startListeningForMap();
-    this.startListeningForOperations();
-    this.readMetadata_();
+
+    // Check if the map exists in the RTDB.
+    firebase.database().ref(`/maps/${mid}`).once('value').then(snapshot => {
+      if (snapshot.exists()) {
+        // Map exists in RTDB.
+        this.startListeningForMap();
+        this.startListeningForOperations();
+        this.readMetadata_();
+      } else {
+        // Map not found in RTDB. Could be cold storage.
+        console.log('Map not found in RTDB, calling restoreMap...');
+        this.setStatus_(Status.UPDATING);
+        const restoreMap = firebase.functions().httpsCallable('restoreMap');
+        restoreMap({ mid }).then(result => {
+          if (!result.data.success) {
+            // Map really doesn't exist.
+            console.log('restoreMap failed: Map not found.');
+            this.setStatus_(Status.LOADING_FAILED);
+          } else {
+            console.log('Map restored from cold storage.');
+            // Map should be in RTDB now.
+            this.startListeningForMap();
+            this.startListeningForOperations();
+            this.readMetadata_();
+          }
+        }).catch(error => {
+          console.error(error);
+          this.setStatus_(Status.UPDATE_ERROR);
+        });
+      }
+    });
+
     callback(!!secret);
   }
 
@@ -498,13 +508,15 @@ class OperationCenter {
       if (origin) {
         data.metadata.origin = origin;
       }
-      firebase.database().ref(`/maps/${state.getMid()}`).set(data).then(() => {
-        this.connectToExistingMap(
-          state.getMid(), state.getSecret(), false, callback);
-      }).catch(error => {
-        setStatus(Status.AUTH_ERROR);
-        callback();
-      });;
+      firebase.database().ref(`/maps/${state.getMid()}`).set(data)
+        .then(() => {
+          this.connectToExistingMap(
+            state.getMid(), state.getSecret(), false, false, callback);
+        })
+        .catch(error => {
+          setStatus(Status.AUTH_ERROR);
+          callback();
+        });
     });
   }
 

@@ -1,4 +1,5 @@
 <html>
+
 <head>
   <script src="../public/app/constants.js" type="text/javascript"></script>
   <script src="../public/app/content.js" type="text/javascript"></script>
@@ -20,7 +21,7 @@
 
     beforeSuite = () => {
       mock('state.getMid()', 'mid');
-      const statusObj = (type, text) => ({type, text});
+      const statusObj = (type, text) => ({ type, text });
       mock('Status', {
         SAVING: statusObj('unstable', 'Saving...'),
         SAVED: statusObj('good', 'Saved'),
@@ -36,8 +37,8 @@
       // We set up a base mock that handles database() calls and has ServerValue.
       const dbMock = () => ({
         ref: () => ({
-          on: () => {},
-          off: () => {},
+          on: () => { },
+          off: () => { },
           set: () => successfulPromise(),
           transaction: (code, cb) => { if (cb) cb(null, true, null); }
         })
@@ -69,25 +70,25 @@
       mock('state.getLastOpNum', () => lastOpNum);
       mock('state.setLastOpNum', num => lastOpNum = num);
       mock('state.getProperty', () => null);
-      mock('state.setProperty', () => {});
+      mock('state.setProperty', () => { });
       mock('state.isReadOnly', () => false);
-      mock('state.nameChanged', () => {});
-      mock('state.reloadTheme', () => {});
-      mock('state.menu.descChanged', () => {});
+      mock('state.nameChanged', () => { });
+      mock('state.reloadTheme', () => { });
+      mock('state.menu.descChanged', () => { });
       mock('state.setupNewMid', (cb) => cb());
-      mock('createTheMapAndUpdateElements', () => {});
-      mock('updateMapTransform', () => {});
+      mock('createTheMapAndUpdateElements', () => { });
+      mock('updateMapTransform', () => { });
       mock('state.theMap', {
         cells: {
           get: () => ({
             getLayerContent: () => null,
-            setLayerContent: () => {},
-            gridElement: { classList: { add: () => {}, remove: () => {} } },
+            setLayerContent: () => { },
+            gridElement: { classList: { add: () => { }, remove: () => { } } },
             hasLayerContent: () => false,
             contentIsVariation_: () => false,
           }),
         },
-        invalidateTiles: () => {},
+        invalidateTiles: () => { },
       });
 
       // Ensure ServerValue is present for every test. 
@@ -95,7 +96,7 @@
       if (typeof firebase !== 'undefined' && firebase.database) {
         firebase.database.ServerValue = { TIMESTAMP: 'TIMESTAMP_MOCK' };
       }
-      
+
       opc = new OperationCenter();
       complete();
     };
@@ -104,22 +105,22 @@
       const identity = {};
       if (typeof n !== 'undefined') identity['n'] = n;
       if (typeof f !== 'undefined') identity['f'] = f;
-      return {i: identity};
+      return { i: identity };
     }
 
     function getLatestIdentityOnMockPath() {
       return 'firebase.database().ref("/maps/mid/payload/latestOperation/i")' +
-          '.on';
+        '.on';
     }
 
     function getLatestOpTransactionMockPath() {
       return 'firebase.database().ref("/maps/mid/payload/latestOperation")' +
-          '.transaction';
+        '.transaction';
     }
 
     function getOpMockPath(num) {
       return 'firebase.database().ref("/maps/mid/payload/operations/' +
-          num + '")';
+        num + '")';
     }
 
     addTest('successful local operation -> op is saved', () => {
@@ -144,81 +145,81 @@
     });
 
     addTest('unsuccessful local op followed by remote op -> ' +
-        'local op is resent', () => {
-      let transactionCount = 0;
-      mock(getLatestOpTransactionMockPath(), (code, callback) => {
-        transactionCount++;
-        if (transactionCount == 1) {
-          assert(status == Status.SAVING);
-          callback(null, !!code(createIdentity(1)), null);
-        } else if (transactionCount == 2) {
-          callback(null, !!code(createIdentity(1)), null);
-          assert(status == Status.SAVED);
-          assert(lastOpNum == 2);
-          testCompleted();
-        } else {
-          assert(false);
-        }
-      });
+      'local op is resent', () => {
+        let transactionCount = 0;
+        mock(getLatestOpTransactionMockPath(), (code, callback) => {
+          transactionCount++;
+          if (transactionCount == 1) {
+            assert(status == Status.SAVING);
+            callback(null, !!code(createIdentity(1)), null);
+          } else if (transactionCount == 2) {
+            callback(null, !!code(createIdentity(1)), null);
+            assert(status == Status.SAVED);
+            assert(lastOpNum == 2);
+            testCompleted();
+          } else {
+            assert(false);
+          }
+        });
 
-      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        identityCallback({val: () => createIdentity(1).i});
-      });
+        mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+          identityCallback({ val: () => createIdentity(1).i });
+        });
 
-      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
-        assert(status == Status.UPDATING);
-        opCallback({val: () => ({})});
-      });
+        mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+          assert(status == Status.UPDATING);
+          opCallback({ val: () => ({}) });
+        });
 
-      opc.addLocalOperation_(new Operation());
-      assert(status == Status.SAVING);
-      opc.startListeningForOperations();
-    });
+        opc.addLocalOperation_(new Operation());
+        assert(status == Status.SAVING);
+        opc.startListeningForOperations();
+      });
 
     addTest('unsuccessful local op followed by remote op voiding it -> ' +
-        'local op is not resent', () => {
-      const localOp = new Operation();
-      localOp
+      'local op is not resent', () => {
+        const localOp = new Operation();
+        localOp
           .addCellChange(
-              'cell_key', ct.walls.id, {[ck.kind]: 1}, {[ck.kind]: 2});
-      const remoteOp = new Operation();
-      remoteOp
+            'cell_key', ct.walls.id, { [ck.kind]: 1 }, { [ck.kind]: 2 });
+        const remoteOp = new Operation();
+        remoteOp
           .addCellChange(
-              'cell_key', ct.walls.id, {[ck.kind]: 1}, {[ck.kind]: 3});
-      remoteOp.num = 1;
-      let layerContent = {[ck.kind]: 1};
-      mock('state.theMap.cells.get("$any").setLayerContent',
+            'cell_key', ct.walls.id, { [ck.kind]: 1 }, { [ck.kind]: 3 });
+        remoteOp.num = 1;
+        let layerContent = { [ck.kind]: 1 };
+        mock('state.theMap.cells.get("$any").setLayerContent',
           (_1, content, _2) => {
-        layerContent = content;
-      });
-      mock('state.theMap.cells.get("$any").getLayerContent',
+            layerContent = content;
+          });
+        mock('state.theMap.cells.get("$any").getLayerContent',
           (_) => layerContent);
-      mock(getOpMockPath(1) + '.set("$all")', successfulPromise());
-      mock(getOpMockPath(1) + '.off("$all")', {});
+        mock(getOpMockPath(1) + '.set("$all")', successfulPromise());
+        mock(getOpMockPath(1) + '.off("$all")', {});
 
-      mock(getLatestOpTransactionMockPath(), (code, callback) => {
-        callback(null, false, null);
+        mock(getLatestOpTransactionMockPath(), (code, callback) => {
+          callback(null, false, null);
+        });
+
+        mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+          identityCallback({ val: () => createIdentity(1).i });
+        });
+
+        mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+          assert(status == Status.UPDATING);
+          opCallback({ val: () => remoteOp.data });
+          setTimeout(() => {
+            assert(status == Status.READY);
+            assert(lastOpNum == 1);
+            testCompleted();
+          }, 10);
+        });
+
+        localOp.redo();
+        opc.addLocalOperation_(localOp);
+        assert(status == Status.SAVING);
+        opc.startListeningForOperations();
       });
-
-      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        identityCallback({val: () => createIdentity(1).i});
-      });
-
-      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
-        assert(status == Status.UPDATING);
-        opCallback({val: () => remoteOp.data});
-        setTimeout(() => {
-          assert(status == Status.READY);
-          assert(lastOpNum == 1);
-          testCompleted();
-        }, 10);
-      });
-
-      localOp.redo();
-      opc.addLocalOperation_(localOp);
-      assert(status == Status.SAVING);
-      opc.startListeningForOperations();
-    });
 
     addTest('multiple successful local operations -> all are saved', () => {
       mock(getOpMockPath(1) + '.on()', {});
@@ -245,299 +246,391 @@
     });
 
     addTest('both valid and invalid local operations -> ' +
-        'only valid are saved', () => {
-      // Setup 3 cells.
-      const cells = {
-        a: {[ck.kind]: 'a base'},
-        b: {[ck.kind]: 'b base'},
-        c: {[ck.kind]: 'c base'},
-      };
-      mock('state.theMap.cells.get', (key) => {
-        return {
-          getLayerContent: _ => cells[key],
-          setLayerContent: (_1, content, _2) => { cells[key] = content; },
-          gridElement: { classList: { add: _ => {}, remove: _ => {} } },
+      'only valid are saved', () => {
+        // Setup 3 cells.
+        const cells = {
+          a: { [ck.kind]: 'a base' },
+          b: { [ck.kind]: 'b base' },
+          c: { [ck.kind]: 'c base' },
         };
-      });
+        mock('state.theMap.cells.get', (key) => {
+          return {
+            getLayerContent: _ => cells[key],
+            setLayerContent: (_1, content, _2) => { cells[key] = content; },
+            gridElement: { classList: { add: _ => { }, remove: _ => { } } },
+          };
+        });
 
-      // Setup a remote op affecting cell b.
-      const remoteOp = new Operation();
-      remoteOp
+        // Setup a remote op affecting cell b.
+        const remoteOp = new Operation();
+        remoteOp
           .addCellChange(
-              'b', ct.walls.id, {[ck.kind]: 'b base'}, {[ck.kind]: 'b remote'});
+            'b', ct.walls.id, { [ck.kind]: 'b base' }, { [ck.kind]: 'b remote' });
 
-      // Setup 4 local ops to follow the remote op.
-      // 1 and 4 are valid; 2 is directly invalid, and 3 is indirectly invalid
-      // since it depends on 2.
-      const localOps = [
-        new Operation(),
-        new Operation(),
-        new Operation(),
-        new Operation(),
-      ];
-      localOps[0]
+        // Setup 4 local ops to follow the remote op.
+        // 1 and 4 are valid; 2 is directly invalid, and 3 is indirectly invalid
+        // since it depends on 2.
+        const localOps = [
+          new Operation(),
+          new Operation(),
+          new Operation(),
+          new Operation(),
+        ];
+        localOps[0]
           .addCellChange(
-              'a', ct.walls.id, {[ck.kind]: 'a base'}, {[ck.kind]: 'a loc0'});
-      localOps[1]
+            'a', ct.walls.id, { [ck.kind]: 'a base' }, { [ck.kind]: 'a loc0' });
+        localOps[1]
           .addCellChange(
-              'b', ct.walls.id, {[ck.kind]: 'b base'}, {[ck.kind]: 'b loc1'});
-      localOps[1]
+            'b', ct.walls.id, { [ck.kind]: 'b base' }, { [ck.kind]: 'b loc1' });
+        localOps[1]
           .addCellChange(
-              'c', ct.walls.id, {[ck.kind]: 'c base'}, {[ck.kind]: 'c loc1'});
-      localOps[2]
+            'c', ct.walls.id, { [ck.kind]: 'c base' }, { [ck.kind]: 'c loc1' });
+        localOps[2]
           .addCellChange(
-              'c', ct.walls.id, {[ck.kind]: 'c loc1'}, {[ck.kind]: 'c loc2'});
-      localOps[3]
+            'c', ct.walls.id, { [ck.kind]: 'c loc1' }, { [ck.kind]: 'c loc2' });
+        localOps[3]
           .addCellChange(
-              'a', ct.walls.id, {[ck.kind]: 'a loc0'}, {[ck.kind]: 'a loc3'});
+            'a', ct.walls.id, { [ck.kind]: 'a loc0' }, { [ck.kind]: 'a loc3' });
 
-      // Apply the operations and verify they worked.
-      localOps.forEach(op => op.redo());
-      assert(cells.a[ck.kind] == 'a loc3');
-      assert(cells.b[ck.kind] == 'b loc1');
-      assert(cells.c[ck.kind] == 'c loc2');
-
-      // Mock transactions that always succeed, starting from 1.
-      let transactionCount = 0;
-      mock(getLatestOpTransactionMockPath(), (code, callback) => {
-        transactionCount++;
-        callback(null, !!code(createIdentity(transactionCount)), null);
-      });
-
-      // Add all local operations, while forcefully suppressing saving.
-      opc.isCurrentlyProcessingPendingOperations_ = true;
-      localOps.forEach(op => opc.addLocalOperation_(op));
-      opc.isCurrentlyProcessingPendingOperations_ = false;
-
-      // Mock the remote op in. When its data is applied, the test should be
-      // done.
-      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        identityCallback({val: () => createIdentity(1).i});
-      });
-
-      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
-        opCallback({val: () => remoteOp.data});
-        // Test done!
+        // Apply the operations and verify they worked.
+        localOps.forEach(op => op.redo());
         assert(cells.a[ck.kind] == 'a loc3');
-        assert(cells.b[ck.kind] == 'b remote');
-        assert(cells.c[ck.kind] == 'c base');
-        assert(lastOpNum == 3);
-        testCompleted();
-      });
+        assert(cells.b[ck.kind] == 'b loc1');
+        assert(cells.c[ck.kind] == 'c loc2');
 
-      opc.startListeningForOperations();
-    });
+        // Mock transactions that always succeed, starting from 1.
+        let transactionCount = 0;
+        mock(getLatestOpTransactionMockPath(), (code, callback) => {
+          transactionCount++;
+          callback(null, !!code(createIdentity(transactionCount)), null);
+        });
+
+        // Add all local operations, while forcefully suppressing saving.
+        opc.isCurrentlyProcessingPendingOperations_ = true;
+        localOps.forEach(op => opc.addLocalOperation_(op));
+        opc.isCurrentlyProcessingPendingOperations_ = false;
+
+        // Mock the remote op in. When its data is applied, the test should be
+        // done.
+        mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+          identityCallback({ val: () => createIdentity(1).i });
+        });
+
+        mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+          opCallback({ val: () => remoteOp.data });
+          // Test done!
+          assert(cells.a[ck.kind] == 'a loc3');
+          assert(cells.b[ck.kind] == 'b remote');
+          assert(cells.c[ck.kind] == 'c base');
+          assert(lastOpNum == 3);
+          testCompleted();
+        });
+
+        opc.startListeningForOperations();
+      });
 
     addTest('incoming op in the gap between transaction and its callback ->' +
-        'op in the transaction is not undoed', () => {
-      // Setup 2 cells.
-      const cells = {
-        a: {[ck.kind]: 'a base'},
-        b: {[ck.kind]: 'b base'},
-      };
-      mock('state.theMap.cells.get', (key) => {
-        return {
-          getLayerContent: _ => cells[key],
-          setLayerContent: (_1, content, _2) => { cells[key] = content; },
-          gridElement: { classList: { add: _ => {}, remove: _ => {} } },
+      'op in the transaction is not undoed', () => {
+        // Setup 2 cells.
+        const cells = {
+          a: { [ck.kind]: 'a base' },
+          b: { [ck.kind]: 'b base' },
         };
-      });
+        mock('state.theMap.cells.get', (key) => {
+          return {
+            getLayerContent: _ => cells[key],
+            setLayerContent: (_1, content, _2) => { cells[key] = content; },
+            gridElement: { classList: { add: _ => { }, remove: _ => { } } },
+          };
+        });
 
-      // Setup operations.
-      const localOp = new Operation();
-      localOp
+        // Setup operations.
+        const localOp = new Operation();
+        localOp
           .addCellChange(
-              'a', ct.walls.id, {[ck.kind]: 'a base'}, {[ck.kind]: 'a local'});
-      localOp
+            'a', ct.walls.id, { [ck.kind]: 'a base' }, { [ck.kind]: 'a local' });
+        localOp
           .addCellChange(
-              'b', ct.walls.id, {[ck.kind]: 'b base'}, {[ck.kind]: 'b local'});
-      const remoteOp = new Operation();
-      remoteOp
+            'b', ct.walls.id, { [ck.kind]: 'b base' }, { [ck.kind]: 'b local' });
+        const remoteOp = new Operation();
+        remoteOp
           .addCellChange(
-              'b', ct.walls.id, {[ck.kind]: 'b local'},
-              {[ck.kind]: 'b remote'});
-      remoteOp.data.i = {n: 2, f: 'remote'};
+            'b', ct.walls.id, { [ck.kind]: 'b local' },
+            { [ck.kind]: 'b remote' });
+        remoteOp.data.i = { n: 2, f: 'remote' };
 
-      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
-        opCallback({val: () => localOp.data});
-      });
+        mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+          opCallback({ val: () => localOp.data });
+        });
 
-      let listenToLatestOpIdentityCallback = null;
-      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        listenToLatestOpIdentityCallback = identityCallback;
-      });
+        let listenToLatestOpIdentityCallback = null;
+        mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+          listenToLatestOpIdentityCallback = identityCallback;
+        });
 
-      let remoteOpCallback = null;
-      mock(getOpMockPath(2) + '.on', (_, opCallback) => {
-        remoteOpCallback = opCallback;
-      });
+        let remoteOpCallback = null;
+        mock(getOpMockPath(2) + '.on', (_, opCallback) => {
+          remoteOpCallback = opCallback;
+        });
 
-      let firstTransaction = true;
-      mock(getLatestOpTransactionMockPath(), (code, callback) => {
-        if (!firstTransaction) return;
-        firstTransaction = false;
-        const success = !!code(createIdentity(0));
-        assert(success);
-        // lastOpNum should not be updated at this point.
-        assert(lastOpNum == 0);
-        // Before calling the transaction callback, add two incoming ops:
-        // the first is localOp itself, the second is remoteOp.
-        listenToLatestOpIdentityCallback({val: () => localOp.data.i});
-        listenToLatestOpIdentityCallback({val: () => remoteOp.data.i});
-        // That second callback should expect remoteOpCallback to be called,
-        // then read and apply the remote op. localOp should not be undoed when
-        // the remote is applied.
+        let firstTransaction = true;
+        mock(getLatestOpTransactionMockPath(), (code, callback) => {
+          if (!firstTransaction) return;
+          firstTransaction = false;
+          const success = !!code(createIdentity(0));
+          assert(success);
+          // lastOpNum should not be updated at this point.
+          assert(lastOpNum == 0);
+          // Before calling the transaction callback, add two incoming ops:
+          // the first is localOp itself, the second is remoteOp.
+          listenToLatestOpIdentityCallback({ val: () => localOp.data.i });
+          listenToLatestOpIdentityCallback({ val: () => remoteOp.data.i });
+          // That second callback should expect remoteOpCallback to be called,
+          // then read and apply the remote op. localOp should not be undoed when
+          // the remote is applied.
+          assert(cells.a[ck.kind] == 'a local');
+          assert(cells.b[ck.kind] == 'b local');
+          remoteOpCallback({ val: () => remoteOp.data });
+          assert(cells.a[ck.kind] == 'a local');
+          assert(cells.b[ck.kind] == 'b remote');
+          // Because of the incoming ops, lastOpNum should be updated even
+          // before the transaction callback.
+          assert(lastOpNum == 2);
+          callback(null, success, null);
+          // lastOpNum and the cells should not be modified by the callback.
+          assert(lastOpNum == 2);
+          assert(cells.a[ck.kind] == 'a local');
+          assert(cells.b[ck.kind] == 'b remote');
+          testCompleted();
+        });
+        localOp.redo();
         assert(cells.a[ck.kind] == 'a local');
         assert(cells.b[ck.kind] == 'b local');
-        remoteOpCallback({val: () => remoteOp.data});
-        assert(cells.a[ck.kind] == 'a local');
-        assert(cells.b[ck.kind] == 'b remote');
-        // Because of the incoming ops, lastOpNum should be updated even
-        // before the transaction callback.
-        assert(lastOpNum == 2);
-        callback(null, success, null);
-        // lastOpNum and the cells should not be modified by the callback.
-        assert(lastOpNum == 2);
-        assert(cells.a[ck.kind] == 'a local');
-        assert(cells.b[ck.kind] == 'b remote');
-        testCompleted();
+        opc.startListeningForOperations();
+        opc.addLocalOperation_(localOp);
       });
-      localOp.redo();
-      assert(cells.a[ck.kind] == 'a local');
-      assert(cells.b[ck.kind] == 'b local');
-      opc.startListeningForOperations();
-      opc.addLocalOperation_(localOp);
-    });
 
     addTest('Remote ops arrive out-of-order -> remote ops are applied in order',
-        () => {
-      // Setup one cell.
-      let cell = {[ck.kind]: 'a'};
-      mock('state.theMap.cells.get', (key) => {
-        return {
-          getLayerContent: _ => cell,
-          setLayerContent: (_1, content, _2) => { cell = content; },
-          gridElement: { classList: { add: _ => {}, remove: _ => {} } },
-          hasLayerContent: () => false,
-          contentIsVariation_: () => false,
-        };
-      });
+      () => {
+        // Setup one cell.
+        let cell = { [ck.kind]: 'a' };
+        mock('state.theMap.cells.get', (key) => {
+          return {
+            getLayerContent: _ => cell,
+            setLayerContent: (_1, content, _2) => { cell = content; },
+            gridElement: { classList: { add: _ => { }, remove: _ => { } } },
+            hasLayerContent: () => false,
+            contentIsVariation_: () => false,
+          };
+        });
 
-      // Setup 3 operations.
-      const ops = [new Operation(), new Operation(), new Operation()];
-      ops[0].addCellChange(
-          'c', ct.walls.id, {[ck.kind]: 'a'}, {[ck.kind]: 'b'});
-      ops[0].data.i = {n: 1, f: 'x'};
-      ops[1].addCellChange(
-          'c', ct.walls.id, {[ck.kind]: 'b'}, {[ck.kind]: 'c'});
-      ops[1].data.i = {n: 2, f: 'y'};
-      ops[2].addCellChange(
-          'c', ct.walls.id, {[ck.kind]: 'c'}, {[ck.kind]: 'd'});
-      ops[2].data.i = {n: 3, f: 'z'};
+        // Setup 3 operations.
+        const ops = [new Operation(), new Operation(), new Operation()];
+        ops[0].addCellChange(
+          'c', ct.walls.id, { [ck.kind]: 'a' }, { [ck.kind]: 'b' });
+        ops[0].data.i = { n: 1, f: 'x' };
+        ops[1].addCellChange(
+          'c', ct.walls.id, { [ck.kind]: 'b' }, { [ck.kind]: 'c' });
+        ops[1].data.i = { n: 2, f: 'y' };
+        ops[2].addCellChange(
+          'c', ct.walls.id, { [ck.kind]: 'c' }, { [ck.kind]: 'd' });
+        ops[2].data.i = { n: 3, f: 'z' };
 
-      // Register callbacks.
-      const opCallbacks = new Array(3);
-      mock(getOpMockPath(1) + '.on', (_, opCallback) => {
-        opCallbacks[0] = opCallback;
-      });
-      mock(getOpMockPath(2) + '.on', (_, opCallback) => {
-        opCallbacks[1] = opCallback;
-      });
-      mock(getOpMockPath(3) + '.on', (_, opCallback) => {
-        opCallbacks[2] = opCallback;
-      });
+        // Register callbacks.
+        const opCallbacks = new Array(3);
+        mock(getOpMockPath(1) + '.on', (_, opCallback) => {
+          opCallbacks[0] = opCallback;
+        });
+        mock(getOpMockPath(2) + '.on', (_, opCallback) => {
+          opCallbacks[1] = opCallback;
+        });
+        mock(getOpMockPath(3) + '.on', (_, opCallback) => {
+          opCallbacks[2] = opCallback;
+        });
 
-      // Report 3 as the latest op when the client asks for it.
-      mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
-        identityCallback({val: () => createIdentity(3).i});
-        // Run the ops callbacks out-of-order!
-        assert(cell[ck.kind] == 'a');
-        opCallbacks[0]({val: () => ops[0].data});
-        assert(cell[ck.kind] == 'b');
-        opCallbacks[2]({val: () => ops[2].data});
-        assert(cell[ck.kind] == 'b');
-        opCallbacks[1]({val: () => ops[1].data});
-        assert(cell[ck.kind] == 'd');
-        testCompleted();
-      });
+        // Report 3 as the latest op when the client asks for it.
+        mock(getLatestIdentityOnMockPath(), (_, identityCallback) => {
+          identityCallback({ val: () => createIdentity(3).i });
+          // Run the ops callbacks out-of-order!
+          assert(cell[ck.kind] == 'a');
+          opCallbacks[0]({ val: () => ops[0].data });
+          assert(cell[ck.kind] == 'b');
+          opCallbacks[2]({ val: () => ops[2].data });
+          assert(cell[ck.kind] == 'b');
+          opCallbacks[1]({ val: () => ops[1].data });
+          assert(cell[ck.kind] == 'd');
+          testCompleted();
+        });
 
-      opc.startListeningForOperations();
-    });
+        opc.startListeningForOperations();
+      });
     addTest('recordOperationComplete adds lastModified', () => {
       mock(getOpMockPath(1) + '.set("$all")', successfulPromise());
       mock(getLatestOpTransactionMockPath(), (code, callback) => {
         callback(null, !!code(createIdentity(0)), null);
       });
-      
+
       const op = new Operation();
       op.addCellChange('cell', 0, {}, {});
       opc.currentOperation_ = op;
       opc.recordOperationComplete();
-      
+
       const props = op.data.p;
-      assert(props && props[pk.lastModified]); 
-      assert(firebase.database && firebase.database.ServerValue && 
-             props[pk.lastModified].n === firebase.database.ServerValue.TIMESTAMP);
+      assert(props && props[pk.lastModified]);
+      assert(firebase.database && firebase.database.ServerValue &&
+        props[pk.lastModified].n === firebase.database.ServerValue.TIMESTAMP);
       testCompleted();
     });
 
-    addTest('restoreMap called when map missing', () => {
+    // Helper to create a chainer that returns self/compatible object with 'on', 'once', etc.
+    const createRefMock = (existsVal, path, onListenerCallback) => {
+      const snapshot = {
+        val: () => (existsVal ? { some: 'data' } : null),
+        exists: () => existsVal,
+        hasChild: () => false,
+        forEach: () => false,
+        key: 'mockKey',
+        child: () => snapshot // Recursive snapshot
+      };
+
+      const refObj = {
+        on: () => {
+          if (path && path.includes('fullMap') && onListenerCallback) {
+            onListenerCallback();
+          }
+        },
+        off: () => { },
+        set: () => successfulPromise(),
+        once: () => successfulPromise(snapshot),
+        transaction: (code, cb) => { if (cb) cb(null, true, null); },
+        // Chaining methods
+        orderByKey: () => refObj,
+        limitToFirst: () => refObj,
+        limitToLast: () => refObj,
+        startAt: () => refObj,
+        endAt: () => refObj,
+        equalTo: () => refObj,
+        child: () => refObj
+      };
+      return refObj;
+    };
+
+    addTest('restoreMap called when map missing (via connectToExistingMap)', () => {
+      // Inject required DOM to prevent Array.from(null) crash
+      const domContainer = document.createElement('div');
+      domContainer.innerHTML = '<div class="disabled-in-read-only-mode"><textarea></textarea></div>';
+      document.body.appendChild(domContainer);
+
       let callableName = null;
       let callableArgs = null;
-      
+
       const httpsCallableMock = (name) => {
         callableName = name;
         return (args) => {
           callableArgs = args;
-          return successfulPromise({data: {success: true}});
+          return successfulPromise({ data: { success: true } });
         };
       };
-      
+
       mock('firebase.functions', () => ({
         httpsCallable: httpsCallableMock
       }));
-
-      // Set MID so listener starts
       mock('state.getMid', () => 'mid');
-      
-      // Simulate missing map
-      mock('firebase.database().ref("/maps/mid/payload/fullMap").on', (_, callback) => {
-        // Trigger with null value
-        callback({val: () => null});
-        
-        // Assertions inside callback flow
-        assert(status === Status.UPDATING);
+      mock('state.setMid', (mid) => { });
+      mock('state.getSecret', () => 'secret');
+
+      const missingMapDbMock = () => ({
+        ref: () => createRefMock(false, null, null)
+      });
+      mock('firebase.database', missingMapDbMock);
+
+      let listMapCalled = false;
+      const capturingDbMock = () => ({
+        ref: (path) => createRefMock(false, path, () => { listMapCalled = true; })
+      });
+      mock('firebase.database', capturingDbMock);
+
+      opc.connectToExistingMap('mid', 'secret', false, false, () => { });
+
+      setTimeout(() => {
+        document.body.removeChild(domContainer);
         assert(callableName === 'restoreMap');
         assert(callableArgs && callableArgs.mid === 'mid');
+        assert(listMapCalled);
         testCompleted();
-      });
+      }, 0);
+    });
 
-      opc.startListeningForMap();
+    addTest('restoreMap NOT called when map exists (via connectToExistingMap)', () => {
+      const domContainer = document.createElement('div');
+      domContainer.innerHTML = '<div class="disabled-in-read-only-mode"><textarea></textarea></div>';
+      document.body.appendChild(domContainer);
+
+      let callableName = null;
+
+      const httpsCallableMock = (name) => {
+        callableName = name;
+        return (args) => successfulPromise({});
+      };
+
+      mock('firebase.functions', () => ({
+        httpsCallable: httpsCallableMock
+      }));
+      mock('state.getMid', () => 'mid');
+      mock('state.setMid', (mid) => { });
+      mock('state.getSecret', () => 'secret');
+
+      let listMapCalled = false;
+      const existingMapDbMock = () => ({
+        ref: (path) => createRefMock(true, path, () => { listMapCalled = true; })
+      });
+      mock('firebase.database', existingMapDbMock);
+
+      opc.connectToExistingMap('mid', 'secret', false, false, () => { });
+
+      setTimeout(() => {
+        document.body.removeChild(domContainer);
+        assert(callableName === null);
+        assert(listMapCalled);
+        testCompleted();
+      }, 0);
     });
 
     addTest('restoreMap fails (map not found in cold storage)', () => {
+      const domContainer = document.createElement('div');
+      domContainer.innerHTML = '<div class="disabled-in-read-only-mode"><textarea></textarea></div>';
+      document.body.appendChild(domContainer);
+
       const httpsCallableMock = (name) => {
-        return (args) => successfulPromise({data: {success: false}});
+        return (args) => successfulPromise({ data: { success: false } });
       };
-      
+
       mock('firebase.functions', () => ({
         httpsCallable: httpsCallableMock
       }));
       mock('state.getMid', () => 'mid');
-      
-      mock('firebase.database().ref("/maps/mid/payload/fullMap").on', (_, callback) => {
-        // Trigger with null value
-        callback({val: () => null});
-        
-        // Assert status is LOADING_FAILED (which is typically red/terminal)
+      mock('state.setMid', (mid) => { });
+      mock('state.getSecret', () => 'secret');
+
+      const missingMapDbMock = () => ({
+        ref: (path) => createRefMock(false, path, null)
+      });
+      mock('firebase.database', missingMapDbMock);
+
+      opc.connectToExistingMap('mid', 'secret', false, false, () => { });
+
+      setTimeout(() => {
+        document.body.removeChild(domContainer);
         assert(status === Status.LOADING_FAILED);
         testCompleted();
-      });
-
-      opc.startListeningForMap();
+      }, 0);
     });
 
-    addTest('restoreMap errors (network/function error)', () => {
+    addTest('restoreMap errors (network error)', () => {
+      const domContainer = document.createElement('div');
+      domContainer.innerHTML = '<div class="disabled-in-read-only-mode"><textarea></textarea></div>';
+      document.body.appendChild(domContainer);
+
       const httpsCallableMock = (name) => {
         return (args) => {
           return {
@@ -545,24 +638,158 @@
           };
         };
       };
-      
+
       mock('firebase.functions', () => ({
         httpsCallable: httpsCallableMock
       }));
       mock('state.getMid', () => 'mid');
-      
-      mock('firebase.database().ref("/maps/mid/payload/fullMap").on', (_, callback) => {
-        // Trigger with null value
-        callback({val: () => null});
-        
-        // Assert status is UPDATE_ERROR
+      mock('state.setMid', (mid) => { });
+      mock('state.getSecret', () => 'secret');
+
+      const missingMapDbMock = () => ({
+        ref: (path) => createRefMock(false, path, null)
+      });
+      mock('firebase.database', missingMapDbMock);
+
+      opc.connectToExistingMap('mid', 'secret', false, false, () => { });
+
+      setTimeout(() => {
+        document.body.removeChild(domContainer);
         assert(status === Status.UPDATE_ERROR);
         testCompleted();
+      }, 0);
+    });
+
+    addTest('createAndConnectToNewMapOnServer (creates map, no restoreMap)', () => {
+      const domContainer = document.createElement('div');
+      domContainer.innerHTML = '<div class="disabled-in-read-only-mode"><textarea></textarea></div>';
+      document.body.appendChild(domContainer);
+
+      let callableName = null;
+      const httpsCallableMock = (name) => {
+        callableName = name;
+        return (args) => successfulPromise({});
+      };
+
+      mock('firebase.functions', () => ({
+        httpsCallable: httpsCallableMock
+      }));
+
+      let mid = null; // Start with no MID
+      mock('state.getMid', () => mid);
+      mock('state.setMid', (m) => { mid = m; });
+      mock('state.getSecret', () => 'secret');
+      mock('state.setupNewMid', (cb) => {
+        mid = 'new_mid';
+        cb();
       });
 
-      opc.startListeningForMap();
+      // Mock DB set and once
+      let mapSet = false;
+      const dbMock = () => ({
+        ref: (path) => ({
+          on: () => { },
+          off: () => { },
+          set: (data) => {
+            if (path === '/maps/new_mid') mapSet = true;
+            return successfulPromise();
+          },
+          // connectToExistingMap calls this. Since we just set it, it should exist.
+          once: () => successfulPromise({
+            val: () => (mapSet ? { some: 'data' } : null),
+            exists: () => mapSet, // Should be true if called after set
+            hasChild: () => false,
+            forEach: () => false,
+            key: 'mockKey',
+            child: () => ({ val: () => null, exists: () => false })
+          }),
+          transaction: (code, cb) => { if (cb) cb(null, true, null); },
+          child: () => ({ set: () => successfulPromise() }), // For secret
+          orderByKey: () => ({ limitToLast: () => ({ on: () => { } }) }),
+          limitToFirst: () => ({ once: () => successfulPromise({ exists: () => mapSet }) })
+        })
+      });
+      mock('firebase.database', dbMock);
+
+      opc.createAndConnectToNewMapOnServer(() => {
+        setTimeout(() => {
+          document.body.removeChild(domContainer);
+          assert(mapSet);
+          assert(callableName === null);
+          assert(mid === 'new_mid');
+          testCompleted();
+        }, 0);
+      });
+    });
+
+    addTest('fork (creates new map, no restoreMap)', () => {
+      const domContainer = document.createElement('div');
+      domContainer.innerHTML = '<div class="disabled-in-read-only-mode"><textarea></textarea></div>';
+      document.body.appendChild(domContainer);
+
+      let callableName = null;
+      const httpsCallableMock = (name) => {
+        callableName = name;
+        return (args) => successfulPromise({});
+      };
+
+      mock('firebase.functions', () => ({
+        httpsCallable: httpsCallableMock
+      }));
+
+      let mid = 'old_mid';
+      mock('state.getMid', () => mid);
+      mock('state.setMid', (m) => { mid = m; });
+      mock('state.getSecret', () => 'secret');
+      mock('state.setupNewMid', (cb) => {
+        mid = 'forked_mid'; // Change to new MID
+        cb();
+      });
+      mock('state.getLastOpNum', () => 10);
+      mock('state.isReadOnly', () => false);
+
+      // Mock rewrite_ since fork calls it
+      opc.rewrite_ = (num, cb) => { if (cb) cb(); };
+
+      let mapSet = false;
+      const dbMock = () => ({
+        ref: (path) => ({
+          on: () => { },
+          off: () => { },
+          set: (data) => {
+            if (path === '/maps/forked_mid') mapSet = true;
+            return successfulPromise();
+          },
+          once: () => successfulPromise({
+            val: () => (mapSet ? { some: 'data' } : null),
+            exists: () => mapSet,
+            hasChild: () => false,
+            forEach: () => false,
+            key: 'mockKey',
+            child: () => ({ val: () => null, exists: () => false })
+          }),
+          transaction: (code, cb) => { if (cb) cb(null, true, null); },
+          child: () => ({ set: () => successfulPromise() }),
+          orderByKey: () => ({ limitToLast: () => ({ on: () => { } }) }),
+          limitToFirst: () => ({ once: () => successfulPromise({ exists: () => mapSet }) })
+        })
+      });
+      mock('firebase.database', dbMock);
+
+
+      opc.fork(() => {
+        setTimeout(() => {
+          document.body.removeChild(domContainer);
+          assert(mapSet);
+          assert(callableName === null);
+          assert(mid === 'forked_mid');
+          testCompleted();
+        }, 0);
+      });
     });
   </script>
 </head>
-  <body></body>
+
+<body></body>
+
 </html>
