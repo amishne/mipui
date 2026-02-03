@@ -5,7 +5,7 @@
     "test": "npm run lint"
   },
   "dependencies": {
-    "eslint": "4.19.1",
+    "eslint": "9.26.0",
     "eslint-config-standard": "11.0.0",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-node": "6.0.0",
